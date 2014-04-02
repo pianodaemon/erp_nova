@@ -15,18 +15,14 @@ import javax.mail.internet.MimeMultipart;
 
 public class SendEmailWithFileHelper {
 
-    public SendEmailWithFileHelper(HashMap<String, String> conecta){
-        this.setIpServidor(conecta.get("hostname"));
-        this.setContrasenia(conecta.get("password"));
-        this.setNombreUsuario(conecta.get("username"));
-    }
+
 
     private String ipServidor;
     private String nombreUsuario;
     private String contrasenia;
     private String mensaje;
-    private String archivoAdjunto;
-    private String nombreArchivoAdjunto;
+    private ArrayList<LinkedHashMap<String,String>> adjuntos;
+    private ArrayList<LinkedHashMap<String,String>> destinatarios;
     private String destinatario;
     private String asunto;
     private String puerto;
@@ -37,14 +33,6 @@ public class SendEmailWithFileHelper {
 
     public void setPuerto(String puerto) {
         this.puerto = puerto;
-    }
-
-    public String getArchivoAdjunto() {
-        return archivoAdjunto;
-    }
-
-    public void setArchivoAdjunto(String archivoAdjunto) {
-        this.archivoAdjunto = archivoAdjunto;
     }
 
     public String getAsunto() {
@@ -87,14 +75,6 @@ public class SendEmailWithFileHelper {
         this.mensaje = mensaje;
     }
 
-    public String getNombreArchivoAdjunto() {
-        return nombreArchivoAdjunto;
-    }
-
-    public void setNombreArchivoAdjunto(String nombreArchivoAdjunto) {
-        this.nombreArchivoAdjunto = nombreArchivoAdjunto;
-    }
-
     public String getNombreUsuario() {
         return nombreUsuario;
     }
@@ -104,6 +84,31 @@ public class SendEmailWithFileHelper {
     }
     
     
+    public ArrayList<LinkedHashMap<String, String>> getAdjuntos() {
+        return adjuntos;
+    }
+
+    public void setAdjuntos(ArrayList<LinkedHashMap<String, String>> adjuntos) {
+        this.adjuntos = adjuntos;
+    }
+
+    public ArrayList<LinkedHashMap<String, String>> getDestinatarios() {
+        return destinatarios;
+    }
+
+    public void setDestinatarios(ArrayList<LinkedHashMap<String, String>> destinatarios) {
+        this.destinatarios = destinatarios;
+    }
+    
+    
+    
+    
+    public SendEmailWithFileHelper(HashMap<String, String> conecta){
+        this.setIpServidor(conecta.get("hostname"));
+        this.setContrasenia(conecta.get("password"));
+        this.setNombreUsuario(conecta.get("username"));
+    }
+    
     
     public void enviarEmail() {
         try {
@@ -112,11 +117,11 @@ public class SendEmailWithFileHelper {
 
             // Nombre del host de correo, es smtp.gmail.com
             props.setProperty("mail.smtp.host", this.getIpServidor());
-
-            // TLS si est� disponible
+            
+            // TLS si esta disponible
             props.setProperty("mail.smtp.starttls.enable", "true");
 
-//	            // Puerto de gmail para envio de correos
+            // Puerto de gmail para envio de correos
             props.setProperty("mail.smtp.port",this.getPuerto());
 
             // Nombre del usuario
@@ -137,30 +142,53 @@ public class SendEmailWithFileHelper {
             texto.setContent(this.getMensaje(), "text/html");
             texto.setText(this.getMensaje());
 
-            //PARTE DEL ADJUNTO DE LA IMAGEN
-            BodyPart adjunto = new MimeBodyPart();
-
-            // Cargamos la imagen
-            adjunto.setDataHandler(new DataHandler(new FileDataSource(this.getArchivoAdjunto())));
-
-            // Opcional. De esta forma transmitimos al receptor el nombre original del
-            // fichero de imagen.
-            adjunto.setFileName(this.getNombreArchivoAdjunto());
-
+            
             //JUNTAMOS AMBAS PARTES EN UNA SOLA
             MimeMultipart multiParte = new MimeMultipart();
             multiParte.addBodyPart(texto);
-            multiParte.addBodyPart(adjunto);
+            
+            
+            if(this.getAdjuntos().size()>0){
+                //Adjuntar archivos
+                for( LinkedHashMap<String,String> i : this.getAdjuntos() ){
+                    BodyPart adjunto = new MimeBodyPart();
+                    
+                    //Pasamos la ruta del archivo a adjuntar
+                    adjunto.setDataHandler(new DataHandler(new FileDataSource(i.get("path_file"))));
+                    
+                    // Opcional. De esta forma transmitimos al receptor el nombre original del fichero de imagen.
+                    adjunto.setFileName(i.get("file_name"));
+                    
+                    multiParte.addBodyPart(adjunto);
+                }
+            }
 
+            
+            
+            
             //CONSTRUIR EL MENSAJE
             MimeMessage message = new MimeMessage(session);
 
             // Se rellena el From
             message.setFrom(new InternetAddress(this.getNombreUsuario()));
 
-            // Se rellenan los destinatarios
-            message.addRecipient(Message.RecipientType.TO, new InternetAddress(this.getDestinatario()));
+            if(this.getDestinatarios().size()>0){
+                //Se cargan los destinatarios
+                for( LinkedHashMap<String,String> i : this.getDestinatarios() ){
+                    if(i.get("type").toUpperCase().trim().equals("TO")){
+                        message.addRecipient(Message.RecipientType.TO, new InternetAddress(i.get("recipient")));
+                    }
+                    if(i.get("type").toUpperCase().trim().equals("CC")){
+                        message.addRecipient(Message.RecipientType.CC, new InternetAddress(i.get("recipient")));
+                    }
+                    //Copia oculta
+                    if(i.get("type").toUpperCase().trim().equals("BCC")){
+                        message.addRecipient(Message.RecipientType.BCC, new InternetAddress(i.get("recipient")));
+                    }
+                }
+            }
 
+            
             // Se rellena el subject
             message.setSubject(this.getAsunto());
 

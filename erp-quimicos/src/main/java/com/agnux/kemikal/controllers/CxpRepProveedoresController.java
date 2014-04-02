@@ -28,19 +28,13 @@ import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 /**
  *
  * @author agnux
@@ -72,31 +66,7 @@ public class CxpRepProveedoresController {
     }
     
     public GralInterfaceDao getGralDao() {
-        return gralDao;     
-  /*//obtiene datos para el buscador
-    @RequestMapping(method = RequestMethod.POST, value="/getBuscaProveedores.json")
-    //obtiene los tipos de agente
-    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getBuscaProveedoresJson(
-           // @RequestParam(value="rfc", required=true) String rfc,
-            //@RequestParam(value="email", required=true) String email,
-           //@RequestParam(value="nombre", required=true) String nombre,
-            @RequestParam(value="iu", required=true) String id_user,Model model
-            ){
-
-        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
-        HashMap<String, String> userDat = new HashMap<String, String>();
-
-        //decodificar id de usuario
-        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
-        userDat = this.getHomeDao().getUserById(id_usuario);
-        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
-
-        jsonretorno.put("Proveedores", this.getCxcDao().getAgentes(id_empresa));
-
-        return jsonretorno;
-
-    }*/
-    
+        return gralDao;
     }
     
     public CxpInterfaceDao getCxpDao() {

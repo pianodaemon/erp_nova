@@ -99,10 +99,10 @@ public final class MandarAutorizacionPorEmail extends Thread{
                     z.setPuerto("10025");
                     z.setMensaje("Este es un mensaje de autorización de Orden de compra por parte de: "+razon_social_empresa );
                     z.setNombreUsuario(email_compras);
-                    z.setNombreArchivoAdjunto("Orden Compra # "+datosOrdenCompra.get("folio")+".pdf");
+                    //z.setNombreArchivoAdjunto("Orden Compra # "+datosOrdenCompra.get("folio")+".pdf");
                     z.setDestinatario(correo_prov);
                     z.setAsunto("Orden Compra # "+datosOrdenCompra.get("folio") );
-                    z.setArchivoAdjunto(fileout);
+                    //z.setArchivoAdjunto(fileout);
                     z.enviarEmail();
                 }else {
                     throw new Exception("No se ha enviado ningún e-mail!");

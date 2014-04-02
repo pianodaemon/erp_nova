@@ -1,30 +1,10 @@
 package com.agnux.kemikal.reportes;
 
-import com.agnux.common.helpers.StringHelper;
-import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.ExceptionConverter;
-import com.itextpdf.text.Font;
-import com.itextpdf.text.Image;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.Phrase;
-import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.pdf.BaseFont;
-import com.itextpdf.text.pdf.ColumnText;
-import com.itextpdf.text.pdf.PdfContentByte;
-import com.itextpdf.text.pdf.PdfPCell;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfPageEventHelper;
-import com.itextpdf.text.pdf.PdfTemplate;
-import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.*;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -37,10 +17,9 @@ import java.util.logging.Logger;
  */
 public class PdfProReporteCalidad {
 
-    public PdfProReporteCalidad(String fileout, String razon_social_empresa, String fecha_inicial, String fecha_final, ArrayList<HashMap<String, String>> Datos_Reporte_Calidad) throws DocumentException {
-        String[] fi = fecha_inicial.split("-");
-        String[] ff = fecha_final.split("-");
-        String periodo_reporte = "Periodo  del  "+fi[2]+"/"+fi[1]+"/"+fi[0]+"  al  "+ff[2]+"/"+ff[1]+"/"+ff[0];
+    public PdfProReporteCalidad(HashMap<String, String> datosEncabezadoPie, String fileout, ArrayList<HashMap<String, String>> Datos_Reporte_Calidad) throws DocumentException {
+
+        
 
         try {
             //tipos de letras (font's)
@@ -51,9 +30,9 @@ public class PdfProReporteCalidad {
 
             Font largeBoldFont = new Font(Font.FontFamily.HELVETICA,10,Font.BOLD,BaseColor.BLACK);
             Font smallFont = new Font(Font.FontFamily.HELVETICA,8,Font.NORMAL,BaseColor.BLACK);
-
-            PdfProReporteCalidad.HeaderFooter event = new PdfProReporteCalidad.HeaderFooter(razon_social_empresa,periodo_reporte);
-            Document doc = new Document(PageSize.LEGAL.rotate(),-50,-50,60,30);
+            
+            HeaderFooter event = new HeaderFooter(datosEncabezadoPie);
+            Document doc = new Document(PageSize.LEGAL.rotate(),-60,-60,60,30);
             doc.addCreator("gpmarsan@gmail.com");
             PdfWriter writer = PdfWriter.getInstance(doc, new FileOutputStream(fileout));
             writer.setPageEvent(event);
@@ -388,23 +367,54 @@ public class PdfProReporteCalidad {
     }
 
 
+    
+    
+    
     static class HeaderFooter extends PdfPageEventHelper {
-        public Image headerImage;
-        protected PdfTemplate total;
-        protected BaseFont helv;
-        protected PdfContentByte cb;
-        protected PdfContentByte cb2;
+        protected PdfTemplate total;       
+        protected BaseFont helv;  
+        protected PdfContentByte cb;  
         Font largeBoldFont = new Font(Font.FontFamily.HELVETICA,10,Font.BOLD,BaseColor.BLACK);
         Font largeFont = new Font(Font.FontFamily.HELVETICA,10,Font.NORMAL,BaseColor.BLACK);
         Font smallFont = new Font(Font.FontFamily.HELVETICA,7,Font.NORMAL,BaseColor.BLACK);
-
+        
+        //ESTAS SON VARIABLES PRIVADAS DE LA CLASE, SE LE ASIGNA VALOR EN EL CONSTRUCTOR SON SETER
         private String empresa;
         private String periodo;
+        private String titulo_reporte;
+        private String codigo1;
+        private String codigo2;
+        
+		
+        //ESTOS  SON LOS GETER Y SETTER DE LAS VARIABLES PRIVADAS DE LA CLASE
+        public String getCodigo1() {
+            return codigo1;
+        }
 
+        public void setCodigo1(String codigo1) {
+            this.codigo1 = codigo1;
+        }
+
+        public String getCodigo2() {
+            return codigo2;
+        }
+
+        public void setCodigo2(String codigo2) {
+            this.codigo2 = codigo2;
+        }
+
+        public String getTitulo_reporte() {
+            return titulo_reporte;
+        }
+
+        public void setTitulo_reporte(String titulo_reporte) {
+            this.titulo_reporte = titulo_reporte;
+        }
+        
         public String getEmpresa() {
             return empresa;
         }
-
+        
         public void setEmpresa(String empresa) {
             this.empresa = empresa;
         }
@@ -416,21 +426,22 @@ public class PdfProReporteCalidad {
         public void setPeriodo(String periodo) {
             this.periodo = periodo;
         }
-
-        HeaderFooter(String razon_soc_empresa, String periodo){
-            this.setEmpresa(razon_soc_empresa);
-            this.setPeriodo(periodo);
+        
+        //ESTE ES EL CONSTRUCTOR DE LA CLASE  QUE RECIBE LOS PARAMETROS
+        HeaderFooter( HashMap<String, String> datos ){
+            this.setEmpresa(datos.get("empresa"));
+            this.setTitulo_reporte(datos.get("titulo_reporte"));
+            this.setPeriodo(datos.get("periodo"));
+            this.setCodigo1(datos.get("codigo1"));
+            this.setCodigo2(datos.get("codigo2"));
         }
-
-        /*Añadimos una tabla con  una imagen del logo de megestiono y creamos la fuente para el documento, la imagen esta escalada para que no se muestre pixelada*/
+        
+        
+        /*Añadimos una tabla con  una imagen del logo de megestiono y creamos la fuente para el documento, la imagen esta escalada para que no se muestre pixelada*/   
         @Override
         public void onOpenDocument(PdfWriter writer, Document document) {
             try {
-                /*
-                headerImage = Image.getInstance(PdfDepositos.ruta_imagen);
-                headerImage.scalePercent(50);
-                */
-                total = writer.getDirectContent().createTemplate(100, 100);
+                total = writer.getDirectContent().createTemplate(100, 100);  
                 //public Rectangle(int x, int y, int width, int height)
                 total.setBoundingBox(new Rectangle(-20, -20, 100, 100));
                 total.fill();
@@ -440,51 +451,62 @@ public class PdfProReporteCalidad {
                 throw new ExceptionConverter(e);
             }
         }
-
+        
         /*añadimos pie de página, borde y más propiedades*/
         @Override
         public void onEndPage(PdfWriter writer, Document document) {
             ColumnText.showTextAligned(writer.getDirectContent(),Element.ALIGN_CENTER, new Phrase(this.getEmpresa(),largeBoldFont),document.getPageSize().getWidth()/2, document.getPageSize().getTop() -25, 0);
-            ColumnText.showTextAligned(writer.getDirectContent(),Element.ALIGN_CENTER, new Phrase("Reporte de Calidad",largeBoldFont),document.getPageSize().getWidth()/2, document.getPageSize().getTop()-38, 0);
+            ColumnText.showTextAligned(writer.getDirectContent(),Element.ALIGN_CENTER, new Phrase(this.getTitulo_reporte(),largeBoldFont),document.getPageSize().getWidth()/2, document.getPageSize().getTop()-38, 0);
             ColumnText.showTextAligned(writer.getDirectContent(),Element.ALIGN_CENTER, new Phrase(this.getPeriodo(),largeFont),document.getPageSize().getWidth()/2, document.getPageSize().getTop()-50, 0);
-
-            SimpleDateFormat formato = new SimpleDateFormat("'Impreso en' MMMMM d, yyyy 'a las' HH:mm:ss 'hrs.'");
-            String impreso_en = formato.format(new Date());
-
+            
             cb = writer.getDirectContent();
-
-            cb.beginText();
-            cb.setFontAndSize(helv, 7);
-            cb.setTextMatrix(document.left()+90, document.bottom() - 20 );  //definir la posicion de text
-            cb.showText(impreso_en);
-            cb.endText();
-
-            //cb.saveState();
-            String text = "Página " + writer.getPageNumber() + " de ";
             float textBase = document.bottom() - 20;
-            float adjust = helv.getWidthPoint("0", 150);
+            
+            //texto inferior izquieda pie de pagina
+            String text_left = this.getCodigo1();
+            float text_left_Size = helv.getWidthPoint(text_left, 7);
+            cb.beginText();
+            cb.setFontAndSize(helv, 7);  
+            cb.setTextMatrix(document.left()+85, textBase );  //definir la posicion de text
+            cb.showText(text_left);
+            cb.endText();
+            
+            
+            //texto centro pie de pagina
+            String text_center ="Página " + writer.getPageNumber() + " de ";
+            float text_center_Size = helv.getWidthPoint(text_center, 7);
+            float pos_text_center = (document.getPageSize().getWidth()/2)-(text_center_Size/2);
+            float adjust = text_center_Size + 3; 
+            cb.beginText();  
+            cb.setFontAndSize(helv, 7);  
+            cb.setTextMatrix(pos_text_center, textBase );  //definir la posicion de text
+            cb.showText(text_center);
+            cb.endText();
+            cb.addTemplate(total, pos_text_center + adjust, textBase);
+            
+            
+            //texto inferior derecha pie de pagina
+            String text_right = this.getCodigo2();
+            float textRightSize = helv.getWidthPoint(text_right, 7);
+            float pos_text_right = document.getPageSize().getWidth()-textRightSize - 40;
             cb.beginText();
             cb.setFontAndSize(helv, 7);
-            cb.setTextMatrix(document.right() - 128, textBase);  //definir la posicion de text
-            cb.showText(text);
-
+            cb.setTextMatrix(pos_text_right, textBase);
+            cb.showText(text_right);
             cb.endText();
-            cb.addTemplate(total, document.right() - adjust , textBase);  //definir la posicion del total de paginas
-            //cb.restoreState();
+            //cb.restoreState();  
         }
-
-
+        
         /*aqui escrimos ls paginas totales, para que nos salga de pie de pagina Pagina x de y*/
         @Override
         public void onCloseDocument(PdfWriter writer, Document document) {
-          total.beginText();
-          total.setFontAndSize(helv, 7);
-          total.setTextMatrix(0,0);
-          total.showText(String.valueOf(writer.getPageNumber() -1));
-          total.endText();
+          total.beginText();  
+          total.setFontAndSize(helv, 7);  
+          total.setTextMatrix(0,0);                                           
+          total.showText(String.valueOf(writer.getPageNumber() -1));  
+          total.endText();  
         }
-
-
-    }
+   };//termina clase HeaderFooter
+    
 
 }

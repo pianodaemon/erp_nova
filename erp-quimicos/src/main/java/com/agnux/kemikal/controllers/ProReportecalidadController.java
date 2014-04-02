@@ -21,19 +21,13 @@ import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 /**
  *
  * @author Noe Martinez
@@ -204,6 +198,7 @@ public class ProReportecalidadController {
         
         HashMap<String, String> userDat = new HashMap<String, String>();
         ArrayList<HashMap<String, String>> Datos_Reporte_Calidad = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> datosEncabezadoPie= new HashMap<String, String>();
         
         System.out.println("Generando reporte de Calidad");
         
@@ -224,6 +219,13 @@ public class ProReportecalidadController {
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
         userDat = this.getHomeDao().getUserById(id_usuario);
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        
+        //Reporte de Calidad
+        Integer app_selected=144;
+        String[] fi = fecha_inicial.split("-");
+        String[] ff = fecha_final.split("-");
+        String periodo_reporte = "Periodo  del  "+fi[2]+"/"+fi[1]+"/"+fi[0]+"  al  "+ff[2]+"/"+ff[1]+"/"+ff[0];
+        
         String rfc=this.getGralDao().getRfcEmpresaEmisora(id_empresa);
         String razon_social_empresa = this.getGralDao().getRazonSocialEmpresaEmisora(id_empresa);
         
@@ -241,11 +243,18 @@ public class ProReportecalidadController {
         String data_string = new String();
         data_string = id_usuario+"___"+arrayCad[0]+"___"+arrayCad[1]+"___"+arrayCad[2]+"___"+arrayCad[3]+"___"+arrayCad[4];
         
-        //obtiene los datos Para el reporte de Calidad (Modulo de Produccion)
+        //Obtiene los datos Para el reporte de Calidad (Modulo de Produccion)
         Datos_Reporte_Calidad = this.getProDao().getPro_ReporteCalidad(data_string);
         
+        //Agregar informacion para el encabezado y pie de pagina
+        datosEncabezadoPie.put("empresa", razon_social_empresa);
+        datosEncabezadoPie.put("titulo_reporte", this.getGralDao().getTituloReporte(id_empresa, app_selected));
+        datosEncabezadoPie.put("periodo", periodo_reporte);
+        datosEncabezadoPie.put("codigo1", this.getGralDao().getCodigo1Iso(id_empresa, app_selected));
+        datosEncabezadoPie.put("codigo2", this.getGralDao().getCodigo2Iso(id_empresa, app_selected));
+        
         //instancia a la clase que construye el pdf del reporte de calidad
-        PdfProReporteCalidad x = new PdfProReporteCalidad( fileout,razon_social_empresa,fecha_inicial,fecha_final,Datos_Reporte_Calidad);
+        PdfProReporteCalidad x = new PdfProReporteCalidad(datosEncabezadoPie, fileout,Datos_Reporte_Calidad);
         
         System.out.println("Recuperando archivo: " + fileout);
         File file = new File(fileout);
