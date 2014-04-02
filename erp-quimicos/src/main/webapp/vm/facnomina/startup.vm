@@ -506,7 +506,7 @@
 																								<td width="90" colspan="2">Antig&uuml;edad</td>
 																								<td width="25"><input type="text" name="antiguedad" value="" style="width:25px;"></td>
 																								<td width="75">&nbsp;Semanas</td>
-																								<td width="25"></td>
+																								<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" align="top" rel="warning_antiguedad"></div></td>
 																								<td width="85">*CURP</td>
 																								<td width="150"><input type="text" name="curp" value="" style="width:150px;"></td>
 																								<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" align="top" rel="warning_curp"></div></td>

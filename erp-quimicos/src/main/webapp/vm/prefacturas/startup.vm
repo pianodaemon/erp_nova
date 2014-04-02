@@ -187,42 +187,43 @@
 															<td width="120">
 																<select name="select_tipo_documento" style="width:120px;" title="Seleccionar el tipo de documento: Factura o Remision."></select>
 															</td>
-															<td width="15"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_rfccliente"></div></td>
-															<td width="90" align="right"></td>
 															<td width="15"></td>
-															<td width="90" align="right">Folio&nbsp;Pedido&nbsp;</td>
-															<td width="75" colspan="2">
-																<input type="text" name="folio_pedido" style="width:75px;" readOnly="true">
-															</td>
+															<td width="90" align="right"></td>
+															<td width="35"></td>
+															<td width="85">Folio&nbsp;del&nbsp;Pedido&nbsp;</td>
+															<td width="120"><input type="text" name="folio_pedido" style="width:120px;" readOnly="true"></td>
 															<td width="15"></td>
 														</tr>
-														<tr><td colspan="10" height="5"></td></tr>
+														<tr><td colspan="9" height="5"></td></tr>
 														<tr>
 															<td width="10"></td>
-															<td width="80">No.&nbsp;Cliente</td>
+															<td width="80">No.&nbsp;de&nbsp;Cliente</td>
 															<td width="120">
 																<input type="hidden" name="id_cliente" value="0">
 																<input type="hidden" name="id_df" value="1">
 																<input type="text" name="nocliente" style="width:120px;">
 															</td>
 															<td width="15"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_rfccliente"></div></td>
-															<td width="90" align="right"><a href="busca_cliente">(Buscar&nbsp;cliente)</a></td>
-															<td width="15"></td>
-															<td width="90"></td>
-															<td width="75" colspan="2"></td>
-															<td width="15"></td>
+															<td width="90"><a href="busca_cliente">(Buscar&nbsp;cliente)</a></td>
+															<td width="35"></td>
+															<td width="85">RFC&nbsp;del&nbsp;Cliente</td>
+															<td width="120"><input type="text" name="rfc" style="width:120px;" readOnly="true"></td>
+															<td width="15"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_rfc"></div></td>
 														</tr>
 														
-														<tr><td colspan="10" height="5"></td></tr>
+														<tr><td colspan="9" height="5"></td></tr>
 														<tr>
 															<td width="10"></td>
 															<td width="80">Razon&nbsp;Social</td>
-															<td colspan="8" width="405"><input type="text" name="razoncliente" style="width:420px;"></td>
+															<td colspan="6" width="465"><input type="text" name="razoncliente" style="width:465px;"></td>
+															<td width="15"></td>
+														</tr>
 														<tr><td colspan="10" height="5"></td></tr>
 														<tr>
 															<td width="10"></td>
 															<td width="80">Direcci&oacute;n</td>
-															<td colspan="8" width="405"><input type="text" name="dircliente" style="width:420px;" readOnly="true"></td>
+															<td colspan="6" width="465"><input type="text" name="dircliente" style="width:465px;" readOnly="true"></td>
+															<td width="15"></td>
 														</tr>
 														</tr>
 													</table>
@@ -285,11 +286,6 @@
 															<td width="90">
 																<select name="moneda" style="width:90px;" title="Moneda de la factura"></select>
 																<input type="hidden" name="moneda_original" value="0">
-																
-																<!--<input type="hidden" name="moneda_id">-->
-																<!--<input type="text" name="moneda"  readOnly="true">-->
-																<!--<input type="hidden" name="tc" value="0">-->
-																
 																<input type="hidden" name="id_impuesto" value="0">
 																<input type="hidden" name="valorimpuesto" value="0">
 															</td>
