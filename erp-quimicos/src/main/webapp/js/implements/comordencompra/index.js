@@ -1612,6 +1612,14 @@ $(function() {
 			
 			$busca_sku.focus();
 			
+			
+			//quitar enter a todos los campos input
+			$('#forma-comordencompra-window').find('input').keypress(function(e){
+				if(e.which==13 ) {
+					return false;
+				}
+			});
+			
 			//$etiqueta_digit.attr('disabled','-1');
 			if(accion_mode == 'edit'){
 				$accion_proceso.attr({'value' : "edit"});

@@ -1978,7 +1978,7 @@ $(function() {
 	
 	
 	
-	$agrega_empleado_grid = function($grid_empleados, id_periodicidad_pago, id_reg, id_empleado, nombre_empleado, t_percep, t_deduc, pago_neto, arrayPar, arrayDeptos, arrayPuestos, arrayRegimenContrato, arrayTipoContrato, arrayTipoJornada, arrayPeriodicidad, arrayBancos, arrayRiesgos, arrayImpuestoRet, arrayPercep, arrayDeduc, arrayTiposHrsExtra, arrayTiposIncapacidad, facturado, serie_folio){
+	$agrega_empleado_grid = function($grid_empleados, id_periodicidad_pago, id_reg, id_empleado, nombre_empleado, t_percep, t_deduc, pago_neto, arrayPar, arrayDeptos, arrayPuestos, arrayRegimenContrato, arrayTipoContrato, arrayTipoJornada, arrayPeriodicidad, arrayBancos, arrayRiesgos, arrayImpuestoRet, arrayPercep, arrayDeduc, arrayTiposHrsExtra, arrayTiposIncapacidad, facturado, serie_folio, cancelado){
 		//Obtiene numero de trs
 		var tr = $("tr", $grid_empleados).size();
 		tr++;
@@ -2063,20 +2063,32 @@ $(function() {
 				var id_empleado = $(this).parent().parent().find('#id_emp').val();
 				var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
 				
-				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getCancelaNomina.json';
-				$arreglo = {'id_reg':id_reg,'id_emp':id_empleado, 'iu':iu }
-				$.post(input_json,$arreglo,function(entry){
-					var descargar  = entry['descargar'];
-					if(descargar == 'true'){
-						
-					}else{
-						jAlert("El xml de la nomina "+$grid_empleados.find('.no_nom'+ tr).val()+" no esta disponible para descarga.", 'Atencion!');
+				//Confirmar Cancelacion
+				jConfirm('Confirmar cancelaci&oacute;n?', 'Dialogo de Confirmacion', function(r) {
+					// If they confirmed, manually trigger a form submission
+					if (r) {
+						var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getCancelaNomina.json';
+						$arreglo = {'id_reg':id_reg,'id_emp':id_empleado, 'iu':iu }
+						$.post(input_json,$arreglo,function(entry){
+							if(entry['valor'].trim() == 'true'){
+								$grid_empleados.find('.cancel'+ tr).attr('disabled','-1');
+								$grid_empleados.find('.xml'+ tr).attr('disabled','-1');
+							}
+							jAlert(entry['msj'], 'Atencion!');
+						});//termina llamada json
 					}
-				});//termina llamada json
+				});
 			});
-			
-			
 		}
+		
+		
+		
+		if(cancelado=='true'){
+			$grid_empleados.find('.cancel'+ tr).attr('disabled','-1');
+			$grid_empleados.find('.xml'+ tr).attr('disabled','-1');
+		}
+		
+		
 		
 		//Editar un empleado
 		$grid_empleados.find('#editar'+ tr).click(function(){
@@ -2114,7 +2126,6 @@ $(function() {
 		});
 	}
 	
-	//arrayPar, arrayDeptos, arrayPuestos, arrayRegimenContrato, arrayTipoContrato, arrayTipoJornada, arrayPeriodicidad, arrayBancos, arrayRiesgos, arrayImpuestoRet, arrayPercep, arrayDeduc, arrayTiposHrsExtra, arrayTiposIncapacidad
 	
 	$get_empleados = function(id_periodicidad_pago, $grid_empleados, $select_comp_periodicidad, arrayPar, arrayDeptos, arrayPuestos, arrayRegimenContrato, arrayTipoContrato, arrayTipoJornada, arrayPeriodicidad, arrayBancos, arrayRiesgos, arrayImpuestoRet, arrayPercep, arrayDeduc, arrayTiposHrsExtra, arrayTiposIncapacidad){
 		$grid_empleados.children().remove();
@@ -2131,7 +2142,8 @@ $(function() {
 					var pago_neto="0.00"
 					var facturado = 'false';
 					var serie_folio = '';
-					$agrega_empleado_grid($grid_empleados, id_periodicidad_pago, id_reg, id_empleado, nombre_empleado, t_percep, t_deduc, pago_neto, arrayPar, arrayDeptos, arrayPuestos, arrayRegimenContrato, arrayTipoContrato, arrayTipoJornada, arrayPeriodicidad, arrayBancos, arrayRiesgos, arrayImpuestoRet, arrayPercep, arrayDeduc, arrayTiposHrsExtra, arrayTiposIncapacidad, facturado, serie_folio);
+					var cancelado='false';
+					$agrega_empleado_grid($grid_empleados, id_periodicidad_pago, id_reg, id_empleado, nombre_empleado, t_percep, t_deduc, pago_neto, arrayPar, arrayDeptos, arrayPuestos, arrayRegimenContrato, arrayTipoContrato, arrayTipoJornada, arrayPeriodicidad, arrayBancos, arrayRiesgos, arrayImpuestoRet, arrayPercep, arrayDeduc, arrayTiposHrsExtra, arrayTiposIncapacidad, facturado, serie_folio, cancelado);
 				});
 			}else{
 				jAlert('No hay empleados que se le pague con la Periodicidad seleccionada.', 'Atencion!', function(r) { 
@@ -2667,8 +2679,9 @@ $(function() {
 						var pago_neto = data['total_pago'];
 						var facturado = data['facturado'];
 						var serie_folio = data['no_nom'];
+						var cancelado = data['cancelado'];
 						//alert(data['facturado']);
-						$agrega_empleado_grid($grid_empleados, entry['Datos'][0]['periodicidad_pago_id'], id_reg, id_empleado, nombre_empleado, t_percep, t_deduc, pago_neto, entry['Par'], entry['Deptos'], entry['Puestos'], entry['RegimenContrato'], entry['TipoContrato'], entry['TipoJornada'], entry['Periodicidad'], entry['Bancos'], entry['Riesgos'], entry['ImpuestoRet'], entry['Percepciones'], entry['Deducciones'], entry['TiposHrsExtra'], entry['TiposIncapacidad'], facturado, serie_folio);
+						$agrega_empleado_grid($grid_empleados, entry['Datos'][0]['periodicidad_pago_id'], id_reg, id_empleado, nombre_empleado, t_percep, t_deduc, pago_neto, entry['Par'], entry['Deptos'], entry['Puestos'], entry['RegimenContrato'], entry['TipoContrato'], entry['TipoJornada'], entry['Periodicidad'], entry['Bancos'], entry['Riesgos'], entry['ImpuestoRet'], entry['Percepciones'], entry['Deducciones'], entry['TiposHrsExtra'], entry['TiposIncapacidad'], facturado, serie_folio, cancelado);
 					});
 					
 					

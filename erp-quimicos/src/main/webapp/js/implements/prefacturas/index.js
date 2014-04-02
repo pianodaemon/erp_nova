@@ -411,7 +411,7 @@ $(function() {
 	
 	
 	//funcion para agregar datos del cliente en la ventana de la prefactura
-	$agregarDatosClienteSeleccionado = function($select_moneda, $select_condiciones, $select_vendedor, array_monedas, array_condiciones, array_vendedores, id_moneda, id_termino, id_vendedor, id_cliente, no_control_cliente, razon_social_cliente, empresa_immex, tasa_immex, cuenta_mn, cuenta_usd, dir_cliente){
+	$agregarDatosClienteSeleccionado = function($select_moneda, $select_condiciones, $select_vendedor, array_monedas, array_condiciones, array_vendedores, id_moneda, id_termino, id_vendedor, id_cliente, no_control_cliente, razon_social_cliente, empresa_immex, tasa_immex, cuenta_mn, cuenta_usd, dir_cliente, rfc_cliente){
 		
 		//asignar a los campos correspondientes el sku y y descripcion
 		$('#forma-prefacturas-window').find('input[name=id_cliente]').val(id_cliente);
@@ -422,6 +422,7 @@ $(function() {
 		$('#forma-prefacturas-window').find('input[name=cta_mn]').val(cuenta_mn);
 		$('#forma-prefacturas-window').find('input[name=cta_usd]').val(cuenta_usd);
 		$('#forma-prefacturas-window').find('input[name=dircliente]').val(dir_cliente);
+		$('#forma-prefacturas-window').find('input[name=rfc]').val(rfc_cliente);
 		
 		//carga el select de monedas  con la moneda del cliente seleccionada por default
 		$select_moneda.children().remove();
@@ -586,8 +587,10 @@ $(function() {
 						var cuenta_usd = $(this).find('#cta_usd').val();
 						var dir_cliente = $(this).find('#direccion').val();
 						
+						var rfc_cliente = $(this).find('span.rfc').html();
+						
 						//llamada a la funcion que agrega datos del cliente a la ventana de la prefactura
-                        $agregarDatosClienteSeleccionado($select_moneda, $select_condiciones, $select_vendedor, array_monedas, array_condiciones, array_vendedores, id_moneda, id_termino, id_vendedor, id_cliente, no_control_cliente, razon_social_cliente, empresa_immex, tasa_immex, cuenta_mn, cuenta_usd, dir_cliente);
+                        $agregarDatosClienteSeleccionado($select_moneda, $select_condiciones, $select_vendedor, array_monedas, array_condiciones, array_vendedores, id_moneda, id_termino, id_vendedor, id_cliente, no_control_cliente, razon_social_cliente, empresa_immex, tasa_immex, cuenta_mn, cuenta_usd, dir_cliente, rfc_cliente);
                         
                         //elimina la ventana de busqueda
                         var remove = function() {$(this).remove();};
@@ -1345,7 +1348,13 @@ $(function() {
 		var $tasa_ret_immex = $('#forma-prefacturas-window').find('input[name=tasa_ret_immex]');
 		
 		var $grid_productos = $('#forma-prefacturas-window').find('#grid_productos');
-		 //Suma de todos los importes sin IVA, sin IEPS
+		
+		if($tasa_ret_immex.val().trim()==''){
+			$tasa_ret_immex.val(0);
+		}
+		
+		
+		//Suma de todos los importes sin IVA, sin IEPS
 		var sumaSubTotal = 0;
 		//Suma de todos los importes del IEPS
 		var sumaIeps = 0;
@@ -1920,13 +1929,7 @@ $(function() {
 		var $cta_usd = $('#forma-prefacturas-window').find('input[name=cta_usd]');
 		var $select_almacen = $('#forma-prefacturas-window').find('select[name=select_almacen]');
 		
-		//var $sku_producto = $('#forma-prefacturas-window').find('input[name=sku_producto]');
-		//var $nombre_producto = $('#forma-prefacturas-window').find('input[name=nombre_producto]');
 		
-		//buscar producto
-		//var $busca_sku = $('#forma-prefacturas-window').find('a[href*=busca_sku]');
-		//href para agregar producto al grid
-		//var $agregar_producto = $('#forma-prefacturas-window').find('a[href*=agregar_producto]');
 		
 		
 		//Boton para agregar datos de la Adenda
@@ -2200,9 +2203,10 @@ $(function() {
 							var cuenta_mn = entry2['Cliente'][0]['cta_pago_mn'];
 							var cuenta_usd = entry2['Cliente'][0]['cta_pago_usd'];
 							var dir_cliente = entry2['Cliente'][0]['direccion'];
+							var rfc_cliente = entry2['Cliente'][0]['rfc'];
 							
 							//llamada a la funcion que agrega datos del cliente a la ventana de la prefactura
-							$agregarDatosClienteSeleccionado($select_moneda, $select_condiciones, $select_vendedor, entry['Monedas'], entry['Condiciones'], entry['Vendedores'], id_moneda, id_termino, id_vendedor, id_cliente, no_control_cliente, razon_social_cliente, empresa_immex, tasa_immex, cuenta_mn, cuenta_usd, dir_cliente);
+							$agregarDatosClienteSeleccionado($select_moneda, $select_condiciones, $select_vendedor, entry['Monedas'], entry['Condiciones'], entry['Vendedores'], id_moneda, id_termino, id_vendedor, id_cliente, no_control_cliente, razon_social_cliente, empresa_immex, tasa_immex, cuenta_mn, cuenta_usd, dir_cliente, rfc_cliente);
 							
 						}else{
 							//limpiar campos
@@ -2214,6 +2218,7 @@ $(function() {
 							$('#forma-prefacturas-window').find('input[name=cta_mn]').val('');
 							$('#forma-prefacturas-window').find('input[name=cta_usd]').val('');
 							$('#forma-prefacturas-window').find('input[name=dircliente]').val('');
+							$('#forma-prefacturas-window').find('input[name=rfc]').val('');
 							
 							jAlert('N&uacute;mero de cliente desconocido.', 'Atencion!', function(r) { 
 								$('#forma-prefacturas-window').find('input[name=nocliente]').focus(); 
@@ -2242,37 +2247,11 @@ $(function() {
 		});
 		
 		
-		/*
-		//buscador de productos
-		$busca_sku.click(function(event){
-			event.preventDefault();
-			//if(parseInt($select_almacen.val()) != 0){
-				$busca_productos($sku_producto.val());
-			//}else{
-			//	jAlert("Es necesario seleccionar un almacen", 'Atencion!');
-			//}
-		});
-		
-		//agregar producto al grid
-		$agregar_producto.click(function(event){
-			event.preventDefault();
-			//if($sku_producto.val() != ''){
-				//$agrega_producto_grid($sku_producto,$grid_productos);
-				$buscador_presentaciones_producto($id_cliente,$no_cliente.val(), $sku_producto.val(),$nombre_producto,$grid_productos,$select_moneda,$tipo_cambio);
-			//}else{
-			//	jAlert("Es necesario ingresar un sku valido", '¡ Atencion !');
-			//}
-			
-		});
-		
-		//desencadena clic del href Agregar producto al pulsar enter en el campo sku del producto
-		$sku_producto.keypress(function(e){
-			if(e.which == 13){
-				$agregar_producto.trigger('click');
-				return false;
-			}
-		});
-		*/
+
+
+		//Se invoca solo para redimensionar altura de la ventana
+		$calcula_totales();
+
 		
 		$submit_actualizar.bind('click',function(){
 			var trCount = $("tr", $grid_productos).size();
@@ -2283,7 +2262,7 @@ $(function() {
 				$total.val(quitar_comas($total.val()));
 				return true;
 			}else{
-				jAlert('No hay datos para actualizar.', 'Atencion!', function(r) { $sku_producto.focus(); });
+				jAlert('No hay datos para actualizar.', 'Atencion!', function(r) { $agregar_remision.focus(); });
 				return false;
 			}
 		});
@@ -2369,6 +2348,7 @@ $(function() {
 				var $id_cliente = $('#forma-prefacturas-window').find('input[name=id_cliente]');
 				var $no_cliente = $('#forma-prefacturas-window').find('input[name=nocliente]');
 				var $razon_cliente = $('#forma-prefacturas-window').find('input[name=razoncliente]');
+				var $rfc = $('#forma-prefacturas-window').find('input[name=rfc]');
 				var $id_df = $('#forma-prefacturas-window').find('input[name=id_df]');
 				var $dir_cliente = $('#forma-prefacturas-window').find('input[name=dircliente]');
 				var $tasa_ret_immex = $('#forma-prefacturas-window').find('input[name=tasa_ret_immex]');
@@ -2467,75 +2447,55 @@ $(function() {
 				$dir_cliente.css({'background' : '#F0F0F0'});
 				$orden_compra.attr("readonly", true);
 				
+				//Quitar enter a todos los campos input
+				$('#forma-prefacturas-window').find('input').keypress(function(e){
+					if(e.which==13 ) {
+						return false;
+					}
+				});
+				
 				var respuestaProcesada = function(data){
 					if ( data['success'] == "true" ){
 							
-							$('#forma-prefacturas-window').find('div.interrogacion').css({'display':'none'});
-							
-							jAlert(data['msj'], 'Atencion!');
-							
-							if ( data['valor'] == "true" ){
-								$no_cliente.attr('disabled','-1'); //deshabilitar
-								$razon_cliente.attr('disabled','-1'); //deshabilitar
-								$observaciones.attr('disabled','-1'); //deshabilitar
-								$select_moneda.attr('disabled','-1'); //deshabilitar
-								$tipo_cambio.attr('disabled','-1'); //deshabilitar
-								$select_vendedor.attr('disabled','-1'); //deshabilitar
-								$select_condiciones.attr('disabled','-1'); //deshabilitar
-								//$sku_producto.attr('disabled','-1'); //deshabilitar
-								//$nombre_producto.attr('disabled','-1'); //deshabilitar
-								$grid_productos.find('#cant').attr("readonly", true);//establece solo lectura campos cantidad del grid
-								$grid_productos.find('#cost').attr("readonly", true);//establece solo lectura campos costo del grid
-								$grid_productos.find('#cant').attr('disabled','-1'); //deshabilitar
-								$grid_productos.find('#cost').attr('disabled','-1'); //deshabilitar
-								$grid_productos.find('a').hide();//ocultar
-								$orden_compra.attr('disabled','-1'); //deshabilitar
-								$select_metodo_pago.attr('disabled','-1'); //deshabilitar
-								$select_metodo_pago_original.attr('disabled','-1'); //deshabilitar
-								$select_almacen.attr('disabled','-1'); //deshabilitar
-								//$busca_sku.hide();
-								//$agregar_producto.hide();
-								$boton_facturar.hide();
-								
-								//guardar nueva prefactura generada con datos de remisiones
-								if( parseInt($select_tipo_documento.val()) == 3 ){
-									//ocultar boton actualizar porque ya se actualizo, ya no se puede guardar cambios, hay que cerrar y volver a abrir
-									$submit_actualizar.hide();
-								}
-								
-								$get_datos_grid();
-								
-								var remove = function() {$(this).remove();};
-								$('#forma-prefacturas-overlay').fadeOut(remove);
-							}
-							
-							
-							/*
-							//factura
-							if( parseInt($select_tipo_documento.val()) == 1 ){
-								jAlert("Se gener&oacute; la Factura: "+data['folio'], 'Atencion!');
-							}
-							
-							
-							//remision
-							if( parseInt($select_tipo_documento.val()) == 2 ){
-								jAlert("Se gener&oacute; la Remisi&oacute;n con Folio: "+data['folio'], 'Atencion!');
-							}
-							
-							//guardar nueva prefactura generada con datos de remisiones
-							if( parseInt($select_tipo_documento.val()) == 3 ){
-								//ocultar boton actualizar porque ya se actualizo, ya no se puede guardar cambios, hay que cerrar y volver a abrir
-								$submit_actualizar.hide();
-								$get_datos_grid();
-								if($accion.val() == 'actualizar'){
-									jAlert("Se gener&oacute; la Factura: "+data['folio'], 'Atencion!');
-								}else{
-									jAlert("La prefactura se guard&oacute; con &eacute;xito", 'Atencion!');
-								}
-							}
-							*/
-
+						$('#forma-prefacturas-window').find('div.interrogacion').css({'display':'none'});
 						
+						jAlert(data['msj'], 'Atencion!');
+						
+						if ( data['valor'] == "true" ){
+							$no_cliente.attr('disabled','-1'); //deshabilitar
+							$razon_cliente.attr('disabled','-1'); //deshabilitar
+							$observaciones.attr('disabled','-1'); //deshabilitar
+							$select_moneda.attr('disabled','-1'); //deshabilitar
+							$tipo_cambio.attr('disabled','-1'); //deshabilitar
+							$select_vendedor.attr('disabled','-1'); //deshabilitar
+							$select_condiciones.attr('disabled','-1'); //deshabilitar
+							//$sku_producto.attr('disabled','-1'); //deshabilitar
+							//$nombre_producto.attr('disabled','-1'); //deshabilitar
+							$grid_productos.find('#cant').attr("readonly", true);//establece solo lectura campos cantidad del grid
+							$grid_productos.find('#cost').attr("readonly", true);//establece solo lectura campos costo del grid
+							$grid_productos.find('#cant').attr('disabled','-1'); //deshabilitar
+							$grid_productos.find('#cost').attr('disabled','-1'); //deshabilitar
+							$grid_productos.find('a').hide();//ocultar
+							$orden_compra.attr('disabled','-1'); //deshabilitar
+							$select_metodo_pago.attr('disabled','-1'); //deshabilitar
+							$select_metodo_pago_original.attr('disabled','-1'); //deshabilitar
+							$select_almacen.attr('disabled','-1'); //deshabilitar
+							//$busca_sku.hide();
+							//$agregar_producto.hide();
+							$boton_facturar.hide();
+							
+							//Guardar nueva prefactura generada con datos de remisiones
+							if( parseInt($select_tipo_documento.val()) == 3 ){
+								//Ocultar boton actualizar porque ya se actualizo, ya no se puede guardar cambios, hay que cerrar y volver a abrir
+								$submit_actualizar.hide();
+							}
+							
+							$get_datos_grid();
+							
+							var remove = function() {$(this).remove();};
+							$('#forma-prefacturas-overlay').fadeOut(remove);
+							
+						}
 					}else{
 						// Desaparece todas las interrogaciones si es que existen
 						//$('#forma-prefacturas-window').find('.div_one').css({'height':'550px'});//sin errores
@@ -2615,30 +2575,30 @@ $(function() {
 				
 				//aqui se cargan los campos al editar
 				$.post(input_json,$arreglo,function(entry){
-					var flujo_proceso = entry['datosPrefactura']['0']['proceso_flujo_id'];
-					$folio_pedido.val(entry['datosPrefactura']['0']['folio_pedido']);
+					var flujo_proceso = entry['datosPrefactura'][0]['proceso_flujo_id'];
+					$folio_pedido.val(entry['datosPrefactura'][0]['folio_pedido']);
 					
-					$id_prefactura.val(entry['datosPrefactura']['0']['id']);
-					$refacturar.val(entry['datosPrefactura']['0']['refacturar']);
-					$id_cliente.val(entry['datosPrefactura']['0']['cliente_id']);
-					$no_cliente.val(entry['datosPrefactura']['0']['numero_control']);
-					$razon_cliente.val(entry['datosPrefactura']['0']['razon_social']);
-					$id_df.val(entry['datosPrefactura']['0']['df_id']);
-					$dir_cliente.val(entry['datosPrefactura']['0']['direccion']);
-					$observaciones.text(entry['datosPrefactura']['0']['observaciones']);
-					$observaciones_original.val(entry['datosPrefactura']['0']['observaciones']);
-                    $orden_compra.val(entry['datosPrefactura']['0']['orden_compra']);
-                    $orden_compra_original.val(entry['datosPrefactura']['0']['orden_compra']);
-                    $tasa_ret_immex.val(entry['datosPrefactura']['0']['tasa_retencion_immex']);
-                    $empresa_immex.val(entry['datosPrefactura']['0']['empresa_immex']);
+					$id_prefactura.val(entry['datosPrefactura'][0]['id']);
+					$refacturar.val(entry['datosPrefactura'][0]['refacturar']);
+					$id_cliente.val(entry['datosPrefactura'][0]['cliente_id']);
+					$no_cliente.val(entry['datosPrefactura'][0]['numero_control']);
+					$razon_cliente.val(entry['datosPrefactura'][0]['razon_social']);
+					$rfc.val(entry['datosPrefactura'][0]['rfc']);
+					$id_df.val(entry['datosPrefactura'][0]['df_id']);
+					$dir_cliente.val(entry['datosPrefactura'][0]['direccion']);
+					$observaciones.text(entry['datosPrefactura'][0]['observaciones']);
+					$observaciones_original.val(entry['datosPrefactura'][0]['observaciones']);
+                    $orden_compra.val(entry['datosPrefactura'][0]['orden_compra']);
+                    $orden_compra_original.val(entry['datosPrefactura'][0]['orden_compra']);
+                    $tasa_ret_immex.val(entry['datosPrefactura'][0]['tasa_retencion_immex']);
+                    $empresa_immex.val(entry['datosPrefactura'][0]['empresa_immex']);
                     
-					$cta_mn.val(entry['datosPrefactura']['0']['cta_pago_mn']);
-					$cta_usd.val(entry['datosPrefactura']['0']['cta_pago_usd']);
-					$no_cuenta.val(entry['datosPrefactura']['0']['no_cuenta']);
+					$cta_mn.val(entry['datosPrefactura'][0]['cta_pago_mn']);
+					$cta_usd.val(entry['datosPrefactura'][0]['cta_pago_usd']);
+					$no_cuenta.val(entry['datosPrefactura'][0]['no_cuenta']);
                     
                     
-                    
-                    $check_incluye_adenda.attr('checked',  (entry['Extras']['0']['adenda'] == 'true')? true:false );
+                    $check_incluye_adenda.attr('checked',  (entry['Extras'][0]['adenda'] == 'true')? true:false );
                     
 					$check_incluye_adenda.click(function(event){
 						//Esto es para evitar que le quiten la seleccion cuando incluye adenda.
