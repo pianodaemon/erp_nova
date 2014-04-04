@@ -395,100 +395,78 @@
                                                 </tr>
                                                 
                                                 <tr>
-                                                    <td colspan="4">
+                                                    <td width="720" colspan="3">
+														<fieldset style="border: solid 1px #313E74;" class="gral">
+															<legend>&nbsp;Enviar&nbsp;archivos&nbsp;por&nbsp;E-Mail</legend> 
+															<ol valign="top">
+																<table border="0" class="gral">
+																	<tr>
+																		<td width="80">E-Mail</td>
+																		<td width="460"><input type="text" name="email_envio" style="width:460px;"></td>
+																		<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_emailenvio"></div></td>
+																		<td width="125" colspan="3" align="center"><input type="button" id="enviar_email" value="Enviar" style="width:100px; font-weight:bold;"></td>
+																	</tr>
+																	<tr><td colspan="4" height="5">&nbsp;</td></tr>
+																	<tr>
+																		<td width="80">Asunto</td>
+																		<td width="460"><input type="text" name="asunto_envio" style="width:460px;"></td>
+																		<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_asuntoenvio"></div></td>
+																		<td width="25"></td>
+																		<td width="30"></td>
+																		<td width="70"></td>
+																	</tr>
+																	<tr><td colspan="4" height="5">&nbsp;</td></tr>
+																	<tr>
+																		<td width="80">Mensaje</td>
+																		<td width="460" rowspan="3"><textarea name="msj_envio" rows="2" cols="60" style="width:460px; resize: none;"></textarea></td>
+																		<td width="25"></td>
+																		<td width="25"></td>
+																		<td width="30"  align="center"><input type="checkbox" name="check_xml"></td>
+																		<td width="70">XML</td>
+																	</tr>
+																	<tr>
+																		<td width="80">&nbsp;</td>
+																		<!--<td width="460"></td>-->
+																		<td width="25"></td>
+																		<td width="25"></td>
+																		<td width="30"></td>
+																		<td width="70"></td>
+																	</tr>
+																	<tr>
+																		<td width="80">&nbsp;</td>
+																		<!--<td width="460"></td>-->
+																		<td width="25"></td>
+																		<td width="25"></td>
+																		<td width="30" align="center"><input type="checkbox" name="check_pdf"></td>
+																		<td width="70">PDF</td>
+																	</tr>
+																</table>
+															</ol>
+														</fieldset>
+                                                    </td>
+                                                    <td width="300">
                                                         <table border="0" class="gral">
+															<tr><td height="5">&nbsp;</td></tr>
                                                             <tr>
-                                                                <td width="10"></td>
-                                                                <td width="80"></td>
-                                                                <td width="125"></td>
-                                                                <td width="50"></td>
-                                                                <td width="45"></td>
-                                                                <td width="300"></td>
-                                                                <td width="25"></td>
-                                                                <td width="125"></td>
-                                                                <td width="25"></td>
-                                                                <td width="55"></td>
-																<td>&nbsp;&nbsp;</td>
-																<td width="120">&nbsp;</td>
+                                                                <td width="300" align="center"><input type="button" id="reconstruir_pdf" value="Reconstruir PDF" style="width:100px; font-weight:bold;"></td>
                                                             </tr>
+                                                            <tr><td height="5">&nbsp;</td></tr>
                                                             <tr>
-                                                                <td width="10"></td>
-                                                                <td width="80">E-Mail</td>
-                                                                <td width="520" colspan="4"><input type="text" name="email_envio" style="width:520px;"></td>
-                                                                <td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_emailenvio"></div></td>
-                                                                <td width="125" align="center"><input type="button" id="enviar_email" value="Enviar" style="width:100px; font-weight:bold;"></td>
-                                                                <td width="25"></td>
-                                                                <td width="55"></td>
-																<td>&nbsp;&nbsp;</td>
-																<td width="120"></td>
+                                                                <td width="300" align="center"><INPUT TYPE="button" id="descargarxml" value="XML" style="width:100px; font-weight:bold;"></td>
                                                             </tr>
+                                                            <tr><td height="5">&nbsp;</td></tr>
                                                             <tr>
-                                                                <td width="10" colspan="12">&nbsp;</td>
+                                                                <td width="300" align="center"><INPUT TYPE="button" id="descargarpdf" value="PDF" style="width:100px; font-weight:bold;"></td>
                                                             </tr>
-                                                            <tr>
-                                                                <td width="10"></td>
-                                                                <td width="80">Asunto</td>
-                                                                <td width="520" colspan="4"><input type="text" name="asunto_envio" style="width:520px;"></td>
-                                                                <td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_asuntoenvio"></div></td>
-                                                                <td width="125"></td>
-                                                                <td width="25"></td>
-                                                                <td width="55"></td>
-																<td>&nbsp;&nbsp;</td>
-																<td width="120" align="center"><input type="button" id="reconstruir_pdf" value="Reconstruir PDF" style="width:100px; font-weight:bold;"></td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td width="10" colspan="12">&nbsp;</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td width="10"></td>
-                                                                <td width="80">Mensaje</td>
-                                                                <td width="125" colspan="6" rowspan="3"><textarea name="msj_envio" rows="2" cols="60" style="width:670px; resize: none;"></textarea></td>
-                                                                <!--
-                                                                <td width="50"></td>
-                                                                <td width="45"></td>
-                                                                <td width="300"></td>
-                                                                <td width="150"></td>
-                                                                -->
-                                                                <td width="25"></td>
-                                                                <td width="55"></td>
-																<td>&nbsp;&nbsp;</td>
-                                                                <td width="120" align="center"><INPUT TYPE="button" id="descargarxml" value="XML" style="width:100px; font-weight:bold;"></td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td width="10"></td>
-                                                                <td width="80"></td>
-                                                                <!--
-                                                                <td width="125"></td>
-                                                                <td width="50"></td>
-                                                                <td width="45"></td>
-                                                                <td width="300"></td>
-                                                                <td width="25"></td>
-                                                                <td width="125"></td>
-                                                                -->
-                                                                <td width="25"></td>
-                                                                <td width="55"></td>
-																<td></td>
-                                                                <td width="120">&nbsp;</td>
-                                                            </tr>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                                
+                                                <!--
+                                                <tr>
+                                                    <td colspan="4">
+                                                        <table border="0" class="gral">                                                    
                                                             
-                                                            <tr>
-                                                                <td width="10"></td>
-                                                                <td width="80"></td>
-                                                                <!--
-                                                                <td width="125"></td>
-                                                                <td width="50"></td>
-                                                                <td width="45"></td>
-                                                                <td width="300"></td>
-                                                                <td width="25"></td>
-                                                                <td width="125"></td>
-                                                                -->
-                                                                <td width="25"></td>
-                                                                <td width="55"></td>
-																<td>&nbsp;&nbsp;</td>
-                                                                <td width="120" align="center"><INPUT TYPE="button" id="descargarpdf" value="PDF" style="width:100px; font-weight:bold;"></td>
-                                                            </tr>
-                                                            
-                                                            <!--
                                                             <tr>
                                                                 <td width="10"></td>
                                                                 <td width="80"></td>
@@ -504,10 +482,11 @@
 																<td>&nbsp;&nbsp;</td>
                                                                 <td align="right"><INPUT TYPE="button" id="descargarpdf" value="PDF" style="width:79px; font-weight:bold;"></td>
                                                             </tr>
-                                                            -->
+                                                            
                                                         </table>
                                                     </td>
                                                 </tr>
+												-->
 												
                                                 <tr>
                                                     
