@@ -663,7 +663,7 @@ public class PrefacturasController {
         
         
         //System.out.println("data_string: "+data_string);
-        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_prefactura+"___"+id_cliente+"___"+id_moneda+"___"+observaciones.toUpperCase()+"___"+tipo_cambio_vista+"___"+id_vendedor+"___"+id_condiciones+"___"+orden_compra.toUpperCase()+"___"+refacturar+"___"+id_metodo_pago+"___"+no_cuenta+"___"+select_tipo_documento+"___"+folio_pedido+"___"+select_almacen+"___"+id_moneda_original+"___"+id_df+"___"+campo_adenda1.toUpperCase()+"___"+campo_adenda2.toUpperCase()+"___"+campo_adenda3+"___"+campo_adenda4.toUpperCase()+"___"+campo_adenda5.toUpperCase()+"___"+campo_adenda6.toUpperCase()+"___"+campo_adenda7.toUpperCase()+"___"+campo_adenda8.toUpperCase()+"___"+rfc;
+        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_prefactura+"___"+id_cliente+"___"+id_moneda+"___"+observaciones.toUpperCase()+"___"+tipo_cambio_vista+"___"+id_vendedor+"___"+id_condiciones+"___"+orden_compra.toUpperCase()+"___"+refacturar+"___"+id_metodo_pago+"___"+no_cuenta+"___"+select_tipo_documento+"___"+folio_pedido+"___"+select_almacen+"___"+id_moneda_original+"___"+id_df+"___"+campo_adenda1.toUpperCase()+"___"+campo_adenda2.toUpperCase()+"___"+campo_adenda3+"___"+campo_adenda4.toUpperCase()+"___"+campo_adenda5.toUpperCase()+"___"+campo_adenda6.toUpperCase()+"___"+campo_adenda7.toUpperCase()+"___"+campo_adenda8.toUpperCase()+"___"+rfc.toUpperCase().trim();
         //System.out.println("data_string: "+data_string);
         
         //System.out.println(TimeHelper.getFechaActualYMDH()+"::::Inicia Validacion de la Prefactura::::::::::::::::::");

@@ -110,11 +110,15 @@ public class SendEmailWithFileHelper {
     }
     
     
-    public void enviarEmail() {
+    public String enviarEmail() {
+        String retorno="";
         try {
+            retorno="Correo enviado!";
             //ESTABLECER LA SESION JAVAMAIL
-            Properties props = new Properties();
-
+            Properties props = System.getProperties();
+            
+            props.clear();
+            
             // Nombre del host de correo, es smtp.gmail.com
             props.setProperty("mail.smtp.host", this.getIpServidor());
             
@@ -123,7 +127,7 @@ public class SendEmailWithFileHelper {
 
             // Puerto de gmail para envio de correos
             props.setProperty("mail.smtp.port",this.getPuerto());
-
+            
             // Nombre del usuario
             props.setProperty("mail.smtp.user", this.getNombreUsuario());
 
@@ -133,7 +137,7 @@ public class SendEmailWithFileHelper {
             Session session = Session.getDefaultInstance(props);
 
             // Para obtener un log de salida m�s extenso
-            session.setDebug(true);
+            //session.setDebug(true);
 
             //CONSTRUIR UN MENSAJE COMPLEJO CON ADJUNTOS
             BodyPart texto = new MimeBodyPart();
@@ -156,8 +160,9 @@ public class SendEmailWithFileHelper {
                     //Pasamos la ruta del archivo a adjuntar
                     adjunto.setDataHandler(new DataHandler(new FileDataSource(i.get("path_file"))));
                     
-                    // Opcional. De esta forma transmitimos al receptor el nombre original del fichero de imagen.
+                    // Opcional. De esta forma transmitimos al receptor el nombre original del fichero
                     adjunto.setFileName(i.get("file_name"));
+                    //adjunto.setFileName(adjunto.getFileName());
                     
                     multiParte.addBodyPart(adjunto);
                 }
@@ -194,19 +199,21 @@ public class SendEmailWithFileHelper {
 
             // Se mete el texto y la foto adjunta.
             message.setContent(multiParte);
-
+            
             //ENVIAR EL MENSAJE
             Transport t = session.getTransport("smtp");
-
+            
             // Aqui usuario y password
             t.connect(this.getNombreUsuario(), this.getContrasenia());
             t.sendMessage(message,message.getAllRecipients());
             t.close();
-
-        }
-        catch (Exception ex) {
+            
+        }catch (Exception ex) {
             ex.printStackTrace();
+            retorno="No fue posible eviar el correo. " + ex.getMessage() ;
         }
+        
+        return retorno;
     }
 
 

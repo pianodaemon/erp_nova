@@ -244,6 +244,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
             +"cxc_clie.id AS cliente_id,"
             +"cxc_clie.rfc,"
             +"cxc_clie.razon_social,"
+            + "(CASE WHEN cxc_clie.email IS NULL THEN '' ELSE cxc_clie.email END) AS email, "
             + "fac_docs.cxc_clie_df_id,"
             + "(CASE WHEN fac_docs.cxc_clie_df_id > 1 THEN "
                 + "sbtdf.calle||' '||sbtdf.numero_interior||' '||sbtdf.numero_exterior||', '||sbtdf.colonia||', '||sbtdf.municipio||', '||sbtdf.estado||', '||sbtdf.pais||' C.P. '||sbtdf.cp "
@@ -289,6 +290,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     row.put("cliente_id",rs.getString("cliente_id"));
                     row.put("rfc",rs.getString("rfc"));
                     row.put("razon_social",rs.getString("razon_social"));
+                    row.put("email",rs.getString("email"));
                     row.put("df_id",rs.getInt("cxc_clie_df_id"));
                     row.put("direccion",rs.getString("direccion"));
                     row.put("subtotal",StringHelper.roundDouble(rs.getDouble("subtotal"),2));
@@ -4692,6 +4694,86 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
             }
         );
         return hm;
+    }
+    
+    
+    @Override
+    public ArrayList<HashMap<String, String>> getEmailEnvio(Integer id_emp, Integer id_suc) {
+        String sql_to_query = "SELECT email, passwd, (CASE WHEN port IS NULL THEN '' ELSE port END) AS port, (CASE WHEN host IS NULL THEN '' ELSE host END) AS host FROM gral_emails WHERE gral_emp_id=? AND gral_suc_id=? AND borrado_logico=false AND fac=true AND cco=false LIMIT 1;";
+        
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(id_emp), new Integer(id_suc)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("email",rs.getString("email"));
+                    row.put("passwd",rs.getString("passwd"));
+                    row.put("port",rs.getString("port"));
+                    row.put("host",rs.getString("host"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+
+    @Override
+    public ArrayList<HashMap<String, String>> getEmailCopiaOculta(Integer id_emp, Integer id_suc) {
+        String sql_to_query = "SELECT email FROM gral_emails WHERE gral_emp_id=? AND gral_suc_id=? AND borrado_logico=false AND fac=true AND cco=true LIMIT 1;";
+        
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(id_emp), new Integer(id_suc)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("email",rs.getString("email"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+
+    @Override
+    public ArrayList<HashMap<String, Object>> getFacPar_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
+        
+        String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
+        
+	String sql_to_query = ""
+        + "SELECT DISTINCT "
+                + "fac_par.id,"
+                + "fac_par.gral_suc_id AS suc_id, "
+                + "gral_suc.titulo AS sucursal "
+        +"FROM fac_par  "
+        +"JOIN gral_suc ON gral_suc.id=fac_par.gral_suc_id "
+        +"JOIN ("+sql_busqueda+") as subt on subt.id=fac_par.id "
+        +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
+        
+        //System.out.println("Busqueda GetPage: "+sql_to_query);
+        //System.out.println("cliente: "+cliente+ "fecha_inicial:"+fecha_inicial+" fecha_final: "+fecha_final+ " offset:"+offset+ " pageSize: "+pageSize+" orderBy:"+orderBy+" asc:"+asc);
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query, 
+            new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("suc_id",rs.getInt("suc_id"));
+                    row.put("sucursal",rs.getString("sucursal"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+
+    @Override
+    public ArrayList<HashMap<String, Object>> getFacPar_Datos(Integer id_factura) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
     
     

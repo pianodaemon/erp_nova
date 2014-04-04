@@ -220,4 +220,15 @@ public interface FacturasInterfaceDao {
     public ArrayList<LinkedHashMap<String,String>> getFacNomina_IncapacidadesXml(Integer id);
     public ArrayList<LinkedHashMap<String,String>> getFacNomina_HorasExtrasXml(Integer id);
     //::::::TERMINA METODOS QUE OBTIENEN DATOS PARA EL XML DE LA NOMINA CFDI::::
+    
+    
+    //Metodos para enviar email
+    public ArrayList<HashMap<String, String>> getEmailEnvio(Integer id_emp,  Integer id_suc);
+    public ArrayList<HashMap<String, String>> getEmailCopiaOculta(Integer id_emp,  Integer id_suc);
+    
+    
+    //Metodos para Configuracion de Parametros de Facturacion
+    public ArrayList<HashMap<String, Object>> getFacPar_PaginaGrid(String data_string,int offset, int pageSize, String orderBy , String asc);
+    public ArrayList<HashMap<String, Object>> getFacPar_Datos(Integer id_factura);
+    
 }

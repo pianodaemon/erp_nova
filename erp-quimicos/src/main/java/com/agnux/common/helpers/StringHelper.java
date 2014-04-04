@@ -20,6 +20,8 @@ import java.text.NumberFormat;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.w3c.dom.*;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.*;
@@ -466,6 +468,16 @@ public class StringHelper {
     }
     
     
+    public static boolean validateEmail(String email) {
+        String PATTERN_EMAIL = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+        
+        // Compiles the given regular expression into a pattern.
+        Pattern pattern = Pattern.compile(PATTERN_EMAIL);
+        
+        // Match the given input against this pattern
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
+    }
     
     
 }

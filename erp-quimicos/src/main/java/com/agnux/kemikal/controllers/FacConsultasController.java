@@ -10,6 +10,7 @@ import com.agnux.cfd.v2.CryptoEngine;
 import com.agnux.cfdi.BeanCancelaCfdi;
 import com.agnux.cfdi.BeanFromCfdiXml;
 import com.agnux.common.helpers.FileHelper;
+import com.agnux.common.helpers.SendEmailWithFileHelper;
 import com.agnux.common.helpers.StringHelper;
 import com.agnux.common.helpers.XmlHelper;
 import com.agnux.common.obj.DataPost;
@@ -30,6 +31,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -371,6 +374,202 @@ public class FacConsultasController {
     }
     
     
+    
+    
+    
+    //Enviar archivos por E-Mail
+    @RequestMapping(method = RequestMethod.POST, value="/getSendMail.json")
+    public @ResponseBody HashMap<String,String> getSendMailJson(
+            @RequestParam(value="id", required=true) Integer id_fac,
+            @RequestParam(value="correo", required=true) String correo,
+            @RequestParam(value="asunto", required=true) String asunto,
+            @RequestParam(value="msj", required=true) String msj,
+            @RequestParam(value="xml", required=true) String xml,
+            @RequestParam(value="pdf", required=true) String pdf,
+            @RequestParam(value="iu", required=true) String id_user_cod,
+            Model model
+        ) {
+        
+        log.log(Level.INFO, "Ejecutando getSendMailJson de {0}", FacConsultasController.class.getName());
+        HashMap<String, String> jsonretorno = new HashMap<String,String>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        ArrayList<HashMap<String, String>> email_envio = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> email_cco = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> conecta = new HashMap<String, String>();
+        LinkedHashMap<String,String> destinatario;
+        LinkedHashMap<String,String> adjunto;
+        ArrayList<LinkedHashMap<String,String>> listaAdjuntos = new ArrayList<LinkedHashMap<String,String>>();
+        ArrayList<LinkedHashMap<String,String>> ListaDestinatarios = new ArrayList<LinkedHashMap<String,String>>();
+        
+        String valor ="false";
+        String respuesta ="";
+        String existen="";
+        String dirSalidas = "";
+        String nombre_archivo="";
+        boolean emailDestinoCorrecto=false;
+        boolean emailOrigenCorrecto=false;
+        
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        
+        email_envio=this.getFacdao().getEmailEnvio(id_empresa, id_sucursal);
+        email_cco=this.getFacdao().getEmailCopiaOculta(id_empresa, id_sucursal);
+        
+        
+        
+        
+        //Obtener tipo de facturacion
+        String tipo_facturacion = this.getFacdao().getTipoFacturacion(id_empresa);
+        
+        if(tipo_facturacion.equals("cfd")){
+            dirSalidas = this.getGralDao().getCfdEmitidosDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa);
+        }
+        
+        if(tipo_facturacion.equals("cfdi")){
+            dirSalidas = this.getGralDao().getCfdiSolicitudesDir() + "out/";
+        }
+        
+        if(tipo_facturacion.equals("cfditf")){
+            dirSalidas = this.getGralDao().getCfdiTimbreEmitidosDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa);
+        }
+        
+        nombre_archivo = this.getFacdao().getRefIdFactura(id_fac, id_empresa);
+        
+        String fileout = dirSalidas +"/"+ nombre_archivo;
+        
+        //Tomar solo serie y folio para nombre del archivo
+        if(nombre_archivo.contains("_")){
+            nombre_archivo = nombre_archivo.split("_")[1];
+        }
+        
+        
+        //Verificar si existe el XML
+        if(xml.equals("true")){
+            System.out.println("Ruta: " + fileout + ".xml");
+            File file = new File(fileout + ".xml");
+            if (!file.exists()){
+                existen="NO existe el archivo: "+nombre_archivo+".xml <br>";
+            }
+        }
+        
+        //Verificar si existe el PDF
+        if(pdf.equals("true")){
+            System.out.println("Ruta: " + fileout + ".pdf");
+            File file2 = new File(fileout + ".pdf");
+            if (!file2.exists()){
+                existen="NO existe el archivo: "+nombre_archivo+".pdf";
+            }
+        }
+        
+        //Validar correo del destinatario
+        emailDestinoCorrecto = StringHelper.validateEmail(correo);
+        
+        if(emailDestinoCorrecto){
+            if(existen.equals("")){
+                if(email_envio.size()>0){
+                    if(!email_envio.get(0).get("email").equals("")){
+                        //Validar correo de envio
+                        emailOrigenCorrecto = StringHelper.validateEmail(email_envio.get(0).get("email"));
+                        
+                        if(emailOrigenCorrecto){
+                            if(!email_envio.get(0).get("passwd").equals("")){
+                                if(!email_envio.get(0).get("port").equals("")){
+                                    if(!email_envio.get(0).get("port").equals("")){
+                                        //String[] correoEnvio = email_envio.get(0).get("email").split("@");
+                                        //String hostname = correoEnvio[1];
+                                        //String username = correoEnvio[0];
+
+                                        //Datos de conexion para el envio
+                                        conecta.put("hostname", email_envio.get(0).get("host"));
+                                        conecta.put("username", email_envio.get(0).get("email"));
+                                        conecta.put("password", email_envio.get(0).get("passwd"));
+
+                                        //Crear lista de Destinatarios
+                                        destinatario = new LinkedHashMap<String,String>();
+                                        destinatario.put("type", "TO");
+                                        destinatario.put("recipient", correo);
+                                        ListaDestinatarios.add(destinatario);
+
+                                        if(email_cco.size()>0){
+                                            if(!email_cco.get(0).get("email").equals("")){
+                                                destinatario = new LinkedHashMap<String,String>();
+                                                destinatario.put("type", "BCC");
+                                                destinatario.put("recipient", email_cco.get(0).get("email"));
+                                                ListaDestinatarios.add(destinatario);
+                                            }
+                                        }
+
+                                        //Crear lista de Archivos Adjuntos
+                                        if(xml.equals("true")){
+                                            //Adjuntar xml
+                                            adjunto = new LinkedHashMap<String,String>();
+                                            adjunto.put("path_file", fileout + ".xml");
+                                            adjunto.put("file_name", nombre_archivo + ".xml");
+                                            listaAdjuntos.add(adjunto);
+                                        }
+                                        if(pdf.equals("true")){
+                                            //Adjuntar pdf
+                                            adjunto = new LinkedHashMap<String,String>();
+                                            adjunto.put("path_file", fileout + ".pdf");
+                                            adjunto.put("file_name", nombre_archivo + ".pdf");
+                                            listaAdjuntos.add(adjunto);
+                                        }
+
+                                        SendEmailWithFileHelper send = new SendEmailWithFileHelper(conecta);
+                                        send.setPuerto(email_envio.get(0).get("port"));
+                                        send.setMensaje(msj);
+                                        send.setAdjuntos(listaAdjuntos);
+                                        send.setDestinatarios(ListaDestinatarios);
+                                        send.setAsunto(asunto);
+                                        respuesta = send.enviarEmail();
+
+                                        valor="true";
+                                        //respuesta="Correo enviado!";
+                                    }else{
+                                        valor="false";
+                                        respuesta="No se ha definido el Servidor SMTP para el env&iacute;o.";
+                                    }
+                                }else{
+                                    valor="false";
+                                    respuesta="No se ha definido el Puerto para el env&iacute;o.";
+                                }
+                            }else{
+                                valor="false";
+                                respuesta="Falta la contrase&ntilde;a del correo de env&iacute;o.";
+                            }
+                        }else{
+                            valor="false";
+                            respuesta="El correo de env&iacute;o es invalido: "+email_envio.get(0).get("email");
+                        }
+                    }else{
+                        valor="false";
+                        respuesta="No se ha definido un correo de env&iacute;o.";
+                    }
+                }else{
+                    valor="false";
+                    respuesta="No existe una configuraci&oacute;n para el env&iacute;o de correos.";
+                }
+            }else{
+                valor="false";
+                respuesta=existen;
+            }
+        }else{
+            valor="false";
+            respuesta="Email de destinatario es incorrecto: "+ correo;
+        }
+
+        
+        jsonretorno.put("valor", valor);
+        jsonretorno.put("msj", respuesta);
+        
+        return jsonretorno;
+    }
+    
+    
+
     
     
     
