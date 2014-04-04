@@ -719,7 +719,7 @@ $(function() {
 			
 			$(this).modalPanel_facconsultas();
 			
-			$('#forma-facconsultas-window').css({"margin-left": -390, 	"margin-top": -220});
+			$('#forma-facconsultas-window').css({"margin-left": -390, 	"margin-top": -290});
 			
 			$forma_selected.prependTo('#forma-facconsultas-window');
 			$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
@@ -769,13 +769,16 @@ $(function() {
 				var $etiqueta_digit = $('#forma-facconsultas-window').find('input[name=digit]');
 				var $digitos = $('#forma-facconsultas-window').find('input[name=digitos]');
 				var $no_cuenta = $('#forma-facconsultas-window').find('input[name=no_cuenta]');
-				//var $sku_producto = $('#forma-facconsultas-window').find('input[name=sku_producto]');
-				//var $nombre_producto = $('#forma-facconsultas-window').find('input[name=nombre_producto]');
 				
-				//buscar producto
-				//var $busca_sku = $('#forma-facconsultas-window').find('a[href*=busca_sku]');
-				//href para agregar producto al grid
-				//var $agregar_producto = $('#forma-facconsultas-window').find('a[href*=agregar_producto]');
+				
+				//Variables para el envio del email
+				var $email_envio = $('#forma-facconsultas-window').find('input[name=email_envio]');
+				var $asunto_envio = $('#forma-facconsultas-window').find('input[name=asunto_envio]');
+				var $msj_envio = $('#forma-facconsultas-window').find('textarea[name=msj_envio]');
+				var $check_xml = $('#forma-facconsultas-window').find('input[name=check_xml]');
+				var $check_pdf = $('#forma-facconsultas-window').find('input[name=check_pdf]');
+				var $enviar_email = $('#forma-facconsultas-window').find('#enviar_email');
+				
 				
 				var $reconstruir_pdf = $('#forma-facconsultas-window').find('#reconstruir_pdf');
 				var $boton_descargarpdf = $('#forma-facconsultas-window').find('#descargarpdf');
@@ -793,6 +796,7 @@ $(function() {
 				var $impuesto = $('#forma-facconsultas-window').find('input[name=impuesto]');
 				var $impuesto_retenido = $('#forma-facconsultas-window').find('input[name=impuesto_retenido]');
 				var $total = $('#forma-facconsultas-window').find('input[name=total]');
+				
 				
 				var $cerrar_plugin = $('#forma-facconsultas-window').find('#close');
 				var $cancelar_plugin = $('#forma-facconsultas-window').find('#boton_cancelar');
@@ -920,19 +924,20 @@ $(function() {
 					}
 					
 					if(parseFloat(sumaIeps)>0 && parseFloat(impuestoRetenido)<=0){
-						$('#forma-facconsultas-window').find('.facconsultas_div_one').css({'height':'525px'});
+						//$('#forma-facconsultas-window').find('.facconsultas_div_one').css({'height':'525px'});
+						$('#forma-facconsultas-window').find('.facconsultas_div_one').css({'height':'645px'});
 					}
 					
 					if(parseFloat(sumaIeps)<=0 && parseFloat(impuestoRetenido)>0){
-						$('#forma-facconsultas-window').find('.facconsultas_div_one').css({'height':'525px'});
+						$('#forma-facconsultas-window').find('.facconsultas_div_one').css({'height':'645px'});
 					}
 					
 					if(parseFloat(sumaIeps)<=0 && parseFloat(impuestoRetenido)<=0){
-						$('#forma-facconsultas-window').find('.facconsultas_div_one').css({'height':'500px'});
+						$('#forma-facconsultas-window').find('.facconsultas_div_one').css({'height':'620px'});
 					}
 					
 					if(parseFloat(sumaIeps)>0 && parseFloat(impuestoRetenido)>0){
-						$('#forma-facconsultas-window').find('.facconsultas_div_one').css({'height':'550px'});
+						$('#forma-facconsultas-window').find('.facconsultas_div_one').css({'height':'670px'});
 					}
 		
                 
@@ -1093,6 +1098,7 @@ $(function() {
 					
 					$tipo_cambio.val(entry['datosFactura']['0']['tipo_cambio']);
 					$tipo_tipo_cambio_original.val(entry['datosFactura']['0']['tipo_cambio']);
+					
 					$rfc_cliente.attr('disabled','-1'); //deshabilitar
 					$folio_pedido.attr('disabled','-1'); //deshabilitar
 					$razon_cliente.attr('disabled','-1'); //deshabilitar
@@ -1124,13 +1130,30 @@ $(function() {
 					//ocultar boton actualizar porque ya esta facturado, ya no se puede guardar cambios
 					$submit_actualizar.hide();
 					
+					
+					
+					
 
+					
 					//si el estado del comprobante es 0, esta cancelado
 					if(entry['datosFactura']['0']['estado']=='CANCELADO'){
 						$reconstruir_pdf.hide();
 						$boton_descargarpdf.hide();
-						//$boton_cancelarfactura.hide();
 						$boton_descargarxml.hide();
+						
+						$email_envio.attr('disabled','-1');
+						$asunto_envio.attr('disabled','-1');
+						$msj_envio.attr('disabled','-1');
+						$check_xml.attr('disabled','-1');
+						$check_pdf.attr('disabled','-1');
+					}else{
+						var asunto = 'FACTURA '+ entry['datosFactura']['0']['serie_folio'];
+						var msj = 'Envio de la factura '+ entry['datosFactura']['0']['serie_folio'] +' de '+ $('#lienzo_recalculable').find('input[name=emp]').val()
+						$email_envio.val(entry['datosFactura'][0]['email']);
+						$asunto_envio.val(asunto);
+						$msj_envio.val(msj);
+						$check_xml.attr('checked', true);
+						$check_pdf.attr('checked', true);
 					}
 				});//termina llamada json
                 
@@ -1155,7 +1178,6 @@ $(function() {
                 
 				//descargar pdf de factura
 				$boton_descargarpdf.click(function(event){
-					
 					var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getVerificaArchivoGenerado.json';
 					$arreglo = {'serie_folio':$serie_folio.val(),'ext':'pdf', 'id':$id_factura.val(), 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() }
 					$.post(input_json,$arreglo,function(entry){
@@ -1169,8 +1191,6 @@ $(function() {
 							jAlert("La factura "+$serie_folio.val()+" no esta disponible para descarga.", 'Atencion!');
 						}
 					});//termina llamada json
-					
-					
 				});
                 
                 
@@ -1191,7 +1211,44 @@ $(function() {
 							jAlert("La factura "+$serie_folio.val()+" no esta disponible para descarga.", 'Atencion!');
 						}
 					});//termina llamada json
+				});
+                
+                
+                
+				//Enviar email
+				$enviar_email.click(function(event){
+					var descargar_xml="false";
+					var descargar_pdf="false";
 					
+					if($check_xml.is(':checked')){ descargar_xml="true"; }
+					if($check_pdf.is(':checked')){ descargar_pdf="true"; }
+					
+					if(descargar_xml=="false" && descargar_pdf=="false"){
+						jAlert("Es necesario indicar los archivos a adjuntar, XML &oacute; PDF &oacute; los dos.", 'Atencion!');
+					}else{
+						var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getSendMail.json';
+						$arreglo = {
+							'id':$id_factura.val(), 
+							'correo':$email_envio.val(), 
+							'asunto':$asunto_envio.val(), 
+							'msj':$msj_envio.val(), 
+							'xml':descargar_xml, 
+							'pdf':descargar_pdf, 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() 
+						}
+						
+						$.post(input_json,$arreglo,function(entry){
+							
+							jAlert(entry['msj'], 'Atencion!');
+							
+							if(entry['valor'] == 'true'){
+								$email_envio.val('');
+								$asunto_envio.val('');
+								$msj_envio.val('');
+								$check_xml.attr('checked', false);
+								$check_pdf.attr('checked', false);
+							}
+						});
+					}
 				});
                 
                                 
