@@ -112,11 +112,8 @@ $(function() {
 	}
 	
 	
-    //arreglo para select opcion
-    var array_incluye_iva = {
-				'false':"No incluye", 
-				'true':"Si incluye"
-			};
+    //Arreglo para select opcion
+    var array_formato_pedido = { 1:"Formato 1", 2:"Formato 2"};
 	
 	//carga los campos select con los datos que recibe como parametro
 	$carga_campos_select = function($campo_select, arreglo_elementos, elemento_seleccionado, texto_elemento_cero, indice1, indice2){
@@ -139,6 +136,25 @@ $(function() {
 		$campo_select.append(option_hmtl);
 	}
 	
+	
+	//carga los campos select con los datos que recibe como parametro
+	$carga_select_con_arreglo_fijo = function($campo_select, arreglo_elementos, elemento_seleccionado, mostrar_opciones){
+		$campo_select.children().remove();
+		var select_html = '';
+		for(var i in arreglo_elementos){
+			if( parseInt(i) == parseInt(elemento_seleccionado) ){
+				select_html += '<option value="' + i + '" selected="yes">' + arreglo_elementos[i] + '</option>';
+			}else{
+				if (mostrar_opciones=='true'){
+					//3=Facturacion de Remisiones, solo debe mostrarse cuando se abra la ventana desde el Icono de Nuevo
+					if(parseInt(i)!=3 ){
+						select_html += '<option value="' + i + '"  >' + arreglo_elementos[i] + '</option>';
+					}
+				}
+			}
+		}
+		$campo_select.append(select_html);
+	}
 	
 	
 	
@@ -172,7 +188,7 @@ $(function() {
 			$forma_selected.attr({ id : form_to_show + id_to_show });
 			
 			$(this).modalPanel_facpar();
-			$('#forma-facpar-window').css({ "margin-left": -350, 	"margin-top": -200 });
+			$('#forma-facpar-window').css({ "margin-left": -400, 	"margin-top": -200 });
 			
 			$forma_selected.prependTo('#forma-facpar-window');
 			$forma_selected.find('.panelcito_modal').attr({ id : 'panelcito_modal' + id_to_show , style:'display:table'});
@@ -183,20 +199,30 @@ $(function() {
 			var $identificador_suc = $('#forma-facpar-window').find('input[name=identificador_suc]');
 			var $sucursal = $('#forma-facpar-window').find('input[name=sucursal]');
 			
+			var $correo_id = $('#forma-facpar-window').find('input[name=correo_id]');
 			var $correo_envio = $('#forma-facpar-window').find('input[name=correo_envio]');
 			var $passwd_correo_envio = $('#forma-facpar-window').find('input[name=passwd_correo_envio]');
 			var $passwd2_correo_envio = $('#forma-facpar-window').find('input[name=passwd2_correo_envio]');
 			var $servidor_correo_envio = $('#forma-facpar-window').find('input[name=servidor_correo_envio]');
 			var $puerto_correo_envio = $('#forma-facpar-window').find('input[name=puerto_correo_envio]');
+			var $cco_id = $('#forma-facpar-window').find('input[name=cco_id]');
+			var $correo_cco = $('#forma-facpar-window').find('input[name=correo_cco]');
+			
+			var $select_almacen_ventas = $('#forma-facpar-window').find('select[name=select_almacen_ventas]');
+			//var $radio_pedido = $('#forma-facpar-window').find('.radio_pedido');
+			//var $radio_fac = $('#forma-facpar-window').find('.radio_fac');
+			var $select_formato_pedido = $('#forma-facpar-window').find('select[name=select_formato_pedido]');
 			
 			var $cerrar_plugin = $('#forma-facpar-window').find('#close');
 			var $cancelar_plugin = $('#forma-facpar-window').find('#boton_cancelar');
 			var $submit_actualizar = $('#forma-facpar-window').find('#submit');
 			
+			//Seleccionar por default
+			//$radio_pedido.attr('checked',  true );
+			
+			
 			if(accion_mode == 'edit'){
 				
-				
-				/*
 				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getParametro.json';
 				$arreglo = {	'id':id_to_show,
 								'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
@@ -238,63 +264,51 @@ $(function() {
 				
 				//aqui se cargan los campos al editar
 				$.post(input_json,$arreglo,function(entry){
-					$campo_id.attr({ 'value' : entry['Parametro'][0]['id'] });
-					$check_requiere_oc.attr('checked', (entry['Parametro'][0]['oc_requerida'] == 'true')? true:false );
+					$identificador.attr({ 'value' : entry['Parametro'][0]['id'] });
+					$identificador_suc.attr({ 'value' : entry['Parametro'][0]['id_suc'] });
+					$sucursal.attr({ 'value' : entry['Parametro'][0]['sucursal'] });
 					
+					$correo_id.attr({ 'value' : entry['Parametro'][0]['correo_e_id'] });
+					$correo_envio.attr({ 'value' : entry['Parametro'][0]['email_envio'] });
+					$passwd_correo_envio.attr({ 'value' : entry['Parametro'][0]['passwd_envio'] });
+					$passwd2_correo_envio.attr({ 'value' : entry['Parametro'][0]['passwd_envio'] });
+					$servidor_correo_envio.attr({ 'value' : entry['Parametro'][0]['host_envio'] });
+					$cco_id.attr({ 'value' : entry['Parametro'][0]['correo_cco_id'] });
+					$puerto_correo_envio.attr({ 'value' : entry['Parametro'][0]['port_envio'] });
 					
-					//cargar select de Sucursales
-					$select_sucursal.children().remove();
-					var suc_hmtl = '';
-					$.each(entry['Sucursales'],function(entryIndex,suc){
-						if(parseInt(entry['Parametro'][0]['gral_suc_id'])==parseInt(suc['id'])){
-							suc_hmtl += '<option value="' + suc['id'] + '" selected="yes">' + suc['titulo'] + '</option>';
+					$correo_cco.attr({ 'value' : entry['Parametro'][0]['email_cco'] });
+					 
+					/*
+					if(entry['Parametro'][0]['valida_exi']=='true'){
+						$radio_pedido.attr('checked',  true );
+					}else{
+						$radio_fac.attr('checked',  true );
+					}
+					*/
+					
+					//Cargar select de almacenes
+					$select_almacen_ventas.children().remove();
+					var alm_hmtl = '';
+					$.each(entry['Almacenes'],function(entryIndex,alm){
+						if(parseInt(entry['Parametro'][0]['alm_id_venta'])==parseInt(alm['id'])){
+							alm_hmtl += '<option value="' + alm['id'] + '" selected="yes">' + alm['titulo'] + '</option>';
 						}else{
-							//suc_hmtl += '<option value="' + suc['id'] + '">' + suc['titulo'] + '</option>';
+							alm_hmtl += '<option value="' + alm['id'] + '">' + alm['titulo'] + '</option>';
 						}
 					});
-					$select_sucursal.append(suc_hmtl);
+					$select_almacen_ventas.append(alm_hmtl);
 					
 					
-					//cargar select de anticipo
-					elemento_seleccionado = entry['Parametro'][0]['cxp_mov_tipo_id'];
-					texto_elemento_cero='Seleccionar Movimiento';
-					$carga_campos_select($select_anticipo, entry['TMovanticipo'], elemento_seleccionado, texto_elemento_cero, "id", "titulo");
-					
-					//cargar select de Aplicado Anticipo
-					elemento_seleccionado = entry['Parametro'][0]['cxp_mov_tipo_id_apl_ant'];
-					texto_elemento_cero='Seleccionar Movimiento';
-					$carga_campos_select($select_apl_anticipo, entry['TMovAplanticipo'], elemento_seleccionado, texto_elemento_cero, "id", "titulo");
-					
-					//cargar select de Aplicado Factura
-					elemento_seleccionado = entry['Parametro'][0]['cxp_mov_tipo_id_apl_fac'];
-					texto_elemento_cero='Seleccionar Movimiento';
-					$carga_campos_select($select_apl_factura, entry['TMovAplfactura'], elemento_seleccionado, texto_elemento_cero, "id", "titulo");						
-					
-					//cargar select de mov Cancelacion
-					elemento_seleccionado = entry['Parametro'][0]['cxp_mov_tipo_id_can'];
-					texto_elemento_cero='Seleccionar Movimiento';
-					$carga_campos_select($select_cacelacion, entry['TMovCancelacion'], elemento_seleccionado, texto_elemento_cero, "id", "titulo");						
-					
-					var option_hmtl='';
-					$select_incluye_iva.children().remove();
-					if(entry['Parametro'][0]['incluye_iva'] == 'true' ){
-						option_hmtl += '<option value="false">No incluye</option>';
-						option_hmtl += '<option value="true" selected="yes">Si incluye</option>';
-					}else{
-						option_hmtl += '<option value="false" selected="yes">No incluye</option>';
-						option_hmtl += '<option value="true">Si incluye</option>';
-					}
-					$select_incluye_iva.append(option_hmtl);
+					var elemento_seleccionado = entry['Parametro'][0]['formato_pedido'];
+					var mostrar_opciones = 'true';
+					$carga_select_con_arreglo_fijo($select_formato_pedido, array_formato_pedido, elemento_seleccionado, mostrar_opciones);
 					
 					
-					//cargar select de consecutivos de sucursales
-					elemento_seleccionado = entry['Parametro'][0]['gral_suc_id_consecutivo'];
-					texto_elemento_cero='Sucursal Actual';
-					$carga_campos_select($select_consecutivo_sucursal, entry['Consecutivo'], elemento_seleccionado, texto_elemento_cero, "id", "titulo");
+					
 				},"json");//termina llamada json
 				      
 				
-				*/
+				
 				
 				//Ligamos el boton cancelar al evento click para eliminar la forma
 				$cancelar_plugin.bind('click',function(){
