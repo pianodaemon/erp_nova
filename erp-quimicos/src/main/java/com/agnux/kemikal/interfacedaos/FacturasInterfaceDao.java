@@ -230,5 +230,7 @@ public interface FacturasInterfaceDao {
     //Metodos para Configuracion de Parametros de Facturacion
     public ArrayList<HashMap<String, Object>> getFacPar_PaginaGrid(String data_string,int offset, int pageSize, String orderBy , String asc);
     public ArrayList<HashMap<String, Object>> getFacPar_Datos(Integer id_factura);
+    public ArrayList<HashMap<String, Object>> getFacPar_Almacenes(Integer id_emp, Integer id_suc);
+    
     
 }

@@ -41,7 +41,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 @SessionAttributes({"user"})
 @RequestMapping("/facpar/")
 public class FacParController {
-    private static final Logger log  = Logger.getLogger(ProvParamAnticiposController.class.getName());
+    private static final Logger log  = Logger.getLogger(FacParController.class.getName());
     ResourceProject resource = new ResourceProject();
     
     @Autowired
@@ -65,7 +65,7 @@ public class FacParController {
             @ModelAttribute("user") UserSessionData user
             )throws ServletException, IOException {
         
-        log.log(Level.INFO, "Ejecutando starUp de {0}", ProvParamAnticiposController.class.getName());
+        log.log(Level.INFO, "Ejecutando starUp de {0}", FacParController.class.getName());
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
         
         infoConstruccionTabla.put("id", "Acciones:70");
@@ -112,7 +112,7 @@ public class FacParController {
         HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
         HashMap<String,String> has_busqueda = StringHelper.convert2hash(StringHelper.ascii2string(cadena_busqueda));
         
-        //aplicativo Parametros de Facturacion
+        //Aplicativo Parametros de Facturacion
         Integer app_selected = 175;
         
         //decodificar id de usuario
@@ -144,6 +144,115 @@ public class FacParController {
         return jsonretorno;
     }
     
+    
+    
+    
+    @RequestMapping(method = RequestMethod.POST, value="/getParametro.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getParametroJson(
+            @RequestParam(value="id", required=true) Integer id,
+            @RequestParam(value="iu", required=true) String id_user_cod,
+            Model model
+            ){
+        
+        log.log(Level.INFO, "Ejecutando getParametroJson de {0}", FacParController.class.getName());
+        HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        ArrayList<HashMap<String, Object>> parametro_datos = new ArrayList<HashMap<String, Object>>();
+        ArrayList<HashMap<String, Object>> almacenes = new ArrayList<HashMap<String, Object>>();
+        
+        ArrayList<HashMap<String, String>> sucursales = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> consecutivo_sucursal = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> tmov_anticipo = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> tmov_aplicado_anticipo = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> tmov_aplicado_factura = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> tmov_cancelacion = new ArrayList<HashMap<String, String>>();
+        
+        Integer grupo=0;
+        Integer naturaleza=0;
+        String referenciado="";
+        
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        
+        if( id != 0  ){
+            parametro_datos = this.getFacdao().getFacPar_Datos(id);
+        }
+        
+        almacenes = this.getFacdao().getFacPar_Almacenes(id_empresa, id_sucursal);
+        
+        jsonretorno.put("Parametro", parametro_datos);
+        jsonretorno.put("Almacenes", almacenes);
+        
+        return jsonretorno;
+    }
+    
+    
+    
+    //crear y editar un registro
+    @RequestMapping(method = RequestMethod.POST, value="/edit.json")
+    public @ResponseBody HashMap<String, String> editJson(
+            @RequestParam(value="identificador", required=true) String identificador,
+            @RequestParam(value="identificador_suc", required=true) String identificador_suc,
+            @RequestParam(value="correo_id", required=true) String correo_id,
+            @RequestParam(value="correo_envio", required=true) String correo_envio,
+            @RequestParam(value="passwd_correo_envio", required=true) String passwd_correo_envio,
+            @RequestParam(value="passwd2_correo_envio", required=true) String passwd2_correo_envio,
+            @RequestParam(value="servidor_correo_envio", required=true) String servidor_correo_envio,
+            @RequestParam(value="puerto_correo_envio", required=true) String puerto_correo_envio,
+            @RequestParam(value="cco_id", required=true) String cco_id,
+            @RequestParam(value="correo_cco", required=true) String correo_cco,
+            @RequestParam(value="select_almacen_ventas", required=true) String select_almacen_ventas,
+            //@RequestParam(value="radio_valida_exi", required=false) String radio_valida_exi,
+            @RequestParam(value="select_formato_pedido", required=true) String select_formato_pedido,
+            Model model,@ModelAttribute("user") UserSessionData user
+            ) {
+            
+            HashMap<String, String> jsonretorno = new HashMap<String, String>();
+            HashMap<String, String> succes = new HashMap<String, String>();
+            //Aplicativo Parametros de Facturacion
+            Integer app_selected = 175;
+            String command_selected = "new";
+            Integer id_usuario= user.getUserId();//variable para el id  del usuario
+            String extra_data_array = "'sin datos'";
+            String valida_exi="true";
+            
+            command_selected = "edit";
+            
+            String data_string = 
+                    app_selected+"___"+
+                    command_selected+"___"+
+                    id_usuario+"___"+ 
+                    identificador+"___"+
+                    identificador_suc+"___"+
+                    correo_envio+"___"+
+                    passwd_correo_envio+"___"+
+                    passwd2_correo_envio+"___"+
+                    servidor_correo_envio+"___"+
+                    puerto_correo_envio+"___"+
+                    correo_cco+"___"+
+                    select_almacen_ventas+"___"+
+                    select_formato_pedido+"___"+
+                    correo_id+"___"+
+                    cco_id;
+            
+            succes = this.getFacdao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
+            
+            log.log(Level.INFO, "despues de validacion {0}", String.valueOf(succes.get("success")));
+            String actualizo = "0";
+            
+            if( String.valueOf(succes.get("success")).equals("true") ){
+                actualizo = this.getFacdao().selectFunctionForFacAdmProcesos(data_string, extra_data_array);
+            }
+            
+            jsonretorno.put("success",String.valueOf(succes.get("success")));
+            
+            log.log(Level.INFO, "Salida json {0}", String.valueOf(jsonretorno.get("success")));
+        return jsonretorno;
+    }
     
     
     
