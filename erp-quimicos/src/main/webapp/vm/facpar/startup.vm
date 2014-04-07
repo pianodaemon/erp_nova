@@ -55,7 +55,7 @@
 					
                     <div id="div_two" title="" class="facpar_div_two">
                         <div class="columns on-2">
-                            <div class="fixed column" id="cierra" style="width:660px; padding-left:6px;"><strong>Configuraci&oacute;n de par&aacute;metros de Facturaci&oacute;n</strong></div>
+                            <div class="fixed column" id="cierra" style="width:760px; padding-left:6px;"><strong>Configuraci&oacute;n de par&aacute;metros de Facturaci&oacute;n</strong></div>
                             <div class="fixed column" style="width:20px; height:25px;">
                                 <div id="close" style="height:25px;background-image:url('../../img/modalbox/close.png'); background-color:; background-position:top; cursor:pointer; background-repeat:no-repeat;"></div>
                             </div>
@@ -79,7 +79,7 @@
                                         <table border="0">
 											<tr>
 												<td width="5">&nbsp;</td>
-												<td width="50">Sucursal</td>
+												<td width="60">Sucursal</td>
 												<td width="320">
 													<INPUT TYPE="hidden" name="identificador_suc" value="0">
 													<INPUT TYPE="text" name="sucursal" style="width:280px;" readOnly="true">
@@ -89,54 +89,70 @@
 											</tr>
 											<tr>
 												<td width="5" height="7"></td>
-												<td width="50"></td>
+												<td width="60"></td>
 												<td width="320"></td>
 												<td width="10"></td>
-												<td width="330"></td>
+												<td width="400"></td>
 											</tr>
 											<tr>
 												<td width="5"></td>
-												<td width="370" colspan="2">
+												<td width="375" colspan="2">
 													<fieldset style="border: solid 1px #313E74;" class="gral">
 														<legend>&nbsp;Env&iacute;o&nbsp;de&nbsp;facturas&nbsp;por&nbsp;correo&nbsp;electr&oacute;nico&nbsp;</legend> 
 														<ol>
-															<table border="0">
+															<table border="0" class="gral">
 																<tr>
-																	<td width="150">Correo Electronico</td>
-																	<td width="190"><INPUT TYPE="text" name="correo_envio" style="width:190px;" value="" title="Ingresar el correo desde donde se hara el env&iacute;o"></td>
-																	<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_correo"></div></td>
+																	<td width="160">Correo&nbsp;Electr&oacute;nico</td>
+																	<td width="190">
+																		<INPUT TYPE="hidden" name="correo_id" value="0">
+																		<INPUT TYPE="text" name="correo_envio" style="width:190px;" value="" title="Ingresar el correo desde donde se hara el env&iacute;o">
+																	</td>
+																	<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_correoenvio"></div></td>
 																</tr>
 																<tr>
-																	<td width="6" colspan="3">&nbsp;</td>
+																	<td width="6" height="5" colspan="3"></td>
 																</tr>
 																<tr>
-																	<td width="150">Contrase&ntilde;a</td>
-																	<td width="190"><INPUT TYPE="text" name="passwd_correo_envio" style="width:190px;" value="" title="Contrase&ntilde;a del correo de env&iacute;o"></td>
+																	<td width="160">Contrase&ntilde;a</td>
+																	<td width="190"><INPUT TYPE="password" name="passwd_correo_envio" style="width:190px;" value="" title="Contrase&ntilde;a del correo de env&iacute;o"></td>
 																	<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_passwd"></div></td>
 																</tr>
 																<tr>
-																	<td width="6" colspan="3">&nbsp;</td>
+																	<td width="6" height="5" colspan="3"></td>
 																</tr>
 																<tr>
-																	<td width="150">Repetir Contrase&ntilde;a</td>
-																	<td width="190"><INPUT TYPE="text" name="passwd2_correo_envio" style="width:190px;" value="" title="Repetir la Contrase&ntilde;a del correo de env&iacute;o"></td>
+																	<td width="160">Repetir&nbsp;Contrase&ntilde;a</td>
+																	<td width="190"><INPUT TYPE="password" name="passwd2_correo_envio" style="width:190px;" value="" title="Repetir la Contrase&ntilde;a del correo de env&iacute;o"></td>
 																	<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_passwd2"></div></td>
 																</tr>
 																<tr>
-																	<td width="6" colspan="3">&nbsp;</td>
+																	<td width="6" height="5" colspan="3"></td>
 																</tr>
 																<tr>
-																	<td width="150">Servidor de Env&iacute;o</td>
+																	<td width="160">Servidor&nbsp;de&nbsp;Env&iacute;o</td>
 																	<td width="190"><INPUT TYPE="text" name="servidor_correo_envio" style="width:190px;" value="" title="Servidor SMTP desde donde se hace el env&iacute;o. Ejemplo: smtp.gmail.com"></td>
-																	<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_servidor"></div></td>
+																	<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_servidorenvio"></div></td>
+																</tr>
+																
+																<tr>
+																	<td width="6" height="5" colspan="3"></td>
 																</tr>
 																<tr>
-																	<td width="6" colspan="3">&nbsp;</td>
-																</tr>
-																<tr>
-																	<td width="150">Puerto de Salida</td>
+																	<td width="160">Puerto&nbsp;de&nbsp;Salida</td>
 																	<td width="190"><INPUT TYPE="text" name="puerto_correo_envio" style="width:190px;" value="" title="Puerto de salida para el env&iacute;o de correos."></td>
-																	<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_puerto"></div></td>
+																	<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_puertoenvio"></div></td>
+																</tr>
+																
+																<tr>
+																	<td width="6" height="5" colspan="3"></td>
+																</tr>
+																<tr>
+																	<td width="160">Enviar&nbsp;Copia&nbsp;Oculta(CCO)</td>
+																	<td width="190">
+																		<INPUT TYPE="hidden" name="cco_id" value="0">
+																		<INPUT TYPE="text" name="correo_cco" style="width:190px;" value="" title="Correo electonico para enviar copia oculta.">
+																	</td>
+																	<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_correocco"></div></td>
 																</tr>
 															</table>
 															
@@ -144,27 +160,46 @@
 													</fieldset>
 												</td>
 												<td width="10"></td>
-												<td width="330">
-													<!--
+												<td width="400" valign="top">
 													<fieldset style="border: solid 1px #313E74;" class="gral">
-														<legend>&nbsp;Valores&nbsp;Defaults&nbsp;</legend> 
+														<legend>&nbsp;Pedidos&nbsp;y&nbsp;Facturaci&oacute;n</legend> 
 														<ol>
-															
-															<table border="0">
+															<table border="0" class="gral">
+																
 																<tr>
-																	<td width="175">Requerir&nbsp;Orden&nbsp;de&nbsp;Compra</td>
-																	<td width="20"><input type="checkbox" name="check_requiere_oc"></td>
-																	<td width="105"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_requiereoc"></div></td>
+																	<td width="120">Almacen&nbsp;de&nbsp;Ventas</td>
+																	<td width="190" colspan="4"><select name="select_almacen_ventas" style="width:190px;"></select></td>
+																	<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_almventas"></div></td>
+																</tr>
+																<tr>
+																	<td width="120" height="5"></td>
+																	<td width="25"></td>
+																	<td width="70"></td>
+																	<td width="25"></td>
+																	<td width="70"></td>
 																	<td width="25"></td>
 																</tr>
+																<!--
 																<tr>
-																	<td width="6" colspan="3">&nbsp;</td>
+																	<td width="120">Validar&nbsp;existencias en</td>
+																	<td width="25"><input type="radio" name="radio_valida_exi" value="1" class="radio_pedido"></td>
+																	<td width="70">Pedido</td>
+																	<td width="25"><input type="radio" name="radio_valida_exi" value="2" class="radio_fac"></td>
+																	<td width="70">Facturaci&oacute;n</td>
+																	<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_validaexi"></div></td>
+																</tr>
+																<tr>
+																	<td width="6" height="5" colspan="6"></td>
+																</tr>
+																-->
+																<tr>
+																	<td width="120">Formato&nbsp;del&nbsp;Pedido</td>
+																	<td width="190" colspan="4"><select name="select_formato_pedido" style="width:190px;"></select></td>
+																	<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_formatopedido"></div></td>
 																</tr>
 															</table>
-															
 														</ol>
 													</fieldset>
-													-->
 												</td>
 											</tr>
                                         </table>
@@ -174,11 +209,11 @@
                             </div>
 
 
-                            <div class="fixed column" id="botones" style="width:680px; background:; text-align:right; padding-left:; position:absolute;margin-top:4px;">
+                            <div class="fixed column" id="botones" style="width:780px; background:; text-align:right; padding-left:; position:absolute;margin-top:4px;">
 								<table border="0">
 									<tr><td colspan="4" height="7"></td></tr>
 									<tr>
-										<td width="680"></td>
+										<td width="780"></td>
 										<td>
 											<input type="image" src="../../img/modalbox/btn1.png" id="submit" style="width:77px; height:24px;"/>
 										</td>

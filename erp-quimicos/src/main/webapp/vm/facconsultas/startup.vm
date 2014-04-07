@@ -406,7 +406,7 @@
 																		<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_emailenvio"></div></td>
 																		<td width="125" colspan="3" align="center"><input type="button" id="enviar_email" value="Enviar" style="width:100px; font-weight:bold;"></td>
 																	</tr>
-																	<tr><td colspan="4" height="5">&nbsp;</td></tr>
+																	<tr><td colspan="4" height="5"></td></tr>
 																	<tr>
 																		<td width="80">Asunto</td>
 																		<td width="460"><input type="text" name="asunto_envio" style="width:460px;"></td>
@@ -415,7 +415,7 @@
 																		<td width="30"></td>
 																		<td width="70"></td>
 																	</tr>
-																	<tr><td colspan="4" height="5">&nbsp;</td></tr>
+																	<tr><td colspan="4" height="5"></td></tr>
 																	<tr>
 																		<td width="80">Mensaje</td>
 																		<td width="460" rowspan="3"><textarea name="msj_envio" rows="2" cols="60" style="width:460px; resize: none;"></textarea></td>
