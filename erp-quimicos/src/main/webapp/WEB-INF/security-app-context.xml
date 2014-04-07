@@ -157,6 +157,7 @@ xmlns:beans="http://www.springframework.org/schema/beans"
         <intercept-url pattern="/controllers/facconsultas/startup.agnux" access="ROLE_ADMIN,ROLE_FAC_CONSULTAS" />
         <intercept-url pattern="/controllers/facdevoluciones/startup.agnux" access="ROLE_ADMIN,ROLE_FAC_DEVOLUCIONES" />
         <intercept-url pattern="/controllers/facnomina/startup.agnux" access="ROLE_ADMIN,ROLE_FAC_NOMINA" />
+        <intercept-url pattern="/controllers/facpar/startup.agnux" access="ROLE_ADMIN" />
         
         <intercept-url pattern="/controllers/carteras/startup.agnux" access="ROLE_ADMIN,ROLE_COBRANZA" />
         <intercept-url pattern="/controllers/clientsantcancel/startup.agnux" access="ROLE_ADMIN,ROLE_CXC_CANCELA_ANTICIPO" />
@@ -335,6 +336,10 @@ xmlns:beans="http://www.springframework.org/schema/beans"
         <intercept-url pattern="/controllers/repcomparativoasventasanualesproducto/startup.agnux" access="ROLE_ADMIN,ROLE_CXC_REP_COMP_VENTAS_PROD" /><!--Federico-->
         <intercept-url pattern="/controllers/gralpercepciones/startup.agnux" access="ROLE_ADMIN,ROLE_GRAL_CATALOGO_PRECEP" /><!--Federico-->
         <intercept-url pattern="/controllers/graldeducciones/startup.agnux" access="ROLE_ADMIN,ROLE_GRAL_CATALOGO_DEDUC" /><!--Federico-->
+        
+        
+        
+        
         
         <form-login 
             login-page="/index.jsp" 
