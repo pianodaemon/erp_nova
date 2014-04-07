@@ -321,8 +321,8 @@ $(function() {
 					$('#forma-facpar-overlay').fadeOut(remove);
 					$buscar.trigger('click');
 				});
-                          
-                          
+				
+				$correo_envio.focus();
 			}
 		}
 	}
