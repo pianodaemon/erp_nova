@@ -136,8 +136,8 @@ public class SendEmailWithFileHelper {
 
             Session session = Session.getDefaultInstance(props);
 
-            // Para obtener un log de salida m�s extenso
-            //session.setDebug(true);
+            // Para obtener un log de salida mas extenso
+            session.setDebug(true);
 
             //CONSTRUIR UN MENSAJE COMPLEJO CON ADJUNTOS
             BodyPart texto = new MimeBodyPart();

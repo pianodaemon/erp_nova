@@ -481,12 +481,12 @@ public class FacConsultasController {
                                         //String[] correoEnvio = email_envio.get(0).get("email").split("@");
                                         //String hostname = correoEnvio[1];
                                         //String username = correoEnvio[0];
-
+                                        
                                         //Datos de conexion para el envio
                                         conecta.put("hostname", email_envio.get(0).get("host"));
                                         conecta.put("username", email_envio.get(0).get("email"));
                                         conecta.put("password", email_envio.get(0).get("passwd"));
-
+                                        
                                         //Crear lista de Destinatarios
                                         destinatario = new LinkedHashMap<String,String>();
                                         destinatario.put("type", "TO");
