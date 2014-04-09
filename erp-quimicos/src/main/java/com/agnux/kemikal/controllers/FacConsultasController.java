@@ -9,10 +9,7 @@ import com.agnux.cfd.v2.BeanFromCfdXml;
 import com.agnux.cfd.v2.CryptoEngine;
 import com.agnux.cfdi.BeanCancelaCfdi;
 import com.agnux.cfdi.BeanFromCfdiXml;
-import com.agnux.common.helpers.FileHelper;
-import com.agnux.common.helpers.SendEmailWithFileHelper;
-import com.agnux.common.helpers.StringHelper;
-import com.agnux.common.helpers.XmlHelper;
+import com.agnux.common.helpers.*;
 import com.agnux.common.obj.DataPost;
 import com.agnux.common.obj.ResourceProject;
 import com.agnux.common.obj.UserSessionData;
@@ -478,10 +475,6 @@ public class FacConsultasController {
                             if(!email_envio.get(0).get("passwd").equals("")){
                                 if(!email_envio.get(0).get("port").equals("")){
                                     if(!email_envio.get(0).get("port").equals("")){
-                                        //String[] correoEnvio = email_envio.get(0).get("email").split("@");
-                                        //String hostname = correoEnvio[1];
-                                        //String username = correoEnvio[0];
-                                        
                                         //Datos de conexion para el envio
                                         conecta.put("hostname", email_envio.get(0).get("host"));
                                         conecta.put("username", email_envio.get(0).get("email"));
@@ -517,7 +510,7 @@ public class FacConsultasController {
                                             adjunto.put("file_name", nombre_archivo + ".pdf");
                                             listaAdjuntos.add(adjunto);
                                         }
-
+                                        
                                         SendEmailWithFileHelper send = new SendEmailWithFileHelper(conecta);
                                         send.setPuerto(email_envio.get(0).get("port"));
                                         send.setMensaje(msj);
@@ -525,9 +518,17 @@ public class FacConsultasController {
                                         send.setDestinatarios(ListaDestinatarios);
                                         send.setAsunto(asunto);
                                         respuesta = send.enviarEmail();
-
+                                        
                                         valor="true";
                                         //respuesta="Correo enviado!";
+                                        
+                                        /*
+                                        MandaEmail senderHilo = new MandaEmail(conecta, ListaDestinatarios, listaAdjuntos, email_envio.get(0).get("port"), asunto, msj);
+                                        senderHilo.start();
+                                        
+                                        valor="true";
+                                        respuesta="Correo enviado!";
+                                        */
                                     }else{
                                         valor="false";
                                         respuesta="No se ha definido el Servidor SMTP para el env&iacute;o.";
@@ -560,7 +561,7 @@ public class FacConsultasController {
             valor="false";
             respuesta="Email de destinatario es incorrecto: "+ correo;
         }
-
+        
         
         jsonretorno.put("valor", valor);
         jsonretorno.put("msj", respuesta);

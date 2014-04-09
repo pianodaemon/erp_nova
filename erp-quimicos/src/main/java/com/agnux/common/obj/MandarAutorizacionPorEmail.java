@@ -17,8 +17,6 @@ import java.util.logging.Logger;
  * @author Ezcure
  */
 public final class MandarAutorizacionPorEmail extends Thread{
-    
-    
     private HashMap<String, String> datosEncabezadoPie;
     private HashMap<String, String> datosOrdenCompra;
     private ArrayList<HashMap<String, String>> conceptosOrdenCompra;
@@ -92,7 +90,7 @@ public final class MandarAutorizacionPorEmail extends Thread{
             //String correo_prov = "";
             String correo_prov = datosOrdenCompra.get("correo_prov");
             System.out.println("Este es el corre del prov. "+correo_prov);
-			
+            
             if (!"0".equals(correo_prov)){
                 if ( this.getConecta() != null ) {
                     SendEmailWithFileHelper z = new SendEmailWithFileHelper(conecta2);

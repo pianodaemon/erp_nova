@@ -4027,7 +4027,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
             sql_to_query=""
             + "SELECT "
                 + "nom_deduc.id, "
-                + "fac_nomina_det_deduc.nom_deduc_id, "
+                + "nom_deduc_tipo.id AS nom_deduc_id, "
                 + "(case when nom_deduc_tipo.clave is null then '' else (case when nom_deduc_tipo.clave<>'' then nom_deduc_tipo.clave||' ' else '' end) end)||upper(nom_deduc_tipo.titulo) AS tipo_deduc,"
                 + "(case when nom_deduc.clave is null then '' else (case when nom_deduc.clave<>'' then nom_deduc.clave||' ' else '' end) end)||upper(nom_deduc.titulo) AS deduccion, "
                 + "(CASE WHEN fac_nomina_det_deduc.gravado IS NULL THEN 0 ELSE fac_nomina_det_deduc.gravado END) AS gravado,"

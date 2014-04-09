@@ -1,6 +1,9 @@
 package com.agnux.common.helpers;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Properties;
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 import javax.mail.BodyPart;
@@ -14,9 +17,6 @@ import javax.mail.internet.MimeMultipart;
 
 
 public class SendEmailWithFileHelper {
-
-
-
     private String ipServidor;
     private String nombreUsuario;
     private String contrasenia;
@@ -117,14 +117,14 @@ public class SendEmailWithFileHelper {
             //ESTABLECER LA SESION JAVAMAIL
             Properties props = System.getProperties();
             
-            props.clear();
+            //props.clear();
             
             // Nombre del host de correo, es smtp.gmail.com
             props.setProperty("mail.smtp.host", this.getIpServidor());
             
             // TLS si esta disponible
             props.setProperty("mail.smtp.starttls.enable", "true");
-
+            
             // Puerto de gmail para envio de correos
             props.setProperty("mail.smtp.port",this.getPuerto());
             
@@ -135,15 +135,27 @@ public class SendEmailWithFileHelper {
             props.setProperty("mail.smtp.auth", "true");
 
             Session session = Session.getDefaultInstance(props);
-
+            
             // Para obtener un log de salida mas extenso
-            session.setDebug(true);
-
+            //session.setDebug(true);
+            
+            //CONSTRUIR EL MENSAJE
+            MimeMessage message = new MimeMessage(session);
+            
+            // Se rellena el From
+            message.setFrom(new InternetAddress(this.getNombreUsuario()));
+            
+            // Se rellena el subject
+            message.setSubject(this.getAsunto());
+            
+            
+            
+            
             //CONSTRUIR UN MENSAJE COMPLEJO CON ADJUNTOS
             BodyPart texto = new MimeBodyPart();
 
             // Texto del mensaje
-            texto.setContent(this.getMensaje(), "text/html");
+            //texto.setContent(this.getMensaje(), "text/html");
             texto.setText(this.getMensaje());
 
             
@@ -167,16 +179,9 @@ public class SendEmailWithFileHelper {
                     multiParte.addBodyPart(adjunto);
                 }
             }
-
             
             
             
-            //CONSTRUIR EL MENSAJE
-            MimeMessage message = new MimeMessage(session);
-
-            // Se rellena el From
-            message.setFrom(new InternetAddress(this.getNombreUsuario()));
-
             if(this.getDestinatarios().size()>0){
                 //Se cargan los destinatarios
                 for( LinkedHashMap<String,String> i : this.getDestinatarios() ){
@@ -194,8 +199,7 @@ public class SendEmailWithFileHelper {
             }
 
             
-            // Se rellena el subject
-            message.setSubject(this.getAsunto());
+
 
             // Se mete el texto y la foto adjunta.
             message.setContent(multiParte);
@@ -210,7 +214,7 @@ public class SendEmailWithFileHelper {
             
         }catch (Exception ex) {
             ex.printStackTrace();
-            retorno="No fue posible eviar el correo. " + ex.getMessage() ;
+            retorno="No fue posible eviar el correo. ["+ ex.getMessage() +"]" ;
         }
         
         return retorno;
