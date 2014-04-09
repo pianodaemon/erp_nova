@@ -1668,8 +1668,9 @@ $(function() {
 	
 	//buscador de presentaciones disponibles para un producto
 	$buscador_presentaciones_producto = function($id_cliente,nocliente, sku_producto,$nombre_producto,$grid_productos,$select_moneda,$tipo_cambio, arrayMonedas){
-		//verifica si el campo rfc proveedor no esta vacio
+		//Verifica si el campo rfc proveedor no esta vacio
 		var cliente_listaprecio=  $('#forma-pocpedidos-window').find('input[name=num_lista_precio]').val();
+		
 		if(nocliente != ''){
 			//verifica si el campo sku no esta vacio para realizar busqueda
 			if(sku_producto != ''){
@@ -1747,9 +1748,8 @@ $(function() {
 								$(this).find('td').css({'background-color':'#FFFFFF'});
 							});
 							
-							//seleccionar un producto del grid de resultados
+							//Seleccionar un producto del grid de resultados
 							$tabla_resultados.find('tr').click(function(){
-								
 								//llamada a la funcion que busca y agrega producto al grid, se le pasa como parametro el lote y el almacen
 								var id_prod = $(this).find('span.id_prod').html();
 								var sku = $(this).find('span.sku').html();
@@ -1789,6 +1789,10 @@ $(function() {
 								var remove = function() {$(this).remove();};
 								$('#forma-buscapresentacion-overlay').fadeOut(remove);
 							});
+							
+							//$tabla_resultados.find('tr').focus();
+							//$(this).aplicarEventoKeypressEjecutaTrigger($('#forma-buscaproducto-window'), $tabla_resultados.find('tr'));
+							
 							
 							$cancelar_plugin_busca_lotes_producto.click(function(event){
 								//event.preventDefault();
@@ -4638,7 +4642,7 @@ $(function() {
 									}
 								}
 							}
-						});						
+						});
 					}//Termina datos para transportista
 					
 					
