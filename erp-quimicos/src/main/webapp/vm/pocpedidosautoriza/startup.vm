@@ -428,6 +428,18 @@
                                                     <td  width="260" align="right" valign="top" style="font-weight: bold;">
                                                         <table border ="0" width="260" class="gral">
                                                             <!--<tr><td colspan="3" height="2"></td></tr>-->
+                                                            <tr id="tr_importe_subtotal">
+                                                                <td width="80"></td>
+                                                                <td width="60">Importe</td>
+                                                                <td width="120"><input type="text" name="importe_subtotal" value="0" style="width:120px; text-align:right;" readOnly="true"></td>
+                                                            </tr>
+                                                            
+                                                            <tr id="tr_descto">
+                                                                <td width="80"></td>
+                                                                <td width="60">Descuento</td>
+                                                                <td width="120"><input type="text" name="monto_descuento" value="0" style="width:120px; text-align:right;" readOnly="true"></td>
+                                                            </tr>
+                                                            
                                                             <tr>
                                                                 <td width="80"></td>
                                                                 <td width="60">Subtotal</td>

@@ -202,6 +202,7 @@
 																<input type="hidden" name="id_cliente" value="0">
 																<input type="hidden" name="id_df" value="1">
 																<input type="text" name="nocliente" style="width:120px;">
+																<input type="hidden" name="pdescto" value="">
 															</td>
 															<td width="15"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_rfccliente"></div></td>
 															<td width="90"><a href="busca_cliente">(Buscar&nbsp;cliente)</a></td>
@@ -455,6 +456,19 @@
 												</td>
 												<td  width="340" align="right" valign="top" style="font-weight: bold;">
 													<table border ="0" width="300">
+														
+														<tr id="tr_importe_subtotal">
+															<td width="80"></td>
+															<td width="60">Importe</td>
+															<td width="120"><input type="text" name="importe_subtotal" value="0" style="width:120px; text-align:right;" readOnly="true"></td>
+														</tr>
+														
+														<tr id="tr_descto">
+															<td width="80"></td>
+															<td width="60">Descuento</td>
+															<td width="120"><input type="text" name="monto_descuento" value="0" style="width:120px; text-align:right;" readOnly="true"></td>
+														</tr>
+														
 														<tr>
 															<td width="80"></td>
 															<td width="60">Subtotal</td>
