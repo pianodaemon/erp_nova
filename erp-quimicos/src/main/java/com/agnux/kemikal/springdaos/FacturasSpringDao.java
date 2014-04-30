@@ -4730,7 +4730,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     @Override
     public ArrayList<HashMap<String, String>> getEmailCopiaOculta(Integer id_emp, Integer id_suc) {
         String sql_to_query = "SELECT gral_emails.email FROM fac_par "
-                + "JOIN gral_emails ON (gral_emails.id=fac_par.gral_emails_id_envio AND gral_emails.gral_emp_id=fac_par.gral_emp_id AND gral_emails.gral_suc_id=fac_par.gral_suc_id AND gral_emails.borrado_logico=false)"
+                + "JOIN gral_emails ON (gral_emails.id=fac_par.gral_emails_id_cco AND gral_emails.gral_emp_id=fac_par.gral_emp_id AND gral_emails.gral_suc_id=fac_par.gral_suc_id AND gral_emails.borrado_logico=false)"
                 + "WHERE fac_par.gral_emp_id=? AND fac_par.gral_suc_id=? AND fac_par.borrado_logico=false LIMIT 1;";
         
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(

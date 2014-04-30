@@ -331,8 +331,9 @@ public class CotizacionesController {
         Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
         
         if(tipo.equals("1")){
+           String permite_descto="false";
             //buscar clientes
-            datos = this.getPocDao().getBuscadorClientes(cadena,filtro,id_empresa,id_sucursal);
+            datos = this.getPocDao().getBuscadorClientes(cadena,filtro,id_empresa,id_sucursal, permite_descto);
         }else{
             //buscar Prospectos
             datos = this.getPocDao().getBuscadorProspectos(cadena,filtro,id_empresa,id_sucursal);
@@ -367,8 +368,9 @@ public class CotizacionesController {
         Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
         
         if(tipo.equals("1")){
+            String permite_descto="false";
             //obtener datos de cliente
-            datos = this.getPocDao().getDatosClienteByNoCliente(no_control,id_empresa,id_sucursal);
+            datos = this.getPocDao().getDatosClienteByNoCliente(no_control,id_empresa,id_sucursal, permite_descto);
         }else{
             //obtener datos de prospecto
             datos = this.getPocDao().getDatosProspectoByNoControl(no_control,id_empresa,id_sucursal);

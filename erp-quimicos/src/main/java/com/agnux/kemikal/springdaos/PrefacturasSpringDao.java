@@ -227,7 +227,9 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
             + "erp_prefacturas.no_cuenta, "
             + "erp_prefacturas.tasa_retencion_immex, "
             + "erp_prefacturas.tipo_documento,"
-            + "erp_prefacturas.inv_alm_id "
+            + "erp_prefacturas.inv_alm_id, "
+            + "(CASE WHEN erp_prefacturas.monto_descto>0 THEN true ELSE false END) AS pdescto, "
+            + "erp_prefacturas.monto_descto "
         + "FROM erp_prefacturas  "
         + "LEFT JOIN erp_proceso ON erp_proceso.id = erp_prefacturas.proceso_id  "
         + "LEFT JOIN gral_mon ON gral_mon.id = erp_prefacturas.moneda_id  "
@@ -275,6 +277,8 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                     row.put("tasa_retencion_immex",StringHelper.roundDouble(rs.getDouble("tasa_retencion_immex"),2));
                     row.put("tipo_documento",String.valueOf(rs.getInt("tipo_documento")));
                     row.put("id_almacen",String.valueOf(rs.getInt("inv_alm_id")));
+                    row.put("pdescto",String.valueOf(rs.getBoolean("pdescto")));
+                    row.put("monto_descto",StringHelper.roundDouble(rs.getDouble("monto_descto"),2));
                     
                     return row;
                 }
@@ -309,7 +313,8 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                 + "erp_prefacturas_detalles.valor_imp, "
                 + "erp_prefacturas_detalles.gral_ieps_id,"
                 + "(erp_prefacturas_detalles.valor_ieps * 100) AS valor_ieps, "
-                + "gral_mon.descripcion as moneda "
+                + "gral_mon.descripcion as moneda, "
+                + "erp_prefacturas_detalles.descto "
         + "FROM erp_prefacturas "
         + "JOIN erp_prefacturas_detalles on erp_prefacturas_detalles.prefacturas_id=erp_prefacturas.id "
         + "LEFT JOIN gral_mon on gral_mon.id = erp_prefacturas.moneda_id "
@@ -346,6 +351,7 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                     row.put("costo_prom","0" );
                     row.put("ieps_id",String.valueOf(rs.getInt("gral_ieps_id")));
                     row.put("valor_ieps",StringHelper.roundDouble(rs.getString("valor_ieps"),2));
+                    row.put("descto",StringHelper.roundDouble(rs.getDouble("descto"),2) );
                     
                     return row;
                 }

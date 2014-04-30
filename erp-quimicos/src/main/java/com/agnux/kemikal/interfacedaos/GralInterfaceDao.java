@@ -241,4 +241,12 @@ public interface GralInterfaceDao {
     //Para el Cátalogo de Periodicidad de Pago
     public ArrayList<HashMap<String, Object>> getPeriodicidadPago_Datos(Integer id);
     public ArrayList<HashMap<String, Object>> getPeriodicidadPago_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
+    
+    //Para el Cátalogo de Configuracion de Periodos de Pago
+    public ArrayList<HashMap<String, Object>> getConfigPeriodosPago_Datos(Integer id);
+    public ArrayList<HashMap<String, Object>> getConfigPeriodosPago_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
+    public ArrayList<HashMap<String,Object>> getPeriodicidad_Tipos(Integer id_empresa);
+    public ArrayList<HashMap<String, Object>> getConfigPeriodosPago_Grid(Integer id);
+    //Calcular años a mostrar
+    public ArrayList<HashMap<String, Object>> getConfigPeriodosPago_Anios();
 }

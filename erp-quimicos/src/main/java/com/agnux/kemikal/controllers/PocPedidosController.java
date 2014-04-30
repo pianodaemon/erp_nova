@@ -340,7 +340,8 @@ public class PocPedidosController {
         
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
-       
+        HashMap<String, String> parametros = new HashMap<String, String>();
+        
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
         
@@ -349,8 +350,10 @@ public class PocPedidosController {
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
         
+        parametros = this.getPocDao().getPocPedido_Parametros(id_empresa, id_sucursal);
+        String permite_descto = parametros.get("permitir_descto").toLowerCase();
         
-        jsonretorno.put("clientes", this.getPocDao().getBuscadorClientes(cadena,filtro,id_empresa, id_sucursal));
+        jsonretorno.put("clientes", this.getPocDao().getBuscadorClientes(cadena,filtro,id_empresa, id_sucursal, permite_descto));
         
         return jsonretorno;
     }
@@ -366,9 +369,11 @@ public class PocPedidosController {
         ) {
         
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        ArrayList<HashMap<String, String>> datosCliente = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
-       
-        //decodificar id de usuario
+        HashMap<String, String> parametros = new HashMap<String, String>();
+        
+        //Decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
         
         userDat = this.getHomeDao().getUserById(id_usuario);
@@ -376,8 +381,12 @@ public class PocPedidosController {
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
         
+        parametros = this.getPocDao().getPocPedido_Parametros(id_empresa, id_sucursal);
+        String permite_descto = parametros.get("permitir_descto").toLowerCase();
         
-        jsonretorno.put("Cliente", this.getPocDao().getDatosClienteByNoCliente(no_control, id_empresa, id_sucursal));
+        datosCliente = this.getPocDao().getDatosClienteByNoCliente(no_control, id_empresa, id_sucursal, permite_descto);
+        
+        jsonretorno.put("Cliente", datosCliente);
         
         return jsonretorno;
     }
@@ -416,12 +425,12 @@ public class PocPedidosController {
     }
     
     
-    //obtiene los tipos de productos para el buscador de productos
+    //Obtiene los tipos de productos para el buscador de productos
     @RequestMapping(method = RequestMethod.POST, value="/getProductoTipos.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getProductoTiposJson(
             @RequestParam(value="iu", required=true) String id_user_cod,
             Model model
-            ) {
+        ) {
         
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         
@@ -468,7 +477,7 @@ public class PocPedidosController {
             @RequestParam(value="id_client", required=true) String idClient,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
-            ) {
+        ) {
         
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
@@ -781,6 +790,7 @@ public class PocPedidosController {
             @RequestParam(value="select_almacen", required=false) String select_almacen,
             @RequestParam(value="id_df", required=true) String id_df,
             @RequestParam(value="check_enviar_obser", required=false) String check_enviar_obser,
+            @RequestParam(value="pdescto", required=true) String permitir_descto,
             @RequestParam(value="eliminado", required=false) String[] eliminado,
             @RequestParam(value="iddetalle", required=false) String[] iddetalle,
             @RequestParam(value="idproducto", required=false) String[] idproducto,
@@ -788,6 +798,7 @@ public class PocPedidosController {
             @RequestParam(value="id_presentacion", required=false) String[] id_presentacion,
             @RequestParam(value="id_imp_prod", required=false) String[] id_impuesto,
             @RequestParam(value="valor_imp", required=false) String[] valor_imp,
+            @RequestParam(value="vdescto", required=false) String[] vdescto,
             
             @RequestParam(value="idIeps", required=false) String[] idIeps,
             @RequestParam(value="tasaIeps", required=false) String[] tasaIeps,
@@ -836,7 +847,7 @@ public class PocPedidosController {
             
             for(int i=0; i<eliminado.length; i++) { 
                 select_umedida[i] = StringHelper.verificarSelect(select_umedida[i]);
-                arreglo[i]= "'"+eliminado[i] +"___" + iddetalle[i] +"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + id_impuesto[i] +"___" + cantidad[i] +"___" + costo[i] + "___"+valor_imp[i] + "___"+noTr[i] + "___"+seleccionado[i]+ "___" + select_umedida[i] + "___" + idIeps[i] + "___" + tasaIeps[i] +"'";
+                arreglo[i]= "'"+eliminado[i] +"___" + iddetalle[i] +"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + id_impuesto[i] +"___" + cantidad[i] +"___" + costo[i] + "___"+valor_imp[i] + "___"+noTr[i] + "___"+seleccionado[i]+ "___" + select_umedida[i] + "___" + idIeps[i] + "___" + tasaIeps[i]+ "___"+ vdescto[i] +"'";
                 //System.out.println(arreglo[i]);
             }
             
@@ -918,8 +929,9 @@ public class PocPedidosController {
                     rem_dir_alterna+"___"+
                     dest_id+"___"+
                     dest_dir_alterna+"___"+
-                    observaciones_transportista;
-
+                    observaciones_transportista+"___"+
+                    permitir_descto;
+            
             //System.out.println("data_string: "+data_string);
             
             succes = this.getPocDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);

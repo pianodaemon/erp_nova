@@ -431,7 +431,7 @@ public class EmpleadosController {
             }else{
                 extra_data_array = "'sin_datos'";
             }
-            
+            System.out.println("extra_data_array: "+extra_data_array);
             
             //System.out.println("select_incoterms: "+select_incoterms);
             int primerPercep = 0;

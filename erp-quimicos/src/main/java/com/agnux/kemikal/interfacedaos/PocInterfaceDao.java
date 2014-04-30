@@ -16,8 +16,8 @@ public interface PocInterfaceDao{
     public String selectFunctionForThisApp(String campos_data, String extra_data_array);
     public int countAll(String data_string);
 
-    public ArrayList<HashMap<String, String>> getBuscadorClientes(String cadena, Integer filtro, Integer id_empresa, Integer id_sucursal);
-    public ArrayList<HashMap<String, String>> getDatosClienteByNoCliente(String no_control,  Integer id_empresa, Integer id_sucursal);
+    public ArrayList<HashMap<String, String>> getBuscadorClientes(String cadena, Integer filtro, Integer id_empresa, Integer id_sucursal, String permite_descto);
+    public ArrayList<HashMap<String, String>> getDatosClienteByNoCliente(String no_control,  Integer id_empresa, Integer id_sucursal, String permite_descto);
     public int getTipoClient(Integer idClient);//obtiene el tipo de cliente
     public ArrayList<HashMap<String, String>> getBuscadorProspectos(String cadena, Integer filtro, Integer id_empresa, Integer id_sucursal);
     public ArrayList<HashMap<String, String>> getDatosProspectoByNoControl(String no_control, Integer id_empresa, Integer id_sucursal);

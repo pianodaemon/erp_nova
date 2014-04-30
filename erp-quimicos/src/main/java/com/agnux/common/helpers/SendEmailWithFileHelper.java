@@ -122,17 +122,27 @@ public class SendEmailWithFileHelper {
             // Nombre del host de correo, es smtp.gmail.com
             props.setProperty("mail.smtp.host", this.getIpServidor());
             
-            // TLS si esta disponible
-            props.setProperty("mail.smtp.starttls.enable", "true");
-            
-            // Puerto de gmail para envio de correos
+            // Puerto para envio de correos
             props.setProperty("mail.smtp.port",this.getPuerto());
+            
+            // Si requiere o no usuario y password para conectarse.
+            props.setProperty("mail.smtp.auth", "true");
+            
+            // TLS si esta disponible
+            //props.setProperty("mail.smtp.starttls.enable", "true");
+            
+            //props.setProperty("mail.smtp.ssl.trust", this.getIpServidor());
+            
+            
+            props.put("mail.smtp.ssl.enable", false);
+            props.put("mail.smtp.starttls.enable", false);
+            
+
             
             // Nombre del usuario
             props.setProperty("mail.smtp.user", this.getNombreUsuario());
 
-            // Si requiere o no usuario y password para conectarse.
-            props.setProperty("mail.smtp.auth", "true");
+
 
             Session session = Session.getDefaultInstance(props);
             

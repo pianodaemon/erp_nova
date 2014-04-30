@@ -144,6 +144,7 @@ public class PocSpringDao implements PocInterfaceDao{
                 + "ELSE "
                     + "cxc_clie.calle||' '||cxc_clie.numero||', '||cxc_clie.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo||' C.P. '||cxc_clie.cp "
                 + "END ) AS direccion,"
+                + "poc_pedidos.monto_descto,"
                 + "poc_pedidos.subtotal,"
                 + "poc_pedidos.monto_ieps,"
                 + "poc_pedidos.impuesto,"
@@ -166,7 +167,8 @@ public class PocSpringDao implements PocInterfaceDao{
                 + "cxc_clie.cta_pago_usd,"
                 + "cxc_clie.lista_precio,"
                 + "poc_pedidos.enviar_obser_fac,"
-                + "poc_pedidos.flete "
+                + "poc_pedidos.flete,"
+                + "(CASE WHEN poc_pedidos.monto_descto>0 THEN true ELSE false END) AS pdescto "
         + "FROM poc_pedidos "
         + "LEFT JOIN erp_proceso ON erp_proceso.id = poc_pedidos.proceso_id "
         + "LEFT JOIN gral_mon ON gral_mon.id = poc_pedidos.moneda_id "
@@ -195,6 +197,7 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("razon_social",rs.getString("razon_social"));
                     row.put("df_id",String.valueOf(rs.getInt("cxc_clie_df_id")));
                     row.put("direccion",rs.getString("direccion"));
+                    row.put("monto_descto",StringHelper.roundDouble(rs.getDouble("monto_descto"),2));
                     row.put("subtotal",StringHelper.roundDouble(rs.getDouble("subtotal"),2));
                     row.put("monto_ieps",StringHelper.roundDouble(rs.getDouble("monto_ieps"),2));
                     row.put("impuesto",StringHelper.roundDouble(rs.getDouble("impuesto"),2));
@@ -217,6 +220,8 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("lista_precio",rs.getString("lista_precio"));
                     row.put("enviar_obser",String.valueOf(rs.getBoolean("enviar_obser_fac")));
                     row.put("flete",String.valueOf(rs.getBoolean("flete")));
+                    row.put("pdescto",String.valueOf(rs.getBoolean("pdescto")));
+                    
                     return row;
                 }
             }
@@ -249,7 +254,8 @@ public class PocSpringDao implements PocInterfaceDao{
             + "(poc_pedidos_detalle.valor_ieps * 100) AS valor_ieps, "
             + "(CASE WHEN poc_pedidos_detalle.backorder=TRUE THEN 'checked' ELSE '' END) AS valor_check, "
             + "(CASE WHEN poc_pedidos_detalle.backorder=TRUE THEN 1 ELSE 0 END) AS valor_selecionado, "
-            + "(poc_pedidos_detalle.cantidad - poc_pedidos_detalle.reservado) AS cant_produccion   "
+            + "(poc_pedidos_detalle.cantidad - poc_pedidos_detalle.reservado) AS cant_produccion, "
+            + "poc_pedidos_detalle.descto "
         + "FROM poc_pedidos_detalle "
         + "LEFT JOIN inv_prod on inv_prod.id = poc_pedidos_detalle.inv_prod_id "
         + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = poc_pedidos_detalle.inv_prod_unidad_id "
@@ -289,6 +295,8 @@ public class PocSpringDao implements PocInterfaceDao{
                     //Valores para el PDF
                     row.put("etiqueta_ieps",rs.getString("etiqueta_ieps"));
                     row.put("importe_ieps",StringHelper.roundDouble(rs.getDouble("importe_ieps"),2) );
+                    
+                    row.put("descto",StringHelper.roundDouble(rs.getDouble("descto"),2) );
                     return row;
                 }
             }
@@ -606,6 +614,7 @@ public class PocSpringDao implements PocInterfaceDao{
         mapDatos.put("permitir_articulos", String.valueOf(map.get("permitir_articulos")));
         mapDatos.put("permitir_kits", String.valueOf(map.get("permitir_kits")));
         mapDatos.put("cambiar_unidad_medida", String.valueOf(map.get("cambiar_unidad_medida")));
+        mapDatos.put("permitir_descto", String.valueOf(map.get("permitir_descto")));
         return mapDatos;
     }
 
@@ -839,7 +848,7 @@ public class PocSpringDao implements PocInterfaceDao{
 
     //buscador de clientes
     @Override
-    public ArrayList<HashMap<String, String>> getBuscadorClientes(String cadena, Integer filtro, Integer id_empresa, Integer id_sucursal) {
+    public ArrayList<HashMap<String, String>> getBuscadorClientes(String cadena, Integer filtro, Integer id_empresa, Integer id_sucursal, String permite_descto) {
         String where="";
 	if(filtro == 1){
             where=" AND cxc_clie.numero_control ilike '%"+cadena.toUpperCase()+"%'";
@@ -858,52 +867,60 @@ public class PocSpringDao implements PocInterfaceDao{
             where=" AND cxc_clie.alias ilike '%"+cadena.toUpperCase()+"%'";
 	}
 
-	String sql_query = "SELECT "
-                                    +"sbt.id, "
-                                    +"sbt.numero_control, "
-                                    +"sbt.rfc, "
-                                    +"sbt.razon_social, "
-                                    +"sbt.direccion, "
-                                    +"sbt.moneda_id, "
-                                    +"gral_mon.descripcion as moneda, "
-                                    +"sbt.cxc_agen_id, "
-                                    +"sbt.terminos_id, "
-                                    +"sbt.empresa_immex, "
-                                    +"sbt.tasa_ret_immex, "
-                                    +"sbt.cta_pago_mn, "
-                                    +"sbt.cta_pago_usd, "
-                                    +"sbt.lista_precio, "
-                                    +"sbt.metodo_pago_id, "
-                                    +"tiene_dir_fiscal,"
-                                    +"sbt.contacto,"
-                                    +"sbt.credito_suspendido "
-                            +"FROM(SELECT cxc_clie.id, "
-                                            +"cxc_clie.numero_control, "
-                                            +"cxc_clie.rfc, "
-                                            +"cxc_clie.razon_social,"
-                                            +"cxc_clie.calle||' '||cxc_clie.numero||', '||cxc_clie.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo||' C.P. '||cxc_clie.cp as direccion, "
-                                            +"cxc_clie.moneda as moneda_id, "
-                                            +"cxc_clie.cxc_agen_id, "
-                                            +"cxc_clie.contacto, "
-                                            +"cxc_clie.dias_credito_id AS terminos_id, "
-                                            +"cxc_clie.empresa_immex, "
-                                            +"(CASE WHEN cxc_clie.tasa_ret_immex IS NULL THEN 0 ELSE cxc_clie.tasa_ret_immex/100 END) AS tasa_ret_immex, "
-                                            + "cxc_clie.cta_pago_mn,"
-                                            + "cxc_clie.cta_pago_usd,  "
-                                            + "cxc_clie.lista_precio, "
-                                            + "cxc_clie.fac_metodos_pago_id AS metodo_pago_id, "
-                                            + "(CASE WHEN tbldf.cxc_clie_id IS NULL THEN false ELSE true END ) AS tiene_dir_fiscal,"
-                                            + "cxc_clie.credito_suspendido "
-                                    +"FROM cxc_clie "
-                                    + "LEFT JOIN (SELECT DISTINCT cxc_clie_id FROM cxc_clie_df WHERE borrado_logico=false) AS tbldf ON tbldf.cxc_clie_id=cxc_clie.id "
-                                    + "JOIN gral_pais ON gral_pais.id = cxc_clie.pais_id "
-                                    + "JOIN gral_edo ON gral_edo.id = cxc_clie.estado_id "
-                                    + "JOIN gral_mun ON gral_mun.id = cxc_clie.municipio_id "
-                                    //+" WHERE empresa_id ="+id_empresa+"  AND sucursal_id="+id_sucursal
-                                    +" WHERE empresa_id ="+id_empresa+" "
-                                    + " AND cxc_clie.borrado_logico=false  "+where+" "
-                            +") AS sbt "
-                            +"LEFT JOIN gral_mon on gral_mon.id = sbt.moneda_id ";
+	String sql_query = ""
+                + "SELECT "
+                    +"sbt.id, "
+                    +"sbt.numero_control, "
+                    +"sbt.rfc, "
+                    +"sbt.razon_social, "
+                    +"sbt.direccion, "
+                    +"sbt.moneda_id, "
+                    +"gral_mon.descripcion as moneda, "
+                    +"sbt.cxc_agen_id, "
+                    +"sbt.terminos_id, "
+                    +"sbt.empresa_immex, "
+                    +"sbt.tasa_ret_immex, "
+                    +"sbt.cta_pago_mn, "
+                    +"sbt.cta_pago_usd, "
+                    +"sbt.lista_precio, "
+                    +"sbt.metodo_pago_id, "
+                    +"tiene_dir_fiscal,"
+                    +"sbt.contacto,"
+                    +"sbt.credito_suspendido, "
+                    +"sbt.pdescto, "
+                    +"sbt.vdescto "
+                +"FROM("
+                    + "SELECT cxc_clie.id, "
+                        +"cxc_clie.numero_control, "
+                        +"cxc_clie.rfc, "
+                        +"cxc_clie.razon_social,"
+                        +"cxc_clie.calle||' '||cxc_clie.numero||', '||cxc_clie.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo||' C.P. '||cxc_clie.cp as direccion, "
+                        +"cxc_clie.moneda as moneda_id, "
+                        +"cxc_clie.cxc_agen_id, "
+                        +"cxc_clie.contacto, "
+                        +"cxc_clie.dias_credito_id AS terminos_id, "
+                        +"cxc_clie.empresa_immex, "
+                        +"(CASE WHEN cxc_clie.tasa_ret_immex IS NULL THEN 0 ELSE cxc_clie.tasa_ret_immex/100 END) AS tasa_ret_immex, "
+                        + "cxc_clie.cta_pago_mn,"
+                        + "cxc_clie.cta_pago_usd,  "
+                        + "cxc_clie.lista_precio, "
+                        + "cxc_clie.fac_metodos_pago_id AS metodo_pago_id, "
+                        + "(CASE WHEN tbldf.cxc_clie_id IS NULL THEN false ELSE true END ) AS tiene_dir_fiscal,"
+                        + "cxc_clie.credito_suspendido, "
+                        + ""+permite_descto.toLowerCase()+"::character varying AS pdescto, "
+                        + "(CASE WHEN lower("+permite_descto+"::character varying)='true' THEN (CASE WHEN cxc_clie_descto.id IS NULL THEN 0 ELSE cxc_clie_descto.valor END) ELSE 0 END) AS vdescto "
+                    +"FROM cxc_clie "
+                    + "LEFT JOIN (SELECT DISTINCT cxc_clie_id FROM cxc_clie_df WHERE borrado_logico=false) AS tbldf ON tbldf.cxc_clie_id=cxc_clie.id "
+                    + "JOIN gral_pais ON gral_pais.id = cxc_clie.pais_id "
+                    + "JOIN gral_edo ON gral_edo.id = cxc_clie.estado_id "
+                    + "JOIN gral_mun ON gral_mun.id = cxc_clie.municipio_id "
+                    + "LEFT JOIN cxc_clie_descto ON cxc_clie_descto.cxc_clie_id=cxc_clie.id "
+                    
+                    //+" WHERE empresa_id ="+id_empresa+"  AND sucursal_id="+id_sucursal
+                    +" WHERE empresa_id ="+id_empresa+" "
+                    + " AND cxc_clie.borrado_logico=false  "+where+" "
+                +") AS sbt "
+                +"LEFT JOIN gral_mon on gral_mon.id = sbt.moneda_id ";
 
         //System.out.println("BuscadorClientes: "+sql_query);
 
@@ -931,6 +948,8 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("tiene_dir_fiscal",String.valueOf(rs.getBoolean("tiene_dir_fiscal")));
                     row.put("contacto",rs.getString("contacto"));
                     row.put("credito_suspendido",String.valueOf(rs.getBoolean("credito_suspendido")));
+                    row.put("pdescto",rs.getString("pdescto"));
+                    row.put("vdescto",StringHelper.roundDouble(String.valueOf(rs.getDouble("vdescto")),2));
                     
                     return row;
                 }
@@ -943,54 +962,62 @@ public class PocSpringDao implements PocInterfaceDao{
 
     //buscador de clientes
     @Override
-    public ArrayList<HashMap<String, String>> getDatosClienteByNoCliente(String no_control,  Integer id_empresa, Integer id_sucursal) {
-	String sql_query = "SELECT "
-                                    +"sbt.id, "
-                                    +"sbt.numero_control, "
-                                    +"sbt.rfc, "
-                                    +"sbt.razon_social, "
-                                    +"sbt.direccion, "
-                                    +"sbt.moneda_id, "
-                                    +"gral_mon.descripcion as moneda, "
-                                    +"sbt.cxc_agen_id, "
-                                    +"sbt.terminos_id, "
-                                    +"sbt.empresa_immex, "
-                                    +"sbt.tasa_ret_immex, "
-                                    +"sbt.cta_pago_mn, "
-                                    +"sbt.cta_pago_usd, "
-                                    +"sbt.lista_precio, "
-                                    +"sbt.metodo_pago_id, "
-                                    +"tiene_dir_fiscal,"
-                                    +"sbt.contacto,"
-                                    +"sbt.credito_suspendido "
-                            +"FROM(SELECT cxc_clie.id, "
-                                            +"cxc_clie.numero_control, "
-                                            +"cxc_clie.rfc, "
-                                            +"cxc_clie.razon_social,"
-                                            +"cxc_clie.calle||' '||cxc_clie.numero||', '||cxc_clie.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo||' C.P. '||cxc_clie.cp as direccion, "
-                                            +"cxc_clie.moneda as moneda_id, "
-                                            +"cxc_clie.cxc_agen_id, "
-                                            +"cxc_clie.contacto, "
-                                            +"cxc_clie.dias_credito_id AS terminos_id, "
-                                            +"cxc_clie.empresa_immex, "
-                                            +"(CASE WHEN cxc_clie.tasa_ret_immex IS NULL THEN 0 ELSE cxc_clie.tasa_ret_immex/100 END) AS tasa_ret_immex, "
-                                            + "cxc_clie.cta_pago_mn,"
-                                            + "cxc_clie.cta_pago_usd,  "
-                                            + "cxc_clie.lista_precio, "
-                                            + "cxc_clie.fac_metodos_pago_id AS metodo_pago_id, "
-                                            + "(CASE WHEN tbldf.cxc_clie_id IS NULL THEN false ELSE true END ) AS tiene_dir_fiscal,"
-                                            + "cxc_clie.credito_suspendido "
-                                    +"FROM cxc_clie "
-                                    + "LEFT JOIN (SELECT DISTINCT cxc_clie_id FROM cxc_clie_df WHERE borrado_logico=false) AS tbldf ON tbldf.cxc_clie_id=cxc_clie.id "
-                                    + "JOIN gral_pais ON gral_pais.id = cxc_clie.pais_id "
-                                    + "JOIN gral_edo ON gral_edo.id = cxc_clie.estado_id "
-                                    + "JOIN gral_mun ON gral_mun.id = cxc_clie.municipio_id "
-                                    //+" WHERE empresa_id ="+id_empresa+"  AND sucursal_id="+id_sucursal
-                                    +" WHERE empresa_id ="+id_empresa+" "
-                                    + " AND cxc_clie.borrado_logico=false "
-                                    + " AND cxc_clie.numero_control='"+no_control.toUpperCase().trim()+"'"
-                            +") AS sbt "
-                            +"LEFT JOIN gral_mon on gral_mon.id = sbt.moneda_id LIMIT 1;";
+    public ArrayList<HashMap<String, String>> getDatosClienteByNoCliente(String no_control,  Integer id_empresa, Integer id_sucursal, String permite_descto) {
+	String sql_query = ""
+                + "SELECT "
+                    +"sbt.id, "
+                    +"sbt.numero_control, "
+                    +"sbt.rfc, "
+                    +"sbt.razon_social, "
+                    +"sbt.direccion, "
+                    +"sbt.moneda_id, "
+                    +"gral_mon.descripcion as moneda, "
+                    +"sbt.cxc_agen_id, "
+                    +"sbt.terminos_id, "
+                    +"sbt.empresa_immex, "
+                    +"sbt.tasa_ret_immex, "
+                    +"sbt.cta_pago_mn, "
+                    +"sbt.cta_pago_usd, "
+                    +"sbt.lista_precio, "
+                    +"sbt.metodo_pago_id, "
+                    +"tiene_dir_fiscal,"
+                    +"sbt.contacto,"
+                    +"sbt.credito_suspendido, "
+                    +"sbt.pdescto, "
+                    +"sbt.vdescto "
+                +"FROM("
+                    + "SELECT cxc_clie.id, "
+                        +"cxc_clie.numero_control, "
+                        +"cxc_clie.rfc, "
+                        +"cxc_clie.razon_social,"
+                        +"cxc_clie.calle||' '||cxc_clie.numero||', '||cxc_clie.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo||' C.P. '||cxc_clie.cp as direccion, "
+                        +"cxc_clie.moneda as moneda_id, "
+                        +"cxc_clie.cxc_agen_id, "
+                        +"cxc_clie.contacto, "
+                        +"cxc_clie.dias_credito_id AS terminos_id, "
+                        +"cxc_clie.empresa_immex, "
+                        +"(CASE WHEN cxc_clie.tasa_ret_immex IS NULL THEN 0 ELSE cxc_clie.tasa_ret_immex/100 END) AS tasa_ret_immex, "
+                        + "cxc_clie.cta_pago_mn,"
+                        + "cxc_clie.cta_pago_usd,  "
+                        + "cxc_clie.lista_precio, "
+                        + "cxc_clie.fac_metodos_pago_id AS metodo_pago_id, "
+                        + "(CASE WHEN tbldf.cxc_clie_id IS NULL THEN false ELSE true END ) AS tiene_dir_fiscal,"
+                        + "cxc_clie.credito_suspendido,"
+                        + ""+permite_descto.toLowerCase()+"::character varying AS pdescto, "
+                        + "(CASE WHEN lower("+permite_descto+"::character varying)='true' THEN (CASE WHEN cxc_clie_descto.id IS NULL THEN 0 ELSE cxc_clie_descto.valor END) ELSE 0 END) AS vdescto "
+                    +"FROM cxc_clie "
+                    + "LEFT JOIN (SELECT DISTINCT cxc_clie_id FROM cxc_clie_df WHERE borrado_logico=false) AS tbldf ON tbldf.cxc_clie_id=cxc_clie.id "
+                    + "JOIN gral_pais ON gral_pais.id = cxc_clie.pais_id "
+                    + "JOIN gral_edo ON gral_edo.id = cxc_clie.estado_id "
+                    + "JOIN gral_mun ON gral_mun.id = cxc_clie.municipio_id "
+                    + "LEFT JOIN cxc_clie_descto ON cxc_clie_descto.cxc_clie_id=cxc_clie.id "
+
+                    //+" WHERE empresa_id ="+id_empresa+"  AND sucursal_id="+id_sucursal
+                    +" WHERE empresa_id ="+id_empresa+" "
+                    + " AND cxc_clie.borrado_logico=false "
+                    + " AND cxc_clie.numero_control='"+no_control.toUpperCase().trim()+"'"
+                +") AS sbt "
+                +"LEFT JOIN gral_mon on gral_mon.id = sbt.moneda_id LIMIT 1;";
 
         //System.out.println("getDatosClienteByNoCliente: "+sql_query);
 
@@ -1018,14 +1045,18 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("tiene_dir_fiscal",String.valueOf(rs.getBoolean("tiene_dir_fiscal")));
                     row.put("contacto",rs.getString("contacto"));
                     row.put("credito_suspendido",String.valueOf(rs.getBoolean("credito_suspendido")));
+                    row.put("pdescto",rs.getString("pdescto"));
+                    row.put("vdescto",StringHelper.roundDouble(String.valueOf(rs.getDouble("vdescto")),2));
                     return row;
                 }
             }
         );
         return hm_cli;
     }
-
-
+    
+ 
+    
+    
     //Buscador de Prospectos
     //Se utiliza en cotizaciones, cuando el proyecto incluye modulo de CRM.
     //Varios de los campos se les asigna un valor por default, solo es para que sea igual que el de clientes

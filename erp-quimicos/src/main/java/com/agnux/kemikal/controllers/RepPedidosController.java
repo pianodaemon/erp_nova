@@ -137,7 +137,9 @@ public class RepPedidosController {
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
         
-        jsonretorno.put("Clientes", this.getPedidDao().getBuscadorClientes(cadena,filtro,id_empresa, id_sucursal));
+        String permite_descto="false";
+                
+        jsonretorno.put("Clientes", this.getPedidDao().getBuscadorClientes(cadena,filtro,id_empresa, id_sucursal, permite_descto));
         
         return jsonretorno;
     }

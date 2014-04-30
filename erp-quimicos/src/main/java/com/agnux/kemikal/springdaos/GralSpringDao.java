@@ -9,6 +9,7 @@ import com.agnux.kemikal.interfacedaos.GralInterfaceDao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -1415,6 +1416,7 @@ public class GralSpringDao implements GralInterfaceDao{
                 + "gral_usr_rol.gral_rol_id "
                 + "from gral_rol "
                 + "left join gral_usr_rol on gral_usr_rol.gral_rol_id = gral_rol.id "
+                + "WHERE gral_rol.borrado_logico=FALSE "
                 + "order by titulo ";
 
         ArrayList<HashMap<String, Object>> roles = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
@@ -2809,5 +2811,150 @@ public class GralSpringDao implements GralInterfaceDao{
         return hm;
     }
     //Termina Metodos del catalogo de Periodicidad de Pago
+    
+    
+    
+ //Métodos para el Catalogo de Configuracion de Periodos de Pago
+    @Override
+    public ArrayList<HashMap<String, Object>> getConfigPeriodosPago_Datos(Integer id) {
+
+
+        String sql_to_query = "SELECT "
+                 +"nom_periodos_conf.id, "
+                 +"nom_periodos_conf.ano as anio, "
+                 +"nom_periodos_conf.nom_periodicidad_pago_id as tipo_periodo, "
+                 +"nom_periodos_conf.prefijo as prefijo "
+            +"FROM nom_periodos_conf "
+            +"LEFT JOIN nom_periodicidad_pago on nom_periodicidad_pago.id=nom_periodos_conf.nom_periodicidad_pago_id  "
+            +"WHERE nom_periodos_conf.id="+id;
+            ArrayList<HashMap<String, Object>> dato_periodicidadpago = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+          
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("anio",rs.getString("anio"));
+                    row.put("tipo_periodo",rs.getString("tipo_periodo"));
+                    row.put("prefijo",rs.getString("prefijo"));
+       
+                    return row;
+                }
+            }
+        );
+        return dato_periodicidadpago;
+    }
+
+    @Override
+    public ArrayList<HashMap<String, Object>> getConfigPeriodosPago_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
+        String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
+        
+	String sql_to_query = ""
+        + "SELECT "
+            +"nom_periodos_conf.id, "
+            +"nom_periodos_conf.ano as anio, "
+            +"nom_periodicidad_pago.titulo as titulo, "
+            +"nom_periodos_conf.prefijo as prefijo "
+        +"FROM nom_periodos_conf "
+        +"JOIN nom_periodicidad_pago on nom_periodicidad_pago.id=nom_periodos_conf.nom_periodicidad_pago_id "
+        +"JOIN ("+sql_busqueda+") AS sbt ON sbt.id = nom_periodos_conf.id "
+        +"WHERE nom_periodos_conf.borrado_logico=false "
+        +"order by "+orderBy+" "+asc+" limit ? OFFSET ? ";
+        
+        System.out.println("Busqueda GetPage: "+sql_to_query+" "+data_string+" "+ offset +" "+ pageSize);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("anio",rs.getString("anio"));
+                    row.put("titulo",rs.getString("titulo"));
+                    row.put("prefijo",rs.getString("prefijo"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+     //Alimenta select de tipo de Tipos Periodicidad
+    @Override
+    public ArrayList<HashMap<String, Object>> getPeriodicidad_Tipos(Integer id_empresa) {
+
+        String sql_to_query = "select id,titulo, no_periodos from nom_periodicidad_pago WHERE nom_periodicidad_pago.activo=true and nom_periodicidad_pago.borrado_logico=false order by titulo ";
+        ArrayList<HashMap<String, Object>> percepciones = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getString("id"));
+                    row.put("titulo",rs.getString("titulo"));
+                    row.put("no_periodos",rs.getString("no_periodos"));
+                    return row;
+                }
+            }
+        );
+        return percepciones;
+    }
+    //Termina Metodos Catalogo de Configuracion de Periodos de Pago.
+    
+    
+     //Metodos para reporte de saldo Mensual------------------------------------------------------------------------------
+    //Calcular años a mostrar en el reporte de Saldo Mansual
+    @Override
+    public ArrayList<HashMap<String, Object>>  getConfigPeriodosPago_Anios() {
+        ArrayList<HashMap<String, Object>> anios = new ArrayList<HashMap<String, Object>>();
+        
+        Calendar c1 = Calendar.getInstance();
+        Integer annio = c1.get(Calendar.YEAR);//obtiene el año actual
+        
+        for(int i=0; i<5; i++) {
+            HashMap<String, Object> row = new HashMap<String, Object>();
+            row.put("valor",(annio+i));
+            anios.add(i, row);
+        }
+        return anios;
+    }
+
+     //Obtiene la lista de Periodos para editar Periodicidad de pago
+    @Override
+    public ArrayList<HashMap<String, Object>> getConfigPeriodosPago_Grid(Integer id) {
+        String sql_to_query="SELECT "
+                +"nom_periodos_conf_det.id as id_reg, "
+                +"nom_periodos_conf_det.nom_periodos_conf_id as id_periodo, "
+                 +"nom_periodos_conf.nom_periodicidad_pago_id as tipo_periodo, "
+                 +"nom_periodos_conf_det.folio as folio, "
+                 +"nom_periodos_conf_det.titulo as tituloperiodo, "
+                 +"(CASE WHEN nom_periodos_conf_det.fecha_ini IS NULL THEN '' ELSE nom_periodos_conf_det.fecha_ini::character varying END) AS fecha_inicial, "
+                 +"(CASE WHEN nom_periodos_conf_det.fecha_fin IS NULL THEN '' ELSE nom_periodos_conf_det.fecha_fin::character varying END) AS fecha_final "
+            +"FROM nom_periodos_conf_det "
+            +"LEFT JOIN  nom_periodos_conf on nom_periodos_conf.id =nom_periodos_conf_det.nom_periodos_conf_id "
+            +"WHERE nom_periodos_conf_det.nom_periodos_conf_id=?"
+            +"ORDER BY nom_periodos_conf.id;";
+      
+       ArrayList<HashMap<String,Object>>hm=(ArrayList<HashMap<String,Object>>)this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(id)},new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs,int rowNum)throws SQLException{
+                    HashMap<String,Object>row=new HashMap<String,Object>();
+                    row.put("id_reg",String.valueOf(rs.getInt("id_reg")));
+                    row.put("id_periodo",String.valueOf(rs.getInt("id_periodo")));
+                    row.put("tipo_periodo",rs.getString("tipo_periodo"));
+                    row.put("folio",String.valueOf(rs.getInt("folio")));
+                    row.put("tituloperiodo",rs.getString("tituloperiodo"));
+                    row.put("fecha_inicial",rs.getString("fecha_inicial"));
+                    row.put("fecha_final",rs.getString("fecha_final"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+
     
 }
