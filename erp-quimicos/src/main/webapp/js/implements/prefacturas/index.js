@@ -1347,12 +1347,18 @@ $(function() {
 		var $empresa_immex = $('#forma-prefacturas-window').find('input[name=empresa_immex]');
 		var $tasa_ret_immex = $('#forma-prefacturas-window').find('input[name=tasa_ret_immex]');
 		
+		var $importe_subtotal = $('#forma-prefacturas-window').find('input[name=importe_subtotal]');
+		var $monto_descuento = $('#forma-prefacturas-window').find('input[name=monto_descuento]');
+		var pdescto = $('#forma-prefacturas-window').find('input[name=pdescto]').val();
+		
 		var $grid_productos = $('#forma-prefacturas-window').find('#grid_productos');
 		
 		if($tasa_ret_immex.val().trim()==''){
 			$tasa_ret_immex.val(0);
 		}
 		
+		var sumaDescuento=0;
+		var sumaSubtotalConDescuento=0;
 		
 		//Suma de todos los importes sin IVA, sin IEPS
 		var sumaSubTotal = 0;
@@ -1370,6 +1376,10 @@ $(function() {
 				//Acumula los importes en la variable subtotal
 				sumaSubTotal = parseFloat(sumaSubTotal) + parseFloat(quitar_comas($(this).find('#import').val()));
 				
+				//Acumula valores con descuento
+				sumaDescuento = parseFloat(sumaDescuento) + parseFloat(quitar_comas($(this).find('#importe_del_descto').val()));
+				sumaSubtotalConDescuento = parseFloat(sumaSubtotalConDescuento) + parseFloat(quitar_comas($(this).find('#importe_con_descto').val()));
+				
 				//Acumula los importes del IEPS
 				sumaIeps =  parseFloat(sumaIeps) + parseFloat($(this).find('#importeIeps').val());
 				
@@ -1379,15 +1389,45 @@ $(function() {
 			}
 		});
 		
-		//calcular  la tasa de retencion IMMEX
-		impuestoRetenido = parseFloat(sumaSubTotal) * parseFloat(parseFloat($tasa_ret_immex.val()));
-		
-		//Calcula el total sumando el sumaSubTotal + sumaIeps + sumaImpuesto - impuestoRetenido
-		sumaTotal = parseFloat(sumaSubTotal) + parseFloat(sumaIeps) + parseFloat(sumaImpuesto) - parseFloat(impuestoRetenido);
+
 		
 		
-		//Redondea a dos digitos el  subtotal y lo asigna  al campo subtotal
-		$campo_subtotal.val($(this).agregar_comas(  parseFloat(sumaSubTotal).toFixed(2)  ));
+		
+		
+		
+		
+		if(pdescto.trim()=='true' && parseFloat(sumaDescuento)>0){
+			//Agregar importe sin descuento, sin impuesto
+			$importe_subtotal.val($(this).agregar_comas(  parseFloat(sumaSubTotal).toFixed(2)  ));
+			
+			//Agregar monto del descuento
+			$monto_descuento.val($(this).agregar_comas(  parseFloat(sumaDescuento).toFixed(2)  ));
+			
+			//calcular  la tasa de retencion IMMEX
+			impuestoRetenido = parseFloat(sumaSubtotalConDescuento) * parseFloat(parseFloat($tasa_ret_immex.val()));
+			
+			//Calcula el total sumando el sumaSubTotal + sumaIeps + sumaImpuesto - impuestoRetenido
+			sumaTotal = parseFloat(sumaSubtotalConDescuento) + parseFloat(sumaIeps) + parseFloat(sumaImpuesto) - parseFloat(impuestoRetenido);
+			
+			//redondea a dos digitos el  subtotal y lo asigna  al campo subtotal
+			$campo_subtotal.val($(this).agregar_comas(  parseFloat(sumaSubtotalConDescuento).toFixed(2)  ));
+		}else{
+			//calcular  la tasa de retencion IMMEX
+			impuestoRetenido = parseFloat(sumaSubTotal) * parseFloat(parseFloat($tasa_ret_immex.val()));
+			
+			//Calcula el total sumando el sumaSubTotal + sumaIeps + sumaImpuesto - impuestoRetenido
+			sumaTotal = parseFloat(sumaSubTotal) + parseFloat(sumaIeps) + parseFloat(sumaImpuesto) - parseFloat(impuestoRetenido);
+			
+			
+			//Redondea a dos digitos el  subtotal y lo asigna  al campo subtotal
+			$campo_subtotal.val($(this).agregar_comas(  parseFloat(sumaSubTotal).toFixed(2)  ));
+		}
+		
+		
+		
+		
+		
+		
 		
 		//Redondea a dos digitos el IEPS y lo asigna  al campo ieps
 		$campo_ieps.val($(this).agregar_comas(  parseFloat(sumaIeps).toFixed(2)  ));
@@ -2426,6 +2466,11 @@ $(function() {
 				var $impuesto = $('#forma-prefacturas-window').find('input[name=impuesto]');
 				var $total = $('#forma-prefacturas-window').find('input[name=total]');
 				
+				var $importe_subtotal = $('#forma-prefacturas-window').find('input[name=importe_subtotal]');
+				var $monto_descuento = $('#forma-prefacturas-window').find('input[name=monto_descuento]');
+				var $pdescto = $('#forma-prefacturas-window').find('input[name=pdescto]');
+		
+				
 				var $cerrar_plugin = $('#forma-prefacturas-window').find('#close');
 				var $cancelar_plugin = $('#forma-prefacturas-window').find('#boton_cancelar');
 				var $submit_actualizar = $('#forma-prefacturas-window').find('#submit');
@@ -2596,7 +2641,8 @@ $(function() {
 					$cta_mn.val(entry['datosPrefactura'][0]['cta_pago_mn']);
 					$cta_usd.val(entry['datosPrefactura'][0]['cta_pago_usd']);
 					$no_cuenta.val(entry['datosPrefactura'][0]['no_cuenta']);
-                    
+					
+                    $pdescto.val(entry['datosPrefactura'][0]['pdescto']);
                     
                     $check_incluye_adenda.attr('checked',  (entry['Extras'][0]['adenda'] == 'true')? true:false );
                     
@@ -2806,6 +2852,10 @@ $(function() {
 							var importePartida = 0;
 							var importeImpuesto = 0;
 							var importeIeps = 0;
+							var precio_u_con_descto = 0;
+							var valor_descto = 0;
+							var importe_del_descuento = 0;
+							var importe_con_descto = 0;
 							
 							//Verificar si esta en proceso de 2=Facturacion
 							if(parseInt(flujo_proceso)==2 || parseInt(flujo_proceso)==7 || parseInt(flujo_proceso)==8){
@@ -2813,15 +2863,24 @@ $(function() {
 							}else{
 								importePartida = prod['importe'];
 							}
+							
 							//Redondear a 4 digitos el importe de la partida
 							importePartida = parseFloat(importePartida).toFixed(4);
 							
-							//Calcular y redondear el Importe del IEPS
-							importeIeps = parseFloat(parseFloat(importePartida) * (parseFloat(prod['valor_ieps'])/100)).toFixed(4);
+							if($pdescto.val().trim()=='true' && parseFloat(prod['descto'])>0){
+								valor_descto = prod['descto'];
+								precio_u_con_descto = parseFloat( parseFloat(prod['precio_unitario']) - (parseFloat(prod['precio_unitario'])*(parseFloat(valor_descto)/100)) ).toFixed(4);
+								
+								importe_del_descuento = parseFloat(parseFloat(importePartida)*(parseFloat(prod['descto'])/100)).toFixed(4);
+								importe_con_descto = parseFloat(parseFloat(importePartida)-parseFloat(importe_del_descuento)).toFixed(4);
+								
+								importeIeps = parseFloat(parseFloat(importe_con_descto) * (parseFloat(prod['valor_ieps'])/100)).toFixed(4);
+								importeImpuesto = (parseFloat(importe_con_descto) + parseFloat(importeIeps)) * parseFloat( prod['valor_imp'] );
+							}else{
+								importeIeps = parseFloat(parseFloat(importePartida) * (parseFloat(prod['valor_ieps'])/100)).toFixed(4);
+								importeImpuesto = parseFloat(parseFloat(parseFloat(importePartida) + parseFloat(importeIeps)) * parseFloat(prod['valor_imp'])).toFixed(4);
+							}
 							
-							importeImpuesto = parseFloat(parseFloat(importePartida) + parseFloat(importeIeps)) * parseFloat(prod['valor_imp']);
-							
-							importeImpuesto = parseFloat(importeImpuesto).toFixed(4);
 							
 							
 							//obtiene numero de trs
@@ -2871,15 +2930,24 @@ $(function() {
 							trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
 								trr += '<input type="text" 	name="costo" 	value="'+  prod['precio_unitario'] +'" 	id="cost" class="borde_oculto" style="width:76px; text-align:right;">';
 								trr += '<input type="hidden" value="'+  prod['precio_unitario'] +'" id="costor">';
+								
+								trr += '<input type="hidden" 	name="vdescto" id="vdescto" value="'+ valor_descto +'">';
+								trr += '<input type="hidden" 	name="pu_descto" id="pu_descto" value="'+ precio_u_con_descto +'">';
+								
 							trr += '</td>';
 							
 							
 							
 							trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
 								trr += '<input type="text" 	name="importe'+ tr +'" 	value="'+ importePartida +'" 	id="import" class="borde_oculto" readOnly="true" style="width:86px; text-align:right;">';
-								trr += '<input type="hidden" name="totimpuesto'+ tr +'" id="totimp" value="'+ importeImpuesto +'">';
 								trr += '<input type="hidden"    name="id_imp_prod"  value="'+  prod['tipo_impuesto_id'] +'" id="idimppord">';
 								trr += '<input type="hidden"    name="valor_imp" 	value="'+  prod['valor_imp'] +'" 		id="ivalorimp">';
+								
+								trr += '<input type="hidden" name="totimpuesto'+ tr +'" id="totimp" value="'+ importeImpuesto +'">';
+								
+								trr += '<input type="hidden" name="importe_del_descto" id="importe_del_descto" value="'+ importe_del_descuento +'">';
+								trr += '<input type="hidden" name="importe_con_descto" id="importe_con_descto" value="'+ importe_con_descto +'">';
+								
 							trr += '</td>';
 							
 							
@@ -2941,6 +3009,11 @@ $(function() {
 									var $campoTasaIeps = $(this).parent().parent().find('#tasaIeps');
 									var $importeIeps = $(this).parent().parent().find('#importeIeps');
 									
+									var $vdescto = $(this).parent().parent().find('#vdescto');
+									var $pu_con_descto = $(this).parent().parent().find('#pu_descto');
+									var $importe_del_descto = $(this).parent().parent().find('#importe_del_descto');
+									var $importe_con_descto = $(this).parent().parent().find('#importe_con_descto');
+								
 									if($facturar.val().trim() == ''){
 										$facturar.val(0);
 									}
@@ -2957,6 +3030,22 @@ $(function() {
 											
 											$importe_impuesto.val(parseFloat((parseFloat($importe.val()) + parseFloat($importeIeps.val())) * parseFloat($tasa_impuesto.val())).toFixed(4));
 											
+											
+											if($pdescto.val().trim()=='true'){
+												if(parseFloat($vdescto.val())>0){
+													$pu_con_descto.val(parseFloat(parseFloat($costo_unitario.val()) - (parseFloat($costo_unitario.val()) * (parseFloat($vdescto.val())/100))).toFixed(4));
+													$importe_del_descto.val(parseFloat(parseFloat($importe.val()) * (parseFloat($vdescto.val())/100)).toFixed(4));
+													$importe_con_descto.val(parseFloat(parseFloat($importe.val()) - parseFloat($importe_del_descto.val())).toFixed(4));
+													
+													//Calcular y redondear el importe del IEPS, tomando el importe con descuento
+													$importeIeps.val(parseFloat(parseFloat($importe_con_descto.val()) * (parseFloat($campoTasaIeps.val())/100)).toFixed(4));
+													
+													//Calcular el impuesto para este producto multiplicando el importe_con_descto + ieps por la tasa del iva
+													$importe_impuesto.val( (parseFloat($importe_con_descto.val()) + parseFloat($importeIeps.val())) * parseFloat( $tasa_impuesto.val() ));
+												}
+											}
+											
+											
 											//Llamada a la funcion que calcula totales
 											$calcula_totales();
 											$facturar.focus();
@@ -2972,6 +3061,20 @@ $(function() {
 												
 												$importe_impuesto.val(parseFloat((parseFloat($importe.val()) + parseFloat($importeIeps.val())) * parseFloat($tasa_impuesto.val())).toFixed(4));
 												
+												if($pdescto.val().trim()=='true'){
+													if(parseFloat($vdescto.val())>0){
+														$pu_con_descto.val(parseFloat(parseFloat($costo_unitario.val()) - (parseFloat($costo_unitario.val()) * (parseFloat($vdescto.val())/100))).toFixed(4));
+														$importe_del_descto.val(parseFloat(parseFloat($importe.val()) * (parseFloat($vdescto.val())/100)).toFixed(4));
+														$importe_con_descto.val(parseFloat(parseFloat($importe.val()) - parseFloat($importe_del_descto.val())).toFixed(4));
+														
+														//Calcular y redondear el importe del IEPS, tomando el importe con descuento
+														$importeIeps.val(parseFloat(parseFloat($importe_con_descto.val()) * (parseFloat($campoTasaIeps.val())/100)).toFixed(4));
+														
+														//Calcular el impuesto para este producto multiplicando el importe_con_descto + ieps por la tasa del iva
+														$importe_impuesto.val( (parseFloat($importe_con_descto.val()) + parseFloat($importeIeps.val())) * parseFloat( $tasa_impuesto.val() ));
+													}
+												}
+												
 												//Llamada a la funcion que calcula totales
 												$calcula_totales();
 												
@@ -2983,6 +3086,20 @@ $(function() {
 											$importeIeps.val(parseFloat(parseFloat($importe.val()) * (parseFloat($campoTasaIeps.val())/100)).toFixed(4));
 											
 											$importe_impuesto.val(parseFloat((parseFloat($importe.val()) + parseFloat($importeIeps.val())) * parseFloat($tasa_impuesto.val())).toFixed(4));
+											
+											if($pdescto.val().trim()=='true'){
+												if(parseFloat($vdescto.val())>0){
+													$pu_con_descto.val(parseFloat(parseFloat($costo_unitario.val()) - (parseFloat($costo_unitario.val()) * (parseFloat($vdescto.val())/100))).toFixed(4));
+													$importe_del_descto.val(parseFloat(parseFloat($importe.val()) * (parseFloat($vdescto.val())/100)).toFixed(4));
+													$importe_con_descto.val(parseFloat(parseFloat($importe.val()) - parseFloat($importe_del_descto.val())).toFixed(4));
+													
+													//Calcular y redondear el importe del IEPS, tomando el importe con descuento
+													$importeIeps.val(parseFloat(parseFloat($importe_con_descto.val()) * (parseFloat($campoTasaIeps.val())/100)).toFixed(4));
+													
+													//Calcular el impuesto para este producto multiplicando el importe_con_descto + ieps por la tasa del iva
+													$importe_impuesto.val( (parseFloat($importe_con_descto.val()) + parseFloat($importeIeps.val())) * parseFloat( $tasa_impuesto.val() ));
+												}
+											}
 											
 											//Llamada a la funcion que calcula totales
 											$calcula_totales();

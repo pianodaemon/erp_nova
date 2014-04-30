@@ -408,7 +408,7 @@ $(function() {
 			var $razon_cliente = $('#forma-pocpedidosautoriza-window').find('input[name=razoncliente]');
 			var $empresa_immex = $('#forma-pocpedidosautoriza-window').find('input[name=empresa_immex]');
 			var $tasa_ret_immex = $('#forma-pocpedidosautoriza-window').find('input[name=tasa_ret_immex]');
-	
+			
 			var $select_moneda = $('#forma-pocpedidosautoriza-window').find('select[name=select_moneda]');
 			var $select_moneda_original = $('#forma-pocpedidosautoriza-window').find('input[name=select_moneda_original]');
 			var $tipo_cambio = $('#forma-pocpedidosautoriza-window').find('input[name=tipo_cambio]');
@@ -446,6 +446,9 @@ $(function() {
 			var $grid_warning = $('#forma-pocpedidosautoriza-window').find('#div_warning_grid').find('#grid_warning');
 			
 			//var $flete = $('#forma-pocpedidosautoriza-window').find('input[name=flete]');
+			var $importe_subtotal = $('#forma-pocpedidosautoriza-window').find('input[name=importe_subtotal]');
+			var $monto_descuento = $('#forma-pocpedidosautoriza-window').find('input[name=monto_descuento]');
+			
 			var $subtotal = $('#forma-pocpedidosautoriza-window').find('input[name=subtotal]');
 			var $ieps = $('#forma-pocpedidosautoriza-window').find('input[name=ieps]');
 			var $impuesto = $('#forma-pocpedidosautoriza-window').find('input[name=impuesto]');
@@ -456,6 +459,8 @@ $(function() {
 			var $cancelar_plugin = $('#forma-pocpedidosautoriza-window').find('#boton_cancelar');
 			var $submit_actualizar = $('#forma-pocpedidosautoriza-window').find('#submit');
 			
+			$('#forma-pocpedidosautoriza-window').find('#tr_importe_subtotal').hide();
+			$('#forma-pocpedidosautoriza-window').find('#tr_descto').hide();
 			$('#forma-pocpedidosautoriza-window').find('#tr_ieps').hide();
 			$('#forma-pocpedidosautoriza-window').find('#tr_retencion').hide();
 			$busca_cliente.hide();
@@ -580,6 +585,9 @@ $(function() {
 					$fecha_compromiso.val(entry['datosPedido'][0]['fecha_compromiso']);
 					$tipo_cambio.val(entry['datosPedido'][0]['tipo_cambio']);
 					
+					var importe_subtotal = parseFloat(parseFloat(entry['datosPedido'][0]['subtotal'])+parseFloat(entry['datosPedido'][0]['monto_descto'])).toFixed(2);
+					$importe_subtotal.val(importe_subtotal);
+					$monto_descuento.val(entry['datosPedido'][0]['monto_descto']);
 					
 					$subtotal.val(entry['datosPedido'][0]['subtotal']);
 					$ieps.val(entry['datosPedido'][0]['monto_ieps']);
@@ -589,6 +597,13 @@ $(function() {
 					
 					
 					var countDisplay=0;
+					
+					if(parseFloat(entry['datosPedido'][0]['monto_descto'])>0){
+						$('#forma-pocpedidosautoriza-window').find('#tr_importe_subtotal').show();
+						$('#forma-pocpedidosautoriza-window').find('#tr_descto').show();
+						countDisplay++;
+					}
+					
 					if(parseFloat(entry['datosPedido'][0]['monto_ieps'])>0){
 						$('#forma-pocpedidosautoriza-window').find('#tr_ieps').show();
 						countDisplay++;
@@ -606,6 +621,9 @@ $(function() {
 						$('#forma-pocpedidosautoriza-window').find('.pocpedidosautoriza_div_one').css({'height':'560px'});
 					}
 			
+					if(parseInt(countDisplay)==3){
+						$('#forma-pocpedidosautoriza-window').find('.pocpedidosautoriza_div_one').css({'height':'590px'});
+					}
 					
 
 					

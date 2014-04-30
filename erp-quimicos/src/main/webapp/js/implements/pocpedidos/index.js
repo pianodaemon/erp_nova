@@ -1148,7 +1148,7 @@ $(function() {
 	
 	
 	
-	$agregarDatosClienteSeleccionado = function($select_moneda,$select_condiciones,$select_vendedor, $select_metodo_pago, array_monedas, array_condiciones, array_vendedores, array_metodos_pago, $no_cuenta, $etiqueta_digit, id_cliente, no_control, razon_social, dir_cliente, empresa_immex, tasa_ret_immex, cuenta_mn, cuenta_usd, id_moneda, id_termino, id_vendedor, num_lista_precio, id_metodo_de_pago, tiene_dir_fiscal, cred_susp){
+	$agregarDatosClienteSeleccionado = function($select_moneda,$select_condiciones,$select_vendedor, $select_metodo_pago, array_monedas, array_condiciones, array_vendedores, array_metodos_pago, $no_cuenta, $etiqueta_digit, id_cliente, no_control, razon_social, dir_cliente, empresa_immex, tasa_ret_immex, cuenta_mn, cuenta_usd, id_moneda, id_termino, id_vendedor, num_lista_precio, id_metodo_de_pago, tiene_dir_fiscal, cred_susp, pdescto, vdescto){
 		
 		if(cred_susp=='false'){
 			//asignar a los campos correspondientes el sku y y descripcion
@@ -1162,6 +1162,9 @@ $(function() {
 			$('#forma-pocpedidos-window').find('input[name=num_lista_precio]').val( num_lista_precio );
 			//por default asignamos cero para el campo id de Direccion Fiscal, esto significa que la direccion se tomara de la tabla de clientes
 			$('#forma-pocpedidos-window').find('input[name=id_df]').val(0);
+			$('#forma-pocpedidos-window').find('input[name=pdescto]').val(pdescto);
+			$('#forma-pocpedidos-window').find('input[name=valor_descto]').val(vdescto);
+			
 			
 			if(tiene_dir_fiscal=='true'){
 				//llamada a la funcion que busca las direcciones fiscales del cliente.
@@ -1423,6 +1426,7 @@ $(function() {
 			var trr = '';
 			$tabla_resultados.children().remove();
 			$.post(input_json,$arreglo,function(entry){
+				
 				$.each(entry['clientes'],function(entryIndex,cliente){
 					trr = '<tr>';
 						trr += '<td width="80">';
@@ -1441,6 +1445,8 @@ $(function() {
 							trr += '<input type="hidden" id="metodo_id" value="'+cliente['metodo_pago_id']+'">';
 							trr += '<input type="hidden" id="tiene_df" value="'+cliente['tiene_dir_fiscal']+'">';//variable para indicar si tiene direccion fiscal
 							trr += '<input type="hidden" id="cred_susp" value="'+cliente['credito_suspendido']+'">';//variable para indicar si el credito esta suspendido
+							trr += '<input type="hidden" id="pdescto" value="'+cliente['pdescto']+'">';
+							trr += '<input type="hidden" id="vdescto" value="'+cliente['vdescto']+'">';
 						trr += '</td>';
 						trr += '<td width="145"><span class="rfc">'+cliente['rfc']+'</span></td>';
 						trr += '<td width="375"><span class="razon">'+cliente['razon_social']+'</span></td>';
@@ -1486,8 +1492,11 @@ $(function() {
 					var tiene_dir_fiscal=$(this).find('#tiene_df').val();
 					var cred_susp = $(this).find('#cred_susp').val();
 					
+					var pdescto = $(this).find('#pdescto').val();
+					var vdescto = $(this).find('#vdescto').val();
+					
 					//llamada a la funcion para agregar los datos del cliente seleccionado
-					$agregarDatosClienteSeleccionado($select_moneda,$select_condiciones,$select_vendedor, $select_metodo_pago, array_monedas, array_condiciones, array_vendedores, array_metodos_pago, $no_cuenta, $etiqueta_digit, id_cliente, no_control, razon_social, dir_cliente, empresa_immex, tasa_ret_immex, cuenta_mn, cuenta_usd, id_moneda, id_termino, id_vendedor, num_lista_precio, id_metodo_de_pago, tiene_dir_fiscal, cred_susp);
+					$agregarDatosClienteSeleccionado($select_moneda,$select_condiciones,$select_vendedor, $select_metodo_pago, array_monedas, array_condiciones, array_vendedores, array_metodos_pago, $no_cuenta, $etiqueta_digit, id_cliente, no_control, razon_social, dir_cliente, empresa_immex, tasa_ret_immex, cuenta_mn, cuenta_usd, id_moneda, id_termino, id_vendedor, num_lista_precio, id_metodo_de_pago, tiene_dir_fiscal, cred_susp, pdescto, vdescto);
 					
 					//elimina la ventana de busqueda
 					var remove = function() {$(this).remove();};
@@ -1670,6 +1679,7 @@ $(function() {
 	$buscador_presentaciones_producto = function($id_cliente,nocliente, sku_producto,$nombre_producto,$grid_productos,$select_moneda,$tipo_cambio, arrayMonedas){
 		//Verifica si el campo rfc proveedor no esta vacio
 		var cliente_listaprecio=  $('#forma-pocpedidos-window').find('input[name=num_lista_precio]').val();
+		var vdescto = $('#forma-pocpedidos-window').find('input[name=vdescto]').val();
 		
 		if(nocliente != ''){
 			//verifica si el campo sku no esta vacio para realizar busqueda
@@ -1775,7 +1785,7 @@ $(function() {
 								if($tipo_cambio.val()!='' && $tipo_cambio.val()!=' '){
 									if(exislp=='1'){
 										//llamada a la funcion que agrega el producto al grid
-										$agrega_producto_grid($grid_productos, id_prod, sku, titulo, unidadId, unidad, id_pres,pres,prec_unitario,$select_moneda,id_moneda,$tipo_cambio,num_dec, arrayMonedas, tcMonProd, idImpto, valorImpto, iepsId, iepsTasa);
+										$agrega_producto_grid($grid_productos, id_prod, sku, titulo, unidadId, unidad, id_pres,pres,prec_unitario,$select_moneda,id_moneda,$tipo_cambio,num_dec, arrayMonedas, tcMonProd, idImpto, valorImpto, iepsId, iepsTasa, vdescto);
 									}else{
 										jAlert(exislp, 'Atencion!', function(r) { 
 											$('#forma-pocpedidos-window').find('input[name=sku_producto]').focus();
@@ -1837,6 +1847,15 @@ $(function() {
 		var $empresa_immex = $('#forma-pocpedidos-window').find('input[name=empresa_immex]');
 		var $tasa_ret_immex = $('#forma-pocpedidos-window').find('input[name=tasa_ret_immex]');
 		
+		var $importe_subtotal = $('#forma-pocpedidos-window').find('input[name=importe_subtotal]');
+		var $monto_descuento = $('#forma-pocpedidos-window').find('input[name=monto_descuento]');
+		
+		var pdescto = $('#forma-pocpedidos-window').find('input[name=pdescto]').val();
+		var vdescto = $('#forma-pocpedidos-window').find('input[name=valor_descto]').val();
+		
+		var sumaDescuento=0;
+		var sumaSubtotalConDescuento=0;
+		
 		var sumaSubTotal = 0; //es la suma de todos los importes
 		//Suma de todos los importes del IEPS
 		var sumaIeps = 0;
@@ -1854,10 +1873,15 @@ $(function() {
 		}
 		*/
 		
+		
 		$grid_productos.find('tr').each(function (index){
 			if(( $(this).find('#cost').val().trim() != '') && ( $(this).find('#cant').val().trim() != '' )){
 				//Acumula los importes sin IVA, sin IEPS en la variable subtotal
 				sumaSubTotal = parseFloat(sumaSubTotal) + parseFloat(quitar_comas($(this).find('#import').val()));
+				
+				//Acumula valores con descuento
+				sumaDescuento = parseFloat(sumaDescuento) + parseFloat(quitar_comas($(this).find('#importe_del_descto').val()));
+				sumaSubtotalConDescuento = parseFloat(sumaSubtotalConDescuento) + parseFloat(quitar_comas($(this).find('#importe_con_descto').val()));
 				
 				//Acumula los importes del IEPS
 				sumaIeps =  parseFloat(sumaIeps) + parseFloat($(this).find('#importeIeps').val());
@@ -1869,14 +1893,33 @@ $(function() {
 			}
 		});
 		
-		//calcular  la tasa de retencion IMMEX
-		impuestoRetenido = parseFloat(sumaSubTotal) * parseFloat(parseFloat($tasa_ret_immex.val()));
 		
-		//Calcula el total sumando el sumaSubTotal + sumaIeps + sumaImpuesto - impuestoRetenido
-		sumaTotal = parseFloat(sumaSubTotal) + parseFloat(sumaIeps) + parseFloat(sumaImpuesto) - parseFloat(impuestoRetenido);
+		if(pdescto.trim()=='true' && parseFloat(sumaDescuento)>0){
+			//Agregar importe sin descuento, sin impuesto
+			$importe_subtotal.val($(this).agregar_comas(  parseFloat(sumaSubTotal).toFixed(2)  ));
+			
+			//Agregar monto del descuento
+			$monto_descuento.val($(this).agregar_comas(  parseFloat(sumaDescuento).toFixed(2)  ));
+			
+			//calcular  la tasa de retencion IMMEX
+			impuestoRetenido = parseFloat(sumaSubtotalConDescuento) * parseFloat(parseFloat($tasa_ret_immex.val()));
+			
+			//Calcula el total sumando el sumaSubTotal + sumaIeps + sumaImpuesto - impuestoRetenido
+			sumaTotal = parseFloat(sumaSubtotalConDescuento) + parseFloat(sumaIeps) + parseFloat(sumaImpuesto) - parseFloat(impuestoRetenido);
+			
+			//redondea a dos digitos el  subtotal y lo asigna  al campo subtotal
+			$campo_subtotal.val($(this).agregar_comas(  parseFloat(sumaSubtotalConDescuento).toFixed(2)  ));
+		}else{
+			//calcular  la tasa de retencion IMMEX
+			impuestoRetenido = parseFloat(sumaSubTotal) * parseFloat(parseFloat($tasa_ret_immex.val()));
+			
+			//Calcula el total sumando el sumaSubTotal + sumaIeps + sumaImpuesto - impuestoRetenido
+			sumaTotal = parseFloat(sumaSubTotal) + parseFloat(sumaIeps) + parseFloat(sumaImpuesto) - parseFloat(impuestoRetenido);
+			
+			//redondea a dos digitos el  subtotal y lo asigna  al campo subtotal
+			$campo_subtotal.val($(this).agregar_comas(  parseFloat(sumaSubTotal).toFixed(2)  ));
+		}
 		
-		//redondea a dos digitos el  subtotal y lo asigna  al campo subtotal
-		$campo_subtotal.val($(this).agregar_comas(  parseFloat(sumaSubTotal).toFixed(2)  ));
 		
 		//Redondea a dos digitos el IEPS y lo asigna  al campo ieps
 		$campo_ieps.val($(this).agregar_comas(  parseFloat(sumaIeps).toFixed(2)  ));
@@ -1890,18 +1933,34 @@ $(function() {
 		//Redondea a dos digitos la suma  total y se asigna al campo total
 		$campo_total.val($(this).agregar_comas(  parseFloat(sumaTotal).toFixed(2)  ));
 		
+		var valorHeight=550;
+		
+		if(parseFloat(sumaDescuento)>0){
+			$('#forma-pocpedidos-window').find('#tr_importe_subtotal').show();
+			$('#forma-pocpedidos-window').find('#tr_descto').show();
+			valorHeight = parseFloat(valorHeight) + 30
+		}else{
+			$('#forma-pocpedidos-window').find('#tr_importe_subtotal').hide();
+			$('#forma-pocpedidos-window').find('#tr_descto').hide();
+		}
+		
 		//Ocultar campos si tienen valor menor o igual a cero
 		if(parseFloat(sumaIeps)<=0){
 			$('#forma-pocpedidos-window').find('#tr_ieps').hide();
 		}else{
 			$('#forma-pocpedidos-window').find('#tr_ieps').show();
+			valorHeight = parseFloat(valorHeight) + 20
 		}
 		if(parseFloat(impuestoRetenido)<=0){
 			$('#forma-pocpedidos-window').find('#tr_retencion').hide();
 		}else{
 			$('#forma-pocpedidos-window').find('#tr_retencion').show();
+			valorHeight = parseFloat(valorHeight) + 20
 		}
 		
+		$('#forma-pocpedidos-window').find('.pocpedidos_div_one').css({'height':valorHeight+'px'});
+		
+		/*
 		if(parseFloat(sumaIeps)>0 && parseFloat(impuestoRetenido)<=0){
 			$('#forma-pocpedidos-window').find('.pocpedidos_div_one').css({'height':'560px'});
 		}
@@ -1913,6 +1972,7 @@ $(function() {
 		if(parseFloat(sumaIeps)>0 && parseFloat(impuestoRetenido)>0){
 			$('#forma-pocpedidos-window').find('.pocpedidos_div_one').css({'height':'580px'});
 		}
+		* */
 	}//termina calcular totales
 	
 	
@@ -1937,11 +1997,14 @@ $(function() {
 	
 	
 	//agregar producto al grid
-	$agrega_producto_grid = function($grid_productos, id_prod, sku, titulo, unidadId, unidad,id_pres,pres,prec_unitario,$select_moneda, id_moneda, $tipo_cambio,num_dec, arrayMonedas, tcMonProd, idImpto, valorImpto, id_ieps, tasa_ieps){
+	$agrega_producto_grid = function($grid_productos, id_prod, sku, titulo, unidadId, unidad,id_pres,pres,prec_unitario,$select_moneda, id_moneda, $tipo_cambio,num_dec, arrayMonedas, tcMonProd, idImpto, valorImpto, id_ieps, tasa_ieps, vdescto){
 		var $id_impuesto = $('#forma-pocpedidos-window').find('input[name=id_impuesto]');
 		var $valor_impuesto = $('#forma-pocpedidos-window').find('input[name=valorimpuesto]');
 		var $incluye_produccion = $('#forma-pocpedidos-window').find('input[name=incluye_pro]');
 		var $num_lista_precio = $('#forma-pocpedidos-window').find('input[name=num_lista_precio]');
+		
+		var pdescto = $('#forma-pocpedidos-window').find('input[name=pdescto]').val();
+		//var vdescto = $('#forma-pocpedidos-window').find('input[name=vdescto]').val();
 		
 		//esta es la moneda definida para el pedido
 		var idMonedaPedido = $select_moneda.val();
@@ -1992,6 +2055,10 @@ $(function() {
 			$valor_impuesto.val(0);
 		}
 		
+		if(vdescto==''){
+			vdescto='0';
+		}
+		
 		var encontrado = 0;
 		//busca el sku y la presentacion en el grid
 		$grid_productos.find('tr').each(function (index){
@@ -2036,9 +2103,14 @@ $(function() {
 				trr += '</td>';
 				trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
 					trr += '<input type="text" name="costo" value="'+ precioCambiado +'" class="costo'+ tr +'" id="cost" style="width:86px; text-align:right;">';
+					
+					trr += '<input type="hidden" 	name="vdescto" id="vdescto" value="'+vdescto+'">';
+					trr += '<input type="hidden" 	name="pu_descto" id="pu_descto" value="0">';
 				trr += '</td>';
 				trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
 					trr += '<input type="text" name="importe'+ tr +'" value="" id="import" class="borde_oculto" readOnly="true" style="width:86px; text-align:right;">';
+					trr += '<input type="hidden" name="importe_del_descto" id="importe_del_descto" value="0">';
+					trr += '<input type="hidden" name="importe_con_descto" id="importe_con_descto" value="0">';
 					trr += '<input type="hidden" name="id_imp_prod"   value="'+  idImpto +'" id="idimppord">';
 					trr += '<input type="hidden" name="valor_imp"     value="'+  valorImpto +'" id="ivalorimp">';
 					trr += '<input type="hidden" name="totimpuesto'+ tr +'" id="totimp" value="0">';
@@ -2147,6 +2219,13 @@ $(function() {
 				var $campoTasaIva = $(this).parent().parent().find('#ivalorimp');
 				var $importeIva = $(this).parent().parent().find('#totimp');
 				
+				var $vdescto = $(this).parent().parent().find('#vdescto');
+				var $pu_con_descto = $(this).parent().parent().find('#pu_descto');
+				var $importe_del_descto = $(this).parent().parent().find('#importe_del_descto');
+				var $importe_con_descto = $(this).parent().parent().find('#importe_con_descto');
+				
+				//pdescto, vdescto
+					
 				if ($campoCantidad.val() == ''){
 					$campoCantidad.val(' ');
 				}
@@ -2160,6 +2239,22 @@ $(function() {
 					
 					//Calcular el impuesto para este producto multiplicando el importe + ieps por la tasa del iva
 					$importeIva.val( (parseFloat($campoImporte.val()) + parseFloat($importeIeps.val())) * parseFloat( $campoTasaIva.val() ));
+					
+					
+					if(pdescto.trim()=='true'){
+						if(parseFloat($vdescto.val())>0){
+							$pu_con_descto.val(parseFloat(parseFloat($campoPrecioU.val()) - (parseFloat($campoPrecioU.val()) * (parseFloat($vdescto.val())/100))).toFixed(4));
+							$importe_del_descto.val(parseFloat(parseFloat($campoImporte.val()) * (parseFloat($vdescto.val())/100)).toFixed(4));
+							$importe_con_descto.val(parseFloat(parseFloat($campoImporte.val()) - parseFloat($importe_del_descto.val())).toFixed(4));
+							
+							//Calcular y redondear el importe del IEPS, tomando el importe con descuento
+							$importeIeps.val(parseFloat(parseFloat($importe_con_descto.val()) * (parseFloat($campoTasaIeps.val())/100)).toFixed(4));
+							
+							//Calcular el impuesto para este producto multiplicando el importe_con_descto + ieps por la tasa del iva
+							$importeIva.val( (parseFloat($importe_con_descto.val()) + parseFloat($importeIeps.val())) * parseFloat( $campoTasaIva.val() ));
+						}
+					}
+					
 				}else{
 					$campoImporte.val('');
 					$importeIva.val('');
@@ -2209,6 +2304,8 @@ $(function() {
 				}
 			});
 			
+
+		
 			//Recalcula importe al perder enfoque el campo costo
 			$grid_productos.find('#cost').blur(function(){
 				var $campoCantidad = $(this).parent().parent().find('#cant');
@@ -2220,6 +2317,11 @@ $(function() {
 				
 				var $campoTasaIva = $(this).parent().parent().find('#ivalorimp');
 				var $importeIva = $(this).parent().parent().find('#totimp');
+				
+				var $vdescto = $(this).parent().parent().find('#vdescto');
+				var $pu_con_descto = $(this).parent().parent().find('#pu_descto');
+				var $importe_del_descto = $(this).parent().parent().find('#importe_del_descto');
+				var $importe_con_descto = $(this).parent().parent().find('#importe_con_descto');
 				
 				if ($campoPrecioU.val().trim() == ''){
 					$campoPrecioU.val(' ');
@@ -2234,6 +2336,21 @@ $(function() {
 					
 					//calcula el impuesto para este producto multiplicando el importe por el valor del iva
 					$importeIva.val( (parseFloat($campoImporte.val()) + parseFloat($importeIeps.val())) * parseFloat( $campoTasaIva.val() ));
+					
+					if(pdescto.trim()=='true'){
+						if(parseFloat($vdescto.val())>0){
+							$pu_con_descto.val(parseFloat(parseFloat($campoPrecioU.val()) - (parseFloat($campoPrecioU.val()) * (parseFloat($vdescto.val())/100))).toFixed(4));
+							$importe_del_descto.val(parseFloat(parseFloat($campoImporte.val()) * (parseFloat($vdescto.val())/100)).toFixed(4));
+							$importe_con_descto.val(parseFloat(parseFloat($campoImporte.val()) - parseFloat($importe_del_descto.val())).toFixed(4));
+							
+							//Calcular y redondear el importe del IEPS, tomando el importe con descuento
+							$importeIeps.val(parseFloat(parseFloat($importe_con_descto.val()) * (parseFloat($campoTasaIeps.val())/100)).toFixed(4));
+							
+							//Calcular el impuesto para este producto multiplicando el importe_con_descto + ieps por la tasa del iva
+							$importeIva.val( (parseFloat($importe_con_descto.val()) + parseFloat($importeIeps.val())) * parseFloat( $campoTasaIva.val() ));
+						}
+					}
+					
 				}else{
 					$campoImporte.val('');
 					$importeIva.val('');
@@ -3127,8 +3244,10 @@ $(function() {
 							var id_metodo_de_pago = entry2['Cliente'][0]['metodo_pago_id'];
 							var tiene_dir_fiscal = entry2['Cliente'][0]['tiene_dir_fiscal'];
 							var cred_susp = entry2['Cliente'][0]['credito_suspendido'];
+							var pdescto = entry2['Cliente'][0]['pdescto'];
+							var vdescto = entry2['Cliente'][0]['vdescto'];
 							
-							$agregarDatosClienteSeleccionado($select_moneda,$select_condiciones,$select_vendedor, $select_metodo_pago, entry['Monedas'], entry['Condiciones'],entry['Vendedores'], entry['MetodosPago'], $no_cuenta, $etiqueta_digit, id_cliente, no_control, razon_social, dir_cliente, empresa_immex, tasa_ret_immex, cuenta_mn, cuenta_usd, id_moneda, id_termino, id_vendedor, num_lista_precio, id_metodo_de_pago, tiene_dir_fiscal, cred_susp);
+							$agregarDatosClienteSeleccionado($select_moneda,$select_condiciones,$select_vendedor, $select_metodo_pago, entry['Monedas'], entry['Condiciones'],entry['Vendedores'], entry['MetodosPago'], $no_cuenta, $etiqueta_digit, id_cliente, no_control, razon_social, dir_cliente, empresa_immex, tasa_ret_immex, cuenta_mn, cuenta_usd, id_moneda, id_termino, id_vendedor, num_lista_precio, id_metodo_de_pago, tiene_dir_fiscal, cred_susp, pdescto, vdescto);
 							
 						}else{
 							$('#forma-pocpedidos-window').find('input[name=id_cliente]').val('');
@@ -3143,6 +3262,9 @@ $(function() {
 							//por default asignamos cero para el campo id de Direccion Fiscal, esto significa que la direccion se tomara de la tabla de clientes
 							$('#forma-pocpedidos-window').find('input[name=id_df]').val(0);
 							
+							$('#forma-pocpedidos-window').find('input[name=pdescto]').val('false');
+							$('#forma-pocpedidos-window').find('input[name=valor_descto]').val(0);
+                                                                    
 							jAlert('N&uacute;mero de cliente desconocido.', 'Atencion!', function(r) { 
 								$('#forma-pocpedidos-window').find('input[name=nocliente]').focus(); 
 							});
@@ -3407,6 +3529,7 @@ $(function() {
 			var $empresa_immex = $('#forma-pocpedidos-window').find('input[name=empresa_immex]');
 			var $tasa_ret_immex = $('#forma-pocpedidos-window').find('input[name=tasa_ret_immex]');
 			var $cliente_listaprecio=  $('#forma-pocpedidos-window').find('input[name=num_lista_precio]');
+			var $pdescto = $('#forma-pocpedidos-window').find('input[name=pdescto]');
 			
 			var $select_moneda = $('#forma-pocpedidos-window').find('select[name=select_moneda]');
 			var $select_moneda_original = $('#forma-pocpedidos-window').find('input[name=select_moneda_original]');
@@ -3699,57 +3822,56 @@ $(function() {
 						$('#forma-pocpedidos-window').find('#div_warning_grid').find('.div_cont_grid_warning').css({'width':'800px'});
 						$('#forma-pocpedidos-window').find('#div_warning_grid').find('.div_cont_grid_warning').find('#grid_warning').css({'width':'780px'});
 					}else{
-						//ocultar td porque la empresa no incluye Produccion
+						//Ocultar td porque la empresa no incluye Produccion
 						$('#forma-pocpedidos-window').find('.tabla_header_grid').find('#td_oculto').hide();
 					}
 					
+					$tasa_ret_immex.val(entry['datosPedido'][0]['tasa_retencion_immex']);
+					$id_pedido.val(entry['datosPedido'][0]['id']);
+					$folio.val(entry['datosPedido'][0]['folio']);
+					$id_cliente.val(entry['datosPedido'][0]['cliente_id']);
+					$nocliente.val(entry['datosPedido'][0]['numero_control']);
+					$razon_cliente.val(entry['datosPedido'][0]['razon_social']);
+					$id_df.val(entry['datosPedido'][0]['df_id']);
+					$dir_cliente.val(entry['datosPedido'][0]['direccion']);
+					$cliente_listaprecio.val(entry['datosPedido'][0]['lista_precio']);
+					$pdescto.val(entry['datosPedido'][0]['pdescto']);
 					
+					$check_enviar_obser.attr('checked',  (entry['datosPedido'][0]['enviar_obser'] == 'true')? true:false );
+					$observaciones.text(entry['datosPedido'][0]['observaciones']);
+					$observaciones_original.val(entry['datosPedido'][0]['observaciones']);
 					
-					$tasa_ret_immex.val(entry['datosPedido']['0']['tasa_retencion_immex']);
-					$id_pedido.val(entry['datosPedido']['0']['id']);
-					$folio.val(entry['datosPedido']['0']['folio']);
-					$id_cliente.val(entry['datosPedido']['0']['cliente_id']);
-					$nocliente.val(entry['datosPedido']['0']['numero_control']);
-					$razon_cliente.val(entry['datosPedido']['0']['razon_social']);
-					$id_df.val(entry['datosPedido']['0']['df_id']);
-					$dir_cliente.val(entry['datosPedido']['0']['direccion']);
-					$cliente_listaprecio.val(entry['datosPedido']['0']['lista_precio']);
-					
-					$check_enviar_obser.attr('checked',  (entry['datosPedido']['0']['enviar_obser'] == 'true')? true:false );
-					$observaciones.text(entry['datosPedido']['0']['observaciones']);
-					$observaciones_original.val(entry['datosPedido']['0']['observaciones']);
-					
-					$orden_compra.val(entry['datosPedido']['0']['orden_compra']);
-					$orden_compra_original.val(entry['datosPedido']['0']['orden_compra']);
+					$orden_compra.val(entry['datosPedido'][0]['orden_compra']);
+					$orden_compra_original.val(entry['datosPedido'][0]['orden_compra']);
                     
-					$transporte.val(entry['datosPedido']['0']['transporte']);
-					$transporte_original.val(entry['datosPedido']['0']['transporte']);
+					$transporte.val(entry['datosPedido'][0]['transporte']);
+					$transporte_original.val(entry['datosPedido'][0]['transporte']);
                     
-					$lugar_entrega.val(entry['datosPedido']['0']['lugar_entrega']);
-					$lugar_entrega_original.val(entry['datosPedido']['0']['lugar_entrega']);
+					$lugar_entrega.val(entry['datosPedido'][0]['lugar_entrega']);
+					$lugar_entrega_original.val(entry['datosPedido'][0]['lugar_entrega']);
 					
-					$fecha_compromiso.val(entry['datosPedido']['0']['fecha_compromiso']);
-					$fecha_compromiso_original.val(entry['datosPedido']['0']['fecha_compromiso']);
+					$fecha_compromiso.val(entry['datosPedido'][0]['fecha_compromiso']);
+					$fecha_compromiso_original.val(entry['datosPedido'][0]['fecha_compromiso']);
 					
-					$tipo_cambio.val(entry['datosPedido']['0']['tipo_cambio']);
-					$tipo_cambio_original.val(entry['datosPedido']['0']['tipo_cambio']);
+					$tipo_cambio.val(entry['datosPedido'][0]['tipo_cambio']);
+					$tipo_cambio_original.val(entry['datosPedido'][0]['tipo_cambio']);
 					
-					$no_cuenta.val(entry['datosPedido']['0']['no_cuenta']);
+					$no_cuenta.val(entry['datosPedido'][0]['no_cuenta']);
 					
-					$cta_mn.val(entry['datosPedido']['0']['cta_pago_mn']);
-					$cta_usd.val(entry['datosPedido']['0']['cta_pago_usd']);
+					$cta_mn.val(entry['datosPedido'][0]['cta_pago_mn']);
+					$cta_usd.val(entry['datosPedido'][0]['cta_pago_usd']);
 					
-					$check_ruta.attr('checked',  (entry['datosPedido']['0']['enviar_ruta'] == 'true')? true:false );
+					$check_ruta.attr('checked',  (entry['datosPedido'][0]['enviar_ruta'] == 'true')? true:false );
 					
 					//carga select denominacion con todas las monedas
 					$select_moneda.children().remove();
 					var moneda_hmtl = '';
 					$.each(entry['Monedas'],function(entryIndex,moneda){
-						if(moneda['id'] == entry['datosPedido']['0']['moneda_id']){
+						if(moneda['id'] == entry['datosPedido'][0]['moneda_id']){
 							moneda_hmtl += '<option value="' + moneda['id'] + '"  selected="yes">' + moneda['descripcion'] + '</option>';
 							$select_moneda_original.val(moneda['id']);
 						}else{
-							if(parseInt(entry['datosPedido']['0']['proceso_flujo_id'])==4){
+							if(parseInt(entry['datosPedido'][0]['proceso_flujo_id'])==4){
 								//moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
 							}
 						}
@@ -3761,17 +3883,17 @@ $(function() {
 					//$id_impuesto.val();
 					//$valor_impuesto.val();
 					//$campo_tc.val(entry['tc']['tipo_cambio']);
-					$id_impuesto.val(entry['iva']['0']['id_impuesto']);
-					$valor_impuesto.val(entry['iva']['0']['valor_impuesto']);
+					$id_impuesto.val(entry['iva'][0]['id_impuesto']);
+					$valor_impuesto.val(entry['iva'][0]['valor_impuesto']);
 					
 					//carga select de vendedores
 					$select_vendedor.children().remove();
 					var hmtl_vendedor;
 					$.each(entry['Vendedores'],function(entryIndex,vendedor){
-						if(entry['datosPedido']['0']['cxc_agen_id'] == vendedor['id']){
+						if(entry['datosPedido'][0]['cxc_agen_id'] == vendedor['id']){
 							hmtl_vendedor += '<option value="' + vendedor['id'] + '" selected="yes" >' + vendedor['nombre_agente'] + '</option>';
 						}else{
-							if(parseInt(entry['datosPedido']['0']['proceso_flujo_id'])==4){
+							if(parseInt(entry['datosPedido'][0]['proceso_flujo_id'])==4){
 								hmtl_vendedor += '<option value="' + vendedor['id'] + '">' + vendedor['nombre_agente'] + '</option>';
 							}
 						}
@@ -3783,10 +3905,10 @@ $(function() {
 					$select_condiciones.children().remove();
 					var hmtl_condiciones;
 					$.each(entry['Condiciones'],function(entryIndex,condicion){
-						if(entry['datosPedido']['0']['cxp_prov_credias_id'] == condicion['id']){
+						if(entry['datosPedido'][0]['cxp_prov_credias_id'] == condicion['id']){
 							hmtl_condiciones += '<option value="' + condicion['id'] + '" selected="yes" >' + condicion['descripcion'] + '</option>';
 						}else{
-							if(parseInt(entry['datosPedido']['0']['proceso_flujo_id'])==4){
+							if(parseInt(entry['datosPedido'][0]['proceso_flujo_id'])==4){
 								hmtl_condiciones += '<option value="' + condicion['id'] + '">' + condicion['descripcion'] + '</option>';
 							}
 						}
@@ -3805,7 +3927,7 @@ $(function() {
 					
 					
 					
-					var valor_metodo = entry['datosPedido']['0']['metodo_pago_id'];
+					var valor_metodo = entry['datosPedido'][0]['metodo_pago_id'];
 					
 					//carga select de metodos de pago
 					$select_metodo_pago.children().remove();
@@ -3814,7 +3936,7 @@ $(function() {
 						if(valor_metodo == metodo['id']){
 							hmtl_metodo += '<option value="' + metodo['id'] + '" selected="yes" >' + metodo['titulo'] + '</option>';
 						}else{
-							if(parseInt(entry['datosPedido']['0']['proceso_flujo_id'])==4){
+							if(parseInt(entry['datosPedido'][0]['proceso_flujo_id'])==4){
 								hmtl_metodo += '<option value="' + metodo['id'] + '"  >' + metodo['titulo'] + '</option>';
 							}
 						}
@@ -3934,6 +4056,11 @@ $(function() {
 							trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
 								trr += '<input type="text" 		name="costo" 	value="'+  prod['precio_unitario'] +'" 	class="costo'+ tr +'" id="cost" style="width:86px; text-align:right;">';
 								trr += '<input type="hidden" value="'+  prod['precio_unitario'] +'" id="costor">';
+								
+								var precio_u_con_descto = parseFloat( parseFloat(prod['precio_unitario']) - (parseFloat(prod['precio_unitario'])*(parseFloat(prod['descto'])/100)) ).toFixed(4);
+								
+								trr += '<input type="hidden" 	name="vdescto" id="vdescto" value="'+ prod['descto'] +'">';
+								trr += '<input type="hidden" 	name="pu_descto" id="pu_descto" value="'+ precio_u_con_descto +'">';								
 							trr += '</td>';
 							
 							trr += '<td class="grid2" style="font-size:11px;  border:1px solid #C1DAD7;" width="90">';
@@ -3941,12 +4068,27 @@ $(function() {
 								trr += '<input type="hidden"    name="id_imp_prod"  value="'+  prod['gral_imp_id'] +'" 		id="idimppord">';
 								trr += '<input type="hidden"    name="valor_imp" 	value="'+  prod['valor_imp'] +'" 	id="ivalorimp">';
 								
-								var importeIeps= parseFloat(parseFloat(prod['importe']) * (parseFloat(prod['valor_ieps'])/100)).toFixed(4);
+								var importeIeps = 0;
+								var importeIva = 0;
+								var importe_del_descuento = parseFloat(parseFloat(prod['importe'])*(parseFloat(prod['descto'])/100)).toFixed(4);
+								var importe_con_descto = parseFloat(parseFloat(prod['importe'])-parseFloat(importe_del_descuento)).toFixed(4);
 								
-								trr += '<input type="hidden" 	name="totimpuesto'+ tr +'" id="totimp" value="'+(parseFloat(prod['importe']) + parseFloat(importeIeps)) * parseFloat( prod['valor_imp'] )+'">';
+								if($pdescto.val().trim()=='true' && parseFloat(prod['descto'])>0){
+									importeIeps = parseFloat(parseFloat(importe_con_descto) * (parseFloat(prod['valor_ieps'])/100)).toFixed(4);
+									importeIva = (parseFloat(importe_con_descto) + parseFloat(importeIeps)) * parseFloat( prod['valor_imp'] );
+								}else{
+									importeIeps = parseFloat(parseFloat(prod['importe']) * (parseFloat(prod['valor_ieps'])/100)).toFixed(4);
+									importeIva = (parseFloat(prod['importe']) + parseFloat(importeIeps)) * parseFloat( prod['valor_imp'] );
+								}
+								
+								trr += '<input type="hidden" 	name="totimpuesto'+ tr +'" id="totimp" value="'+ importeIva +'">';
+								
+								trr += '<input type="hidden" name="importe_del_descto" id="importe_del_descto" value="'+ importe_del_descuento +'">';
+								trr += '<input type="hidden" name="importe_con_descto" id="importe_con_descto" value="'+ importe_con_descto +'">';
+								
 							trr += '</td>';
 							
-
+							
 							
 							trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="60">';
 								trr += '<input type="hidden" name="idIeps"     value="'+ prod['ieps_id'] +'" id="idIeps">';
@@ -4035,6 +4177,10 @@ $(function() {
 								var $campoTasaIva = $(this).parent().parent().find('#ivalorimp');
 								var $importeIva = $(this).parent().parent().find('#totimp');
 								
+								var $vdescto = $(this).parent().parent().find('#vdescto');
+								var $pu_con_descto = $(this).parent().parent().find('#pu_descto');
+								var $importe_del_descto = $(this).parent().parent().find('#importe_del_descto');
+								var $importe_con_descto = $(this).parent().parent().find('#importe_con_descto');
 								
 								if ($campoCantidad.val().trim() == ''){
 									$campoCantidad.val(' ');
@@ -4055,6 +4201,22 @@ $(function() {
 									
 									//Calcula el IVA para este producto multiplicando el importe + ieps por la tasa del iva
 									$importeIva.val((parseFloat($campoImporte.val()) + parseFloat($importeIeps.val()) ) * parseFloat( $campoTasaIva.val() ));
+									
+									
+									if($pdescto.val().trim()=='true'){
+										if(parseFloat($vdescto.val())>0){
+											$pu_con_descto.val(parseFloat(parseFloat($campoPrecioU.val()) - (parseFloat($campoPrecioU.val()) * (parseFloat($vdescto.val())/100))).toFixed(4));
+											$importe_del_descto.val(parseFloat(parseFloat($campoImporte.val()) * (parseFloat($vdescto.val())/100)).toFixed(4));
+											$importe_con_descto.val(parseFloat(parseFloat($campoImporte.val()) - parseFloat($importe_del_descto.val())).toFixed(4));
+											
+											//Calcular y redondear el importe del IEPS, tomando el importe con descuento
+											$importeIeps.val(parseFloat(parseFloat($importe_con_descto.val()) * (parseFloat($campoTasaIeps.val())/100)).toFixed(4));
+											
+											//Calcular el impuesto para este producto multiplicando el importe_con_descto + ieps por la tasa del iva
+											$importeIva.val( (parseFloat($importe_con_descto.val()) + parseFloat($importeIeps.val())) * parseFloat( $campoTasaIva.val() ));
+										}
+									}
+									
 								}else{
 									$campoImporte.val(0);
 									$importeIva.val(0);
@@ -4082,6 +4244,11 @@ $(function() {
 								var $campoTasaIva = $(this).parent().parent().find('#ivalorimp');
 								var $importeIva = $(this).parent().parent().find('#totimp');
 								
+								var $vdescto = $(this).parent().parent().find('#vdescto');
+								var $pu_con_descto = $(this).parent().parent().find('#pu_descto');
+								var $importe_del_descto = $(this).parent().parent().find('#importe_del_descto');
+								var $importe_con_descto = $(this).parent().parent().find('#importe_con_descto');
+								
 								if ($campoPrecioU.val().trim() == ''){
 									$campoPrecioU.val(' ');
 								}else{
@@ -4100,6 +4267,21 @@ $(function() {
 									
 									//Calcula el impuesto para este producto multiplicando el importe por el valor del iva
 									$importeIva.val((parseFloat($campoImporte.val()) + parseFloat($importeIeps.val())) * parseFloat($campoTasaIva.val()));
+									
+									if($pdescto.val().trim()=='true'){
+										if(parseFloat($vdescto.val())>0){
+											$pu_con_descto.val(parseFloat(parseFloat($campoPrecioU.val()) - (parseFloat($campoPrecioU.val()) * (parseFloat($vdescto.val())/100))).toFixed(4));
+											$importe_del_descto.val(parseFloat(parseFloat($campoImporte.val()) * (parseFloat($vdescto.val())/100)).toFixed(4));
+											$importe_con_descto.val(parseFloat(parseFloat($campoImporte.val()) - parseFloat($importe_del_descto.val())).toFixed(4));
+											
+											//Calcular y redondear el importe del IEPS, tomando el importe con descuento
+											$importeIeps.val(parseFloat(parseFloat($importe_con_descto.val()) * (parseFloat($campoTasaIeps.val())/100)).toFixed(4));
+											
+											//Calcular el impuesto para este producto multiplicando el importe_con_descto + ieps por la tasa del iva
+											$importeIva.val( (parseFloat($importe_con_descto.val()) + parseFloat($importeIeps.val())) * parseFloat( $campoTasaIva.val() ));
+										}
+									}
+									
 								}else{
 									$campoImporte.val(0);
 									$importeIva.val(0);
@@ -4131,7 +4313,6 @@ $(function() {
 								}
 							});
 						});
-						
 						
 					}
 					
