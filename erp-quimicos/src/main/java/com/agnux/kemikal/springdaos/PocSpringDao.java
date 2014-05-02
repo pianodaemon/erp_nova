@@ -255,7 +255,7 @@ public class PocSpringDao implements PocInterfaceDao{
             + "(CASE WHEN poc_pedidos_detalle.backorder=TRUE THEN 'checked' ELSE '' END) AS valor_check, "
             + "(CASE WHEN poc_pedidos_detalle.backorder=TRUE THEN 1 ELSE 0 END) AS valor_selecionado, "
             + "(poc_pedidos_detalle.cantidad - poc_pedidos_detalle.reservado) AS cant_produccion, "
-            + "poc_pedidos_detalle.descto "
+            + "(CASE WHEN poc_pedidos_detalle.descto IS NULL THEN 0 ELSE poc_pedidos_detalle.descto END) AS descto "
         + "FROM poc_pedidos_detalle "
         + "LEFT JOIN inv_prod on inv_prod.id = poc_pedidos_detalle.inv_prod_id "
         + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = poc_pedidos_detalle.inv_prod_unidad_id "

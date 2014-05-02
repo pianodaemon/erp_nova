@@ -35,7 +35,7 @@ public interface PrefacturasInterfaceDao {
     public ArrayList<HashMap<String, Object>> getPrefactura_PresPorProd(Integer id_prefactura);
     public ArrayList<HashMap<String, Object>> getMonedas();
     public ArrayList<HashMap<String, Object>> getDatosRemision(Integer id_remision);
-    public ArrayList<HashMap<String, Object>> getDetallesRemision(Integer id_remision);
+    public ArrayList<HashMap<String, Object>> getDetallesRemision(Integer id_remision, String permitir_descuento);
     public ArrayList<HashMap<String, String>> getRemisionesCliente(Integer id_cliente);
     public ArrayList<HashMap<String, Object>> getPresPorProdRemision(Integer id_remision);
     

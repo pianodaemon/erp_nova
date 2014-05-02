@@ -60,7 +60,7 @@ public interface FacturasInterfaceDao {
     public ArrayList<String> getLeyendasEspecialesCfdi(Integer id_empresa);
     
     
-    public ArrayList<LinkedHashMap<String, String>> getListaConceptosXmlCfdiTf(Integer id_prefactura);
+    public ArrayList<LinkedHashMap<String, String>> getListaConceptosXmlCfdiTf(Integer id_prefactura, String permitir_descuento);
     
     //Actualizar campo de salidas de archivos en fac_docs
     //public Boolean update_fac_docs_salidas(String serieFolio, String nombre_archivo);

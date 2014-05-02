@@ -31,6 +31,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -476,7 +477,12 @@ public class PrefacturasController {
         boolean incluirAdenda=false;
         
         datos_remision = this.getPdao().getDatosRemision(id_remision);
-        detalles_remision = this.getPdao().getDetallesRemision(id_remision);
+        String permitir_descuento="false";
+        if(datos_remision.get(0).get("pdescto").toString().toLowerCase().equals("true")){
+            permitir_descuento="true";
+        }
+        
+        detalles_remision = this.getPdao().getDetallesRemision(id_remision, permitir_descuento);
         //pres_x_prod = this.getPdao().getPresPorProdRemision(id_remision);
         
         parametros = this.getPdao().getFac_Parametros(id_sucursal);
@@ -556,6 +562,7 @@ public class PrefacturasController {
             @RequestParam(value="folio_pedido", required=false) String folio_pedido,
             @RequestParam(value="tasa_ret_immex", required=false) String tasa_ret_immex,
             @RequestParam(value="select_almacen", required=false) String select_almacen,
+            @RequestParam(value="pdescto", required=true) String permitir_descto,
             
             //Estos son para datos de la Adenda
             @RequestParam(value="campo1", required=true) String campo_adenda1,
@@ -579,6 +586,7 @@ public class PrefacturasController {
             @RequestParam(value="costo", required=false) String[] costo,
             @RequestParam(value="idIeps", required=false) String[] idIeps,
             @RequestParam(value="tasaIeps", required=false) String[] tasaIeps,
+            @RequestParam(value="vdescto", required=false) String[] vdescto,
             
             @RequestParam(value="id_remision", required=false) String[] id_remision,
             @RequestParam(value="id_df", required=false) String id_df,
@@ -643,7 +651,7 @@ public class PrefacturasController {
         arreglo = new String[eliminado.length];
         
         for(int i=0; i<eliminado.length; i++) {
-            arreglo[i]= "'"+eliminado[i] +"___" + iddetalle[i] +"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + id_impuesto[i] +"___" + cantidad[i] +"___" + StringHelper.removerComas(costo[i]) + "___"+valor_imp[i]+"___" + id_remision[i]+"___"+costo_promedio[i]+"___"+idUnidad[i] + "___" + idIeps[i] + "___" + tasaIeps[i] +"'";
+            arreglo[i]= "'"+eliminado[i] +"___" + iddetalle[i] +"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + id_impuesto[i] +"___" + cantidad[i] +"___" + StringHelper.removerComas(costo[i]) + "___"+valor_imp[i]+"___" + id_remision[i]+"___"+costo_promedio[i]+"___"+idUnidad[i] + "___" + idIeps[i] + "___" + tasaIeps[i] + "___" + vdescto[i] +"'";
             //arreglo[i]= "'"+eliminado[i] +"___" + iddetalle[i] +"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + id_impuesto +"___" + cantidad[i] +"___" + costo[i]+"'";
             //System.out.println(arreglo[i]);
         }
@@ -663,7 +671,7 @@ public class PrefacturasController {
         
         
         //System.out.println("data_string: "+data_string);
-        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_prefactura+"___"+id_cliente+"___"+id_moneda+"___"+observaciones.toUpperCase()+"___"+tipo_cambio_vista+"___"+id_vendedor+"___"+id_condiciones+"___"+orden_compra.toUpperCase()+"___"+refacturar+"___"+id_metodo_pago+"___"+no_cuenta+"___"+select_tipo_documento+"___"+folio_pedido+"___"+select_almacen+"___"+id_moneda_original+"___"+id_df+"___"+campo_adenda1.toUpperCase()+"___"+campo_adenda2.toUpperCase()+"___"+campo_adenda3+"___"+campo_adenda4.toUpperCase()+"___"+campo_adenda5.toUpperCase()+"___"+campo_adenda6.toUpperCase()+"___"+campo_adenda7.toUpperCase()+"___"+campo_adenda8.toUpperCase()+"___"+rfc.toUpperCase().trim();
+        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_prefactura+"___"+id_cliente+"___"+id_moneda+"___"+observaciones.toUpperCase()+"___"+tipo_cambio_vista+"___"+id_vendedor+"___"+id_condiciones+"___"+orden_compra.toUpperCase()+"___"+refacturar+"___"+id_metodo_pago+"___"+no_cuenta+"___"+select_tipo_documento+"___"+folio_pedido+"___"+select_almacen+"___"+id_moneda_original+"___"+id_df+"___"+campo_adenda1.toUpperCase()+"___"+campo_adenda2.toUpperCase()+"___"+campo_adenda3+"___"+campo_adenda4.toUpperCase()+"___"+campo_adenda5.toUpperCase()+"___"+campo_adenda6.toUpperCase()+"___"+campo_adenda7.toUpperCase()+"___"+campo_adenda8.toUpperCase()+"___"+rfc.toUpperCase().trim() + "___" + permitir_descto;
         //System.out.println("data_string: "+data_string);
         
         //System.out.println(TimeHelper.getFechaActualYMDH()+"::::Inicia Validacion de la Prefactura::::::::::::::::::");
@@ -847,11 +855,11 @@ public class PrefacturasController {
                             iva = this.getFacdao().getIvas();
                             
                             
-                            conceptos = this.getFacdao().getListaConceptosXmlCfdiTf(id_prefactura);
+                            conceptos = this.getFacdao().getListaConceptosXmlCfdiTf(id_prefactura, permitir_descto.trim().toLowerCase());
                             impRetenidos = this.getFacdao().getImpuestosRetenidosFacturaXml();
                             impTrasladados = this.getFacdao().getImpuestosTrasladadosFacturaXml(id_sucursal, conceptos, ieps, iva);
-                            dataFacturaCliente = this.getFacdao().getDataFacturaXml(id_prefactura);
                             leyendas = this.getFacdao().getLeyendasEspecialesCfdi(id_empresa);
+                            dataFacturaCliente = this.getFacdao().getDataFacturaXml(id_prefactura);
                             
                             //estos son requeridos para cfditf
                             datosExtrasXmlFactura.put("prefactura_id", String.valueOf(id_prefactura));
@@ -898,7 +906,7 @@ public class PrefacturasController {
                                 
                                 //System.out.println(TimeHelper.getFechaActualYMDH()+":::::::::::Inicia construccion de PDF:::::::::::::::::..");
                                 
-                                //conceptos para el pdfcfd
+                                //Conceptos para el pdfcfd
                                 listaConceptosPdfCfd = this.getFacdao().getListaConceptosPdfCfd(serieFolio);
                                 
                                 //datos para el pdf
