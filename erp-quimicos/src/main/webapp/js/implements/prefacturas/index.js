@@ -764,9 +764,9 @@ $(function() {
 			var trCount = $("tr", $grid_productos).size();
 			var valor_orden_compra = $orden_compra.val();
 			var valor_folio_pedido = $folio_pedido.val();
-			var valor_folio_remision = entry['Datos']['0']['folio_remision'];
-			var id_dir_fiscal = entry['Datos']['0']['df_id'];
-			var dir_fiscal = entry['Datos']['0']['direccion'];
+			var valor_folio_remision = entry['Datos'][0]['folio_remision'];
+			var id_dir_fiscal = entry['Datos'][0]['df_id'];
+			var dir_fiscal = entry['Datos'][0]['direccion'];
 			var cargar_datos=false;
 			
 			//verificar si el id de la direccion fiscal es igual a cero o  es igual a 1. Cualquiera de estos dos valosres significa que es la primera remision
@@ -832,8 +832,16 @@ $(function() {
 					$folio_pedido.val(entry['Datos']['0']['folio_pedido']);
 				}
 				
+				$('#forma-prefacturas-window').find('input[name=pdescto]').val(entry['Datos'][0]['pdescto']);
+				
 				var importeIeps=0;
 				var tasaIeps=0;
+				var importePartida = 0;
+				var importeImpuesto = 0;
+				var precio_u_con_descto = 0;
+				var valor_descto = 0;
+				var importe_del_descuento = 0;
+				var importe_con_descto = 0;
 				
 				if(entry['Conceptos'] != null){
 					$.each(entry['Conceptos'],function(entryIndex,prod){
@@ -842,11 +850,34 @@ $(function() {
 						tr++;
 						importeIeps=0;
 						tasaIeps=0;
+						
+						importePartida = 0;
+						importeImpuesto = 0;
+						precio_u_con_descto = 0;
+						valor_descto = 0;
+						importe_del_descuento = 0;
+						importe_con_descto = 0;
+						
+						//Redondear a 4 digitos el importe de la partida
+						importePartida = parseFloat(prod['importe']).toFixed(4);
+						
 						if(parseFloat(prod['valor_ieps'])>0){
 							tasaIeps = parseFloat(prod['valor_ieps'])/100;
 						}
 						
-						importeIeps=parseFloat(parseFloat(prod['importe']) * parseFloat(tasaIeps)).toFixed(4);
+						if($('#forma-prefacturas-window').find('input[name=pdescto]').val().trim()=='true' && parseFloat(prod['descto'])>0){
+							valor_descto = prod['descto'];
+							precio_u_con_descto = parseFloat( parseFloat(prod['precio_unitario']) - (parseFloat(prod['precio_unitario'])*(parseFloat(valor_descto)/100)) ).toFixed(4);
+							
+							importe_del_descuento = parseFloat(parseFloat(importePartida)*(parseFloat(valor_descto)/100)).toFixed(4);
+							importe_con_descto = parseFloat(parseFloat(importePartida)-parseFloat(importe_del_descuento)).toFixed(4);
+							
+							importeIeps = parseFloat(parseFloat(importe_con_descto) * parseFloat(tasaIeps)).toFixed(4);
+							importeImpuesto = (parseFloat(importe_con_descto) + parseFloat(importeIeps)) * parseFloat( prod['valor_imp'] );
+						}else{
+							importeIeps = parseFloat(parseFloat(importePartida) * parseFloat(tasaIeps)).toFixed(4);
+							importeImpuesto = parseFloat(parseFloat(parseFloat(importePartida) + parseFloat(importeIeps)) * parseFloat(prod['valor_imp'])).toFixed(4);
+						}
 						
 						var trr = '';
 						trr = '<tr>';
@@ -892,20 +923,25 @@ $(function() {
 						trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
 							trr += '<input type="text" 	name="costo" 	value="'+  prod['precio_unitario'] +'" 	id="cost" class="borde_oculto" style="width:76px; text-align:right;" readOnly="true">';
 							trr += '<input type="hidden" value="'+  prod['precio_unitario'] +'" id="costor">';
+							
+							trr += '<input type="hidden" 	name="vdescto" id="vdescto" value="'+ valor_descto +'">';
+							trr += '<input type="hidden" 	name="pu_descto" id="pu_descto" value="'+ precio_u_con_descto +'">';
 						trr += '</td>';
-						
 						
 						trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
-							trr += '<input type="text" 	name="importe'+ tr +'" 	value="'+  prod['importe'] +'" 	id="import" class="borde_oculto" style="width:86px; text-align:right;" readOnly="true">';
-							trr += '<input type="hidden" name="totimpuesto'+ tr +'" id="totimp" value="'+(parseFloat(prod['importe']) + parseFloat(importeIeps)) * parseFloat(prod['valor_imp'])+'">';
+							trr += '<input type="text" 	name="importe'+ tr +'" 	value="'+  importePartida +'" 	id="import" class="borde_oculto" style="width:86px; text-align:right;" readOnly="true">';
+							trr += '<input type="hidden" name="totimpuesto'+ tr +'" id="totimp" value="'+ importeImpuesto +'">';
 							trr += '<input type="hidden"    name="id_imp_prod"  value="'+  prod['gral_imp_id'] +'" id="idimppord">';
 							trr += '<input type="hidden"    name="valor_imp" 	value="'+  prod['valor_imp'] +'" 		id="ivalorimp">';
+							
+							trr += '<input type="hidden" name="importe_del_descto" id="importe_del_descto" value="'+ importe_del_descuento +'">';
+							trr += '<input type="hidden" name="importe_con_descto" id="importe_con_descto" value="'+ importe_con_descto +'">';
+							
 						trr += '</td>';
-						
 						
 						trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="50">';
 							trr += '<input type="hidden" name="idIeps"     value="'+ prod['ieps_id'] +'" id="idIeps">';
-							trr += '<input type="text" name="tasaIeps" value="'+ prod['valor_ieps'] +'" class="borde_oculto" id="tasaIeps" style="width:46px; text-align:right;" readOnly="true">';
+							trr += '<input type="text" name="tasaIeps" value="'+ tasaIeps +'" class="borde_oculto" id="tasaIeps" style="width:46px; text-align:right;" readOnly="true">';
 						trr += '</td>';
 						
 						trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="62">';
@@ -1389,12 +1425,6 @@ $(function() {
 			}
 		});
 		
-
-		
-		
-		
-		
-		
 		
 		if(pdescto.trim()=='true' && parseFloat(sumaDescuento)>0){
 			//Agregar importe sin descuento, sin impuesto
@@ -1424,11 +1454,6 @@ $(function() {
 		}
 		
 		
-		
-		
-		
-		
-		
 		//Redondea a dos digitos el IEPS y lo asigna  al campo ieps
 		$campo_ieps.val($(this).agregar_comas(  parseFloat(sumaIeps).toFixed(2)  ));
 		
@@ -1443,18 +1468,35 @@ $(function() {
 		
 		
 		
+		var valorHeight=540;
+		
+		if(parseFloat(sumaDescuento)>0){
+			$('#forma-prefacturas-window').find('#tr_importe_subtotal').show();
+			$('#forma-prefacturas-window').find('#tr_descto').show();
+			valorHeight = parseFloat(valorHeight) + 30;
+		}else{
+			$('#forma-prefacturas-window').find('#tr_importe_subtotal').hide();
+			$('#forma-prefacturas-window').find('#tr_descto').hide();
+		}
+		
 		//Ocultar campos si tienen valor menor o igual a cero
 		if(parseFloat(sumaIeps)<=0){
 			$('#forma-prefacturas-window').find('#tr_ieps').hide();
 		}else{
 			$('#forma-prefacturas-window').find('#tr_ieps').show();
+			valorHeight = parseFloat(valorHeight) + 15;
 		}
+		
 		if(parseFloat(impuestoRetenido)<=0){
 			$('#forma-prefacturas-window').find('#tr_retencion').hide();
 		}else{
 			$('#forma-prefacturas-window').find('#tr_retencion').show();
+			valorHeight = parseFloat(valorHeight) + 15;
 		}
 		
+		$('#forma-prefacturas-window').find('.prefacturas_div_one').css({'height':valorHeight+'px'});
+		
+		/*
 		if(parseFloat(sumaIeps)>0 && parseFloat(impuestoRetenido)<=0){
 			$('#forma-prefacturas-window').find('.prefacturas_div_one').css({'height':'560px'});
 		}
@@ -1470,7 +1512,7 @@ $(function() {
 		if(parseFloat(sumaIeps)>0 && parseFloat(impuestoRetenido)>0){
 			$('#forma-prefacturas-window').find('.prefacturas_div_one').css({'height':'580px'});
 		}
-		
+		*/
 	}//termina calcular totales
 	
 	

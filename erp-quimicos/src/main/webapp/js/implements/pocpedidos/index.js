@@ -1938,7 +1938,7 @@ $(function() {
 		if(parseFloat(sumaDescuento)>0){
 			$('#forma-pocpedidos-window').find('#tr_importe_subtotal').show();
 			$('#forma-pocpedidos-window').find('#tr_descto').show();
-			valorHeight = parseFloat(valorHeight) + 30
+			valorHeight = parseFloat(valorHeight) + 30;
 		}else{
 			$('#forma-pocpedidos-window').find('#tr_importe_subtotal').hide();
 			$('#forma-pocpedidos-window').find('#tr_descto').hide();
@@ -1949,13 +1949,13 @@ $(function() {
 			$('#forma-pocpedidos-window').find('#tr_ieps').hide();
 		}else{
 			$('#forma-pocpedidos-window').find('#tr_ieps').show();
-			valorHeight = parseFloat(valorHeight) + 20
+			valorHeight = parseFloat(valorHeight) + 20;
 		}
 		if(parseFloat(impuestoRetenido)<=0){
 			$('#forma-pocpedidos-window').find('#tr_retencion').hide();
 		}else{
 			$('#forma-pocpedidos-window').find('#tr_retencion').show();
-			valorHeight = parseFloat(valorHeight) + 20
+			valorHeight = parseFloat(valorHeight) + 20;
 		}
 		
 		$('#forma-pocpedidos-window').find('.pocpedidos_div_one').css({'height':valorHeight+'px'});
