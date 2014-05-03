@@ -34,7 +34,7 @@ import java.util.logging.Logger;
 public class FacturasSpringDao implements FacturasInterfaceDao{
     private JdbcTemplate jdbcTemplate;
     private String fechaComprobante;
-    private String subtotalSinDescuento;
+    private String subtotalConDescuento;
     private String montoDescuento;
     private String subTotal;
     private String impuestoTrasladado;
@@ -48,14 +48,6 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     
     public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
-    }
-    
-    public String getSubtotalSinDescuento() {
-        return subtotalSinDescuento;
-    }
-
-    public void setSubtotalSinDescuento(String subtotalSinDescuento) {
-        this.subtotalSinDescuento = subtotalSinDescuento;
     }
     
     public String getMontoDescuento() {
@@ -72,6 +64,14 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     
     public void setSubTotal(String subTotal) {
         this.subTotal = subTotal;
+    }
+    
+    public String getSubtotalConDescuento() {
+        return subtotalConDescuento;
+    }
+
+    public void setSubtotalConDescuento(String subtotalConDescuento) {
+        this.subtotalConDescuento = subtotalConDescuento;
     }
     
     public String getImpuestoTrasladado() {
@@ -282,7 +282,10 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
             + "fac_docs.fac_metodos_pago_id,"
             + "fac_docs.no_cuenta, "
             + "cxc_clie.tasa_ret_immex/100 AS tasa_ret_immex,"
-            + "erp_h_facturas.saldo_factura "
+            + "erp_h_facturas.saldo_factura, "
+            + "fac_docs.monto_descto, "
+            + "(CASE WHEN fac_docs.subtotal_sin_descto IS NULL THEN 0 ELSE fac_docs.subtotal_sin_descto END) AS subtotal_sin_descto, "
+            + "(CASE WHEN fac_docs.monto_descto>0 THEN fac_docs.motivo_descto ELSE '' END) AS motivo_descto  "
         +"FROM fac_docs   "
         +"JOIN erp_h_facturas ON erp_h_facturas.serie_folio=fac_docs.serie_folio "
         +"LEFT JOIN cxc_clie ON cxc_clie.id=fac_docs.cxc_clie_id "
@@ -325,6 +328,10 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     row.put("tasa_ret_immex",StringHelper.roundDouble(rs.getDouble("tasa_ret_immex"),2));
                     row.put("saldo_fac",StringHelper.roundDouble(rs.getDouble("saldo_factura"),2));
                     row.put("monto_ieps",StringHelper.roundDouble(rs.getDouble("monto_ieps"),2));
+                    
+                    row.put("monto_descto",StringHelper.roundDouble(rs.getDouble("monto_descto"),2));
+                    row.put("subtotal_sin_descto",StringHelper.roundDouble(rs.getDouble("subtotal_sin_descto"),2));
+                    row.put("motivo_descto",rs.getString("motivo_descto"));
                     
                     return row;
                 }
@@ -662,7 +669,8 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                         + "(CASE WHEN erp_prefacturas.cxc_clie_df_id > 1 THEN sbtdf.estado ELSE gral_edo.titulo END ) AS estado,"
                         + "(CASE WHEN erp_prefacturas.cxc_clie_df_id > 1 THEN sbtdf.pais ELSE gral_pais.titulo END ) AS pais,"
                         + "(CASE WHEN erp_prefacturas.cxc_clie_df_id > 1 THEN sbtdf.cp ELSE cxc_clie.cp END ) AS cp, "
-                        + "(CASE WHEN erp_prefacturas.monto_descto>0 THEN true ELSE false END) AS pdescto "
+                        + "(CASE WHEN erp_prefacturas.monto_descto>0 THEN true ELSE false END) AS pdescto, "
+                        + "(CASE WHEN erp_prefacturas.monto_descto>0 THEN (CASE WHEN erp_prefacturas.motivo_descto IS NULL THEN '' ELSE erp_prefacturas.motivo_descto END) ELSE '' END) AS mdescto "
                 + "FROM erp_prefacturas  "
                 + "LEFT JOIN cxc_clie ON cxc_clie.id=erp_prefacturas.cliente_id "
                 + "LEFT JOIN fac_metodos_pago ON fac_metodos_pago.id=erp_prefacturas.fac_metodos_pago_id "
@@ -687,11 +695,16 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         data.put("comprobante_attr_condicionesdepago",map.get("condicion_pago").toString().toUpperCase());
         data.put("comprobante_attr_formadepago","PAGO EN UNA SOLA EXIBICION");
         if(map.get("pdescto").toString().trim().toLowerCase().equals("true")){
-            data.put("comprobante_attr_motivodescuento","DESCUENTO POR PRONTO PAGO");
+            data.put("comprobante_attr_motivodescuento",map.get("mdescto").toString().toUpperCase());
             data.put("comprobante_attr_descuento",this.getMontoDescuento());
+            data.put("subtotal_con_descuento",this.getSubtotalConDescuento());
+            //Este es para el PDF cuando incluye descuento
+            data.put("subtotal_sin_descuento",this.getSubTotal());
         }else{
             data.put("comprobante_attr_motivodescuento","");
             data.put("comprobante_attr_descuento","0.00");
+            data.put("subtotal_con_descuento","0.00");
+            data.put("subtotal_sin_descuento","0.00");
         }
         data.put("comprobante_attr_subtotal",this.getSubTotal());
         data.put("comprobante_attr_total",this.getTotal());
@@ -762,7 +775,6 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         Double montoTotal=0.0;
         Double sumaDescuento=0.0;
         Double sumaSubtotalConDescuento=0.0;
-        Double sumaSubtotalSinDescuento=0.0;
         
         for (int x=0; x<=conceptos.size()-1;x++){
             LinkedHashMap<String,String> con = conceptos.get(x);
@@ -779,15 +791,14 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         if(sumaDescuento>0){
             monto_retencion = sumaSubtotalConDescuento * tasa_retencion;
             montoTotal = sumaSubtotalConDescuento + sumaImporteIeps + sumaImpuesto - monto_retencion;
-            this.setSubTotal(StringHelper.roundDouble(sumaSubtotalConDescuento,2));
         }else{
             monto_retencion = sumaImporte * tasa_retencion;
             montoTotal = sumaImporte + sumaImporteIeps + sumaImpuesto - monto_retencion;
-            this.setSubTotal(StringHelper.roundDouble(sumaImporte,2));
         }
         
-        this.setSubtotalSinDescuento(StringHelper.roundDouble(sumaImporte,2));
+        this.setSubtotalConDescuento(StringHelper.roundDouble(sumaSubtotalConDescuento,2));
         this.setMontoDescuento(StringHelper.roundDouble(sumaDescuento,2));
+        this.setSubTotal(StringHelper.roundDouble(sumaImporte,2));
         this.setImpuestoTrasladado(StringHelper.roundDouble(sumaImpuesto,2));
         this.setImpuestoRetenido(StringHelper.roundDouble(monto_retencion,2));
         this.setTasaRetencion(StringHelper.roundDouble(tasa_retencion,2));
@@ -795,7 +806,6 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         
         //System.out.println("tasa_retencion: "+ tasa_retencion);
         //System.out.println("Subtotal: "+ this.getSubTotal()+"      Trasladado: "+ sumaImpuesto+ "      Retenido: "+ monto_retencion+ "      Total: "+ this.getTotal());
-        
     }
     
     
@@ -1351,8 +1361,8 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                 + "(CASE WHEN erp_prefacturas_detalles.gral_ieps_id>0 THEN '. IEPS '||(round((erp_prefacturas_detalles.valor_ieps * 100::double precision)::numeric,2)::double precision) ELSE '' END) AS etiqueta_ieps,"
                 + "(CASE WHEN inv_prod_unidades.titulo IS NULL THEN '' ELSE inv_prod_unidades.titulo END) AS unidad,"
                 + "erp_prefacturas_detalles.cant_facturar AS cantidad,"
-                //+ "erp_prefacturas_detalles.precio_unitario,"
-                + "(CASE WHEN "+ permitir_descuento +"::boolean=true THEN (CASE WHEN erp_prefacturas_detalles.descto IS NULL THEN erp_prefacturas_detalles.precio_unitario ELSE (CASE WHEN erp_prefacturas_detalles.descto>0 THEN (erp_prefacturas_detalles.precio_unitario - (erp_prefacturas_detalles.precio_unitario * (erp_prefacturas_detalles.descto::double precision/100))) ELSE erp_prefacturas_detalles.precio_unitario END) END) ELSE erp_prefacturas_detalles.precio_unitario END) AS precio_unitario, "
+                + "erp_prefacturas_detalles.precio_unitario,"
+                + "(CASE WHEN "+ permitir_descuento +"::boolean=true THEN (CASE WHEN erp_prefacturas_detalles.descto IS NULL THEN erp_prefacturas_detalles.precio_unitario ELSE (CASE WHEN erp_prefacturas_detalles.descto>0 THEN (erp_prefacturas_detalles.precio_unitario - (erp_prefacturas_detalles.precio_unitario * (erp_prefacturas_detalles.descto::double precision/100))) ELSE erp_prefacturas_detalles.precio_unitario END) END) ELSE erp_prefacturas_detalles.precio_unitario END) AS precio_unitario_con_descto, "
                 + "(erp_prefacturas_detalles.cant_facturar * erp_prefacturas_detalles.precio_unitario) AS importe, "
                 + "(CASE WHEN "+ permitir_descuento +"::boolean=true THEN (CASE WHEN erp_prefacturas_detalles.descto IS NULL THEN (erp_prefacturas_detalles.cant_facturar * erp_prefacturas_detalles.precio_unitario) ELSE (CASE WHEN erp_prefacturas_detalles.descto>0 THEN ((erp_prefacturas_detalles.cant_facturar * erp_prefacturas_detalles.precio_unitario) - ((erp_prefacturas_detalles.cant_facturar * erp_prefacturas_detalles.precio_unitario) * (erp_prefacturas_detalles.descto::double precision/100))) ELSE (erp_prefacturas_detalles.cant_facturar * erp_prefacturas_detalles.precio_unitario) END) END) ELSE (erp_prefacturas_detalles.cant_facturar * erp_prefacturas_detalles.precio_unitario) END) AS importe_con_descto, "
                 + "(CASE WHEN "+ permitir_descuento +"::boolean=true THEN (CASE WHEN erp_prefacturas_detalles.descto IS NULL THEN 0 ELSE (CASE WHEN erp_prefacturas_detalles.descto>0 THEN ((erp_prefacturas_detalles.cant_facturar * erp_prefacturas_detalles.precio_unitario) * (erp_prefacturas_detalles.descto::double precision/100)) ELSE 0 END) END) ELSE 0 END) AS importe_del_descto, "
@@ -1404,7 +1414,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     row.put("importe_ieps",StringHelper.roundDouble(rs.getDouble("importe_ieps"),4) );
                     row.put("etiqueta_ieps",rs.getString("etiqueta_ieps"));
                     row.put("descto",StringHelper.roundDouble(rs.getDouble("descto"),2) );
-                    //row.put("precio_unitario_con_descto",StringHelper.roundDouble(rs.getDouble("precio_unitario_con_descto"),4) );
+                    row.put("precio_unitario_con_descto",StringHelper.roundDouble(rs.getDouble("precio_unitario_con_descto"),4) );
                     row.put("importe_del_descto",StringHelper.roundDouble(rs.getDouble("importe_del_descto"),4) );
                     row.put("importe_con_descto",StringHelper.roundDouble(rs.getDouble("importe_con_descto"),4) );
                     
@@ -1420,7 +1430,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         } catch (SQLException ex) {
             Logger.getLogger(FacturasSpringDao.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+        /*
         if(permitir_descuento.equals("true")){
             try {
                 retorno = tratar_conceptos_con_descuento(hm_conceptos);
@@ -1430,8 +1440,8 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         }else{
             retorno = hm_conceptos;
         }
-        
-        return retorno;
+        */
+        return hm_conceptos;
     }
     
     
@@ -1443,7 +1453,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     
     
     
-    
+    /*
     //Tratar conceptos cuando incluye descuento, solo es para enviar el importe con descuento
     public ArrayList<LinkedHashMap<String, String>> tratar_conceptos_con_descuento(ArrayList<LinkedHashMap<String, String>> conceptos) throws SQLException{
         ArrayList<LinkedHashMap<String, String>> tratado = new ArrayList<LinkedHashMap<String, String>>();
@@ -1458,8 +1468,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
             fila.put("unidad",i.get("unidad"));
             fila.put("cantidad",i.get("cantidad"));
             fila.put("valorUnitario",i.get("valorUnitario"));
-            //fila.put("importe",i.get("importe"));
-            fila.put("importe",i.get("importe_con_descto"));
+            fila.put("importe",i.get("importe"));
             fila.put("importe_impuesto",i.get("importe_impuesto"));
             fila.put("numero_aduana",i.get("numero_aduana"));
             fila.put("fecha_aduana",i.get("fecha_aduana"));
@@ -1480,7 +1489,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         
         return tratado;
     }
-    
+    */
     
     /*
     //ejecuta procesos relacionados a facturacion
@@ -1586,7 +1595,11 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         
         //obtener datos del vendedor y terminos de pago
         String sql_to_query = ""
-        + "SELECT fac_docs.subtotal, "
+        + "SELECT "
+            + "fac_docs.subtotal, "
+            + "fac_docs.monto_descto, "
+            + "(CASE WHEN fac_docs.subtotal_sin_descto IS NULL THEN 0 ELSE fac_docs.subtotal_sin_descto END) AS subtotal_sin_descto, "
+            + "(CASE WHEN fac_docs.monto_descto>0 THEN fac_docs.motivo_descto ELSE '' END) AS motivo_descto, "
             + "fac_docs.monto_ieps,"
             + "fac_docs.impuesto, "
             + "fac_docs.monto_retencion, "
@@ -1615,6 +1628,10 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         extras.put("total", StringHelper.roundDouble(mapVendedorCondiciones.get("total").toString(),2));
         extras.put("nombre_moneda", mapVendedorCondiciones.get("nombre_moneda").toString());
         extras.put("moneda_abr", mapVendedorCondiciones.get("moneda_abr").toString());
+        
+        extras.put("monto_descto", StringHelper.roundDouble(mapVendedorCondiciones.get("monto_descto").toString(),2));
+        extras.put("subtotal_sin_descto", StringHelper.roundDouble(mapVendedorCondiciones.get("subtotal_sin_descto").toString(),2));
+        extras.put("motivo_descto", mapVendedorCondiciones.get("motivo_descto").toString());
         
         extras.put("nombre_vendedor", mapVendedorCondiciones.get("nombre_vendedor").toString());
         extras.put("terminos", mapVendedorCondiciones.get("terminos").toString());
@@ -2728,6 +2745,8 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         data.put("comprobante_attr_formadepago","PAGO EN UNA SOLA EXIBICION");
         data.put("comprobante_attr_motivodescuento","");
         data.put("comprobante_attr_descuento","0.00");
+        data.put("subtotal_con_descuento","0.00");
+        data.put("subtotal_sin_descuento","0.00");//Este es para el pdf cuando incluye descuento
         data.put("comprobante_attr_subtotal",map.get("subtotal").toString().toUpperCase());
         data.put("comprobante_attr_total",this.getTotal());
         data.put("comprobante_attr_metododepago",map.get("metodo_pago").toString().toUpperCase());
@@ -2932,6 +2951,11 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         extras.put("sello_digital", sello_digital);
         extras.put("serieFolio", serieFolio);
         extras.put("refId", mapVendedorCondiciones.get("ref_id").toString());
+        
+        extras.put("monto_descto", "0.00");
+        extras.put("subtotal_sin_descto", "0.00");
+        extras.put("motivo_descto", "");
+        
         return extras;
     }
     

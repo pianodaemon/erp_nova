@@ -83,7 +83,11 @@ public class pdfCfd_CfdiTimbradoFormato2 {
     private String fecha_pago;
     private String metodo_pago;
     private String no_cuenta;
+    private String motivoDescuento;
+    private String subTotalConDescuento;
+    private String subTotalSinDescuento;
     private String subTotal;
+    private String montoDescuento;
     private String montoImpuesto;
     private String montoIeps;
     private String montoRetencion;
@@ -174,6 +178,17 @@ public class pdfCfd_CfdiTimbradoFormato2 {
                 break;
         }
         
+        this.setMontoDescuento(extras.get("monto_descto"));
+        this.setMotivoDescuento(extras.get("motivo_descto"));
+        
+        if(Double.parseDouble(this.getMontoDescuento())>0){
+            this.setSubTotalConDescuento(extras.get("subtotal"));
+            this.setSubTotalSinDescuento(extras.get("subtotal_sin_descto"));
+        }else{
+            this.setSubTotalConDescuento("0.00");
+            this.setSubTotalSinDescuento("0.00");
+        }
+        
         this.setSubTotal(extras.get("subtotal"));
         this.setMontoIeps(extras.get("monto_ieps"));
         this.setMontoImpuesto(extras.get("impuesto"));
@@ -183,6 +198,7 @@ public class pdfCfd_CfdiTimbradoFormato2 {
         this.setTitulo_moneda(extras.get("nombre_moneda"));
         this.setSimbolo_moneda(datosCliente.get("comprobante_attr_simbolo_moneda"));
         
+
         this.setReceptor_razon_social(datosCliente.get("comprobante_receptor_attr_nombre"));
         this.setReceptor_no_control(datosCliente.get("numero_control"));
         this.setReceptor_rfc(datosCliente.get("comprobante_receptor_attr_rfc"));
@@ -1165,49 +1181,171 @@ public class pdfCfd_CfdiTimbradoFormato2 {
                     colspan=7;
                 }
             }
-           
-           //fila SUBTOTAL
-            cell = new PdfPCell(new Paragraph("", smallFont));
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setVerticalAlignment(Element.ALIGN_TOP);
-            //celda.setBorder(0);
-            cell.setBorderWidthBottom(0);
-            cell.setBorderWidthLeft(0);
-            cell.setBorderWidthRight(1);
-            cell.setBorderWidthTop(1);
-            cell.setColspan(colspan);
-            table.addCell(cell);
             
-            cell = new PdfPCell(new Paragraph("SUB-TOTAL",smallBoldFont6));
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            cell.setVerticalAlignment(Element.ALIGN_TOP);
-            //cell.setBorder(0);
-            cell.setBorderWidthBottom(0);
-            cell.setBorderWidthLeft(0);
-            cell.setBorderWidthRight(1);
-            cell.setBorderWidthTop(1);
-            table.addCell(cell);
             
-            cell= new PdfPCell(new Paragraph(getSimbolo_moneda(),smallBoldFont6));
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            cell.setVerticalAlignment(Element.ALIGN_TOP);
-            //cell.setBorder(0);
-            cell.setBorderWidthBottom(0);
-            cell.setBorderWidthLeft(0);
-            cell.setBorderWidthRight(0);
-            cell.setBorderWidthTop(1);
-            table.addCell(cell);
+            if(Double.parseDouble(getMontoDescuento())>0){
+                //fila IMPORTE SUBTOTAL
+                cell = new PdfPCell(new Paragraph("", smallFont));
+                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                cell.setVerticalAlignment(Element.ALIGN_TOP);
+                //cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                cell.setBorderWidthBottom(0);
+                cell.setBorderWidthLeft(0);
+                cell.setBorderWidthRight(1);
+                cell.setBorderWidthTop(1);
+                cell.setColspan(colspan);
+                table.addCell(cell);
+
+                cell = new PdfPCell(new Paragraph("IMPORTE",smallBoldFont6));
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setVerticalAlignment(Element.ALIGN_TOP);
+                cell.setBorderWidthBottom(0);
+                cell.setBorderWidthLeft(0);
+                cell.setBorderWidthRight(1);
+                cell.setBorderWidthTop(1);
+                table.addCell(cell);
+
+                cell= new PdfPCell(new Paragraph(getSimbolo_moneda(),smallFont));
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setVerticalAlignment(Element.ALIGN_TOP);
+                cell.setBorderWidthBottom(0);
+                cell.setBorderWidthLeft(0);
+                cell.setBorderWidthRight(0);
+                cell.setBorderWidthTop(1);
+                table.addCell(cell);
+
+                cell= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(getSubTotalSinDescuento(),2)),smallBoldFont6));
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setVerticalAlignment(Element.ALIGN_TOP);
+                cell.setBorderWidthBottom(0);
+                cell.setBorderWidthLeft(0);
+                cell.setBorderWidthRight(1);
+                cell.setBorderWidthTop(1);
+                table.addCell(cell);
+                
+                
+                
+                //Fila DESCUENTO
+                cell = new PdfPCell(new Paragraph("MOTIVO DEL DESCUENTO", smallBoldFont6));
+                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                cell.setVerticalAlignment(Element.ALIGN_TOP);
+                cell.setBorderWidthBottom(0);
+                cell.setBorderWidthLeft(0);
+                cell.setBorderWidthRight(1);
+                cell.setBorderWidthTop(0);
+                cell.setColspan(colspan);
+                table.addCell(cell);
+                
+                cell = new PdfPCell(new Paragraph("DESCUENTO",smallBoldFont6));
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setVerticalAlignment(Element.ALIGN_TOP);
+                cell.setBorderWidthBottom(0);
+                cell.setBorderWidthLeft(0);
+                cell.setBorderWidthRight(1);
+                cell.setBorderWidthTop(0);
+                table.addCell(cell);
+                
+                cell= new PdfPCell(new Paragraph(getSimbolo_moneda(),smallFont));
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setVerticalAlignment(Element.ALIGN_TOP);
+                cell.setBorderWidthBottom(0);
+                cell.setBorderWidthLeft(0);
+                cell.setBorderWidthRight(0);
+                cell.setBorderWidthTop(0);
+                table.addCell(cell);
+
+                cell= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(getMontoDescuento(),2)),smallBoldFont6));
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setVerticalAlignment(Element.ALIGN_TOP);
+                cell.setBorderWidthBottom(0);
+                cell.setBorderWidthLeft(0);
+                cell.setBorderWidthRight(1);
+                cell.setBorderWidthTop(0);
+                table.addCell(cell);
+                
+                
+                
+                //SUBTOTAL
+                cell = new PdfPCell(new Paragraph(getMotivoDescuento(), smallFont));
+                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                cell.setVerticalAlignment(Element.ALIGN_TOP);
+                cell.setBorderWidthBottom(0);
+                cell.setBorderWidthLeft(0);
+                cell.setBorderWidthRight(1);
+                cell.setBorderWidthTop(0);
+                cell.setColspan(colspan);
+                table.addCell(cell);
+                
+                cell = new PdfPCell(new Paragraph("SUB-TOTAL",smallBoldFont6));
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setVerticalAlignment(Element.ALIGN_TOP);
+                cell.setBorderWidthBottom(0);
+                cell.setBorderWidthLeft(0);
+                cell.setBorderWidthRight(1);
+                cell.setBorderWidthTop(0);
+                table.addCell(cell);
+                
+                cell= new PdfPCell(new Paragraph(getSimbolo_moneda(),smallFont));
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setVerticalAlignment(Element.ALIGN_TOP);
+                cell.setBorderWidthBottom(0);
+                cell.setBorderWidthLeft(0);
+                cell.setBorderWidthRight(0);
+                cell.setBorderWidthTop(0);
+                table.addCell(cell);
+
+                cell= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(getSubTotalConDescuento(),2)),smallBoldFont6));
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setVerticalAlignment(Element.ALIGN_TOP);
+                cell.setBorderWidthBottom(0);
+                cell.setBorderWidthLeft(0);
+                cell.setBorderWidthRight(1);
+                cell.setBorderWidthTop(0);
+                table.addCell(cell);
+            }else{
+                //fila SUBTOTAL
+                cell = new PdfPCell(new Paragraph("", smallFont));
+                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                cell.setVerticalAlignment(Element.ALIGN_TOP);
+                cell.setBorderWidthBottom(0);
+                cell.setBorderWidthLeft(0);
+                cell.setBorderWidthRight(1);
+                cell.setBorderWidthTop(1);
+                cell.setColspan(colspan);
+                table.addCell(cell);
+
+                cell = new PdfPCell(new Paragraph("SUB-TOTAL",smallBoldFont6));
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setVerticalAlignment(Element.ALIGN_TOP);
+                cell.setBorderWidthBottom(0);
+                cell.setBorderWidthLeft(0);
+                cell.setBorderWidthRight(1);
+                cell.setBorderWidthTop(1);
+                table.addCell(cell);
+
+                cell= new PdfPCell(new Paragraph(getSimbolo_moneda(),smallFont));
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setVerticalAlignment(Element.ALIGN_TOP);
+                cell.setBorderWidthBottom(0);
+                cell.setBorderWidthLeft(0);
+                cell.setBorderWidthRight(0);
+                cell.setBorderWidthTop(1);
+                table.addCell(cell);
+
+                cell= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(getSubTotal(),2)),smallBoldFont6));
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setVerticalAlignment(Element.ALIGN_TOP);
+                cell.setBorderWidthBottom(0);
+                cell.setBorderWidthLeft(0);
+                cell.setBorderWidthRight(1);
+                cell.setBorderWidthTop(1);
+                table.addCell(cell);
+            }
             
-            cell= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(getSubTotal(),2)),smallBoldFont6));
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            cell.setVerticalAlignment(Element.ALIGN_TOP);
-            //cell.setBorder(0);
-            cell.setBorderWidthBottom(0);
-            cell.setBorderWidthLeft(0);
-            cell.setBorderWidthRight(1);
-            cell.setBorderWidthTop(1);
-            table.addCell(cell);
             
+            
+
+
             
             //FILA IEPS
             if(Double.parseDouble(getMontoIeps())>0){
@@ -2169,7 +2307,39 @@ public class pdfCfd_CfdiTimbradoFormato2 {
     public void setSubTotal(String subTotal) {
         this.subTotal = subTotal;
     }
-   
+    
+    public String getSubTotalConDescuento() {
+        return subTotalConDescuento;
+    }
+
+    public void setSubTotalConDescuento(String subTotalConDescuento) {
+        this.subTotalConDescuento = subTotalConDescuento;
+    }
+    
+    public String getSubTotalSinDescuento() {
+        return subTotalSinDescuento;
+    }
+
+    public void setSubTotalSinDescuento(String subTotalSinDescuento) {
+        this.subTotalSinDescuento = subTotalSinDescuento;
+    }
+    
+    public String getMontoDescuento() {
+        return montoDescuento;
+    }
+
+    public void setMontoDescuento(String montoDescuento) {
+        this.montoDescuento = montoDescuento;
+    }
+    
+    public String getMotivoDescuento() {
+        return motivoDescuento;
+    }
+
+    public void setMotivoDescuento(String motivoDescuento) {
+        this.motivoDescuento = motivoDescuento;
+    }
+    
     public String getMoneda_abr() {
         return moneda_abr;
     }

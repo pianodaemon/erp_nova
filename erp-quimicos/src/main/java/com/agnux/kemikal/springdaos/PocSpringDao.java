@@ -168,7 +168,8 @@ public class PocSpringDao implements PocInterfaceDao{
                 + "cxc_clie.lista_precio,"
                 + "poc_pedidos.enviar_obser_fac,"
                 + "poc_pedidos.flete,"
-                + "(CASE WHEN poc_pedidos.monto_descto>0 THEN true ELSE false END) AS pdescto "
+                + "(CASE WHEN poc_pedidos.monto_descto>0 THEN true ELSE false END) AS pdescto, "
+                + "(CASE WHEN poc_pedidos.monto_descto>0 THEN (CASE WHEN poc_pedidos.motivo_descto IS NULL THEN '' ELSE poc_pedidos.motivo_descto END) ELSE '' END) AS mdescto "
         + "FROM poc_pedidos "
         + "LEFT JOIN erp_proceso ON erp_proceso.id = poc_pedidos.proceso_id "
         + "LEFT JOIN gral_mon ON gral_mon.id = poc_pedidos.moneda_id "
@@ -221,7 +222,7 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("enviar_obser",String.valueOf(rs.getBoolean("enviar_obser_fac")));
                     row.put("flete",String.valueOf(rs.getBoolean("flete")));
                     row.put("pdescto",String.valueOf(rs.getBoolean("pdescto")));
-                    
+                    row.put("mdescto",rs.getString("mdescto"));
                     return row;
                 }
             }

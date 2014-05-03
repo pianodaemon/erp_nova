@@ -76,6 +76,8 @@ public class BeanFacturadorCfdiTimbre {
     private String fechaTimbrado;
     private String noCertificadoSAT;
     private String cadenaOriginalTimbre;
+    //Solo se utiliza para guardar registro
+    private String subTotalSinDescuento;
     
     // datos Emisor
     private String razon_social_emisor;
@@ -277,6 +279,12 @@ public class BeanFacturadorCfdiTimbre {
         this.setTotal(data.get("comprobante_attr_total"));
         this.setMoneda(data.get("comprobante_attr_moneda"));
         this.setTipoCambio(data.get("comprobante_attr_tc"));
+        if(Double.parseDouble(this.getDescuento())>0){
+            this.setSubTotalSinDescuento(data.get("subtotal_sin_descuento"));
+        }else{
+            this.setSubTotalSinDescuento("0.00");
+        }
+        
         //System.out.println("comprobante_attr_tc: "+String.valueOf(data.get("comprobante_attr_tc"))+" comprobante_attr_moneda:"+String.valueOf(data.get("comprobante_attr_moneda")) );
         
         this.setMetodoDePago(StringHelper.normalizaString(StringHelper.remueve_tildes(data.get("comprobante_attr_metododepago")).replace("'", "")));
@@ -565,7 +573,7 @@ public class BeanFacturadorCfdiTimbre {
                                 String refacturar = this.getDatosExtras().get("refacturar");
                                 String id_moneda = this.getDatosExtras().get("moneda_id");
                                 
-                                data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+prefactura_id+"___"+pop.getRfc_receptor()+"___"+Serie+"___"+Folio+"___"+no_aprobacion+"___"+pop.getTotal()+"___"+pop.getTotalImpuestosTrasladados()+"___"+estado_comprobante+"___"+xml_file_name+"___"+pop.getFecha()+"___"+pop.getRazon_social_receptor()+"___"+pop.getTipoDeComprobante()+"___"+this.getProposito()+"___"+ano_aprobacion+"___"+cadena_conceptos+"___"+cadena_imp_trasladados+"___"+cadena_imp_retenidos+"___"+Integer.parseInt(id_moneda)+"___"+tipo_cambio+"___"+refacturar+"___"+regimen_fiscal+"___"+metodo_pago+"___"+num_cuenta+"___"+lugar_de_expedicion+"___"+this.getRef_id()+"___"+cadena_xml;
+                                data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+prefactura_id+"___"+pop.getRfc_receptor()+"___"+Serie+"___"+Folio+"___"+no_aprobacion+"___"+pop.getTotal()+"___"+pop.getTotalImpuestosTrasladados()+"___"+estado_comprobante+"___"+xml_file_name+"___"+pop.getFecha()+"___"+pop.getRazon_social_receptor()+"___"+pop.getTipoDeComprobante()+"___"+this.getProposito()+"___"+ano_aprobacion+"___"+cadena_conceptos+"___"+cadena_imp_trasladados+"___"+cadena_imp_retenidos+"___"+Integer.parseInt(id_moneda)+"___"+tipo_cambio+"___"+refacturar+"___"+regimen_fiscal+"___"+metodo_pago+"___"+num_cuenta+"___"+lugar_de_expedicion+"___"+this.getRef_id()+"___"+cadena_xml+"___"+this.getSubTotalSinDescuento();
                                 
                                 System.out.println(TimeHelper.getFechaActualYMDH()+":::Inicia Salvar datos de la Factura.");
                                 
@@ -1616,6 +1624,14 @@ public class BeanFacturadorCfdiTimbre {
     
     public final void setSubTotal(String subTotal) {
         this.subTotal = subTotal;
+    }
+    
+    public String getSubTotalSinDescuento() {
+        return subTotalSinDescuento;
+    }
+
+    public void setSubTotalSinDescuento(String subTotalConDescuento) {
+        this.subTotalSinDescuento = subTotalConDescuento;
     }
     
     public String getMoneda() {

@@ -229,7 +229,8 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
             + "erp_prefacturas.tipo_documento,"
             + "erp_prefacturas.inv_alm_id, "
             + "(CASE WHEN erp_prefacturas.monto_descto>0 THEN true ELSE false END) AS pdescto, "
-            + "erp_prefacturas.monto_descto "
+            + "erp_prefacturas.monto_descto, "
+            + "(CASE WHEN erp_prefacturas.monto_descto>0 THEN (CASE WHEN erp_prefacturas.motivo_descto IS NULL THEN '' ELSE erp_prefacturas.motivo_descto END) ELSE '' END) AS mdescto "
         + "FROM erp_prefacturas  "
         + "LEFT JOIN erp_proceso ON erp_proceso.id = erp_prefacturas.proceso_id  "
         + "LEFT JOIN gral_mon ON gral_mon.id = erp_prefacturas.moneda_id  "
@@ -279,7 +280,7 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                     row.put("id_almacen",String.valueOf(rs.getInt("inv_alm_id")));
                     row.put("pdescto",String.valueOf(rs.getBoolean("pdescto")));
                     row.put("monto_descto",StringHelper.roundDouble(rs.getDouble("monto_descto"),2));
-                    
+                    row.put("mdescto",rs.getString("mdescto"));
                     return row;
                 }
             }
@@ -1033,7 +1034,8 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                                 + "END ) "
                     + "END) AS no_cuenta,"
                     + "cxc_clie.cxc_clie_tipo_adenda_id AS adenda_id, "
-                    + "(CASE WHEN fac_rems.monto_descto>0 THEN true ELSE false END) AS pdescto "
+                    + "(CASE WHEN fac_rems.monto_descto>0 THEN true ELSE false END) AS pdescto, "
+                    + "(CASE WHEN fac_rems.motivo_descto IS NULL THEN '' ELSE fac_rems.motivo_descto END) AS mdescto "
                 + "FROM fac_rems "
                 + "JOIN cxc_clie ON cxc_clie.id = fac_rems.cxc_clie_id "
                 + "LEFT JOIN gral_pais ON gral_pais.id = cxc_clie.pais_id "
@@ -1059,6 +1061,7 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                     row.put("adenda_id",String.valueOf(rs.getInt("adenda_id")));
                     row.put("moneda2",rs.getString("mon_iso4217_anterior"));
                     row.put("pdescto",String.valueOf(rs.getBoolean("pdescto")));
+                    row.put("mdescto",rs.getString("mdescto"));
                     return row;
                 }
             }

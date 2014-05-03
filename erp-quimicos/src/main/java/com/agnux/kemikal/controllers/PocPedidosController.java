@@ -791,6 +791,8 @@ public class PocPedidosController {
             @RequestParam(value="id_df", required=true) String id_df,
             @RequestParam(value="check_enviar_obser", required=false) String check_enviar_obser,
             @RequestParam(value="pdescto", required=true) String permitir_descto,
+            @RequestParam(value="motivo_descuento", required=true) String motivo_descuento,
+            
             @RequestParam(value="eliminado", required=false) String[] eliminado,
             @RequestParam(value="iddetalle", required=false) String[] iddetalle,
             @RequestParam(value="idproducto", required=false) String[] idproducto,
@@ -930,7 +932,8 @@ public class PocPedidosController {
                     dest_id+"___"+
                     dest_dir_alterna+"___"+
                     observaciones_transportista+"___"+
-                    permitir_descto;
+                    permitir_descto+"___"+
+                    motivo_descuento.toUpperCase();
             
             //System.out.println("data_string: "+data_string);
             
