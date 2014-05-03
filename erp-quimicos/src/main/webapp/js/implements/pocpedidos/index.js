@@ -1679,7 +1679,7 @@ $(function() {
 	$buscador_presentaciones_producto = function($id_cliente,nocliente, sku_producto,$nombre_producto,$grid_productos,$select_moneda,$tipo_cambio, arrayMonedas){
 		//Verifica si el campo rfc proveedor no esta vacio
 		var cliente_listaprecio=  $('#forma-pocpedidos-window').find('input[name=num_lista_precio]').val();
-		var vdescto = $('#forma-pocpedidos-window').find('input[name=vdescto]').val();
+		var vdescto = $('#forma-pocpedidos-window').find('input[name=valor_descto]').val();
 		
 		if(nocliente != ''){
 			//verifica si el campo sku no esta vacio para realizar busqueda
@@ -1844,6 +1844,8 @@ $(function() {
 		//var $campo_tc = $('#forma-pocpedidos-window').find('input[name=tc]');
 		//var $valor_impuesto = $('#forma-pocpedidos-window').find('input[name=valorimpuesto]');
 		var $grid_productos = $('#forma-pocpedidos-window').find('#grid_productos');
+		var $grid_warning = $('#forma-pocpedidos-window').find('#div_warning_grid').find('#grid_warning');
+		
 		var $empresa_immex = $('#forma-pocpedidos-window').find('input[name=empresa_immex]');
 		var $tasa_ret_immex = $('#forma-pocpedidos-window').find('input[name=tasa_ret_immex]');
 		
@@ -1931,17 +1933,25 @@ $(function() {
 		$campo_impuesto_retenido.val($(this).agregar_comas(  parseFloat(impuestoRetenido).toFixed(2)  ));
 		
 		//Redondea a dos digitos la suma  total y se asigna al campo total
-		$campo_total.val($(this).agregar_comas(  parseFloat(sumaTotal).toFixed(2)  ));
+		$campo_total.val($(this).agregar_comas(parseFloat(sumaTotal).toFixed(2)));
 		
 		var valorHeight=550;
 		
 		if(parseFloat(sumaDescuento)>0){
 			$('#forma-pocpedidos-window').find('#tr_importe_subtotal').show();
 			$('#forma-pocpedidos-window').find('#tr_descto').show();
-			valorHeight = parseFloat(valorHeight) + 30;
+			$('#forma-pocpedidos-window').find('input[name=etiqueta_motivo_descto]').show();
+			$('#forma-pocpedidos-window').find('input[name=motivo_descuento]').show();
+			if(parseInt($("tr",$grid_warning).size()) > 0){
+				valorHeight = parseFloat(valorHeight) + 40;
+			}else{
+				valorHeight = parseFloat(valorHeight) + 30;
+			}
 		}else{
 			$('#forma-pocpedidos-window').find('#tr_importe_subtotal').hide();
 			$('#forma-pocpedidos-window').find('#tr_descto').hide();
+			$('#forma-pocpedidos-window').find('input[name=etiqueta_motivo_descto]').hide();
+			$('#forma-pocpedidos-window').find('input[name=motivo_descuento]').hide();
 		}
 		
 		//Ocultar campos si tienen valor menor o igual a cero
@@ -1959,20 +1969,6 @@ $(function() {
 		}
 		
 		$('#forma-pocpedidos-window').find('.pocpedidos_div_one').css({'height':valorHeight+'px'});
-		
-		/*
-		if(parseFloat(sumaIeps)>0 && parseFloat(impuestoRetenido)<=0){
-			$('#forma-pocpedidos-window').find('.pocpedidos_div_one').css({'height':'560px'});
-		}
-		
-		if(parseFloat(sumaIeps)<=0 && parseFloat(impuestoRetenido)>0){
-			$('#forma-pocpedidos-window').find('.pocpedidos_div_one').css({'height':'560px'});
-		}
-		
-		if(parseFloat(sumaIeps)>0 && parseFloat(impuestoRetenido)>0){
-			$('#forma-pocpedidos-window').find('.pocpedidos_div_one').css({'height':'580px'});
-		}
-		* */
 	}//termina calcular totales
 	
 	
@@ -2535,7 +2531,9 @@ $(function() {
 		//grid de errores
 		var $grid_warning = $('#forma-pocpedidos-window').find('#div_warning_grid').find('#grid_warning');
 		
-		//var $flete = $('#forma-pocpedidos-window').find('input[name=flete]');
+		var $etiqueta_motivo_descto = $('#forma-pocpedidos-window').find('input[name=etiqueta_motivo_descto]');
+		var $motivo_descuento = $('#forma-pocpedidos-window').find('input[name=motivo_descuento]');
+		
 		var $subtotal = $('#forma-pocpedidos-window').find('input[name=subtotal]');
 		var $ieps = $('#forma-pocpedidos-window').find('input[name=ieps]');
 		var $impuesto = $('#forma-pocpedidos-window').find('input[name=impuesto]');
@@ -2609,6 +2607,9 @@ $(function() {
 		$descargarpdf.hide();
 		$cancelado .hide();
 		
+		$etiqueta_motivo_descto.hide();
+		$motivo_descuento.hide();
+		
 		$permitir_solo_numeros($no_cuenta);
 		$no_cuenta.attr('disabled','-1');
 		$etiqueta_digit.attr('disabled','-1');
@@ -2638,6 +2639,7 @@ $(function() {
 				$('#forma-pocpedidos-overlay').fadeOut(remove);
 				$get_datos_grid();
 			}else{
+				/*
 				// Desaparece todas las interrogaciones si es que existen
 				//$('#forma-pocpedidos-window').find('.div_one').css({'height':'545px'});//sin errores
 				$('#forma-pocpedidos-window').find('.pocpedidos_div_one').css({'height':'580px'});//con errores
@@ -2653,6 +2655,24 @@ $(function() {
 				if(parseFloat($ieps.val())>0 && parseFloat($impuesto_retenido.val())>0){
 					$('#forma-pocpedidos-window').find('.pocpedidos_div_one').css({'height':'600px'});
 				}
+				*/
+				var valorHeight=550;
+				
+				if(parseFloat(quitar_comas($('#forma-pocpedidos-window').find('input[name=monto_descuento]').val()))>0){
+					valorHeight = parseFloat(valorHeight) + 30;
+				}
+				
+				if(parseFloat(quitar_comas($ieps.val()))>0){
+					valorHeight = parseFloat(valorHeight) + 20;
+				}
+				if(parseFloat(quitar_comas($impuesto_retenido.val()))>0){
+					valorHeight = parseFloat(valorHeight) + 20;
+				}
+				$('#forma-pocpedidos-window').find('.pocpedidos_div_one').css({'height':valorHeight+'px'});
+						
+				
+				
+				
 				
 				$('#forma-pocpedidos-window').find('div.interrogacion').css({'display':'none'});
 				
@@ -3587,6 +3607,9 @@ $(function() {
 			//grid de errores
 			var $grid_warning = $('#forma-pocpedidos-window').find('#div_warning_grid').find('#grid_warning');
 			
+			var $etiqueta_motivo_descto = $('#forma-pocpedidos-window').find('input[name=etiqueta_motivo_descto]');
+			var $motivo_descuento = $('#forma-pocpedidos-window').find('input[name=motivo_descuento]');
+			
 			//var $flete = $('#forma-pocpedidos-window').find('input[name=flete]');
 			var $subtotal = $('#forma-pocpedidos-window').find('input[name=subtotal]');
 			var $ieps = $('#forma-pocpedidos-window').find('input[name=ieps]');
@@ -3659,6 +3682,9 @@ $(function() {
 			$tasa_ret_immex.val('0');
 			$busca_cliente.hide();
 			$cancelado.hide();
+			$etiqueta_motivo_descto.hide();
+			$motivo_descuento.hide();
+			
 			$permitir_solo_numeros($no_cuenta);
 			$no_cuenta.attr('disabled','-1');
 			$etiqueta_digit.attr('disabled','-1');
@@ -3836,6 +3862,7 @@ $(function() {
 					$dir_cliente.val(entry['datosPedido'][0]['direccion']);
 					$cliente_listaprecio.val(entry['datosPedido'][0]['lista_precio']);
 					$pdescto.val(entry['datosPedido'][0]['pdescto']);
+					$motivo_descuento.val(entry['datosPedido'][0]['mdescto']);
 					
 					$check_enviar_obser.attr('checked',  (entry['datosPedido'][0]['enviar_obser'] == 'true')? true:false );
 					$observaciones.text(entry['datosPedido'][0]['observaciones']);

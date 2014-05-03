@@ -797,11 +797,18 @@ $(function() {
 				var $impuesto_retenido = $('#forma-facconsultas-window').find('input[name=impuesto_retenido]');
 				var $total = $('#forma-facconsultas-window').find('input[name=total]');
 				
+				var $importe_subtotal = $('#forma-facconsultas-window').find('input[name=importe_subtotal]');
+				var $monto_descuento = $('#forma-facconsultas-window').find('input[name=monto_descuento]');
+				var $etiqueta_motivo_descto = $('#forma-facconsultas-window').find('input[name=etiqueta_motivo_descto]');
+				var $motivo_descuento = $('#forma-facconsultas-window').find('input[name=motivo_descuento]');
+				
 				
 				var $cerrar_plugin = $('#forma-facconsultas-window').find('#close');
 				var $cancelar_plugin = $('#forma-facconsultas-window').find('#boton_cancelar');
 				var $submit_actualizar = $('#forma-facconsultas-window').find('#submit');
 				
+				$etiqueta_motivo_descto.hide();
+				$motivo_descuento.hide();
 				//ocultar boton descargar y facturar. Despues de facturar debe mostrarse
 				//$reconstruir_pdf.hide();
 				$boton_descargarpdf.hide();
@@ -912,35 +919,46 @@ $(function() {
 					$impuesto_retenido.val( $(this).agregar_comas(entry['datosFactura']['0']['monto_retencion']));
 					$total.val($(this).agregar_comas( entry['datosFactura']['0']['total']));
 					
+					$importe_subtotal.val($(this).agregar_comas(entry['datosFactura']['0']['subtotal_sin_descto']));
+					$monto_descuento.val($(this).agregar_comas(entry['datosFactura']['0']['monto_descto']));
+					$motivo_descuento.val(entry['datosFactura']['0']['motivo_descto']);
+					
 					var sumaIeps = entry['datosFactura'][0]['monto_ieps'];
 					var impuestoRetenido = entry['datosFactura'][0]['monto_retencion'];
+					
+					
+					var valorHeight=620;
+					
+					if(parseFloat(entry['datosFactura']['0']['monto_descto'])>0){
+						$('#forma-facconsultas-window').find('#tr_importe_subtotal').show();
+						$('#forma-facconsultas-window').find('#tr_descto').show();
+						$('#forma-facconsultas-window').find('input[name=etiqueta_motivo_descto]').show();
+						$('#forma-facconsultas-window').find('input[name=motivo_descuento]').show();
+						valorHeight = parseFloat(valorHeight) + 30;
+					}else{
+						$('#forma-facconsultas-window').find('#tr_importe_subtotal').hide();
+						$('#forma-facconsultas-window').find('#tr_descto').hide();
+						$('#forma-facconsultas-window').find('input[name=etiqueta_motivo_descto]').hide();
+						$('#forma-facconsultas-window').find('input[name=motivo_descuento]').hide();
+					}
 					
 					//Ocultar campos si tienen valor menor o igual a cero
 					if(parseFloat(sumaIeps)<=0){
 						$('#forma-facconsultas-window').find('#tr_ieps').hide();
+					}else{
+						$('#forma-facconsultas-window').find('#tr_ieps').show();
+						valorHeight = parseFloat(valorHeight) + 15;
 					}
+					
 					if(parseFloat(impuestoRetenido)<=0){
 						$('#forma-facconsultas-window').find('#tr_retencion').hide();
+					}else{
+						$('#forma-facconsultas-window').find('#tr_retencion').show();
+						valorHeight = parseFloat(valorHeight) + 15;
 					}
 					
-					if(parseFloat(sumaIeps)>0 && parseFloat(impuestoRetenido)<=0){
-						//$('#forma-facconsultas-window').find('.facconsultas_div_one').css({'height':'525px'});
-						$('#forma-facconsultas-window').find('.facconsultas_div_one').css({'height':'645px'});
-					}
+					$('#forma-facconsultas-window').find('.facconsultas_div_one').css({'height':valorHeight+'px'});
 					
-					if(parseFloat(sumaIeps)<=0 && parseFloat(impuestoRetenido)>0){
-						$('#forma-facconsultas-window').find('.facconsultas_div_one').css({'height':'645px'});
-					}
-					
-					if(parseFloat(sumaIeps)<=0 && parseFloat(impuestoRetenido)<=0){
-						$('#forma-facconsultas-window').find('.facconsultas_div_one').css({'height':'620px'});
-					}
-					
-					if(parseFloat(sumaIeps)>0 && parseFloat(impuestoRetenido)>0){
-						$('#forma-facconsultas-window').find('.facconsultas_div_one').css({'height':'670px'});
-					}
-		
-                
 					
 					
                     //form pago 2=Tarjeta Credito, 3=Tarjeta Debito
@@ -963,9 +981,6 @@ $(function() {
 						}
 						$no_cuenta.val(entry['datosFactura']['0']['no_cuenta']);
 					}
-					
-					
-					
 					
 					
 					//carga select denominacion con todas las monedas

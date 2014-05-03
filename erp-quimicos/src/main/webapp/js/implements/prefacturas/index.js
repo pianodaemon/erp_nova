@@ -833,6 +833,7 @@ $(function() {
 				}
 				
 				$('#forma-prefacturas-window').find('input[name=pdescto]').val(entry['Datos'][0]['pdescto']);
+				$('#forma-prefacturas-window').find('input[name=motivo_descuento]').val(entry['Datos'][0]['mdescto']);
 				
 				var importeIeps=0;
 				var tasaIeps=0;
@@ -1473,10 +1474,14 @@ $(function() {
 		if(parseFloat(sumaDescuento)>0){
 			$('#forma-prefacturas-window').find('#tr_importe_subtotal').show();
 			$('#forma-prefacturas-window').find('#tr_descto').show();
+			$('#forma-prefacturas-window').find('input[name=etiqueta_motivo_descto]').show();
+			$('#forma-prefacturas-window').find('input[name=motivo_descuento]').show();
 			valorHeight = parseFloat(valorHeight) + 30;
 		}else{
 			$('#forma-prefacturas-window').find('#tr_importe_subtotal').hide();
 			$('#forma-prefacturas-window').find('#tr_descto').hide();
+			$('#forma-prefacturas-window').find('input[name=etiqueta_motivo_descto]').hide();
+			$('#forma-prefacturas-window').find('input[name=motivo_descuento]').hide();
 		}
 		
 		//Ocultar campos si tienen valor menor o igual a cero
@@ -2052,7 +2057,8 @@ $(function() {
 		//grid de errores
 		var $grid_warning = $('#forma-prefacturas-window').find('#div_warning_grid').find('#grid_warning');
 		
-		//var $flete = $('#forma-prefacturas-window').find('input[name=flete]');
+		var $etiqueta_motivo_descto = $('#forma-prefacturas-window').find('input[name=etiqueta_motivo_descto]');
+		var $motivo_descuento = $('#forma-prefacturas-window').find('input[name=motivo_descuento]');
 		var $subtotal = $('#forma-prefacturas-window').find('input[name=subtotal]');
 		var $impuesto = $('#forma-prefacturas-window').find('input[name=impuesto]');
 		var $total = $('#forma-prefacturas-window').find('input[name=total]');
@@ -2071,6 +2077,8 @@ $(function() {
 		$id_prefactura.val(0);//para nueva cotizacion el folio es 0
 		$id_df.val(1);
 		//$campo_factura.css({'background' : '#ffffff'});
+		$etiqueta_motivo_descto.hide();
+		$motivo_descuento.hide();
 		
 		//ocultar boton de facturar y descargar pdf. Solo debe estar activo en editar
 		$boton_facturar.hide();
@@ -2511,7 +2519,9 @@ $(function() {
 				var $importe_subtotal = $('#forma-prefacturas-window').find('input[name=importe_subtotal]');
 				var $monto_descuento = $('#forma-prefacturas-window').find('input[name=monto_descuento]');
 				var $pdescto = $('#forma-prefacturas-window').find('input[name=pdescto]');
-		
+				var $etiqueta_motivo_descto = $('#forma-prefacturas-window').find('input[name=etiqueta_motivo_descto]');
+				var $motivo_descuento = $('#forma-prefacturas-window').find('input[name=motivo_descuento]');
+				
 				
 				var $cerrar_plugin = $('#forma-prefacturas-window').find('#close');
 				var $cancelar_plugin = $('#forma-prefacturas-window').find('#boton_cancelar');
@@ -2521,6 +2531,8 @@ $(function() {
 				$submit_actualizar.hide();
 				$titulo_remision.hide();
 				$agregar_remision.hide();
+				$etiqueta_motivo_descto.hide();
+				$motivo_descuento.hide();
 				
 				$etiqueta_digit.attr('disabled','-1');
 				
@@ -2685,6 +2697,7 @@ $(function() {
 					$no_cuenta.val(entry['datosPrefactura'][0]['no_cuenta']);
 					
                     $pdescto.val(entry['datosPrefactura'][0]['pdescto']);
+                    $motivo_descuento.val(entry['datosPrefactura'][0]['mdescto']);
                     
                     $check_incluye_adenda.attr('checked',  (entry['Extras'][0]['adenda'] == 'true')? true:false );
                     
