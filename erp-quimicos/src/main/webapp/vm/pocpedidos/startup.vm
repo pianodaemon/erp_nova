@@ -76,14 +76,14 @@
 				<td width="20"></td>
 				<td width="180">Cliente</td>
 				<td width="15"></td>
-				<td width="100">C&oacute;digo Producto</td>
+				<td width="100">C&oacute;digo&nbsp;Producto</td>
 				<td width="15"></td>
-				<td width="150">Nombre Producto</td>
+				<td width="150">Nombre&nbsp;Producto</td>
 				<td width="15"></td>
 				<td width="150">Agente</td>
 				<td width="20">&nbsp;</td>
 				<td width="25"></td>
-				<td colspan="3">Fecha de creaci&oacute;n</td>
+				<td colspan="3">Fecha&nbsp;de&nbsp;creaci&oacute;n</td>
 				<td width="20">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 				<td></td>
 				<td width="25"></td>
@@ -190,13 +190,14 @@
                                     <div id="tabx-1" class="contenidoPes" >
                                         <table border="0" style="margin:0; padding:0;">
                                                 <tr>
-                                                    <td width="625"></td>
+													<td width="125"></td>
+                                                    <td width="500"></td>
                                                     <td width="10"></td>
                                                     <td width="140"></td>
                                                     <td width="325"></td>
                                                 </tr>
                                                 <tr>
-                                                    <td valign="top" width="625"  > 
+                                                    <td valign="top" colspan="2" width="625"  > 
                                                         <table border="0" class="gral">
                                                             <tr>
                                                                 <td width="10"></td>
@@ -262,7 +263,7 @@
                                                 </tr>
 												
                                                 <tr>
-                                                    <td colspan="4">   
+                                                    <td colspan="5">   
 														<table border="0" class="gral"> 
                                                             <tr>
                                                                 <td width="10" height="3"></td>
@@ -400,7 +401,7 @@
                                                 </tr>
                                                 
                                                 <tr>
-                                                    <td colspan="4">
+                                                    <td colspan="5">
                                                         <table border="0" class="gral">
                                                             <tr><td colspan="11" height="2"></td></tr>
                                                             <tr>
@@ -426,7 +427,7 @@
                                                 </tr>
 												
                                                 <tr class="registros">
-                                                    <td colspan="4" class="header_grid" style="border-top: 1px solid #C1DAD7; border-bottom: 1px solid #C1DAD7; border-left: 1px solid #FFFFFF; border-right: 1px solid #FFFFFF;">
+                                                    <td colspan="5" class="header_grid" style="border-top: 1px solid #C1DAD7; border-bottom: 1px solid #C1DAD7; border-left: 1px solid #FFFFFF; border-right: 1px solid #FFFFFF;">
 														
 														<table class="tabla_header_grid">
 															<thead>
@@ -458,44 +459,14 @@
                                                         
                                                     </td>
                                                 </tr>
-												
-                                                <tr>
-                                                    <td colspan="3" width="600"  align="left" valign="top">
-														
-                                                        <div id="div_warning_grid" style="display:none;">
-															
-                                                            <table border ="0">
-                                                                <tr>
-                                                                    <td width="10"></td>
-                                                                    <td  colspan="4"><div style="color:#d41000;">&nbsp;&nbsp;Datos&nbsp;no&nbsp;validos</div></td>
-                                                                    <td width="10"></td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td width="10"></td>
-                                                                    <td width="20" style="background-color:#A8A9AB; font-weight: bold;"></td>
-                                                                    <td width="90" style="background-color:#A8A9AB; font-weight: bold;">C&oacute;digo</td>
-                                                                    <td width="160" style="background-color:#A8A9AB; font-weight: bold;">Descripci&oacute;n</td>
-                                                                    <td width="295" class="td_head" style="background-color:#A8A9AB; font-weight: bold;">Descripci&oacute;n&nbsp;del&nbsp;error</td>
-                                                                    <td width="10"></td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td width="10"></td>
-                                                                    <td colspan="5"> 
-                                                                        <div align="left" class="div_cont_grid_warning" style="width:600px; height:68px; overflow:scroll; overflow-x: auto; overflow-y: auto; color:#d41000;">
-                                                                            <table id="grid_warning" border="0" style="width:575px;"">
-                                                                                <!-- Aqui se muestran los warning
-                                                                                style="background-color:#e7e8ea;"
-                                                                                -->
-                                                                            </table>
-                                                                        </div>
-                                                                    </td>
-                                                                </tr>
-                                                            </table>
-                                                        </div>
-                                                    </td>
-                                                    <td  width="325" align="right" valign="top" style="font-weight:bold;">
+                                                
+                                                <tr class="gral" valign="top">
+                                                    <td width="125"><input type="text" name="etiqueta_motivo_descto" value="Motivo&nbsp;del&nbsp;Descuento" class="borde_oculto" style="width:120px;"></td>
+                                                    <td width="500"><input type="text" name="motivo_descuento" style="width:500px;"></td>
+                                                    <td width="10"></td>
+                                                    <td width="140"></td>
+                                                    <td width="325" rowspan="2" align="right" valign="top" style="font-weight:bold;">
                                                         <table border ="0" width="325" class="gral">
-                                                            <!--<tr><td colspan="3" height="2"></td></tr>-->
                                                             <tr id="tr_importe_subtotal">
                                                                 <td width="80"></td>
                                                                 <td width="60">Importe</td>
@@ -534,7 +505,49 @@
                                                                 <td width="120"><input type="text" name="total" value="0" style="width:120px; text-align:right;" readOnly="true"></td>
                                                             </tr>
                                                         </table>
+                                                    
                                                     </td>
+                                                </tr>
+												
+                                                <tr>
+                                                    <td colspan="4" width="625"  align="left" valign="top">
+														
+                                                        <div id="div_warning_grid" style="display:none;">
+															
+                                                            <table border ="0">
+                                                                <tr>
+                                                                    <td width="10"></td>
+                                                                    <td  colspan="4"><div style="color:#d41000;">&nbsp;&nbsp;Datos&nbsp;no&nbsp;validos</div></td>
+                                                                    <td width="10"></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td width="10"></td>
+                                                                    <td width="20" style="background-color:#A8A9AB; font-weight: bold;"></td>
+                                                                    <td width="90" style="background-color:#A8A9AB; font-weight: bold;">C&oacute;digo</td>
+                                                                    <td width="160" style="background-color:#A8A9AB; font-weight: bold;">Descripci&oacute;n</td>
+                                                                    <td width="295" class="td_head" style="background-color:#A8A9AB; font-weight: bold;">Descripci&oacute;n&nbsp;del&nbsp;error</td>
+                                                                    <td width="10"></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td width="10"></td>
+                                                                    <td colspan="5"> 
+                                                                        <div align="left" class="div_cont_grid_warning" style="width:600px; height:68px; overflow:scroll; overflow-x: auto; overflow-y: auto; color:#d41000;">
+                                                                            <table id="grid_warning" border="0" style="width:575px;"">
+                                                                                <!-- Aqui se muestran los warning
+                                                                                style="background-color:#e7e8ea;"
+                                                                                -->
+                                                                            </table>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                        </div>
+                                                    </td>
+                                                    <!--
+                                                    <td  width="325" align="right" valign="top" style="font-weight:bold;">
+
+                                                    </td>
+                                                    -->
                                                 </tr>
                                         </table>
                                     </div><!--tabx-1-->

@@ -238,13 +238,14 @@
 										
                                         <table border="0" style="margin:0; padding:0;" >
                                                 <tr>
-                                                    <td width="600"></td>
+                                                    <td width="125"></td>
+                                                    <td width="475"></td>
                                                     <td width="10"></td>
                                                     <td width="110"></td>
                                                     <td width="300"></td>
                                                 </tr>
                                                 <tr>
-                                                    <td valign="top" width="600"  > 
+                                                    <td valign="top" colspan="2" width="600"  > 
                                                         <table border="0" class="gral">
                                                             <tr>
                                                                 <td width="10"></td>
@@ -310,7 +311,7 @@
                                                 </tr>
 												
                                                 <tr>
-                                                    <td colspan="4">   
+                                                    <td colspan="5">   
 														<table border="0" class="gral"> 
                                                             <tr>
                                                                 <td width="10" height="5"></td>
@@ -395,7 +396,7 @@
                                                 </tr>
                                                 
                                                 <tr>
-                                                    <td width="720" colspan="3">
+                                                    <td width="720" colspan="4">
 														<fieldset style="border: solid 1px #313E74;" class="gral">
 															<legend>&nbsp;Enviar&nbsp;archivos&nbsp;por&nbsp;E-Mail</legend> 
 															<ol valign="top">
@@ -490,7 +491,7 @@
 												
                                                 <tr>
                                                     
-													<td colspan="4" style="border-top:1px solid #C1DAD7; border-bottom:1px solid #C1DAD7; border-left:1px solid #FFFFFF; border-right: 1px solid #FFFFFF;">
+													<td colspan="5" style="border-top:1px solid #C1DAD7; border-bottom:1px solid #C1DAD7; border-left:1px solid #FFFFFF; border-right: 1px solid #FFFFFF;">
 														<table >
 															<thead>
 																<tr class="registros_pagos">
@@ -517,9 +518,60 @@
                                                         
                                                     </td>
                                                 </tr>
+                                                
+                                                
+                                                <tr valign="top" class="gral">
+													<td width="125"><input type="text" name="etiqueta_motivo_descto" value="Motivo&nbsp;del&nbsp;Descuento" class="borde_oculto" style="width:120px;"></td>
+													<td width="475"><input type="text" name="motivo_descuento" style="width:500px;" readOnly="true"></td>
+                                                    <td width="10"></td>
+                                                    <td width="110"></td>
+                                                    <td width="300" rowspan="2" align="right" valign="top" style="font-weight:bold;">
+                                                    
+                                                        <table border ="0" width="300">
+															<tr id="tr_importe_subtotal">
+																<td width="80"></td>
+																<td width="60">Importe</td>
+																<td width="120"><input type="text" name="importe_subtotal" value="0" style="width:120px; text-align:right;" readOnly="true"></td>
+															</tr>
+															
+															<tr id="tr_descto">
+																<td width="80"></td>
+																<td width="60">Descuento</td>
+																<td width="120"><input type="text" name="monto_descuento" value="0" style="width:120px; text-align:right;" readOnly="true"></td>
+															</tr>
+                                                            <tr>
+                                                                <td width="80"></td>
+                                                                <td width="60">Subtotal</td>
+                                                                <td width="120"><INPUT TYPE="text" name="subtotal" value="0" style="width:120px; text-align:right;" readOnly="true"></td>
+                                                            </tr>
+															<tr id="tr_ieps">
+																<td width="80"></td>
+																<td width="60">IEPS</td>
+																<td width="120"><input type="text" name="ieps" value="0" style="width:120px; text-align:right;" readOnly="true"></td>
+															</tr>
+                                                            <tr>
+                                                                <td width="80"></td>
+                                                                <td width="60">IVA</td>
+                                                                <td width="120"><INPUT TYPE="text" name="impuesto" value="0" style="width:120px; text-align:right;" readOnly="true"></td>
+                                                            </tr>
+															<tr id="tr_retencion">
+																<td width="80"></td>
+																<td width="60">Retenci&oacute;n</td>
+																<td width="120"><INPUT TYPE="text" name="impuesto_retenido" value="0" style="width:120px; text-align:right;" readOnly="true"></td>
+															</tr>
+                                                            <tr>
+                                                                <td width="80"></td>
+                                                                <td width="60">Total</td>
+                                                                <td width="120"><INPUT TYPE="text" name="total" value="0" style="width:120px; text-align:right;" readOnly="true"></td>
+                                                            </tr>
+                                                        </table>
+                                                    
+                                                    </td>
+                                                </tr>
+                                                
 												
                                                 <tr>
-                                                    <td colspan="3" width="720"  align="left" valign="top">
+                                                    <td colspan="4" width="720"  align="left" valign="top">
 
                                                         <div id="div_warning_grid" style="display:none;">
 															
@@ -553,36 +605,11 @@
                                                         </div>
                                                         
                                                     </td>
+                                                    <!--
                                                     <td  width="300" align="right" valign="top" style="font-weight: bold;">
-                                                        <table border ="0" width="300">
-                                                            <!--<tr><td colspan="3" height="2"></td></tr>-->
-                                                            <tr>
-                                                                <td width="80"></td>
-                                                                <td width="60">Subtotal</td>
-                                                                <td width="120"><INPUT TYPE="text" name="subtotal" value="0" style="width:120px; text-align:right;" readOnly="true"></td>
-                                                            </tr>
-															<tr id="tr_ieps">
-																<td width="80"></td>
-																<td width="60">IEPS</td>
-																<td width="120"><input type="text" name="ieps" value="0" style="width:120px; text-align:right;" readOnly="true"></td>
-															</tr>
-                                                            <tr>
-                                                                <td width="80"></td>
-                                                                <td width="60">IVA</td>
-                                                                <td width="120"><INPUT TYPE="text" name="impuesto" value="0" style="width:120px; text-align:right;" readOnly="true"></td>
-                                                            </tr>
-															<tr id="tr_retencion">
-																<td width="80"></td>
-																<td width="60">Retenci&oacute;n</td>
-																<td width="120"><INPUT TYPE="text" name="impuesto_retenido" value="0" style="width:120px; text-align:right;" readOnly="true"></td>
-															</tr>
-                                                            <tr>
-                                                                <td width="80"></td>
-                                                                <td width="60">Total</td>
-                                                                <td width="120"><INPUT TYPE="text" name="total" value="0" style="width:120px; text-align:right;" readOnly="true"></td>
-                                                            </tr>
-                                                        </table>
+
                                                     </td>
+                                                    -->
                                                 </tr>
 
                                         </table>
