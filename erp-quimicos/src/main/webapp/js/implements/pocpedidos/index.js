@@ -1162,9 +1162,13 @@ $(function() {
 			$('#forma-pocpedidos-window').find('input[name=num_lista_precio]').val( num_lista_precio );
 			//por default asignamos cero para el campo id de Direccion Fiscal, esto significa que la direccion se tomara de la tabla de clientes
 			$('#forma-pocpedidos-window').find('input[name=id_df]').val(0);
+			if(parseFloat(vdescto)>0){
+				$('#forma-pocpedidos-window').find('input[name=check_descto]').attr('checked',  (pdescto == 'true')? true:false );
+				$('#forma-pocpedidos-window').find('input[name=valor_descto]').attr("readonly", false);
+				$('#forma-pocpedidos-window').find('input[name=valor_descto]').css({'background' : '#ffffff'});
+			}
 			$('#forma-pocpedidos-window').find('input[name=pdescto]').val(pdescto);
 			$('#forma-pocpedidos-window').find('input[name=valor_descto]').val(vdescto);
-			
 			
 			if(tiene_dir_fiscal=='true'){
 				//llamada a la funcion que busca las direcciones fiscales del cliente.
@@ -2451,6 +2455,69 @@ $(function() {
 	
 	
 	
+	//Recalcula importes por partida
+	$recalcular_importes_partidas = function($grid_productos, $pdescto, $porcentaje_descuento){
+		$grid_productos.find('tr').each(function (index){
+			var $campoCantidad = $(this).find('#cant');
+			var $campoPrecioU = $(this).find('#cost');
+			var $campoImporte = $(this).find('#import');
+			var $campoTasaIeps = $(this).find('#tasaIeps');
+			var $importeIeps = $(this).find('#importeIeps');
+			var $campoTasaIva = $(this).find('#ivalorimp');
+			var $importeIva = $(this).find('#totimp');
+			var $vdescto = $(this).find('#vdescto');
+			var $pu_con_descto = $(this).find('#pu_descto');
+			var $importe_del_descto = $(this).find('#importe_del_descto');
+			var $importe_con_descto = $(this).find('#importe_con_descto');
+			
+			if($pdescto.val().trim()=='true' && parseFloat($porcentaje_descuento.val())>0){
+				$vdescto.val($porcentaje_descuento.val());
+				$pu_con_descto.val(0);
+				$importe_del_descto.val(0);
+				$importe_con_descto.val(0);
+			}else{
+				$vdescto.val(0);
+				$pu_con_descto.val(0);
+				$importe_del_descto.val(0);
+				$importe_con_descto.val(0);
+			}
+			
+			if( ($campoPrecioU.val().trim() != '') && ($campoCantidad.val().trim() != '') ){
+				//Calcula el importe
+				$campoImporte.val(parseFloat($campoPrecioU.val()) * parseFloat($campoCantidad.val()));
+				//Redondea el importe en dos decimales
+				//$(this).parent().parent().find('#import').val(Math.round(parseFloat($(this).parent().parent().find('#import').val())*100)/100);
+				$campoImporte.val( parseFloat($campoImporte.val()).toFixed(4));
+				
+				//Calcular el importe del IEPS
+				$importeIeps.val(parseFloat(parseFloat($campoImporte.val()) * (parseFloat($campoTasaIeps.val())/100)).toFixed(4));
+				
+				//Calcula el impuesto para este producto multiplicando el importe por el valor del iva
+				$importeIva.val((parseFloat($campoImporte.val()) + parseFloat($importeIeps.val())) * parseFloat($campoTasaIva.val()));
+				
+				if($pdescto.val().trim()=='true'){
+					if(parseFloat($vdescto.val())>0){
+						$pu_con_descto.val(parseFloat(parseFloat($campoPrecioU.val()) - (parseFloat($campoPrecioU.val()) * (parseFloat($vdescto.val())/100))).toFixed(4));
+						$importe_del_descto.val(parseFloat(parseFloat($campoImporte.val()) * (parseFloat($vdescto.val())/100)).toFixed(4));
+						$importe_con_descto.val(parseFloat(parseFloat($campoImporte.val()) - parseFloat($importe_del_descto.val())).toFixed(4));
+						
+						//Calcular y redondear el importe del IEPS, tomando el importe con descuento
+						$importeIeps.val(parseFloat(parseFloat($importe_con_descto.val()) * (parseFloat($campoTasaIeps.val())/100)).toFixed(4));
+						
+						//Calcular el impuesto para este producto multiplicando el importe_con_descto + ieps por la tasa del iva
+						$importeIva.val( (parseFloat($importe_con_descto.val()) + parseFloat($importeIeps.val())) * parseFloat( $campoTasaIva.val() ));
+					}
+				}
+			}else{
+				$campoImporte.val(0);
+				$importeIva.val(0);
+			}
+		});
+		
+		//Llamada a la funcion que calcula totales 
+		$calcula_totales();
+	}
+	
 	
 	
 	//nuevo pedido
@@ -2531,6 +2598,9 @@ $(function() {
 		//grid de errores
 		var $grid_warning = $('#forma-pocpedidos-window').find('#div_warning_grid').find('#grid_warning');
 		
+		var $check_descto = $('#forma-pocpedidos-window').find('input[name=check_descto]');
+		var $pdescto = $('#forma-pocpedidos-window').find('input[name=pdescto]');
+		var $valor_descto = $('#forma-pocpedidos-window').find('input[name=valor_descto]');
 		var $etiqueta_motivo_descto = $('#forma-pocpedidos-window').find('input[name=etiqueta_motivo_descto]');
 		var $motivo_descuento = $('#forma-pocpedidos-window').find('input[name=motivo_descuento]');
 		
@@ -2607,8 +2677,14 @@ $(function() {
 		$descargarpdf.hide();
 		$cancelado .hide();
 		
+		
 		$etiqueta_motivo_descto.hide();
 		$motivo_descuento.hide();
+		$valor_descto.attr("readonly", true);
+		$valor_descto.css({'background' : '#F0F0F0'});
+		$valor_descto.val(parseFloat(0).toFixed(4));
+		$permitir_solo_numeros($valor_descto);
+		$('#forma-pocpedidos-window').find('#permite_descto').hide();
 		
 		$permitir_solo_numeros($no_cuenta);
 		$no_cuenta.attr('disabled','-1');
@@ -2670,10 +2746,6 @@ $(function() {
 				}
 				$('#forma-pocpedidos-window').find('.pocpedidos_div_one').css({'height':valorHeight+'px'});
 						
-				
-				
-				
-				
 				$('#forma-pocpedidos-window').find('div.interrogacion').css({'display':'none'});
 				
 				$grid_productos.find('#cant').css({'background' : '#ffffff'});
@@ -2763,7 +2835,11 @@ $(function() {
 			arrayUM = entry['UM'];
 			
 			//Almacenar valor para variable que indica si se debe permitir el cambio de la unidad de medida
-			cambiarUM = entry['Extras'][0]['cambioUM']
+			cambiarUM = entry['Extras'][0]['cambioUM'];
+			
+			if(entry['Extras'][0]['per_descto']=='true'){
+				$('#forma-pocpedidos-window').find('#permite_descto').show();
+			}
 			
 			$incluye_produccion.val(entry['Extras'][0]['mod_produccion']);
 			$transportista.val(entry['Extras'][0]['transportista']);
@@ -2908,7 +2984,6 @@ $(function() {
 						$select_municipio_origen.append(trama_hmtl_localidades);
 					},"json");//termina llamada json
 				});
-				
 				
 				
 				
@@ -3350,6 +3425,20 @@ $(function() {
 		
 		
 		
+		$check_descto.click(function(event){
+			if(this.checked){
+				$valor_descto.attr("readonly", false);
+				$valor_descto.css({'background' : '#ffffff'});
+				$valor_descto.val(parseFloat(0).toFixed(4));
+			}else{
+				$valor_descto.attr("readonly", true);
+				$valor_descto.val(parseFloat(0).toFixed(4));
+				$valor_descto.css({'background' : '#F0F0F0'});
+			}
+		});
+		
+		
+		
 		
 		
 		//cambiar metodo de pago
@@ -3607,8 +3696,12 @@ $(function() {
 			//grid de errores
 			var $grid_warning = $('#forma-pocpedidos-window').find('#div_warning_grid').find('#grid_warning');
 			
+			var $check_descto = $('#forma-pocpedidos-window').find('input[name=check_descto]');
+			var $pdescto = $('#forma-pocpedidos-window').find('input[name=pdescto]');
+			var $valor_descto = $('#forma-pocpedidos-window').find('input[name=valor_descto]');
 			var $etiqueta_motivo_descto = $('#forma-pocpedidos-window').find('input[name=etiqueta_motivo_descto]');
 			var $motivo_descuento = $('#forma-pocpedidos-window').find('input[name=motivo_descuento]');
+			
 			
 			//var $flete = $('#forma-pocpedidos-window').find('input[name=flete]');
 			var $subtotal = $('#forma-pocpedidos-window').find('input[name=subtotal]');
@@ -3682,8 +3775,15 @@ $(function() {
 			$tasa_ret_immex.val('0');
 			$busca_cliente.hide();
 			$cancelado.hide();
+			
 			$etiqueta_motivo_descto.hide();
 			$motivo_descuento.hide();
+			$valor_descto.attr("readonly", true);
+			$valor_descto.css({'background' : '#F0F0F0'});
+			$valor_descto.val(parseFloat(0).toFixed(4));
+			$permitir_solo_numeros($valor_descto);
+			$('#forma-pocpedidos-window').find('#permite_descto').hide();
+			
 			
 			$permitir_solo_numeros($no_cuenta);
 			$no_cuenta.attr('disabled','-1');
@@ -3832,6 +3932,10 @@ $(function() {
 					//Almacenar valor para variable que indica si se debe permitir el cambio de la unidad de medida
 					cambiarUM = entry['Extras'][0]['cambioUM']
 					
+					if(entry['Extras'][0]['per_descto']=='true'){
+						$('#forma-pocpedidos-window').find('#permite_descto').show();
+					}
+					
 					$incluye_produccion.val(entry['Extras']['0']['mod_produccion']);
 					
 					if(entry['Extras']['0']['mod_produccion']=='true'){
@@ -3863,6 +3967,12 @@ $(function() {
 					$cliente_listaprecio.val(entry['datosPedido'][0]['lista_precio']);
 					$pdescto.val(entry['datosPedido'][0]['pdescto']);
 					$motivo_descuento.val(entry['datosPedido'][0]['mdescto']);
+					
+					if($pdescto.val()=='true'){
+						$('#forma-pocpedidos-window').find('input[name=check_descto]').attr('checked',  ($pdescto.val() == 'true')? true:false );
+						$('#forma-pocpedidos-window').find('#permite_descto').show();
+						$valor_descto.val(entry['datosPedido'][0]['porcentaje_descto']);
+					}
 					
 					$check_enviar_obser.attr('checked',  (entry['datosPedido'][0]['enviar_obser'] == 'true')? true:false );
 					$observaciones.text(entry['datosPedido'][0]['observaciones']);
@@ -5063,6 +5173,62 @@ $(function() {
 					
 				});
 				
+                
+                
+                
+				$check_descto.click(function(event){
+					if(this.checked){
+						$pdescto.val('true');
+						$valor_descto.attr("readonly", false);
+						$valor_descto.css({'background' : '#ffffff'});
+						$valor_descto.val(parseFloat(0).toFixed(4));
+						$recalcular_importes_partidas($grid_productos, $pdescto, $valor_descto);
+					}else{
+						$pdescto.val('false');
+						$valor_descto.attr("readonly", true);
+						$valor_descto.val(parseFloat(0).toFixed(4));
+						$valor_descto.css({'background' : '#F0F0F0'});
+						$recalcular_importes_partidas($grid_productos, $pdescto, $valor_descto);
+					}
+				});
+                
+                
+                
+				
+				$valor_descto.focus(function(e){
+					if($(this).val().trim()==''){
+						$(this).val('');
+					}else{
+						if(parseFloat($(this).val())<=0){
+							$(this).val('');
+						}
+					}
+				});
+				
+				$valor_descto.blur(function(){
+					var $campo_descto = $(this);
+					
+					if($campo_descto.val().trim()==''){
+						$campo_descto.val(0);
+					}
+					
+					$campo_descto.val(parseFloat($campo_descto.val()).toFixed(4));
+					
+					if(parseFloat($campo_descto.val())<=0){
+						if($check_descto.prop("checked")){
+							jAlert('Es necesario ingresar el Porcentaje del Descuento', 'Atencion!', function(r) { 
+								$recalcular_importes_partidas($grid_productos, $pdescto, $campo_descto);
+								$campo_descto.focus();
+							});
+						}
+					}else{
+						$recalcular_importes_partidas($grid_productos, $pdescto, $campo_descto);
+					}
+					
+				});
+				
+	
+                
                 
                 
 				
