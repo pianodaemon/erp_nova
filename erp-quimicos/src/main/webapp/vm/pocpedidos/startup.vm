@@ -206,7 +206,6 @@
                                                                     <input type="hidden" name="id_cliente" value="">
                                                                     <input type="hidden" name="id_df" value="1">
                                                                     <input type="hidden" name="pdescto" value="">
-                                                                    <input type="hidden" name="valor_descto" value="0">
                                                                     <input type="text" name="nocliente" style="width:120px; border:1px solid #000;">
                                                                 </td>
                                                                 <td width="15"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_nocliente"></div></td>
@@ -283,6 +282,9 @@
 																<td></td>
 																<td width="75"></td>
 																<td width="25"></td>
+																<td width="93"></td>
+																<td width="45"></td>
+																<td width="20"></td>
                                                             </tr>
 														    
 														    
@@ -316,9 +318,12 @@
 																	<select name="select_almacen" style="width:180px"></select>
 																</td>
 																<td width="25"></td>
+																<td width="93"></td>
+																<td width="45"></td>
+																<td width="20"></td>
                                                             </tr>
                                                             
-                                                            <tr><td colspan="17" height="5"></td></tr>
+                                                            <tr><td colspan="20" height="5"></td></tr>
                                                             
                                                             
 															<tr>
@@ -343,10 +348,13 @@
 																	<select name="select_condiciones_original" style="display:none"></select>
 																</td>
 																<td width="25"></td>
+																<td width="93"></td>
+																<td width="45"></td>
+																<td width="20"></td>
 															</tr>
                                                             
                                                             
-                                                            <tr><td colspan="17" height="5"></td></tr>
+                                                            <tr><td colspan="20" height="5"></td></tr>
                                                             
                                                             
                                                             
@@ -371,9 +379,12 @@
 																	<select name="vendedor_original" style="display:none"></select>
 																</td>
 																<td width="25"></td>
+																<td width="93"><span id="permite_descto">Aplicar Descuento</span></td>
+																<td width="45"><input type="checkbox" name="check_descto" id="permite_descto"></td>
+																<td width="20"></td>
                                                             </tr>
                                                             
-                                                            <tr><td colspan="17" height="5"></td></tr>
+                                                            <tr><td colspan="20" height="5"></td></tr>
                                                             
                                                             <tr>
                                                                 <td width="10"></td>
@@ -382,7 +393,8 @@
 																	<input type="text" name="lugar_entrega" style="width:480px;">
 																	<input type="text" name="lugar_entrega_original" style="display:none">
                                                                 </td>
-                                                                <!--<td width="30"></td>
+                                                                <!--
+                                                                <td width="30"></td>
 																<td width="75"></td>
 																<td>&nbsp;&nbsp;</td>
 																<td></td>
@@ -392,10 +404,11 @@
 																<td>&nbsp;&nbsp;</td>
 																<td width="140"><input type="checkbox" name="check_ruta"></td>
 																<td width="25"></td>
+																<td width="93"><span id="permite_descto">% del Descuento</span></td>
+																<td width="45"><input type="text" name="valor_descto" style="width:45px;" maxlength="7" id="permite_descto"></td>
+																<td width="20"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_valordescto"></div></td>
                                                             </tr>
                                                             
-                                                            
-														    
                                                         </table>
                                                     </td>
                                                 </tr>
