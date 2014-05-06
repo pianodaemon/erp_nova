@@ -169,7 +169,8 @@ public class PocSpringDao implements PocInterfaceDao{
                 + "poc_pedidos.enviar_obser_fac,"
                 + "poc_pedidos.flete,"
                 + "(CASE WHEN poc_pedidos.monto_descto>0 THEN true ELSE false END) AS pdescto, "
-                + "(CASE WHEN poc_pedidos.monto_descto>0 THEN (CASE WHEN poc_pedidos.motivo_descto IS NULL THEN '' ELSE poc_pedidos.motivo_descto END) ELSE '' END) AS mdescto "
+                + "(CASE WHEN poc_pedidos.monto_descto>0 THEN (CASE WHEN poc_pedidos.motivo_descto IS NULL THEN '' ELSE poc_pedidos.motivo_descto END) ELSE '' END) AS mdescto, "
+                + "(CASE WHEN poc_pedidos.monto_descto IS NULL THEN 0 ELSE poc_pedidos.porcentaje_descto END) AS porcentaje_descto "
         + "FROM poc_pedidos "
         + "LEFT JOIN erp_proceso ON erp_proceso.id = poc_pedidos.proceso_id "
         + "LEFT JOIN gral_mon ON gral_mon.id = poc_pedidos.moneda_id "
@@ -223,6 +224,7 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("flete",String.valueOf(rs.getBoolean("flete")));
                     row.put("pdescto",String.valueOf(rs.getBoolean("pdescto")));
                     row.put("mdescto",rs.getString("mdescto"));
+                    row.put("porcentaje_descto",StringHelper.roundDouble(rs.getDouble("porcentaje_descto"),4));
                     return row;
                 }
             }
@@ -297,7 +299,7 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("etiqueta_ieps",rs.getString("etiqueta_ieps"));
                     row.put("importe_ieps",StringHelper.roundDouble(rs.getDouble("importe_ieps"),2) );
                     
-                    row.put("descto",StringHelper.roundDouble(rs.getDouble("descto"),2) );
+                    row.put("descto",StringHelper.roundDouble(rs.getDouble("descto"),4) );
                     return row;
                 }
             }
@@ -599,7 +601,7 @@ public class PocSpringDao implements PocInterfaceDao{
     public HashMap<String, String> getPocPedido_Parametros(Integer id_emp, Integer id_suc) {
         HashMap<String, String> mapDatos = new HashMap<String, String>();
         String sql_query = "SELECT * FROM fac_par WHERE gral_emp_id="+id_emp+" AND gral_suc_id="+id_suc+";";
-
+        
         Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_query);
 
         mapDatos.put("gral_suc_id", String.valueOf(map.get("gral_suc_id")));
@@ -950,7 +952,7 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("contacto",rs.getString("contacto"));
                     row.put("credito_suspendido",String.valueOf(rs.getBoolean("credito_suspendido")));
                     row.put("pdescto",rs.getString("pdescto"));
-                    row.put("vdescto",StringHelper.roundDouble(String.valueOf(rs.getDouble("vdescto")),2));
+                    row.put("vdescto",StringHelper.roundDouble(String.valueOf(rs.getDouble("vdescto")),4));
                     
                     return row;
                 }
@@ -1047,7 +1049,7 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("contacto",rs.getString("contacto"));
                     row.put("credito_suspendido",String.valueOf(rs.getBoolean("credito_suspendido")));
                     row.put("pdescto",rs.getString("pdescto"));
-                    row.put("vdescto",StringHelper.roundDouble(String.valueOf(rs.getDouble("vdescto")),2));
+                    row.put("vdescto",StringHelper.roundDouble(String.valueOf(rs.getDouble("vdescto")),4));
                     return row;
                 }
             }

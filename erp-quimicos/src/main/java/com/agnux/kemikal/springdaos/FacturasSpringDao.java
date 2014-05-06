@@ -1413,7 +1413,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     row.put("tasa_ieps",StringHelper.roundDouble(rs.getDouble("tasa_ieps"),2) );
                     row.put("importe_ieps",StringHelper.roundDouble(rs.getDouble("importe_ieps"),4) );
                     row.put("etiqueta_ieps",rs.getString("etiqueta_ieps"));
-                    row.put("descto",StringHelper.roundDouble(rs.getDouble("descto"),2) );
+                    row.put("descto",StringHelper.roundDouble(rs.getDouble("descto"),4) );
                     row.put("precio_unitario_con_descto",StringHelper.roundDouble(rs.getDouble("precio_unitario_con_descto"),4) );
                     row.put("importe_del_descto",StringHelper.roundDouble(rs.getDouble("importe_del_descto"),4) );
                     row.put("importe_con_descto",StringHelper.roundDouble(rs.getDouble("importe_con_descto"),4) );

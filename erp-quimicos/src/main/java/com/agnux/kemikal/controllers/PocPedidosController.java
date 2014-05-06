@@ -258,6 +258,7 @@ public class PocPedidosController {
         //Aqui se obtienen los parametros de la facturacion, nos intersa saber si se debe permitir cambiar_unidad_medida
         parametros = this.getPocDao().getPocPedido_Parametros(id_empresa, id_sucursal);
         extra.put("cambioUM", parametros.get("cambiar_unidad_medida"));
+        extra.put("per_descto", parametros.get("permitir_descto"));
         
         valorIva= this.getPocDao().getValoriva(id_sucursal);
         tc.put("tipo_cambio", StringHelper.roundDouble(this.getPocDao().getTipoCambioActual(), 4));
@@ -792,6 +793,7 @@ public class PocPedidosController {
             @RequestParam(value="check_enviar_obser", required=false) String check_enviar_obser,
             @RequestParam(value="pdescto", required=true) String permitir_descto,
             @RequestParam(value="motivo_descuento", required=true) String motivo_descuento,
+            @RequestParam(value="valor_descto", required=true) String porcentaje_descto,
             
             @RequestParam(value="eliminado", required=false) String[] eliminado,
             @RequestParam(value="iddetalle", required=false) String[] iddetalle,
@@ -933,7 +935,8 @@ public class PocPedidosController {
                     dest_dir_alterna+"___"+
                     observaciones_transportista+"___"+
                     permitir_descto+"___"+
-                    motivo_descuento.toUpperCase();
+                    motivo_descuento.toUpperCase()+"___"+
+                    porcentaje_descto;
             
             //System.out.println("data_string: "+data_string);
             

@@ -352,7 +352,7 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                     row.put("costo_prom","0" );
                     row.put("ieps_id",String.valueOf(rs.getInt("gral_ieps_id")));
                     row.put("valor_ieps",StringHelper.roundDouble(rs.getString("valor_ieps"),2));
-                    row.put("descto",StringHelper.roundDouble(rs.getDouble("descto"),2) );
+                    row.put("descto",StringHelper.roundDouble(rs.getDouble("descto"),4) );
                     
                     return row;
                 }
@@ -991,7 +991,7 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                     row.put("ieps_id",String.valueOf(rs.getInt("gral_ieps_id")));
                     row.put("valor_ieps",StringHelper.roundDouble(rs.getString("valor_ieps"),2));
                     
-                    row.put("descto",StringHelper.roundDouble(rs.getDouble("descto"),2) );
+                    row.put("descto",StringHelper.roundDouble(rs.getDouble("descto"),4) );
                     /*
                     System.out.println(rs.getString("moneda")+"  "
                             + ""+rs.getString("sku")+"  "
