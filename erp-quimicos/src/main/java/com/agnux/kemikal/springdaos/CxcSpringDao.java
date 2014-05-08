@@ -5160,4 +5160,67 @@ return subfamilias;
     }
     
     
+    
+//Metodo Descuentos de clientes para editar 
+      @Override
+    public ArrayList<HashMap<String, Object>> getClientstDescuentos_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
+        //throw new UnsupportedOperationException("Not supported yet.");
+        String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
+
+	String sql_to_query = "SELECT cxc_clie_descto.id, cxc_clie.razon_social as cliente,cxc_clie_descto.tipo,cxc_clie_descto.valor "
+                               + " FROM cxc_clie_descto "
+                               + " JOIN cxc_clie on cxc_clie.id= cxc_clie_descto.cxc_clie_id "
+                        +"JOIN ("+sql_busqueda+") AS sbt ON sbt.id = cxc_clie_descto.id "
+                        +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
+
+        System.out.println("Busqueda GetPage: "+sql_to_query);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("cliente",rs.getString("cliente"));
+                    row.put("tipo",rs.getString("tipo"));
+                    row.put("valor",StringHelper.roundDouble(rs.getString("valor"),2));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+     //Termina Metodo Descuentos de clientes para editar 
+
+
+
+    //Obtiene los Descuentos asignados a los clientes.
+    @Override
+    public ArrayList<HashMap<String, Object>> getClientstDescuentos_Datos(Integer id) {
+        String sql_query = "SELECT cxc_clie_descto.id, cxc_clie.numero_control,cxc_clie.razon_social,cxc_clie_descto.cxc_clie_id,cxc_clie_descto.tipo,cxc_clie_descto.valor "
+                + " FROM cxc_clie_descto "
+                +" LEFT JOIN cxc_clie on cxc_clie.id= cxc_clie_descto.cxc_clie_id "
+                + "WHERE cxc_clie_descto.id =" +id;
+        System.out.print(sql_query);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("cxc_clie_id",rs.getString("cxc_clie_id"));
+                    row.put("numero_control",rs.getString("numero_control"));
+                    row.put("razon_social",rs.getString("razon_social"));
+                    row.put("tipo",rs.getString("tipo"));
+                    row.put("valor",StringHelper.roundDouble(rs.getString("valor"),2));
+
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    //Termina Metodo Descuentos asignados a los clientes.
+    
 }

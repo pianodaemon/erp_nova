@@ -205,4 +205,9 @@ public interface CxcInterfaceDao {
     
     //Reporte de Anual de ventas por cliente
     public ArrayList<HashMap<String,String>> getVentasAnualesCliente(Integer anio, Integer id_empresa);
+    
+    //Catalogo de Descuentos de Clientes
+    public ArrayList<HashMap<String, Object>> getClientstDescuentos_PaginaGrid(String data_string, int offset, int pageSize, String orderBy , String asc);
+    public ArrayList<HashMap<String, Object>> getClientstDescuentos_Datos(Integer id);
+    
 }

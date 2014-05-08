@@ -111,7 +111,7 @@ public class GralConfigPeriodosPagoController {
         mes.put("anioActual", TimeHelper.getFechaActualY());
         mesActual.add(0, mes);
         
-        jsonretorno.put("Anios", this.getGralDao().getGral_AnioReporteSaldoMensual());
+        jsonretorno.put("Anios", this.getGralDao().getConfigPeriodosPago_Anios());
         jsonretorno.put("Dato", mesActual);
         return jsonretorno;
     }
