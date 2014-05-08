@@ -778,6 +778,7 @@ $(function() {
 				$select_presentacion_orig.children().remove();
 				var presentacion = '<option value="0">[-Presentaci&oacute;n--]</option>';
 				$.each(entry['Presentaciones'],function(entryIndex,pres){
+					alert(pres['titulo'].toUpperCase() + " = " + unidad_buscador.toUpperCase());
 					if(pres['titulo'].toUpperCase() == unidad_buscador.toUpperCase()){
 						presentacion += '<option value="' + pres['id'] + '" selected="yes" >' + pres['titulo'] + '</option>';
 					}
@@ -875,7 +876,7 @@ $(function() {
 							trr += '<input type="hidden" id="cantidad_buscador" value="'+orden['cantidad']+'">';
 							trr += '<input type="hidden" id="id_orden_buscador" value="'+orden['id_op']+'">';
 							trr += '<span class="folio_orden_buscador">'+orden['folio']+'</span>';
-							trr += '<span class="decimales_orden_buscador">'+orden['decimales']+'</span>';
+							trr += '<span class="decimales_orden_buscador" style="display:none;">'+orden['decimales']+'</span>';
 						trr += '</td>';
 						trr += '<td width="120">';
 							trr += '<input type="hidden" id="id_prod_buscador" value="'+orden['producto_id']+'">';
@@ -939,6 +940,8 @@ $(function() {
 								//alert("equivalencia="+equivalencia);
 							}
 						});
+						
+						alert("id_prod:"+id_prod_buscador +"    id_uni:"+id_unidad_buscador+"    uni:"+unidad_buscador);
 						
 						$agregarDatosProductoSeleccionado(id_orden_buscador, id_prod_buscador, id_unidad_buscador, unidad_buscador, folio_orden_buscador, codigo_prod_buscador, descripcion_prod_buscador,id_almacen_buscador,cantidad_buscador,id_presentacion_buscador, entry['Presentaciones']);
 						//llamada a la funcion para agregar los datos del Producto seleccionado

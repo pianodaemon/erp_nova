@@ -3424,21 +3424,57 @@ $(function() {
 		});
 		
 		
-		
+                
 		$check_descto.click(function(event){
 			if(this.checked){
+				$pdescto.val('true');
 				$valor_descto.attr("readonly", false);
 				$valor_descto.css({'background' : '#ffffff'});
 				$valor_descto.val(parseFloat(0).toFixed(4));
+				$recalcular_importes_partidas($grid_productos, $pdescto, $valor_descto);
 			}else{
+				$pdescto.val('false');
 				$valor_descto.attr("readonly", true);
 				$valor_descto.val(parseFloat(0).toFixed(4));
 				$valor_descto.css({'background' : '#F0F0F0'});
+				$recalcular_importes_partidas($grid_productos, $pdescto, $valor_descto);
 			}
 		});
 		
 		
 		
+		$valor_descto.focus(function(e){
+			if($(this).val().trim()==''){
+				$(this).val('');
+			}else{
+				if(parseFloat($(this).val())<=0){
+					$(this).val('');
+				}
+			}
+		});
+		
+		$valor_descto.blur(function(){
+			var $campo_descto = $(this);
+			
+			if($campo_descto.val().trim()==''){
+				$campo_descto.val(0);
+			}
+			
+			$campo_descto.val(parseFloat($campo_descto.val()).toFixed(4));
+			
+			if(parseFloat($campo_descto.val())<=0){
+				if($check_descto.prop("checked")){
+					jAlert('Es necesario ingresar el Porcentaje del Descuento', 'Atencion!', function(r) { 
+						$recalcular_importes_partidas($grid_productos, $pdescto, $campo_descto);
+						$campo_descto.focus();
+					});
+				}
+			}else{
+				$recalcular_importes_partidas($grid_productos, $pdescto, $campo_descto);
+			}
+		});
+
+
 		
 		
 		//cambiar metodo de pago
@@ -4966,10 +5002,6 @@ $(function() {
 					
 					
 					
-					
-					
-					
-					
 					//si es refacturacion, no se puede cambiar los datos del grid, solo el header de la factura
 					if(entry['datosPedido']['0']['cancelado']=="true"){
 						$cancelar_pedido.hide();
@@ -4980,6 +5012,7 @@ $(function() {
 						$folio.attr('disabled','-1'); //deshabilitar
 						$check_ruta.attr('disabled','-1'); //deshabilitar
 						$check_enviar_obser.attr('disabled','-1'); //deshabilitar
+						$check_descto.attr('disabled','-1'); //deshabilitar
 						$sku_producto.attr('disabled','-1'); //deshabilitar
 						$nombre_producto.attr('disabled','-1'); //deshabilitar
 						$nocliente.attr('disabled','-1'); //deshabilitar
@@ -5009,6 +5042,7 @@ $(function() {
 					}
 					
 					
+					
 					//proceso_flujo_id=4 :Pedido, diferente de 4 ya esta en otro estado del proceso
 					if(parseInt(entry['datosPedido']['0']['proceso_flujo_id'])!=4){
 						$cancelar_pedido.hide();
@@ -5017,6 +5051,7 @@ $(function() {
 						$agregar_producto.hide();
 						$check_enviar_obser.attr('disabled','-1'); //deshabilitar
 						$check_ruta.attr('disabled','-1'); //deshabilitar
+						$check_descto.attr('disabled','-1'); //deshabilitar
 						$sku_producto.attr('disabled','-1'); //deshabilitar
 						$nombre_producto.attr('disabled','-1'); //deshabilitar
 						//$nocliente.attr('disabled','-1'); //deshabilitar
@@ -5037,6 +5072,7 @@ $(function() {
 						$grid_productos.find('input[name=checkProd]').attr('disabled','-1'); //deshabilitar
 						
 						
+						
 						$('#forma-pocpedidos-window').find('#tabx-2').find('input').attr("readonly", true);
 						$('#forma-pocpedidos-window').find('#tabx-2').find('input').css({'background' : '#F0F0F0'});
 						$('#forma-pocpedidos-window').find('#tabx-2').find('textarea').attr("readonly", true);
@@ -5044,7 +5080,6 @@ $(function() {
 						$('#forma-pocpedidos-window').find('#tabx-2').find('input[name=check_flete]').attr('disabled','-1'); //deshabilitar
 						$('#forma-pocpedidos-window').find('#tabx-2').find('a').hide();
 					}else{
-
 						//$fecha_compromiso.val(mostrarFecha());
 						$fecha_compromiso.click(function (s){
 							var a=$('div.datepicker');
@@ -5088,6 +5123,55 @@ $(function() {
 					$agregar_producto.click(function(event){
 						event.preventDefault();
 						$buscador_presentaciones_producto($id_cliente, $nocliente.val(), $sku_producto.val(),$nombre_producto,$grid_productos,$select_moneda,$tipo_cambio, entry['Monedas']);
+					});
+					
+					
+					
+					$check_descto.click(function(event){
+						if(this.checked){
+							$pdescto.val('true');
+							$valor_descto.attr("readonly", false);
+							$valor_descto.css({'background' : '#ffffff'});
+							$valor_descto.val(parseFloat(0).toFixed(4));
+							$recalcular_importes_partidas($grid_productos, $pdescto, $valor_descto);
+						}else{
+							$pdescto.val('false');
+							$valor_descto.attr("readonly", true);
+							$valor_descto.val(parseFloat(0).toFixed(4));
+							$valor_descto.css({'background' : '#F0F0F0'});
+							$recalcular_importes_partidas($grid_productos, $pdescto, $valor_descto);
+						}
+					});
+					
+					$valor_descto.focus(function(e){
+						if($(this).val().trim()==''){
+							$(this).val('');
+						}else{
+							if(parseFloat($(this).val())<=0){
+								$(this).val('');
+							}
+						}
+					});
+					
+					$valor_descto.blur(function(){
+						var $campo_descto = $(this);
+						
+						if($campo_descto.val().trim()==''){
+							$campo_descto.val(0);
+						}
+						
+						$campo_descto.val(parseFloat($campo_descto.val()).toFixed(4));
+						
+						if(parseFloat($campo_descto.val())<=0){
+							if($check_descto.prop("checked")){
+								jAlert('Es necesario ingresar el Porcentaje del Descuento', 'Atencion!', function(r) { 
+									$recalcular_importes_partidas($grid_productos, $pdescto, $campo_descto);
+									$campo_descto.focus();
+								});
+							}
+						}else{
+							$recalcular_importes_partidas($grid_productos, $pdescto, $campo_descto);
+						}
 					});
 					
 				});//termina llamada json
@@ -5175,63 +5259,6 @@ $(function() {
 				
                 
                 
-                
-				$check_descto.click(function(event){
-					if(this.checked){
-						$pdescto.val('true');
-						$valor_descto.attr("readonly", false);
-						$valor_descto.css({'background' : '#ffffff'});
-						$valor_descto.val(parseFloat(0).toFixed(4));
-						$recalcular_importes_partidas($grid_productos, $pdescto, $valor_descto);
-					}else{
-						$pdescto.val('false');
-						$valor_descto.attr("readonly", true);
-						$valor_descto.val(parseFloat(0).toFixed(4));
-						$valor_descto.css({'background' : '#F0F0F0'});
-						$recalcular_importes_partidas($grid_productos, $pdescto, $valor_descto);
-					}
-				});
-                
-                
-                
-				
-				$valor_descto.focus(function(e){
-					if($(this).val().trim()==''){
-						$(this).val('');
-					}else{
-						if(parseFloat($(this).val())<=0){
-							$(this).val('');
-						}
-					}
-				});
-				
-				$valor_descto.blur(function(){
-					var $campo_descto = $(this);
-					
-					if($campo_descto.val().trim()==''){
-						$campo_descto.val(0);
-					}
-					
-					$campo_descto.val(parseFloat($campo_descto.val()).toFixed(4));
-					
-					if(parseFloat($campo_descto.val())<=0){
-						if($check_descto.prop("checked")){
-							jAlert('Es necesario ingresar el Porcentaje del Descuento', 'Atencion!', function(r) { 
-								$recalcular_importes_partidas($grid_productos, $pdescto, $campo_descto);
-								$campo_descto.focus();
-							});
-						}
-					}else{
-						$recalcular_importes_partidas($grid_productos, $pdescto, $campo_descto);
-					}
-					
-				});
-				
-	
-                
-                
-                
-				
 				$tipo_cambio.keypress(function(e){
 					// Permitir  numeros, borrar, suprimir, TAB, puntos, comas
 					if (e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
