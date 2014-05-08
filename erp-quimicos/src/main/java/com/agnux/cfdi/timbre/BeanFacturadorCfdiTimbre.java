@@ -496,7 +496,7 @@ public class BeanFacturadorCfdiTimbre {
 
 
                     System.out.println(TimeHelper.getFechaActualYMDH()+":::Termina ejecucion de programa externo");
-                    //System.out.println("sb.toString: "+sb.toString());
+                    System.out.println("sb.toString: "+sb.toString());
 
                     String cadenaResult = new String();
                     String valor1 = new String();
