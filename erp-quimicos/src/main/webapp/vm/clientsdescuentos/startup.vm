@@ -140,7 +140,7 @@
 															<tr>
 																<td width="5"></td>
 																<td width="85">Valor</td>
-																<td width="100" colspan="3"><INPUT TYPE="text" name="valor" style="width:100px;"></td>
+																<td width="100" colspan="1"><INPUT TYPE="text" name="valor" style="width:100px;"></td>
 																<td width="50" ><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_valor"></div></td>
 															</tr>
                                                         </table>
