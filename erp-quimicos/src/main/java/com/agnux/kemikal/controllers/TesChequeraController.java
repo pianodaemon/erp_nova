@@ -155,7 +155,7 @@ public class TesChequeraController {
     //??????
     
     @RequestMapping(method = RequestMethod.POST, value="/getTesChera.json")
-    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getInvSeccionJson(
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getTesCheraJson(
             @RequestParam(value="id", required=true) Integer id,
             @RequestParam(value="iu", required=true) String id_user_cod,
             Model model
@@ -163,36 +163,57 @@ public class TesChequeraController {
         
         log.log(Level.INFO, "Ejecutando getTesChera de {0}", TesChequeraController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
-       ArrayList<HashMap<String, String>> datoschequera = new ArrayList<HashMap<String, String>>();
-       ArrayList<HashMap<String, String>> Bancos = new ArrayList<HashMap<String, String>>(); //hasmap para la vista
-       ArrayList<HashMap<String, String>> monedas = new ArrayList<HashMap<String, String>>(); //hasmap para la vista
-       ArrayList<HashMap<String, String>> paises = new ArrayList<HashMap<String, String>>();
-       ArrayList<HashMap<String, String>> entidades = new ArrayList<HashMap<String, String>>();
-       ArrayList<HashMap<String, String>> municipios = new ArrayList<HashMap<String, String>>();
-       HashMap<String, String> userDat = new HashMap<String, String>();
+        ArrayList<HashMap<String, String>> datoschequera = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> Bancos = new ArrayList<HashMap<String, String>>(); //hasmap para la vista
+        ArrayList<HashMap<String, String>> monedas = new ArrayList<HashMap<String, String>>(); //hasmap para la vista
+        ArrayList<HashMap<String, String>> paises = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> entidades = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> municipios = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> contab = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> cuentasMayor = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> arrayExtra = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> extra = new HashMap<String, String>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
         
-        //decodificar id de usuario
+        //Decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
         userDat = this.getHomeDao().getUserById(id_usuario);
         
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        //Esta variable indica si la empresa incluye modulo de Contabilidad
+        extra.put("inc_ctb", userDat.get("incluye_contab"));
+        extra.put("nivel_cta", userDat.get("nivel_cta"));
+        arrayExtra.add(0,extra);
         
         if( id != 0  ){
             datoschequera = this.getTesDao().getTesChequera_Datos(id);
             entidades = this.getTesDao().getEntidadesForThisPais(datoschequera.get(0).get("pais_id").toString());
             municipios = this.getTesDao().getMunicipiosForThisEntidad(datoschequera.get(0).get("pais_id").toString(), datoschequera.get(0).get("estado_id").toString());
+            
+            if(userDat.get("incluye_contab").equals("true")){
+                contab = this.getTesDao().getTesChequera_DatosContabilidad(id);
+            }
         }
         
         Bancos = this.getTesDao().getBancos(id_empresa);
         monedas = this.getTesDao().getMonedas();
         paises = this.getTesDao().getPaises();
-        jsonretorno.put("Chequera", datoschequera);
         
+        if(userDat.get("incluye_contab").equals("true")){
+            cuentasMayor = this.getTesDao().getTesChequera_CuentasMayor(id_empresa);
+        }
+        
+        
+        jsonretorno.put("Chequera", datoschequera);
         jsonretorno.put("Bancos", Bancos);
         jsonretorno.put("Monedas", monedas);
         jsonretorno.put("Paises", paises);
         jsonretorno.put("Entidades", entidades);
         jsonretorno.put("Municipios", municipios);
+        
+        jsonretorno.put("Extras", arrayExtra);
+        jsonretorno.put("CtaMay", cuentasMayor);
+        jsonretorno.put("Contab", contab);
         
         return jsonretorno;
     }
@@ -228,19 +249,56 @@ public class TesChequeraController {
     }
     
     
+    //metodo para el Buscador de Cuentas Contables
+    @RequestMapping(method = RequestMethod.POST, value="/getBuscadorCuentasContables.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getBuscadorCuentasContablesJson(
+            @RequestParam(value="cta_mayor", required=true) Integer cta_mayor,
+            @RequestParam(value="detalle", required=true) Integer detalle,
+            @RequestParam(value="clasifica", required=false) String clasifica,
+            @RequestParam(value="cta", required=false) String cta,
+            @RequestParam(value="scta", required=false) String scta,
+            @RequestParam(value="sscta", required=false) String sscta,
+            @RequestParam(value="ssscta", required=false) String ssscta,
+            @RequestParam(value="sssscta", required=false) String sssscta,
+            @RequestParam(value="descripcion", required=false) String descripcion,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+            ) {
+        
+        log.log(Level.INFO, "Ejecutando getBuscadorCuentasContablesJson de {0}", ClientsController.class.getName());
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        ArrayList<HashMap<String, String>> cuentasContables = new ArrayList<HashMap<String, String>>();
+        
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        
+        System.out.println("cta_mayor: "+cta_mayor);
+        
+        cuentasContables = this.getTesDao().getTesChequera_CuentasContables(cta_mayor, detalle, clasifica, cta, scta, sscta, ssscta, sssscta, descripcion, id_empresa);
+        
+        jsonretorno.put("CtaContables", cuentasContables);
+        
+        return jsonretorno;
+    }
+    
+    
+    
+    
+    
     //crear y editar
     @RequestMapping(method = RequestMethod.POST, value="/edit.json")
     public @ResponseBody HashMap<String, String> editJson(
             @RequestParam(value="identificador", required=true) String id,
- 
             @RequestParam(value="chequera", required=false) String chequera,
             @RequestParam(value="moneda", required=false) String id_moneda,
             @RequestParam(value="check_modificar_consecutivo", required=false) String  chk_modificar_consecutivo,
             @RequestParam(value="check_modificar_fecha", required=false) String        chk_modificar_fecha,
             @RequestParam(value="check_modificar_cheque", required=false) String       chk_modificar_cheque,
             @RequestParam(value="check_imprimir_chequeningles", required=false) String chk_imprimir_chequeningles,
-
-
+            
             @RequestParam(value="select_banco", required=false) String id_banco,
             @RequestParam(value="numero_sucursal", required=false) String numero_sucursal,
             @RequestParam(value="nombre_sucursal", required=false) String nombre_sucursal,
@@ -251,8 +309,7 @@ public class TesChequeraController {
             @RequestParam(value="pais", required=false) String id_pais,
             @RequestParam(value="estado", required=false) String id_estado,
             @RequestParam(value="municipio", required=false) String id_municipio,
-
-
+            
             @RequestParam(value="tel1", required=false) String telefono1,
             @RequestParam(value="ext1", required=false) String extencion1,
             @RequestParam(value="tel2", required=false) String telefono2,
@@ -261,7 +318,8 @@ public class TesChequeraController {
             @RequestParam(value="gerente", required=false) String gerente,
             @RequestParam(value="ejecutivo", required=false) String ejecutivo,
             @RequestParam(value="email", required=false) String email,
-
+            
+            @RequestParam(value="id_cta_activo", required=true) String id_cta_activo,
 
             Model model,@ModelAttribute("user") UserSessionData user
             ) {
@@ -345,7 +403,9 @@ public class TesChequeraController {
         }
         
         
-        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id+"___"+chequera+"___"+chk_modificar_consecutivo +"___"+chk_modificar_fecha+"___"+chk_modificar_cheque+"___"+id_pais+"___"+id_municipio+"___"+id_estado+"___"+id_moneda+"___"+id_banco +"___"+chk_imprimir_chequeningles+"___"+calle+"___"+numero+"___"+colonia+"___"+cp+"___"+numero_sucursal+"___"+nombre_sucursal+"___"+telefono1+"___"+extencion1+"___"+telefono2+"___"+extencion2+"___"+fax+"___"+gerente+"___"+ejecutivo+"___"+email;
+        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id+"___"+chequera+"___"+chk_modificar_consecutivo +"___"+chk_modificar_fecha+"___"+chk_modificar_cheque+"___"+id_pais+"___"+id_municipio+"___"+id_estado+"___"+id_moneda+"___"+id_banco +"___"+chk_imprimir_chequeningles+"___"+calle.toUpperCase()+"___"+numero+"___"+colonia.toUpperCase()+"___"+cp+"___"+numero_sucursal+"___"+nombre_sucursal.toUpperCase()+"___"+telefono1+"___"+extencion1+"___"+telefono2+"___"+extencion2+"___"+fax+"___"+gerente.toUpperCase()+"___"+ejecutivo.toUpperCase()+"___"+email+"___"+id_cta_activo;
+        
+        
         succes = this.getTesDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
         log.log(Level.INFO, "despues de validacion {0}", String.valueOf(succes.get("success")));
         if( String.valueOf(succes.get("success")).equals("true") ){

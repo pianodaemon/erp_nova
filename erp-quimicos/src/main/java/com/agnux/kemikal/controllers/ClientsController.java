@@ -217,13 +217,14 @@ public class ClientsController {
         ArrayList<HashMap<String, Object>> arrayExtra = new ArrayList<HashMap<String, Object>>();
         HashMap<String, Object> extra = new HashMap<String, Object>();
         
-        //decodificar id de usuario
+        //Decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
         userDat = this.getHomeDao().getUserById(id_usuario);
         
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         
-        extra.put("incluye_contab", userDat.get("incluye_contab"));//esta variable indica si la empresa incluye modulo de Contabilidad
+        //Esta variable indica si la empresa incluye modulo de Contabilidad
+        extra.put("incluye_contab", userDat.get("incluye_contab"));
         extra.put("nivel_cta", userDat.get("nivel_cta"));
         arrayExtra.add(0,extra);
         

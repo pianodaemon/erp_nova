@@ -5183,7 +5183,7 @@ return subfamilias;
                     row.put("id",rs.getInt("id"));
                     row.put("cliente",rs.getString("cliente"));
                     row.put("tipo",rs.getString("tipo"));
-                    row.put("valor",StringHelper.roundDouble(rs.getString("valor"),2));
+                    row.put("valor",StringHelper.roundDouble(rs.getString("valor"),4));
                     return row;
                 }
             }
@@ -5213,7 +5213,7 @@ return subfamilias;
                     row.put("numero_control",rs.getString("numero_control"));
                     row.put("razon_social",rs.getString("razon_social"));
                     row.put("tipo",rs.getString("tipo"));
-                    row.put("valor",StringHelper.roundDouble(rs.getString("valor"),2));
+                    row.put("valor",StringHelper.roundDouble(rs.getString("valor"),4));
 
                     return row;
                 }

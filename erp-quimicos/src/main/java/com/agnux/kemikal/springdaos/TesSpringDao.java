@@ -358,6 +358,165 @@ public class TesSpringDao implements TesInterfaceDao{
     
     
     
+
+    //Obtiene datos de configuracion de Cuentas Contables
+    @Override
+    public ArrayList<HashMap<String, String>> getTesChequera_DatosContabilidad(Integer id) {
+        String sql_query = ""
+        + "SELECT "
+            +"tes_che.id as che_id, "
+            + "(CASE WHEN tbl_cta_activo.id IS NULL THEN 0 ELSE tbl_cta_activo.id END) AS ac_id_cta, "
+            + "(CASE WHEN tbl_cta_activo.cta IS NULL OR tbl_cta_activo.cta=0 THEN '' ELSE tbl_cta_activo.cta::character varying END) AS ac_cta, "
+            + "(CASE WHEN tbl_cta_activo.subcta IS NULL OR tbl_cta_activo.subcta=0 THEN '' ELSE tbl_cta_activo.subcta::character varying END) AS ac_subcta, "
+            + "(CASE WHEN tbl_cta_activo.ssubcta IS NULL OR tbl_cta_activo.ssubcta=0 THEN '' ELSE tbl_cta_activo.ssubcta::character varying END) AS ac_ssubcta, "
+            + "(CASE WHEN tbl_cta_activo.sssubcta IS NULL OR tbl_cta_activo.sssubcta=0 THEN '' ELSE tbl_cta_activo.sssubcta::character varying END) AS ac_sssubcta,"
+            + "(CASE WHEN tbl_cta_activo.ssssubcta IS NULL OR tbl_cta_activo.ssssubcta=0 THEN '' ELSE tbl_cta_activo.ssssubcta::character varying END) AS ac_ssssubcta, "
+            + "(CASE WHEN tbl_cta_activo.descripcion IS NULL OR tbl_cta_activo.descripcion='' THEN  (CASE WHEN tbl_cta_activo.descripcion_ing IS NULL OR tbl_cta_activo.descripcion_ing='' THEN  tbl_cta_activo.descripcion_otr ELSE tbl_cta_activo.descripcion_ing END )  ELSE tbl_cta_activo.descripcion END ) AS ac_descripcion "
+        +"FROM tes_che "
+        +"LEFT JOIN ctb_cta AS tbl_cta_activo ON tbl_cta_activo.id=tes_che.ctb_cta_id_activo "
+        +"WHERE tes_che.borrado_logico=false AND tes_che.id=?;";
+        
+        //System.out.println("getCliente_DatosContabilidad: "+ sql_query);
+        ArrayList<HashMap<String, String>> contab = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{new Integer(id)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("che_id",String.valueOf(rs.getInt("che_id")));
+                    row.put("ac_id_cta",rs.getString("ac_id_cta"));
+                    row.put("ac_cta",rs.getString("ac_cta"));
+                    row.put("ac_subcta",rs.getString("ac_subcta"));
+                    row.put("ac_ssubcta",rs.getString("ac_ssubcta"));
+                    row.put("ac_sssubcta",rs.getString("ac_sssubcta"));
+                    row.put("ac_ssssubcta",rs.getString("ac_ssssubcta"));
+                    row.put("ac_descripcion",rs.getString("ac_descripcion"));
+                    
+                    return row;
+                }
+            }
+        );
+        return contab;
+    }
+
+    
+    
+    @Override
+    public ArrayList<HashMap<String, String>> getTesChequera_CuentasMayor(Integer id_empresa) {
+        String sql_query = "SELECT id, titulo FROM ctb_may_clases ORDER BY id;";
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("titulo",rs.getString("titulo"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    
+    
+    //Metodo para el buscador de cuentas contables
+    @Override
+    public ArrayList<HashMap<String, String>> getTesChequera_CuentasContables(Integer cta_mayor, Integer detalle, String clasifica, String cta, String scta, String sscta, String ssscta, String sssscta, String descripcion, Integer id_empresa) {
+
+        String where="";
+	if(cta_mayor != 0){
+            where+=" AND ctb_cta.cta_mayor="+cta_mayor+" ";
+	}
+
+	if(!clasifica.equals("")){
+            where+=" AND ctb_cta.clasifica="+clasifica+" ";
+	}
+
+	if(!cta.equals("")){
+            where+=" AND ctb_cta.cta="+cta+" ";
+	}
+
+	if(!scta.equals("")){
+            where+=" AND ctb_cta.subcta="+scta+" ";
+	}
+
+	if(!sscta.equals("")){
+            where+=" AND ctb_cta.ssubcta="+sscta+" ";
+	}
+
+	if(!ssscta.equals("")){
+            where+=" AND ctb_cta.sssubcta="+ssscta+" ";
+	}
+
+	if(!sssscta.equals("")){
+            where+=" AND ctb_cta.ssssubcta="+sssscta+" ";
+	}
+
+	if(!descripcion.equals("")){
+            where+=" AND ctb_cta.ssssubcta ilike '%"+descripcion+"%'";
+	}
+
+        String sql_query = ""
+                + "SELECT DISTINCT "
+                    + "ctb_cta.id, "
+                    + "ctb_cta.cta_mayor, "
+                    + "ctb_cta.clasifica, "
+                    + "ctb_cta.cta, "
+                    + "ctb_cta.subcta, "
+                    + "ctb_cta.ssubcta, "
+                    + "ctb_cta.sssubcta,"
+                    + "ctb_cta.ssssubcta, "
+                    + "(CASE 	WHEN nivel_cta=1 THEN rpad(ctb_cta.cta::character varying, 4, '0')   "
+                    + "WHEN ctb_cta.nivel_cta=2 THEN '&nbsp;&nbsp;&nbsp;'||rpad(ctb_cta.cta::character varying, 4, '0')||'-'||lpad(ctb_cta.subcta::character varying, 4, '0') "
+                    + "WHEN ctb_cta.nivel_cta=3 THEN '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'||rpad(ctb_cta.cta::character varying, 4, '0')||'-'||lpad(ctb_cta.subcta::character varying, 4, '0')||'-'||lpad(ctb_cta.ssubcta::character varying, 4, '0') "
+                    + "WHEN ctb_cta.nivel_cta=4 THEN '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'||rpad(ctb_cta.cta::character varying, 4, '0')||'-'||lpad(ctb_cta.subcta::character varying, 4, '0')||'-'||lpad(ctb_cta.ssubcta::character varying, 4, '0')||'-'||lpad(ctb_cta.sssubcta::character varying, 4, '0') "
+                    + "WHEN ctb_cta.nivel_cta=5 THEN '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'||rpad(ctb_cta.cta::character varying, 4, '0')||'-'||lpad(ctb_cta.subcta::character varying, 4, '0')||'-'||lpad(ctb_cta.ssubcta::character varying, 4, '0')||'-'||lpad(ctb_cta.sssubcta::character varying, 4, '0')||'-'||lpad(ctb_cta.ssssubcta::character varying, 4, '0') "
+                    + "ELSE '' "
+                    + "END ) AS cuenta, "
+                    + "(CASE WHEN ctb_cta.descripcion IS NULL OR ctb_cta.descripcion='' THEN  (CASE WHEN ctb_cta.descripcion_ing IS NULL OR ctb_cta.descripcion_ing='' THEN  ctb_cta.descripcion_otr ELSE ctb_cta.descripcion_ing END )  ELSE descripcion END ) AS descripcion, "
+                    + "(CASE WHEN ctb_cta.detalle=0 THEN 'NO' WHEN ctb_cta.detalle=1 THEN 'SI' ELSE '' END) AS detalle, "
+                    + "ctb_cta.nivel_cta "
+                + "FROM ctb_cta "
+                + "WHERE ctb_cta.borrado_logico=false  "
+                + "AND ctb_cta.gral_emp_id=? AND ctb_cta.detalle=? "+ where +" "
+                + "ORDER BY ctb_cta.id;";
+
+
+        System.out.println("getCliente_CuentasContables: "+sql_query);
+
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{new Integer(id_empresa), new Integer(detalle)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("m",String.valueOf(rs.getInt("cta_mayor")));
+                    row.put("c",String.valueOf(rs.getInt("clasifica")));
+                    row.put("cta",String.valueOf(rs.getInt("cta")));
+                    row.put("subcta",String.valueOf(rs.getInt("subcta")));
+                    row.put("ssubcta",String.valueOf(rs.getInt("ssubcta")));
+                    row.put("sssubcta",String.valueOf(rs.getInt("sssubcta")));
+                    row.put("ssssubcta",String.valueOf(rs.getInt("ssssubcta")));
+                    row.put("cuenta",rs.getString("cuenta"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("detalle",rs.getString("detalle"));
+                    row.put("nivel_cta",String.valueOf(rs.getInt("nivel_cta")));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+
+
+    
+    
+    
+    
     @Override
     public ArrayList<HashMap<String, String>> getBancos(Integer idEmpresa) {
         String sql_to_query = "select distinct id as id_banco, titulo as banco from tes_ban "
