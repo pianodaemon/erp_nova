@@ -136,6 +136,7 @@
 													<li class="topline"><a href="../clientsclasif2/startup.agnux">Clasificaci&oacute;n 2</a></li>
 													<li class="topline"><a href="../clientsclasif3/startup.agnux">Clasificaci&oacute;n 3</a></li>
 													<li class="topline"><a href="../clientstmovimientos/startup.agnux">Tipos de Movimientos</a></li>
+													<li class="topline"><a href="../clientsdescuentos/startup.agnux">Descuentos</a></li>
 													
 													<li class="topline" id="transpor"><a href="../clientsremiten/startup.agnux">Remitentes</a></li>
 													<li class="topline" id="transpor"><a href="../clientsdest/startup.agnux">Destinatarios</a></li>
@@ -691,6 +692,7 @@
 													<li><a href="../gralpercepciones/startup.agnux">Percepciones</a></li>
 													<li><a href="../graldeducciones/startup.agnux">Deduciones</a></li>
 													<li><a href="../gralperiodicidadpago/startup.agnux">Periodicidad de Pago</a></li>
+													<li><a href="../gralconfigperiodospago/startup.agnux">Configuraci&oacute;n de Peridodos de Pago</a></li>
 												</ul>
 											</li>
 

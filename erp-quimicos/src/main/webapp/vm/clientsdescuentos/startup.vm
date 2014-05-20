@@ -126,7 +126,7 @@
                                                                 <td width="70">No.&nbsp;Cliente</td>
                                                                 <td width="100">
                                                                     <input type="hidden" name="id_cliente" value="0">
-                                                                    <input type="text" name="nocliente" style="width:100px; border:1px solid #000;">
+                                                                    <input type="text" name="nocliente" style="width:100px; border:1px solid #000;" maxlength="15">
                                                                 </td>
                                                                 <td width="15"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_nocliente"></div></td>
                                                                 <td width="70">Razon&nbsp;social</td>
@@ -140,7 +140,7 @@
 															<tr>
 																<td width="5"></td>
 																<td width="85">Valor</td>
-																<td width="100" colspan="1"><INPUT TYPE="text" name="valor" style="width:100px;"></td>
+																<td width="100" colspan="1"><INPUT TYPE="text" name="valor" style="width:100px;" maxlength="7"></td>
 																<td width="50" ><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_valor"></div></td>
 															</tr>
                                                         </table>
