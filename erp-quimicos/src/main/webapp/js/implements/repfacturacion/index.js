@@ -290,7 +290,7 @@ $(function() {
 		
 		$(this).modalPanel_repfacturacion();
 		
-		$('#forma-repfacturacion-window').css({"margin-left": -340, 	"margin-top": -220});
+		$('#forma-repfacturacion-window').css({"margin-left": -390, 	"margin-top": -290});
 		
 		$forma_selected.prependTo('#forma-repfacturacion-window');
 		$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
@@ -385,33 +385,30 @@ $(function() {
 			//ieps suma
 			var sumaIeps = entry['datosFactura']['0']['monto_ieps'];
 			var impuestoRetenido = entry['datosFactura']['0']['monto_retencion'];
+			
 			//Ocultar campos si tienen valor menor o igual a cero
-					if(parseFloat(sumaIeps)<=0){
-						$('#forma-facconsultas-window').find('#tr_ieps').hide();
-					}
-					if(parseFloat(impuestoRetenido)<=0){
-						$('#forma-facconsultas-window').find('#tr_retencion').hide();
-					}
-					
-					if(parseFloat(sumaIeps)>0 && parseFloat(impuestoRetenido)<=0){
-						$('#forma-facconsultas-window').find('.facconsultas_div_one').css({'height':'525px'});
-					}
-					
-					if(parseFloat(sumaIeps)<=0 && parseFloat(impuestoRetenido)>0){
-						$('#forma-facconsultas-window').find('.facconsultas_div_one').css({'height':'525px'});
-					}
-					
-					if(parseFloat(sumaIeps)<=0 && parseFloat(impuestoRetenido)<=0){
-						$('#forma-facconsultas-window').find('.facconsultas_div_one').css({'height':'500px'});
-					}
-					
-					if(parseFloat(sumaIeps)>0 && parseFloat(impuestoRetenido)>0){
-						$('#forma-facconsultas-window').find('.facconsultas_div_one').css({'height':'550px'});
-					}
-		
+			if(parseFloat(sumaIeps)<=0){
+				$('#forma-facconsultas-window').find('#tr_ieps').hide();
+			}
+			if(parseFloat(impuestoRetenido)<=0){
+				$('#forma-facconsultas-window').find('#tr_retencion').hide();
+			}
 			
+			if(parseFloat(sumaIeps)>0 && parseFloat(impuestoRetenido)<=0){
+				$('#forma-facconsultas-window').find('.facconsultas_div_one').css({'height':'525px'});
+			}
 			
+			if(parseFloat(sumaIeps)<=0 && parseFloat(impuestoRetenido)>0){
+				$('#forma-facconsultas-window').find('.facconsultas_div_one').css({'height':'525px'});
+			}
 			
+			if(parseFloat(sumaIeps)<=0 && parseFloat(impuestoRetenido)<=0){
+				$('#forma-facconsultas-window').find('.facconsultas_div_one').css({'height':'500px'});
+			}
+			
+			if(parseFloat(sumaIeps)>0 && parseFloat(impuestoRetenido)>0){
+				$('#forma-facconsultas-window').find('.facconsultas_div_one').css({'height':'550px'});
+			}
 			
 			//form pago 2=Tarjeta Credito, 3=Tarjeta Debito
 			if(parseInt(entry['datosFactura']['0']['fac_metodos_pago_id'])==2 || parseInt(entry['datosFactura']['0']['fac_metodos_pago_id']==3)){

@@ -276,7 +276,7 @@ $(function() {
 		
 		if(parseInt(tipo)==2 ){
 			//CTA_MAYOR=1(Activo) o 5(Egresos)		CLASIFICA=1 (Pasivo Circulante o Costo de Ventas).  
-			detalle=1; clasifica=1;
+			detalle=1; clasifica=1; detalle=1;
 			$.each(arrayCtasMayor,function(entryIndex,ctamay){
 				if (parseInt( ctamay['id'])==1 || parseInt( ctamay['id'])==5 ){
 					ctamay_hmtl += '<option value="' + ctamay['id'] + '">'+ ctamay['titulo'] + '</option>';
@@ -286,7 +286,7 @@ $(function() {
 		
 		if(parseInt(tipo)==3 ){
 			//CTA_MAYOR=7 (IETU) 	CLASIFICA=1 (Impuesto IETU). 
-			mayor_seleccionado=7; detalle=1; clasifica=1;
+			mayor_seleccionado=7; clasifica=2; detalle=1;
 			$.each(arrayCtasMayor,function(entryIndex,ctamay){
 				if (parseInt(mayor_seleccionado)== parseInt( ctamay['id']) ){
 					ctamay_hmtl += '<option value="' + ctamay['id'] + '">'+ ctamay['titulo'] + '</option>';
@@ -1870,7 +1870,7 @@ $(function() {
 					
 					//Alimentando los campos select de las pais del contacto cobranza
 					$select_cob_pais.children().remove();
-					var cob_pais_hmtl = "";
+					var cob_pais_hmtl = '<option value="0" selected="yes">[-Seleccionar pais-]</option>';
 					$.each(entry['pais'],function(entryIndex,pais){
 						if(pais['cve_pais'] == entry['Proveedor']['0']['cob_pais_id']){
 							cob_pais_hmtl += '<option value="' + pais['cve_pais'] + '"  selected="yes">' + pais['pais_ent'] + '</option>';
@@ -1882,7 +1882,7 @@ $(function() {
 					
 					//Alimentando los campos select del estado del contacto cobranza
 					$select_cob_estado.children().remove();
-					var cob_entidad_hmtl = "";
+					var cob_entidad_hmtl = '<option value="0" selected="yes" >[-Seleccionar entidad--]</option>';
 					$.each(entry['entidades'],function(entryIndex,entidad){
 						if(entidad['cve_ent'] == entry['Proveedor']['0']['cob_estado_id']){
 							cob_entidad_hmtl += '<option value="' + entidad['cve_ent'] + '"  selected="yes">' + entidad['nom_ent'] + '</option>';
@@ -1894,7 +1894,7 @@ $(function() {
 					
 					//Alimentando los campos select de los municipios del contacto cobranza
 					$select_cob_localidad.children().remove();
-					var cob_localidad_hmtl = "";
+					var cob_localidad_hmtl = '<option value="0" selected="yes" >[-Seleccionar municipio-]</option>';
 					$.each(entry['cobmunicipios'],function(entryIndex,mun){
 						if(mun['cve_mun'] == entry['Proveedor']['0']['cob_municipio_id']){
 							cob_localidad_hmtl += '<option value="' + mun['cve_mun'] + '"  selected="yes">' + mun['nom_mun'] + '</option>';
@@ -1903,8 +1903,6 @@ $(function() {
 						}
 					});
 					$select_cob_localidad.append(cob_localidad_hmtl);
-					
-					
 					
 					
 					//carga select estados al cambiar el pais

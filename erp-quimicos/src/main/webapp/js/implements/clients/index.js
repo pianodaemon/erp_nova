@@ -846,10 +846,15 @@ $(function() {
 		if(parseInt(nivel_cta) >=4 ){ $campo_ssscuenta.show(); };
 		if(parseInt(nivel_cta) >=5 ){ $campo_sssscuenta.show(); };
 		
+		//Activo
 		if(parseInt(tipo)==1 ){mayor_seleccionado=1; detalle=1; };
+		//Ingreso
 		if(parseInt(tipo)==2 ){mayor_seleccionado=4; detalle=1; };
+		//IETU
 		if(parseInt(tipo)==3 ){mayor_seleccionado=7; detalle=1; };
+		//Cuenta Complementaria
 		if(parseInt(tipo)==4 ){mayor_seleccionado=1; detalle=1; };
+		//Cuenta Activo Complementaria
 		if(parseInt(tipo)==5 ){mayor_seleccionado=1; detalle=1; };
 		
 		//carga select de cuentas de Mayor

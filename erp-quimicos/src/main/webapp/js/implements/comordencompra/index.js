@@ -1054,7 +1054,7 @@ $(function() {
 
 
 
-			
+			/*
 			//validar campo costo, solo acepte numeros y punto
 			$grid_productos.find('#cost').keypress(function(e){
 				// Permitir  numeros, borrar, suprimir, TAB, puntos, comas
@@ -1074,7 +1074,8 @@ $(function() {
 					return false;
 				}
 			});
-
+			*/
+			
 			/*
 			//elimina un producto del grid
 			$grid_productos.find('#delete'+ tr).bind('click',function(event){
@@ -1092,6 +1093,29 @@ $(function() {
 				}
 			});
 			*/
+			
+			//validar campo costo, solo acepte numeros y punto
+			$permitir_solo_numeros( $grid_productos.find('#cost') );
+			$permitir_solo_numeros( $grid_productos.find('#cant') );
+
+			//elimina un producto del grid
+			$grid_productos.find('#delete'+ tr).bind('click',function(event){
+				event.preventDefault();
+				if(parseInt($(this).parent().find('#elim').val()) != 0){
+					var iddetalle = $(this).parent().find('#idd').val();
+					
+					//asigna espacios en blanco a todos los input de la fila eliminada
+					$(this).parent().parent().find('input').val(' ');
+					
+					//asigna un 0 al input eliminado como bandera para saber que esta eliminado
+					$(this).parent().find('#elim').val(0);//cambiar valor del campo a 0 para indicar que se ha elimnado
+					$(this).parent().find('#idd').val(iddetalle);
+					//oculta la fila eliminada
+					$(this).parent().parent().hide();
+					$calcula_totales();//llamada a la funcion que calcula totales
+				}
+			});
+			
 			
 			$grid_productos.find('.cant'+ tr).focus();
 			

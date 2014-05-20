@@ -346,7 +346,7 @@ $(function() {
 		
 		
 		$nocliente.focus();
-		$permitir_solo_numeros($nocliente);
+		//$permitir_solo_numeros($nocliente);
         $permitir_solo_numeros($campo_valor);
 		
 		//$folio.css({'background' : '#DDDDDD'});
@@ -521,7 +521,7 @@ $(function() {
 			$nocliente.attr({ 'readOnly':true });
 			$razoncliente.attr({ 'readOnly':true });
 			$busca_cliente.hide();
-			$permitir_solo_numeros($nocliente);
+			//$permitir_solo_numeros($nocliente);
 			$permitir_solo_numeros($campo_valor);
 			
 			//Quitar enter a todos los campos input
