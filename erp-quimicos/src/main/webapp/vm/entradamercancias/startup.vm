@@ -127,7 +127,7 @@
                     
                     <div id="div_two" title="" class="entradamercancias_div_two">
                         <div class="columns on-2">
-                            <div class="fixed column" style="width:1088px; padding-left:6px;"><strong>Facturas Compras</strong></div>
+                            <div class="fixed column" style="width:1128px; padding-left:6px;"><strong>Facturas Compras</strong></div>
                             <div class="fixed column" style="width:20px; height:25px;">
                                 <div id="close" style="height:25px;background-image:url('../../img/modalbox/close.png'); background-color:; background-position:top; cursor:pointer; background-repeat:no-repeat;"></div>
                             </div>
@@ -321,7 +321,8 @@
 													<table >
 														<thead>
 															<tr>
-																<td class="grid" id="td_sku" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="65">&nbsp;#</td>
+																<td class="grid" id="td_sku" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="50">&nbsp;#</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="50">&nbsp;O.C.</td>
 																<td class="grid" id="td_sku" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="100">&nbsp;C&oacute;digo</td>
 																<td class="grid" id="td_nombre" style="background-color: rgb(180, 180, 180);"  width="200">&nbsp;Descripci&oacute;n</td>
 																<td class="grid" style="background-color: rgb(180, 180, 180);" width="70">&nbsp;Unidad</td>
@@ -421,10 +422,10 @@
                             </div>
 
 
-                            <div class="fixed column" style="width:1105px; background:; text-align:right; padding-left:; position:absolute;margin-top:4px;">
+                            <div class="fixed column" style="width:1145px; background:; text-align:right; padding-left:; position:absolute;margin-top:4px;">
 								<table border="0">
 									<tr>
-										<td width="1105"></td>
+										<td width="1145"></td>
 										<td>
 											<!--<input  id="submit" style="width:77px; height:24px; background-image:url('../../img/modalbox/btn1.png'); background-repeat:no-repeat;">-->
 											<input type="image" src="../../img/modalbox/btn1.png" id="submit" style="width:77px; height:24px;"/>
