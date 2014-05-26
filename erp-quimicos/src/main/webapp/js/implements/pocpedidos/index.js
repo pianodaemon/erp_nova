@@ -1679,15 +1679,20 @@ $(function() {
 	
 	
 	
-	//buscador de presentaciones disponibles para un producto
+	//Buscador de presentaciones disponibles para un producto
 	$buscador_presentaciones_producto = function($id_cliente,nocliente, sku_producto,$nombre_producto,$grid_productos,$select_moneda,$tipo_cambio, arrayMonedas){
 		//Verifica si el campo rfc proveedor no esta vacio
 		var cliente_listaprecio=  $('#forma-pocpedidos-window').find('input[name=num_lista_precio]').val();
 		var vdescto = $('#forma-pocpedidos-window').find('input[name=valor_descto]').val();
 		
 		if(nocliente != ''){
+			
 			//verifica si el campo sku no esta vacio para realizar busqueda
 			if(sku_producto != ''){
+				
+				//Asignar el enfoque para corregir el problema donde muestra varias ventanas si le dan mas de un enter al querer agregar el producto al grid
+				$('#forma-pocpedidos-window').find('input[name=folio]').focus();
+				
 				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getPresentacionesProducto.json';
 				$arreglo = {'sku':sku_producto,
 							'lista_precios':cliente_listaprecio,
@@ -1699,121 +1704,154 @@ $(function() {
 				
 				$.post(input_json,$arreglo,function(entry){
 					
-					//verifica si el arreglo  retorno datos
+					//Verifica si el arreglo  retorno datos
 					if (entry['Presentaciones'].length > 0){
 						
-						//if (entry['Presentaciones'][0]['exis_prod_lp']=='1'){
-							$(this).modalPanel_Buscapresentacion();
-							var $dialogoc =  $('#forma-buscapresentacion-window');
-							$dialogoc.append($('div.buscador_presentaciones').find('table.formaBusqueda_presentaciones').clone());
-							$('#forma-buscapresentacion-window').css({"margin-left": -200, "margin-top": -180});
+						if(parseInt(entry['Presentaciones'].length)==1){
+							//Agregar TR de manera automatica porque solo hay una presentacion
+							var id_prod = entry['Presentaciones'][0]['id'];
+							var sku = entry['Presentaciones'][0]['sku'];
+							var titulo = entry['Presentaciones'][0]['titulo'];
+							var unidadId = entry['Presentaciones'][0]['unidad_id'];
+							var unidad = entry['Presentaciones'][0]['unidad'];
+							var id_pres = entry['Presentaciones'][0]['id_presentacion'];
+							var pres = entry['Presentaciones'][0]['presentacion'];
+							var num_dec = entry['Presentaciones'][0]['decimales'];
+							var prec_unitario = entry['Presentaciones'][0]['precio'];
+							var id_moneda = entry['Presentaciones'][0]['id_moneda'];
+							var tcMonProd = entry['Presentaciones'][0]['tc'];
+							var exislp = entry['Presentaciones'][0]['exis_prod_lp'];
+							var idImpto = entry['Presentaciones'][0]['id_impto'];
+							var valorImpto = entry['Presentaciones'][0]['valor_impto'];
+							var iepsId = entry['Presentaciones'][0]['ieps_id'];
+							var iepsTasa = entry['Presentaciones'][0]['ieps_tasa'];
 							
-							var $tabla_resultados = $('#forma-buscapresentacion-window').find('#tabla_resultado');
-							//var $cancelar_plugin_busca_lotes_producto = $('#forma-buscapresentacion-window').find('a[href*=cencela]');
-							var $cancelar_plugin_busca_lotes_producto = $('#forma-buscapresentacion-window').find('#cencela');
-							$tabla_resultados.children().remove();
-							
-							$cancelar_plugin_busca_lotes_producto.mouseover(function(){
-								$(this).removeClass("onmouseOutCancelar").addClass("onmouseOverCancelar");
-							});
-							$cancelar_plugin_busca_lotes_producto.mouseout(function(){
-								$(this).removeClass("onmouseOverCancelar").addClass("onmouseOutCancelar");
-							});
-							
-							//crea el tr con los datos del producto seleccionado
-							$.each(entry['Presentaciones'],function(entryIndex,pres){
-								trr = '<tr>';
-									trr += '<td width="100">';
-										trr += '<span class="id_prod" style="display:none">'+pres['id']+'</span>';
-										trr += '<span class="sku">'+pres['sku']+'</span>';
-									trr += '</td>';
-									trr += '<td width="250"><span class="titulo">'+pres['titulo']+'</span></td>';
-									trr += '<td width="80">';
-										trr += '<span class="unidadId" style="display:none">'+pres['unidad_id']+'</span>';
-										trr += '<span class="unidad" style="display:none">'+pres['unidad']+'</span>';
-										trr += '<span class="id_pres" style="display:none">'+pres['id_presentacion']+'</span>';
-										trr += '<span class="pres">'+pres['presentacion']+'</span>';
-										trr += '<span class="costo" style="display:none">'+pres['precio']+'</span>';
-										trr += '<span class="idmon" style="display:none">'+pres['id_moneda']+'</span>';
-										trr += '<span class="tc" style="display:none">'+pres['tc']+'</span>';
-										trr += '<span class="dec" style="display:none">'+pres['decimales']+'</span>';
-										trr += '<span class="exislp" style="display:none">'+pres['exis_prod_lp']+'</span>';
-										trr += '<span class="idImpto" style="display:none">'+pres['id_impto']+'</span>';
-										trr += '<span class="valorImpto" style="display:none">'+pres['valor_impto']+'</span>';
-										trr += '<span class="iepsId" style="display:none">'+pres['ieps_id']+'</span>';
-										trr += '<span class="iepsTasa" style="display:none">'+pres['ieps_tasa']+'</span>';
-									trr += '</td>';
-								trr += '</tr>';
-								$tabla_resultados.append(trr);
-							});//termina llamada json
-							
-							$tabla_resultados.find('tr:odd').find('td').css({'background-color' : '#e7e8ea'});
-							$tabla_resultados.find('tr:even').find('td').css({'background-color' : '#FFFFFF'});
-							
-							$('tr:odd' , $tabla_resultados).hover(function () {
-								$(this).find('td').css({background : '#FBD850'});
-							}, function() {
-									//$(this).find('td').css({'background-color':'#DDECFF'});
-								$(this).find('td').css({'background-color':'#e7e8ea'});
-							});
-							$('tr:even' , $tabla_resultados).hover(function () {
-								$(this).find('td').css({'background-color':'#FBD850'});
-							}, function() {
-								$(this).find('td').css({'background-color':'#FFFFFF'});
-							});
-							
-							//Seleccionar un producto del grid de resultados
-							$tabla_resultados.find('tr').click(function(){
-								//llamada a la funcion que busca y agrega producto al grid, se le pasa como parametro el lote y el almacen
-								var id_prod = $(this).find('span.id_prod').html();
-								var sku = $(this).find('span.sku').html();
-								var titulo = $(this).find('span.titulo').html();
-								var unidadId = $(this).find('span.unidadId').html();
-								var unidad = $(this).find('span.unidad').html();
-								var id_pres = $(this).find('span.id_pres').html();
-								var pres = $(this).find('span.pres').html();
-								var num_dec = $(this).find('span.dec').html();
-								var prec_unitario = $(this).find('span.costo').html();
-								var id_moneda = $(this).find('span.idmon').html();
-								//tipo de cambio de la moneda del producto
-								var tcMonProd = $(this).find('span.tc').html();
-								var exislp = $(this).find('span.exislp').html();
-								
-								var idImpto = $(this).find('span.idImpto').html();
-								var valorImpto = $(this).find('span.valorImpto').html();
-								
-								var iepsId = $(this).find('span.iepsId').html();
-								var iepsTasa = $(this).find('span.iepsTasa').html();
-								
-								
-								if($tipo_cambio.val()!='' && $tipo_cambio.val()!=' '){
-									if(exislp=='1'){
-										//llamada a la funcion que agrega el producto al grid
-										$agrega_producto_grid($grid_productos, id_prod, sku, titulo, unidadId, unidad, id_pres,pres,prec_unitario,$select_moneda,id_moneda,$tipo_cambio,num_dec, arrayMonedas, tcMonProd, idImpto, valorImpto, iepsId, iepsTasa, vdescto);
-									}else{
-										jAlert(exislp, 'Atencion!', function(r) { 
-											$('#forma-pocpedidos-window').find('input[name=sku_producto]').focus();
-										});
-									}
+							if($tipo_cambio.val()!='' && $tipo_cambio.val()!=' '){
+								if(exislp=='1'){
+									//llamada a la funcion que agrega el producto al grid
+									$agrega_producto_grid($grid_productos, id_prod, sku, titulo, unidadId, unidad, id_pres,pres,prec_unitario,$select_moneda,id_moneda,$tipo_cambio,num_dec, arrayMonedas, tcMonProd, idImpto, valorImpto, iepsId, iepsTasa, vdescto);
 								}else{
-									jAlert('Es necesario ingresar el Tipo de Cambio.', 'Atencion!');
+									jAlert(exislp, 'Atencion!', function(r) { 
+										$('#forma-pocpedidos-window').find('input[name=sku_producto]').focus();
+									});
 								}
+							}else{
+								jAlert('Es necesario ingresar el Tipo de Cambio.', 'Atencion!');
+							}
+						}else{
+								$(this).modalPanel_Buscapresentacion();
+								var $dialogoc =  $('#forma-buscapresentacion-window');
+								$dialogoc.append($('div.buscador_presentaciones').find('table.formaBusqueda_presentaciones').clone());
+								$('#forma-buscapresentacion-window').css({"margin-left": -200, "margin-top": -180});
 								
-								//elimina la ventana de busqueda
-								var remove = function() {$(this).remove();};
-								$('#forma-buscapresentacion-overlay').fadeOut(remove);
-							});
-							
-							//$tabla_resultados.find('tr').focus();
-							//$(this).aplicarEventoKeypressEjecutaTrigger($('#forma-buscaproducto-window'), $tabla_resultados.find('tr'));
-							
-							
-							$cancelar_plugin_busca_lotes_producto.click(function(event){
-								//event.preventDefault();
-								var remove = function() {$(this).remove();};
-								$('#forma-buscapresentacion-overlay').fadeOut(remove);
-								$('#forma-pocpedidos-window').find('input[name=sku_producto]').focus();
-							});
+								var $tabla_resultados = $('#forma-buscapresentacion-window').find('#tabla_resultado');
+								//var $cancelar_plugin_busca_lotes_producto = $('#forma-buscapresentacion-window').find('a[href*=cencela]');
+								var $cancelar_plugin_busca_lotes_producto = $('#forma-buscapresentacion-window').find('#cencela');
+								$tabla_resultados.children().remove();
+								
+								$cancelar_plugin_busca_lotes_producto.mouseover(function(){
+									$(this).removeClass("onmouseOutCancelar").addClass("onmouseOverCancelar");
+								});
+								$cancelar_plugin_busca_lotes_producto.mouseout(function(){
+									$(this).removeClass("onmouseOverCancelar").addClass("onmouseOutCancelar");
+								});
+								
+								//crea el tr con los datos del producto seleccionado
+								$.each(entry['Presentaciones'],function(entryIndex,pres){
+									trr = '<tr>';
+										trr += '<td width="100">';
+											trr += '<span class="id_prod" style="display:none">'+pres['id']+'</span>';
+											trr += '<span class="sku">'+pres['sku']+'</span>';
+										trr += '</td>';
+										trr += '<td width="250"><span class="titulo">'+pres['titulo']+'</span></td>';
+										trr += '<td width="80">';
+											trr += '<span class="unidadId" style="display:none">'+pres['unidad_id']+'</span>';
+											trr += '<span class="unidad" style="display:none">'+pres['unidad']+'</span>';
+											trr += '<span class="id_pres" style="display:none">'+pres['id_presentacion']+'</span>';
+											trr += '<span class="pres">'+pres['presentacion']+'</span>';
+											trr += '<span class="costo" style="display:none">'+pres['precio']+'</span>';
+											trr += '<span class="idmon" style="display:none">'+pres['id_moneda']+'</span>';
+											trr += '<span class="tc" style="display:none">'+pres['tc']+'</span>';
+											trr += '<span class="dec" style="display:none">'+pres['decimales']+'</span>';
+											trr += '<span class="exislp" style="display:none">'+pres['exis_prod_lp']+'</span>';
+											trr += '<span class="idImpto" style="display:none">'+pres['id_impto']+'</span>';
+											trr += '<span class="valorImpto" style="display:none">'+pres['valor_impto']+'</span>';
+											trr += '<span class="iepsId" style="display:none">'+pres['ieps_id']+'</span>';
+											trr += '<span class="iepsTasa" style="display:none">'+pres['ieps_tasa']+'</span>';
+										trr += '</td>';
+									trr += '</tr>';
+									$tabla_resultados.append(trr);
+								});//termina llamada json
+								
+								$tabla_resultados.find('tr:odd').find('td').css({'background-color' : '#e7e8ea'});
+								$tabla_resultados.find('tr:even').find('td').css({'background-color' : '#FFFFFF'});
+								
+								$('tr:odd' , $tabla_resultados).hover(function () {
+									$(this).find('td').css({background : '#FBD850'});
+								}, function() {
+										//$(this).find('td').css({'background-color':'#DDECFF'});
+									$(this).find('td').css({'background-color':'#e7e8ea'});
+								});
+								$('tr:even' , $tabla_resultados).hover(function () {
+									$(this).find('td').css({'background-color':'#FBD850'});
+								}, function() {
+									$(this).find('td').css({'background-color':'#FFFFFF'});
+								});
+								
+								//Seleccionar un producto del grid de resultados
+								$tabla_resultados.find('tr').click(function(){
+									//llamada a la funcion que busca y agrega producto al grid, se le pasa como parametro el lote y el almacen
+									var id_prod = $(this).find('span.id_prod').html();
+									var sku = $(this).find('span.sku').html();
+									var titulo = $(this).find('span.titulo').html();
+									var unidadId = $(this).find('span.unidadId').html();
+									var unidad = $(this).find('span.unidad').html();
+									var id_pres = $(this).find('span.id_pres').html();
+									var pres = $(this).find('span.pres').html();
+									var num_dec = $(this).find('span.dec').html();
+									var prec_unitario = $(this).find('span.costo').html();
+									var id_moneda = $(this).find('span.idmon').html();
+									//tipo de cambio de la moneda del producto
+									var tcMonProd = $(this).find('span.tc').html();
+									var exislp = $(this).find('span.exislp').html();
+									
+									var idImpto = $(this).find('span.idImpto').html();
+									var valorImpto = $(this).find('span.valorImpto').html();
+									
+									var iepsId = $(this).find('span.iepsId').html();
+									var iepsTasa = $(this).find('span.iepsTasa').html();
+									
+									
+									if($tipo_cambio.val()!='' && $tipo_cambio.val()!=' '){
+										if(exislp=='1'){
+											//llamada a la funcion que agrega el producto al grid
+											$agrega_producto_grid($grid_productos, id_prod, sku, titulo, unidadId, unidad, id_pres,pres,prec_unitario,$select_moneda,id_moneda,$tipo_cambio,num_dec, arrayMonedas, tcMonProd, idImpto, valorImpto, iepsId, iepsTasa, vdescto);
+										}else{
+											jAlert(exislp, 'Atencion!', function(r) { 
+												$('#forma-pocpedidos-window').find('input[name=sku_producto]').focus();
+											});
+										}
+									}else{
+										jAlert('Es necesario ingresar el Tipo de Cambio.', 'Atencion!');
+									}
+									
+									//elimina la ventana de busqueda
+									var remove = function() {$(this).remove();};
+									$('#forma-buscapresentacion-overlay').fadeOut(remove);
+								});
+								
+								//$tabla_resultados.find('tr').focus();
+								//$(this).aplicarEventoKeypressEjecutaTrigger($('#forma-buscaproducto-window'), $tabla_resultados.find('tr'));
+								
+								
+								$cancelar_plugin_busca_lotes_producto.click(function(event){
+									//event.preventDefault();
+									var remove = function() {$(this).remove();};
+									$('#forma-buscapresentacion-overlay').fadeOut(remove);
+									$('#forma-pocpedidos-window').find('input[name=sku_producto]').focus();
+								});
+						}
+
 					}else{
 						jAlert('El producto que intenta agregar no existe, pruebe ingresando otro.\nHaga clic en Buscar.', 'Atencion!', function(r) { 
 							$('#forma-pocpedidos-window').find('input[name=titulo_producto]').val('');

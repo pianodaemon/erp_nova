@@ -635,7 +635,6 @@ $(function() {
 			}
 		});
 		
-		
 		$.each(tiposIva,function(entryIndex,tipos){
 			if(parseInt(tipos['id'])==1){
 				//calcula iva del flete
@@ -714,13 +713,21 @@ $(function() {
 			trCount++;
 			var tr_prod='';
 			
+			var oc="";
+			
 			$('#forma-entradamercancias-window').find('input[name=titulo_producto]').val(titulo);
 			
 			tr_prod += '<tr>';
-				tr_prod += '<td width="65" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
+				tr_prod += '<td width="49" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
 					tr_prod += '<a href="elimina_producto" id="eliminaprod'+ trCount +'">Eliminar</a>';
 					tr_prod += '<input type="hidden" name="eliminado" id="eliminado" value="1">';//el 1 significa que el registro no ha sido eliminado
 				tr_prod += '</td>';
+				
+				tr_prod += '<td width="49" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
+					tr_prod += '<input type="text" name="nooc" id="nooc" value=" " class="borde_oculto" style="width:46px;" readOnly="true">';
+					tr_prod += '<input type="hidden" name="iddetoc" id="iddetoc" value="0">';
+				tr_prod += '</td>';
+				
 				tr_prod += '<td width="100" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
 					tr_prod += '<input type="hidden" name="id_prod_grid" id="idprod" value="'+ id_prod +'">';
 					tr_prod += '<input type="text" id="skup" name="sku'+ trCount +'" value="'+ sku +'" class="borde_oculto" style="width:96px;" readOnly="true">';
@@ -746,7 +753,7 @@ $(function() {
 				tr_prod += '</td>';
 				
 				tr_prod += '<td width="90" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-					tr_prod += '<input type="text" name="importe'+ trCount +'" id="import" style="width:86px;" readOnly="true">';
+					tr_prod += '<input type="text" name="importe'+ trCount +'" id="import" class="borde_oculto" style="width:86px; text-align:right;" readOnly="true">';
 				tr_prod += '</td>';
 				
 				tr_prod += '<td width="82" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
@@ -801,7 +808,7 @@ $(function() {
 				tr_prod += '</td>';
 				
 				tr_prod += '<td width="65" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-					tr_prod += '<input type="text" name="importe_ieps'+ trCount +'" id="import_ieps" value="'+parseFloat(0).toFixed(4)+'" style="width:61px; text-align:right;" readOnly="true">';
+					tr_prod += '<input type="text" name="importe_ieps'+ trCount +'" id="import_ieps" value="'+parseFloat(0).toFixed(4)+'" class="borde_oculto" style="width:61px; text-align:right;" readOnly="true">';
 				tr_prod += '</td>';
 				
 			tr_prod += '</tr>';
@@ -832,7 +839,7 @@ $(function() {
 				
 				if( ($campoCostoU.val().trim() != '') && ($campoCant.val().trim() != '') ){	
 					//Calcula y redondea el importe
-					$campoImport.val(parseFloat(parseFloat($campoCostoU.val()) * parseFloat($campoCant.val())).toFixed(2));
+					$campoImport.val(parseFloat(parseFloat($campoCostoU.val()) * parseFloat($campoCant.val())).toFixed(4));
 					
 					//Calcular y redondear el Importe del IEPS
 					$campoImportIeps.val(parseFloat(parseFloat($campoImport.val()) * parseFloat(parseFloat($campoTasaIeps.val())/100)).toFixed(4));
@@ -862,7 +869,7 @@ $(function() {
 				}
 				if( ($campoCant.val().trim() != '') && ($campoCostoU.val().trim() != '') ){						
 					//Calcula y redondea el importe
-					$campoImport.val(parseFloat(parseFloat($campoCostoU.val()) * parseFloat($campoCant.val())).toFixed(2));
+					$campoImport.val(parseFloat(parseFloat($campoCostoU.val()) * parseFloat($campoCant.val())).toFixed(4));
 					
 					//Calcular y redondear el Importe del IEPS
 					$campoImportIeps.val(parseFloat(parseFloat($campoImport.val()) * parseFloat(parseFloat($campoTasaIeps.val())/100)).toFixed(4));
@@ -1212,244 +1219,287 @@ $(function() {
 		
 		//busca datos de la orden de compra al presionar Enter estando en el campo Orden Compra
 		$campo_ordencompra.keypress(function(e){
+			
 			if(e.which == 13){
 				
-				$hidden_id_proveedor.val('');
-				$campo_rfc_proveedor.val('');
-				$campo_razon_proveedor.val('');
-				$hidden_tipo_proveedor.val('');
-				$no_proveedor.val('');
-				$campo_tc.val('');
+				var encontrado = 0;
+				var primer_oc=0;
+				$grid_productos.find('tr').each(function (index){
+					if(($(this).find('#nooc').val()== $campo_ordencompra.val()) && (parseInt($(this).find('#eliminado').val())!=0)){
+						encontrado++;//el producto ya esta en el grid
+					}
+					if((parseInt($(this).find('#nooc').val())>0) && (parseInt($(this).find('#eliminado').val())!=0)){
+						//LOs registros son de una OC
+						primer_oc++;
+					}
+				});
 				
-				$grid_productos.children().remove();
-				
-				var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDatosOrdenCompra.json';
-				$arreglo2 = {	'orden_compra':$campo_ordencompra.val(),
-								'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
-							};
-				
-				$.post(input_json2,$arreglo2,function(entry){
+				if(parseInt(encontrado)<=0){
 					
-					$hidden_id_proveedor.val(entry['DatosOC'][0]['proveedor_id']);
-					$campo_rfc_proveedor.val(entry['DatosOC'][0]['rfc']);
-					$campo_razon_proveedor.val(entry['DatosOC'][0]['razon_social']);
-					$hidden_tipo_proveedor.val(entry['DatosOC'][0]['proveedortipo_id']);
-					$no_proveedor.val(entry['DatosOC'][0]['no_proveedor']);
-					$campo_tc.val(entry['DatosOC'][0]['tc']);
-					
-					//carga select denominacion con todas las monedas
-					$select_denominacion.children().remove();
-					var moneda_hmtl = '';
-					$.each(Monedas,function(entryIndex,moneda){
-						if(parseInt(moneda['id']) == parseInt(entry['DatosOC'][0]['moneda_id'])){
-							moneda_hmtl += '<option value="' + moneda['id'] + '" selected="yes">' + moneda['descripcion'] + '</option>';
-						}else{
-							moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
-						}
-					});
-					$select_denominacion.append(moneda_hmtl);
-					
-					
-					
-					
-					if(entry['DetallesOC'] != null){
-						$.each(entry['DetallesOC'],function(entryIndex,Grid){
-							var trCount = $("tr", $grid_productos).size();
-							trCount++;
-							
-							var id_ieps = Grid['ieps_id'];
-							var tasa_ieps = Grid['ieps_tasa'];
-							var importe_ieps=0;
-							
-							if(parseInt(entry['DatosOC'][0]['proveedortipo_id'])==2){
-								//Proveedor extranjero
-								id_ieps=0;
-								tasa_ieps=0;
-								importe_ieps=0;
-							}
-							
-							importe_ieps = parseFloat(parseFloat(Grid['importe']) * parseFloat(parseFloat(tasa_ieps)/100)).toFixed(4);
-							
-							var valor_pedimento=" ";
-							var tr_prod='';
-							
-							tr_prod += '<tr>';
-								tr_prod += '<td width="65" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-									tr_prod += '<a href="elimina_producto" id="eliminaprod'+ trCount +'">Eliminar</a>';
-									tr_prod += '<input type="hidden" name="eliminado" id="eliminado" value="1">';//el 1 significa que el registro no ha sido eliminado
-								tr_prod += '</td>';
-								tr_prod += '<td width="100" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-									tr_prod += '<input type="hidden" name="id_prod_grid" id="idprod" value="'+  Grid['producto_id'] +'">';
-									tr_prod += '<input type="text" id="skup" name="sku'+ trCount +'" value="' + Grid['sku'] + '" class="borde_oculto" style="width:96px;" readOnly="true">';
-								tr_prod += '</td>';
-								tr_prod += '<td width="200" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-									tr_prod += '<input type="text" name="titulo'+ trCount +'" value="' + Grid['titulo'] + '" class="borde_oculto" style="width:196px;" readOnly="true">';
-								tr_prod += '</td>';
-								tr_prod += '<td width="70" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-									tr_prod += '<input type="text" name="unidad" class="borde_oculto" value="' + Grid['unidad'] + '" readOnly="true" style="width:66px;">';
-								tr_prod += '</td>';
-								tr_prod += '<td width="70" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-									tr_prod += '<input type="hidden" name="id_pres" id="idpres" value="'+ Grid['id_presentacion'] +'">';
-									tr_prod += '<input type="text" name="presentacion" id="pres" class="borde_oculto" value="' + Grid['presentacion'] + '" readOnly="true" style="width:66px;">';
-								tr_prod += '</td>';
-								tr_prod += '<td width="70" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-									tr_prod += '<input type="text" name="cantidad" id="cant" value="' + Grid['cantidad'] + '" style="width:66px;">';
-								tr_prod += '</td>';
-								tr_prod += '<td width="75" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-									tr_prod += '<input type="text" name="costo" id="cost" value="' + Grid['costo'] + '" style="width:69px;">';
-								tr_prod += '</td>';
-								
-								tr_prod += '<td width="90" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-									tr_prod += '<input type="text" name="importe'+ trCount +'" id="import" value="' + Grid['importe'] + '" style="width:86px; text-align:left;" readOnly="true">';
-								tr_prod += '</td>';
-								tr_prod += '<td width="82" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-									tr_prod += '<select name="impuesto" id="imp" style="width:80px;">';
-									//tr_prod += '<option value="0">[--  --]</option>';
-									//aqui se carga el select con los tipos de iva
-									$.each(tiposIva,function(entryIndex,tipos){
-										if(tipos['id'] == Grid['tipo_impuesto']){
-											tr_prod += '<option value="' + tipos['id'] + '"  selected="yes">' + tipos['descripcion'] + '</option>';
-										}else{
-											tr_prod += '<option value="' + tipos['id'] + '"  >' + tipos['descripcion'] + '</option>';
-										}
-									});
-									
-									tr_prod += '</select>';
-									tr_prod += '<input type="hidden" name="valorimp" id="v_imp" value="' + Grid['valor_imp'] + '">';
-									tr_prod += '<input type="hidden" name="totalimpuesto'+ trCount +'" id="totimp" value="0">';
-								tr_prod += '</td>';
-								
-								
-								
-								tr_prod += '<td width="80" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-									tr_prod += '<select name="select_ieps" id="selectIeps" style="width:76px;">';
-									if(parseInt(id_ieps)<=0){
-										tr_prod += '<option value="0">[-- --]</option>';
-									}
-									$.each(arrayIeps,function(entryIndex,ieps){
-										if(ieps['id'] == id_ieps){
-											tr_prod += '<option value="' + ieps['id'] + '"  selected="yes">' + ieps['titulo'] + '</option>';
-										}
-									});
-									tr_prod += '</select>';
-									tr_prod += '<input type="hidden" name="valorieps" id="tIeps" value="' + tasa_ieps + '">';
-								tr_prod += '</td>';
-								
-								tr_prod += '<td width="65" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-									tr_prod += '<input type="text" name="importe_ieps'+ trCount +'" id="import_ieps" value="'+parseFloat(importe_ieps).toFixed(4)+'" style="width:61px; text-align:right;" readOnly="true">';
-								tr_prod += '</td>';
-								
-								
-							tr_prod += '</tr>';
-							$grid_productos.append(tr_prod);
-							
-								//al iniciar el campo tiene un  caracter en blanco, al obtener el foco se elimina el  espacio por comillas
-								$grid_productos.find('input[name=costo]').focus(function(e){
-									if($(this).val() == ' '){
-										$(this).val('');
-									}
-								});
-								
-								//recalcula importe al perder enfoque el campo costo
-								$grid_productos.find('input[name=costo]').blur(function(){
-									if ($(this).val() == ''  || $(this).val() == null){
-										$(this).val(' ');
-									}
-									
-									if( ($(this).val() != ' ') && ($(this).parent().parent().find('#cant').val() != ' ') )
-									{	//calcula el importe
-										$(this).parent().parent().find('#import').val(parseFloat($(this).val()) * parseFloat($(this).parent().parent().find('#cant').val()));
-										//redondea el importe en dos decimales
-										$(this).parent().parent().find('#import').val(parseFloat($(this).parent().parent().find('#import').val()).toFixed(2));
-									}else{
-										$(this).parent().parent().find('#import').val('');
-									}
-									$calcula_totales();//llamada a la funcion que calcula totales
-								});
-
-								//al iniciar el campo tiene un  caracter en blanco, al obtener el foco se elimina el  espacio por comillas
-								$grid_productos.find('input[name=cantidad]').focus(function(e){
-									if($(this).val() == ' '){
-										$(this).val('');
-									}
-								});
-
-								//recalcula importe al perder enfoque el campo cantidad
-								$grid_productos.find('input[name=cantidad]').blur(function(){
-									if ($(this).val() == ''  || $(this).val() == null){
-										$(this).val(' ');
-									}
-									if( ($(this).val() != ' ') && ($(this).parent().parent().find('#cost').val() != ' ') )
-									{	//calcula el importe
-										$(this).parent().parent().find('#import').val(parseFloat($(this).val()) * parseFloat($(this).parent().parent().find('#cost').val()));
-										//redondea el importe en dos decimales
-										$(this).parent().parent().find('#import').val(parseFloat($(this).parent().parent().find('#import').val()).toFixed(2));
-									}else{
-										$(this).parent().parent().find('#import').val('');
-									}
-									$calcula_totales();//llamada a la funcion que calcula totales
-								});
-
-
-								//validar campo costo, solo acepte numeros y punto
-								$grid_productos.find('input[name=costo]').keypress(function(e){
-									//alert(e.which);
-									// Permitir  numeros, borrar, suprimir, TAB, puntos, comas
-									if (e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
-										return true;
-									}else {
-										return false;
-									}		
-								});
-
-								//validar campo cantidad, solo acepte numeros y punto
-								$grid_productos.find('input[name=cantidad]').keypress(function(e){
-									//alert(e.which);
-									// Permitir  numeros, borrar, suprimir, TAB, puntos, comas
-									if (e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
-										return true;
-									}else {
-										return false;
-									}		
-								});
-
-								//elimina un producto del grid
-								$grid_productos.find('#eliminaprod'+ trCount).bind('click',function(event){
-									event.preventDefault();
-									if(parseInt($(this).parent().find('#eliminado').val()) != 0){
-										//asigna espacios en blanco a todos los input de la fila eliminada
-										$(this).parent().parent().find('input').val(' ');
-										//asigna un 0 al input eliminado como bandera para saber que esta eliminado
-										$(this).parent().find('#eliminado').val(0);//cambiar valor del campo a 0 para indicar que se ha elimnado
-										//oculta la fila eliminada
-										$(this).parent().parent().hide();
-										$calcula_totales();//llamada a la funcion que calcula totales
-									}
-								});
-								
-								//seleccionar tipo de  impuesto
-								$grid_productos.find('select[name=impuesto]').change(function(){
-									var valorImpuesto=0;
-									var id_ivatipo = $(this).val();
-									$.each(tiposIva,function(entryIndex,tipos){
-										if(parseInt(tipos['id'])==parseInt(id_ivatipo)){
-											valorImpuesto = tipos['iva_1'];
-										}
-									});
-									$(this).parent().find('input[name=valorimp]').val(valorImpuesto);
-									
-									$calcula_totales();//llamada a la funcion que calcula totales
-								});
-													
-						});
-						
-						
-						$calcula_totales();//llamada a la funcion que calcula totales
+					if(parseInt(primer_oc)<=0){
+						$hidden_id_proveedor.val('');
+						$campo_rfc_proveedor.val('');
+						$campo_razon_proveedor.val('');
+						$hidden_tipo_proveedor.val('');
+						$no_proveedor.val('');
+						$campo_tc.val('');
+						$grid_productos.children().remove();
 					}
 					
-				});//termina llamada json
-				
-				//return false;
+					var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDatosOrdenCompra.json';
+					$arreglo2 = {	'orden_compra':$campo_ordencompra.val(),
+									'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
+								};
+					
+					$.post(input_json2,$arreglo2,function(entry){
+						
+						if(parseInt(entry['DatosOC'].length) > 0 ){
+							if(parseInt(primer_oc)<=0){
+								$hidden_id_proveedor.val(entry['DatosOC'][0]['proveedor_id']);
+								$campo_rfc_proveedor.val(entry['DatosOC'][0]['rfc']);
+								$campo_razon_proveedor.val(entry['DatosOC'][0]['razon_social']);
+								$hidden_tipo_proveedor.val(entry['DatosOC'][0]['proveedortipo_id']);
+								$no_proveedor.val(entry['DatosOC'][0]['no_proveedor']);
+								$campo_tc.val(entry['DatosOC'][0]['tc']);
+								
+								//carga select denominacion con todas las monedas
+								$select_denominacion.children().remove();
+								var moneda_hmtl = '';
+								$.each(Monedas,function(entryIndex,moneda){
+									if(parseInt(moneda['id']) == parseInt(entry['DatosOC'][0]['moneda_id'])){
+										moneda_hmtl += '<option value="' + moneda['id'] + '" selected="yes">' + moneda['descripcion'] + '</option>';
+									}else{
+										moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
+									}
+								});
+								$select_denominacion.append(moneda_hmtl);
+							}
+							
+							if(entry['DetallesOC'] != null){
+								$.each(entry['DetallesOC'],function(entryIndex,Grid){
+									var trCount = $("tr", $grid_productos).size();
+									trCount++;
+									
+									var id_ieps = Grid['ieps_id'];
+									var tasa_ieps = Grid['ieps_tasa'];
+									var importe_ieps=0;
+									
+									if(parseInt(entry['DatosOC'][0]['proveedortipo_id'])==2){
+										//Proveedor extranjero
+										id_ieps=0;
+										tasa_ieps=0;
+										importe_ieps=0;
+									}
+									
+									importe_ieps = parseFloat(parseFloat(Grid['importe']) * parseFloat(parseFloat(tasa_ieps)/100)).toFixed(4);
+									
+									var valor_pedimento=" ";
+									var tr_prod='';
+									
+									tr_prod += '<tr>';
+										tr_prod += '<td width="49" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
+											tr_prod += '<a href="elimina_producto" id="eliminaprod'+ trCount +'">Eliminar</a>';
+											tr_prod += '<input type="hidden" name="eliminado" id="eliminado" value="1">';//el 1 significa que el registro no ha sido eliminado
+										tr_prod += '</td>';
+										
+										tr_prod += '<td width="49" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
+											tr_prod += '<input type="text" name="nooc" id="nooc" value="'+ $campo_ordencompra.val() +'" class="borde_oculto" style="width:46px;" readOnly="true">';
+											tr_prod += '<input type="hidden" name="iddetoc" id="iddetoc" value="'+ Grid['id_det_oc'] +'">';
+										tr_prod += '</td>';
+										
+										tr_prod += '<td width="100" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
+											tr_prod += '<input type="hidden" name="id_prod_grid" id="idprod" value="'+  Grid['producto_id'] +'">';
+											tr_prod += '<input type="text" id="skup" name="sku'+ trCount +'" value="' + Grid['sku'] + '" class="borde_oculto" style="width:96px;" readOnly="true">';
+										tr_prod += '</td>';
+										tr_prod += '<td width="200" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
+											tr_prod += '<input type="text" name="titulo'+ trCount +'" value="' + Grid['titulo'] + '" class="borde_oculto" style="width:196px;" readOnly="true">';
+										tr_prod += '</td>';
+										tr_prod += '<td width="70" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
+											tr_prod += '<input type="text" name="unidad" class="borde_oculto" value="' + Grid['unidad'] + '" readOnly="true" style="width:66px;">';
+										tr_prod += '</td>';
+										tr_prod += '<td width="70" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
+											tr_prod += '<input type="hidden" name="id_pres" id="idpres" value="'+ Grid['id_presentacion'] +'">';
+											tr_prod += '<input type="text" name="presentacion" id="pres" class="borde_oculto" value="' + Grid['presentacion'] + '" readOnly="true" style="width:66px;">';
+										tr_prod += '</td>';
+										tr_prod += '<td width="70" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
+											tr_prod += '<input type="text" name="cantidad" id="cant" class="cant'+trCount+'" value="' + Grid['cantidad'] + '" style="width:66px;">';
+										tr_prod += '</td>';
+										tr_prod += '<td width="75" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
+											tr_prod += '<input type="text" name="costo" id="cost" class="cost'+trCount+'" value="' + Grid['costo'] + '" style="width:69px;">';
+										tr_prod += '</td>';
+										tr_prod += '<td width="90" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
+											tr_prod += '<input type="text" name="importe'+ trCount +'" id="import" value="' + Grid['importe'] + '" class="borde_oculto" style="width:86px; text-align:right;" readOnly="true">';
+										tr_prod += '</td>';
+										tr_prod += '<td width="82" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
+											tr_prod += '<select name="impuesto" id="imp" style="width:80px;">';
+											//tr_prod += '<option value="0">[--  --]</option>';
+											//aqui se carga el select con los tipos de iva
+											$.each(tiposIva,function(entryIndex,tipos){
+												if(tipos['id'] == Grid['tipo_impuesto']){
+													tr_prod += '<option value="' + tipos['id'] + '"  selected="yes">' + tipos['descripcion'] + '</option>';
+												}else{
+													tr_prod += '<option value="' + tipos['id'] + '"  >' + tipos['descripcion'] + '</option>';
+												}
+											});
+											
+											tr_prod += '</select>';
+											tr_prod += '<input type="hidden" name="valorimp" id="v_imp" value="' + Grid['valor_imp'] + '">';
+											tr_prod += '<input type="hidden" name="totalimpuesto'+ trCount +'" id="totimp" value="0">';
+										tr_prod += '</td>';
+										
+										
+										
+										tr_prod += '<td width="80" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
+											tr_prod += '<select name="select_ieps" id="selectIeps" style="width:76px;">';
+											if(parseInt(id_ieps)<=0){
+												tr_prod += '<option value="0">[-- --]</option>';
+											}
+											$.each(arrayIeps,function(entryIndex,ieps){
+												if(ieps['id'] == id_ieps){
+													tr_prod += '<option value="' + ieps['id'] + '"  selected="yes">' + ieps['titulo'] + '</option>';
+												}
+											});
+											tr_prod += '</select>';
+											tr_prod += '<input type="hidden" name="valorieps" id="tIeps" value="' + tasa_ieps + '">';
+										tr_prod += '</td>';
+										
+										tr_prod += '<td width="65" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
+											tr_prod += '<input type="text" name="importe_ieps'+ trCount +'" id="import_ieps" value="'+parseFloat(importe_ieps).toFixed(4)+'" class="borde_oculto" style="width:61px; text-align:right;" readOnly="true">';
+										tr_prod += '</td>';
+										
+										
+									tr_prod += '</tr>';
+									$grid_productos.append(tr_prod);
+									
+									//Al iniciar el campo tiene un  caracter en blanco, al obtener el foco se elimina el  espacio por comillas
+									$grid_productos.find('input.cost'+trCount).focus(function(e){
+										if($(this).val() == ' '){
+											$(this).val('');
+										}
+									});
+									
+									$grid_productos.find('input.cost'+trCount).blur(function(e){
+										var $campoCostoU=$(this);
+										var $campoCant=$(this).parent().parent().find('#cant');
+										var $campoImport=$(this).parent().parent().find('#import');
+										var $campoImportIeps=$(this).parent().parent().find('#import_ieps');
+										var $campoTasaIeps=$(this).parent().parent().find('#tIeps');
+										
+										if ($campoCostoU.val() == ''  || $campoCostoU.val() == null){
+											$campoCostoU.val(' ');
+										}
+										
+										if( ($campoCostoU.val().trim() != '') && ($campoCant.val().trim() != '') ){	
+											//Calcula y redondea el importe
+											$campoImport.val(parseFloat(parseFloat($campoCostoU.val()) * parseFloat($campoCant.val())).toFixed(4));
+											
+											//Calcular y redondear el Importe del IEPS
+											$campoImportIeps.val(parseFloat(parseFloat($campoImport.val()) * parseFloat(parseFloat($campoTasaIeps.val())/100)).toFixed(4));
+										}else{
+											$campoImport.val('');
+										}
+										$calcula_totales();//llamada a la funcion que calcula totales
+									});
+														
+									//Al iniciar el campo tiene un  caracter en blanco, al obtener el foco se elimina el  espacio por comillas
+									$grid_productos.find('input.cant'+trCount).focus(function(e){
+										if($(this).val() == ' '){
+											$(this).val('');
+										}
+									});
+									
+									
+									
+									//recalcula importe al perder enfoque el campo cantidad
+									$grid_productos.find('input.cant'+trCount).blur(function(e){
+										var $campoCostoU=$(this).parent().parent().find('#cost');
+										var $campoCant=$(this);
+										var $campoImport=$(this).parent().parent().find('#import');
+										var $campoImportIeps=$(this).parent().parent().find('#import_ieps');
+										var $campoTasaIeps=$(this).parent().parent().find('#tIeps');
+										
+										if ($campoCant.val().trim() == ''  || $campoCant.val() == null){
+											$campoCant.val(' ');
+										}
+										if( ($campoCant.val().trim() != '') && ($campoCostoU.val().trim() != '') ){						
+											//Calcula y redondea el importe
+											$campoImport.val(parseFloat(parseFloat($campoCostoU.val()) * parseFloat($campoCant.val())).toFixed(4));
+											
+											//Calcular y redondear el Importe del IEPS
+											$campoImportIeps.val(parseFloat(parseFloat($campoImport.val()) * parseFloat(parseFloat($campoTasaIeps.val())/100)).toFixed(4));
+										}else{
+											$campoImport.val('');
+										}
+										$calcula_totales();//llamada a la funcion que calcula totales
+									});
+									
+									
+									//Validar campo costo, solo acepte numeros y punto
+									$grid_productos.find('input.cost'+trCount).keypress(function(e){
+										// Permitir  numeros, borrar, suprimir, TAB, puntos, comas
+										if (e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
+											return true;
+										}else {
+											return false;
+										}
+									});
+									
+									//Validar campo cantidad, solo acepte numeros y punto
+									$grid_productos.find('input.cant'+trCount).keypress(function(e){
+										// Permitir  numeros, borrar, suprimir, TAB, puntos, comas
+										if (e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
+											return true;
+										}else {
+											return false;
+										}
+									});
+
+
+									//elimina un producto del grid
+									$grid_productos.find('#eliminaprod'+ trCount).bind('click',function(event){
+										event.preventDefault();
+										if(parseInt($(this).parent().find('#eliminado').val()) != 0){
+											//asigna espacios en blanco a todos los input de la fila eliminada
+											$(this).parent().parent().find('input').val(' ');
+											//asigna un 0 al input eliminado como bandera para saber que esta eliminado
+											$(this).parent().find('#eliminado').val(0);//cambiar valor del campo a 0 para indicar que se ha elimnado
+											//oculta la fila eliminada
+											$(this).parent().parent().hide();
+											$calcula_totales();//llamada a la funcion que calcula totales
+										}
+									});
+									
+									//seleccionar tipo de  impuesto
+									$grid_productos.find('select[name=impuesto]').change(function(){
+										var valorImpuesto=0;
+										var id_ivatipo = $(this).val();
+										$.each(tiposIva,function(entryIndex,tipos){
+											if(parseInt(tipos['id'])==parseInt(id_ivatipo)){
+												valorImpuesto = tipos['iva_1'];
+											}
+										});
+										$(this).parent().find('input[name=valorimp]').val(valorImpuesto);
+										
+										$calcula_totales();//llamada a la funcion que calcula totales
+									});
+														
+								});
+								
+								
+								$calcula_totales();//llamada a la funcion que calcula totales
+							}
+						}else{
+							jAlert('La Orden de Compra '+$campo_ordencompra.val()+' no esta existe o no est&aacute; disponible.\nVerifique es estado de la Orden de Compra.', 'Atencion!', function(r) { 
+								$campo_ordencompra.focus();
+							});
+						}
+					});//termina llamada json
+					
+				}else{
+					jAlert('Los datos de la Orden de Compra '+$campo_ordencompra.val()+' ya se encuentra en el listado, seleccione otro diferente.', 'Atencion!', function(r) { 
+						$campo_ordencompra.focus();
+					});
+				}
 			}
 		});
 		
@@ -1513,16 +1563,6 @@ $(function() {
 			$buscador_presentaciones_producto($no_proveedor.val(),$campo_sku.val());
 		});
 		
-		
-		/*
-		//desencadena clic del href Agregar producto al pulsar enter en el campo sku del producto
-		$campo_sku.keypress(function(e){
-			if(e.which == 13){
-				$agregar_producto.trigger('click');
-				return false;
-			}
-		});
-		*/
 		
 		//desencadena clic del href Agregar producto al pulsar enter en el campo sku del producto
 		$(this).aplicarEventoKeypressEjecutaTrigger($campo_sku, $agregar_producto);
@@ -1618,7 +1658,6 @@ $(function() {
 					},"json");
 				}
 			});
-                        
 		}else{
 			//aqui  entra para editar un registro
 			var form_to_show = 'formaEntradamercancias00';
@@ -1635,7 +1674,6 @@ $(function() {
 			$forma_selected.find('.panelcito_modal').attr({ id : 'panelcito_modal' + id_to_show , style:'display:table'});
 			
 			$tabs_li_funxionalidad();
-			
 			
 			//alert(id_to_show);
 			
@@ -1889,10 +1927,16 @@ $(function() {
 							var tr_prod='';
 							
 							tr_prod += '<tr>';
-								tr_prod += '<td width="65" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
+								tr_prod += '<td width="49" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
 									tr_prod += '<a href="elimina_producto" id="eliminaprod'+ trCount +'">Eliminar</a>';
 									tr_prod += '<input type="hidden" name="eliminado" id="eliminado" value="1">';//el 1 significa que el registro no ha sido eliminado
 								tr_prod += '</td>';
+								
+								tr_prod += '<td width="49" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
+									tr_prod += '<input type="text" name="nooc" id="nooc" value="'+ prodGrid['folio_oc'] +'" class="borde_oculto" style="width:46px;" readOnly="true">';
+									tr_prod += '<input type="hidden" name="iddetoc" id="iddetoc" value="'+ prodGrid['id_det_oc'] +'">';
+								tr_prod += '</td>';
+								
 								tr_prod += '<td width="100" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
 									tr_prod += '<input type="hidden" name="id_prod_grid" id="idprod" value="'+  prodGrid['producto_id'] +'">';
 									tr_prod += '<input type="text" id="skup" name="sku'+ trCount +'" value="' + prodGrid['sku'] + '" class="borde_oculto" style="width:96px;" readOnly="true">';
@@ -1915,7 +1959,7 @@ $(function() {
 								tr_prod += '</td>';
 								
 								tr_prod += '<td width="90" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-									tr_prod += '<input type="text" name="importe'+ trCount +'" id="import" value="' + prodGrid['importe'] + '" style="width:86px; text-align:right;" readOnly="true">';
+									tr_prod += '<input type="text" name="importe'+ trCount +'" id="import" value="' + prodGrid['importe'] + '" class="borde_oculto" style="width:86px; text-align:right;" readOnly="true">';
 								tr_prod += '</td>';
 								tr_prod += '<td width="82" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
 									tr_prod += '<select name="impuesto" id="imp" style="width:80px;">';
@@ -1950,7 +1994,7 @@ $(function() {
 								tr_prod += '</td>';
 								
 								tr_prod += '<td width="65" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-									tr_prod += '<input type="text" name="importe_ieps'+ trCount +'" id="import_ieps" value="'+importeIeps+'" style="width:61px; text-align:right;" readOnly="true">';
+									tr_prod += '<input type="text" name="importe_ieps'+ trCount +'" id="import_ieps" value="'+importeIeps+'" class="borde_oculto" style="width:61px; text-align:right;" readOnly="true">';
 								tr_prod += '</td>';
 								
 								if(prodGrid['pedimento_aduanal']!='' && prodGrid['pedimento_aduanal']!=null){
