@@ -174,10 +174,8 @@ public class CompOrdenCompraController {
         int offset = resource.__get_inicio_offset(items_por_pag, pag_start);
         
         //obtiene los registros para el grid, de acuerdo a los parametros de busqueda
-       
-          
         jsonretorno.put("Data", this.getComDao().getComOrdenCompra_PaginaGrid(data_string, offset, items_por_pag, orderby, desc));
-                //.getComOrdenCompra_PaginaGrid(data_string, offset, items_por_pag, orderby, desc));
+        
         //obtiene el hash para los datos que necesita el datagrid
         jsonretorno.put("DataForGrid", dataforpos.formaHashForPos(dataforpos));
         
@@ -465,6 +463,33 @@ public class CompOrdenCompraController {
         return jsonretorno;
     }
     
+    
+    
+    
+    
+    //cancelacion de facturas
+    @RequestMapping(method = RequestMethod.POST, value="/getCancelarPartida.json")
+    public @ResponseBody HashMap<String, String> getCancelarFactura(
+            @RequestParam(value="idd", required=true) Integer iddetalle,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+        ) {
+        
+        HashMap<String, String> jsonretorno = new HashMap<String, String>();
+        System.out.println("Cancelar partida de la Orden de Compra");
+        //Decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        
+        Integer app_selected = 90;
+        String command_selected = "cancelar_partida";
+        String extra_data_array = "'sin datos'";
+        
+        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+iddetalle;
+        
+        jsonretorno.put("success",String.valueOf( this.getComDao().selectFunctionForThisApp(data_string,extra_data_array)) );
+        
+        return jsonretorno;
+    }
     
     
     

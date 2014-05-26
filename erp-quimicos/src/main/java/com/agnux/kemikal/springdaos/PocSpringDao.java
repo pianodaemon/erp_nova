@@ -789,16 +789,16 @@ public class PocSpringDao implements PocInterfaceDao{
     @Override
     public ArrayList<HashMap<String, String>> getValoriva(Integer id_sucursal) {
         String sql_to_query = ""
-                + "SELECT "
-                    + "(CASE WHEN impto_suc.id IS NULL THEN 0 ELSE impto_suc.id END) AS id_impuesto, "
-                    + "(CASE WHEN impto_suc.id IS NULL THEN 0 ELSE impto_suc.iva_1 END) AS valor_impuesto,"
-                    + "(CASE WHEN impto_emp.id IS NULL THEN 0 ELSE impto_emp.id END) AS id_impto_emp, "
-                    + "(CASE WHEN impto_emp.id IS NULL THEN 0 ELSE impto_emp.iva_1 END) AS valor_impto_emp "
-                + "FROM gral_suc  "
-                + "JOIN gral_emp ON gral_emp.id=gral_suc.empresa_id "
-                + "JOIN gral_imptos AS impto_suc ON (impto_suc.id=gral_suc.gral_impto_id AND impto_suc.borrado_logico=FALSE) "
-                + "JOIN gral_imptos AS impto_emp ON (impto_emp.id=gral_emp.gral_impto_id AND impto_emp.borrado_logico=FALSE) "
-                + "WHERE gral_suc.id=?;";
+        + "SELECT "
+            + "(CASE WHEN impto_suc.id IS NULL THEN 0 ELSE impto_suc.id END) AS id_impuesto, "
+            + "(CASE WHEN impto_suc.id IS NULL THEN 0 ELSE impto_suc.iva_1 END) AS valor_impuesto,"
+            + "(CASE WHEN impto_emp.id IS NULL THEN 0 ELSE impto_emp.id END) AS id_impto_emp, "
+            + "(CASE WHEN impto_emp.id IS NULL THEN 0 ELSE impto_emp.iva_1 END) AS valor_impto_emp "
+        + "FROM gral_suc  "
+        + "JOIN gral_emp ON gral_emp.id=gral_suc.empresa_id "
+        + "JOIN gral_imptos AS impto_suc ON (impto_suc.id=gral_suc.gral_impto_id AND impto_suc.borrado_logico=FALSE) "
+        + "JOIN gral_imptos AS impto_emp ON (impto_emp.id=gral_emp.gral_impto_id AND impto_emp.borrado_logico=FALSE) "
+        + "WHERE gral_suc.id=?;";
         
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, String>> hm_valoriva = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(

@@ -1278,26 +1278,30 @@ public class InvSpringDao implements InvInterfaceDao{
     public ArrayList<HashMap<String, String>> getEntradas_DatosGrid(Integer id) {
         String sql_to_query = ""
         + "SELECT "
-                + "com_fac_detalle.producto_id, "
-                + "inv_prod.sku, "
-                + "inv_prod.descripcion AS titulo, "
-                + "(CASE WHEN com_fac_detalle.gral_ieps_id>0 THEN ' - IEPS '||(round((com_fac_detalle.valor_ieps * 100::double precision)::numeric,2))||'%' ELSE '' END) AS etiqueta_ieps,"
-                + "inv_prod_unidades.titulo as unidad, "
-                + "inv_prod_presentaciones.id as id_presentacion, "
-                + "inv_prod_presentaciones.titulo as presentacion, "
-                + "com_fac_detalle.costo_unitario as costo, "
-                + "com_fac_detalle.cantidad, "
-                + "(com_fac_detalle.costo_unitario * com_fac_detalle.cantidad) as importe, "
-                + "com_fac_detalle.tipo_de_impuesto_sobre_partida as tipo_impuesto, "
-                + "com_fac_detalle.valor_imp, "
-                + "inv_prod_unidades.decimales,"
-                + "com_fac_detalle.gral_ieps_id,"
-                + "com_fac_detalle.valor_ieps,"
-                + "(CASE WHEN com_fac_detalle.gral_ieps_id>0 THEN ((com_fac_detalle.costo_unitario * com_fac_detalle.cantidad) * com_fac_detalle.valor_ieps) ELSE 0 END) AS importe_ieps "
+            + "com_fac_detalle.producto_id, "
+            + "inv_prod.sku, "
+            + "inv_prod.descripcion AS titulo, "
+            + "(CASE WHEN com_fac_detalle.gral_ieps_id>0 THEN ' - IEPS '||(round((com_fac_detalle.valor_ieps * 100::double precision)::numeric,2))||'%' ELSE '' END) AS etiqueta_ieps,"
+            + "inv_prod_unidades.titulo as unidad, "
+            + "inv_prod_presentaciones.id as id_presentacion, "
+            + "inv_prod_presentaciones.titulo as presentacion, "
+            + "com_fac_detalle.costo_unitario as costo, "
+            + "com_fac_detalle.cantidad, "
+            + "(com_fac_detalle.costo_unitario * com_fac_detalle.cantidad) as importe, "
+            + "com_fac_detalle.tipo_de_impuesto_sobre_partida as tipo_impuesto, "
+            + "com_fac_detalle.valor_imp, "
+            + "inv_prod_unidades.decimales,"
+            + "com_fac_detalle.gral_ieps_id,"
+            + "com_fac_detalle.valor_ieps,"
+            + "(CASE WHEN com_fac_detalle.gral_ieps_id>0 THEN ((com_fac_detalle.costo_unitario * com_fac_detalle.cantidad) * com_fac_detalle.valor_ieps) ELSE 0 END) AS importe_ieps, "
+            + "(CASE WHEN com_orden_compra.folio IS NULL THEN ' ' ELSE com_orden_compra.folio END) AS folio_oc, "
+            + "(CASE WHEN com_fac_oc.com_oc_det_id IS NULL THEN 0 ELSE com_fac_oc.com_oc_det_id END) AS id_det_oc "
         + "FROM com_fac_detalle "
         + "LEFT JOIN inv_prod on inv_prod.id = com_fac_detalle.producto_id "
         + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "
         + "LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = com_fac_detalle.presentacion_id "
+        + "LEFT JOIN com_fac_oc ON com_fac_oc.com_fac_det_id=com_fac_detalle.id "
+        + "LEFT JOIN com_orden_compra ON com_orden_compra.id=com_fac_oc.com_oc_id "
         + "WHERE com_fac_detalle.com_fac_id="+ id + ";";
         
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
@@ -1323,6 +1327,8 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("valor_ieps",StringHelper.roundDouble(rs.getString("valor_ieps"),4));
                     row.put("importe_ieps",StringHelper.roundDouble(rs.getString("importe_ieps"),4));
                     row.put("etiqueta_ieps",rs.getString("etiqueta_ieps"));
+                    row.put("folio_oc",rs.getString("folio_oc"));
+                    row.put("id_det_oc",rs.getString("id_det_oc"));
                     return row;
                 }
             }
@@ -1338,23 +1344,25 @@ public class InvSpringDao implements InvInterfaceDao{
     @Override
     public ArrayList<HashMap<String, String>> getEntradas_DatosOrdenCompra(String orden_compra, Integer id_empresa) {
         String sql_to_query = ""
-                + "SELECT "
-                    + "com_orden_compra.id,"
-                    + "com_orden_compra.proveedor_id,"
-                    + "cxp_prov.rfc, "
-                    + "cxp_prov.folio AS no_proveedor, "
-                    + "cxp_prov.razon_social, "
-                    + "cxp_prov.proveedortipo_id,"
-                    + "com_orden_compra.moneda_id,"
-                    + "com_orden_compra.tipo_cambio,"
-                    + "com_orden_compra.subtotal, "
-                    + "com_orden_compra.impuesto,"
-                    + "com_orden_compra.total "
-                + "FROM com_orden_compra "
-                + "JOIN cxp_prov ON cxp_prov.id=com_orden_compra.proveedor_id "
-                + "WHERE com_orden_compra.folio='"+ orden_compra + "'  "
-                + "AND com_orden_compra.gral_emp_id="+ id_empresa + ";";
-
+        + "SELECT "
+            + "com_orden_compra.id,"
+            + "com_orden_compra.proveedor_id,"
+            + "cxp_prov.rfc, "
+            + "cxp_prov.folio AS no_proveedor, "
+            + "cxp_prov.razon_social, "
+            + "cxp_prov.proveedortipo_id,"
+            + "com_orden_compra.moneda_id,"
+            + "com_orden_compra.tipo_cambio,"
+            + "com_orden_compra.subtotal, "
+            + "com_orden_compra.impuesto,"
+            + "com_orden_compra.total "
+        + "FROM com_orden_compra "
+        + "JOIN cxp_prov ON cxp_prov.id=com_orden_compra.proveedor_id "
+        + "WHERE com_orden_compra.folio='"+ orden_compra + "'  "
+        + "AND com_orden_compra.gral_emp_id="+ id_empresa + ""
+        + "AND status IN (1,3);";
+        //STATUS 0=Orden Generada, 1=Autorizado, 2=Cancelado, 3=Surtido Parcial, 4=Surtido Completo
+        
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, String>> hm_datos_entrada = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -1388,27 +1396,36 @@ public class InvSpringDao implements InvInterfaceDao{
     public ArrayList<HashMap<String, String>> getEntradas_DetallesOrdenCompra(Integer id_orden_compra) {
         String sql_to_query = ""
         + "SELECT "
-            + "com_orden_compra_detalle.inv_prod_id AS producto_id,  "
+            + "com_orden_compra_detalle.com_orden_compra_id AS id_oc,"
+            + "com_orden_compra_detalle.id AS id_det_oc,"
+            + "com_orden_compra_detalle.inv_prod_id AS producto_id,"
             + "inv_prod.sku, "
             + "inv_prod.descripcion AS titulo, "
             + "inv_prod_unidades.titulo AS unidad, "
             + "inv_prod_presentaciones.id AS id_presentacion, "
             + "inv_prod_presentaciones.titulo AS presentacion, "
             + "com_orden_compra_detalle.precio_unitario AS costo, "
-            + "com_orden_compra_detalle.cantidad, "
+            + "com_orden_compra_detalle.cantidad - (CASE WHEN com_orden_compra_detalle.cant_surtido IS NULL THEN 0 ELSE com_orden_compra_detalle.cant_surtido END) AS cantidad, "
             + "(com_orden_compra_detalle.precio_unitario * com_orden_compra_detalle.cantidad) AS importe, "
             + "com_orden_compra_detalle.gral_imp_id AS tipo_impuesto, "
             + "com_orden_compra_detalle.valor_imp, "
             + "inv_prod_unidades.decimales, "
             + "(CASE WHEN inv_prod.ieps=0 THEN 0 ELSE gral_ieps.id END) AS ieps_id, "
-            + "(CASE WHEN inv_prod.ieps=0 THEN 0 ELSE gral_ieps.tasa END) AS ieps_tasa "
+            + "(CASE WHEN inv_prod.ieps=0 THEN 0 ELSE gral_ieps.tasa END) AS ieps_tasa, "
+            + "(CASE WHEN com_orden_compra_detalle.cant_surtido IS NULL THEN 0 ELSE com_orden_compra_detalle.cant_surtido END) AS cant_surtido "
         + "FROM com_orden_compra_detalle "
         + "LEFT JOIN inv_prod on inv_prod.id=com_orden_compra_detalle.inv_prod_id "
         + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id=inv_prod.unidad_id "
         + "LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id=com_orden_compra_detalle.presentacion_id "
         + "LEFT JOIN gral_ieps ON gral_ieps.id=inv_prod.ieps "
-        + "WHERE com_orden_compra_detalle.com_orden_compra_id="+ id_orden_compra + ";";
-
+        + "WHERE com_orden_compra_detalle.com_orden_compra_id="+ id_orden_compra +" "
+        + "AND com_orden_compra_detalle.surtir=true "
+        + "AND com_orden_compra_detalle.estatus IN (0,1) "
+        + "AND (com_orden_compra_detalle.cantidad - (CASE WHEN com_orden_compra_detalle.cant_surtido IS NULL THEN 0 ELSE com_orden_compra_detalle.cant_surtido END))>0.0001;";
+        
+        //0=Sin Estatus, 1=Parcial(Surtido Parcial), 2=Surtido(Surtido Completo), 3=Cancelado
+        
+        System.out.println("sql_to_query: "+sql_to_query);
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -1416,6 +1433,8 @@ public class InvSpringDao implements InvInterfaceDao{
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id_oc",String.valueOf(rs.getInt("id_oc")));
+                    row.put("id_det_oc",String.valueOf(rs.getInt("id_det_oc")));
                     row.put("producto_id",String.valueOf(rs.getInt("producto_id")));
                     row.put("sku",rs.getString("sku"));
                     row.put("titulo",rs.getString("titulo"));
@@ -1424,11 +1443,11 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("presentacion",rs.getString("presentacion"));
                     row.put("costo",StringHelper.roundDouble(rs.getString("costo"),2));
                     row.put("cantidad",StringHelper.roundDouble(rs.getString("cantidad"),2));
-                    row.put("importe",StringHelper.roundDouble(rs.getString("importe"),2));
+                    row.put("importe",StringHelper.roundDouble(rs.getString("importe"),4));
                     row.put("tipo_impuesto",String.valueOf(rs.getInt("tipo_impuesto")));
                     row.put("valor_imp",StringHelper.roundDouble(rs.getString("valor_imp"),2));
                     row.put("decimales",rs.getString("decimales"));
-                    
+                    row.put("cant_surtido",StringHelper.roundDouble(rs.getString("cant_surtido"),2));
                     row.put("ieps_id",String.valueOf(rs.getInt("ieps_id")));
                     row.put("ieps_tasa",StringHelper.roundDouble(rs.getString("ieps_tasa"),2));
                     return row;
@@ -7204,7 +7223,7 @@ public class InvSpringDao implements InvInterfaceDao{
                 + "AND inv_exi.ano="+ano_actual+" "
                 + "AND inv_prod.sku='"+sku.toUpperCase()+"' "
                 + "ORDER BY inv_prod.descripcion LIMIT 1;";
-        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        //System.out.println("sql_to_query: "+sql_to_query);
 
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,

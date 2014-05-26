@@ -216,14 +216,16 @@ public class EntradamercanciasController {
         ArrayList<HashMap<String, String>> DetallesOC = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
         
-        //decodificar id de usuario
+        //Decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
         userDat = this.getHomeDao().getUserById(id_usuario);
         
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         
         DatosOC = this.getInvDao().getEntradas_DatosOrdenCompra(orden_compra, id_empresa);
-        DetallesOC = this.getInvDao().getEntradas_DetallesOrdenCompra(Integer.parseInt(DatosOC.get(0).get("id")));
+        if(DatosOC.size()>0){
+            DetallesOC = this.getInvDao().getEntradas_DetallesOrdenCompra(Integer.parseInt(DatosOC.get(0).get("id")));
+        }
         
         jsonretorno.put("DatosOC", DatosOC);
         jsonretorno.put("DetallesOC", DetallesOC);
@@ -450,13 +452,15 @@ public class EntradamercanciasController {
             
             @RequestParam(value="select_ieps", required=true) String[] id_ieps,
             @RequestParam(value="valorieps", required=true) String[] tasa_eps,
+            @RequestParam(value="iddetoc", required=true) String[] iddetoc,
+            @RequestParam(value="nooc", required=true) String[] nooc,
             
             //@RequestParam(value="lote", required=true) String[] lote,
             //@RequestParam(value="pedimento", required=true) String[] pedimento,
             //@RequestParam(value="caducidad", required=true) String[] caducidad,
             @ModelAttribute("user") UserSessionData user,
             Model model
-            ) {
+        ) {
             
             HashMap<String, String> jsonretorno = new HashMap<String, String>();
             HashMap<String, String> succes = new HashMap<String, String>();
@@ -469,14 +473,33 @@ public class EntradamercanciasController {
             Integer app_selected = 9;
             String command_selected = "new";
             Integer id_usuario= user.getUserId();//variable para el id  del usuario
+            String numeros_oc = "";
+            String oc_actual = "";
+            int primer_oc=0;
             
             if(total_tr > 0){
-                for(int i=0; i<eliminado.length; i++) { 
+                for(int i=0; i<eliminado.length; i++) {
                     if(Integer.parseInt(eliminado[i]) != 0){
                         no_partida++;//si no esta eliminado incrementa el contador de partidas
+                        
+                        if(!oc_actual.equals(nooc[i])){
+                            oc_actual = nooc[i];
+                            if(primer_oc==0){
+                                numeros_oc = numeros_oc + nooc[i];
+                            }else{
+                                numeros_oc = numeros_oc + "," + nooc[i];
+                            }
+                            primer_oc++;
+                        }
                     }
-                    arreglo[i]= "'"+no_partida+"___"+cantidad[i]+"___"+costo[i]+"___"+id_prod_grid[i]+"___"+impuesto[i]+"___"+valor_imp[i]+"___"+id_pres[i]+"___"+eliminado[i]+"___"+id_ieps[i]+"___"+tasa_eps[i]+"'";
+                    arreglo[i]= "'"+no_partida+"___"+cantidad[i]+"___"+costo[i]+"___"+id_prod_grid[i]+"___"+impuesto[i]+"___"+valor_imp[i]+"___"+id_pres[i]+"___"+eliminado[i]+"___"+id_ieps[i]+"___"+tasa_eps[i]+ "___"+ iddetoc[i] +"'";
                 }
+                
+                if(primer_oc > 1){
+                    //Numeros de OC en esta factura
+                    ordencompra = numeros_oc;
+                }
+                
                 //serializar el arreglo
                 extra_data_array = StringUtils.join(arreglo, ",");
             }else{

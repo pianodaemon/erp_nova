@@ -238,12 +238,17 @@ public class ComSpringDao  implements ComInterfaceDao {
                     + "com_orden_compra_detalle.precio_unitario,"
                     + "(com_orden_compra_detalle.cantidad * com_orden_compra_detalle.precio_unitario) AS importe, "
                     + "com_orden_compra_detalle.gral_imp_id,"
-                    + "com_orden_compra_detalle.valor_imp "
+                    + "com_orden_compra_detalle.valor_imp,"
+                    + "com_orden_compra_detalle.cant_surtido AS cant_rec,"
+                    + "(CASE WHEN (com_orden_compra_detalle.cantidad::double precision - com_orden_compra_detalle.cant_surtido)<=0.0001 THEN 0 ELSE (com_orden_compra_detalle.cantidad::double precision - com_orden_compra_detalle.cant_surtido) END) AS cant_pen, "
+                    + "(CASE WHEN com_orden_compra_detalle.estatus=1 THEN 'PARCIAL' WHEN com_orden_compra_detalle.estatus=2 THEN 'COMPLETO' WHEN com_orden_compra_detalle.estatus=3 THEN 'CANCELADO' ELSE '' END) AS pstatus, "
+                    + "com_orden_compra_detalle.estatus "
                 + "FROM com_orden_compra_detalle "
                 + "LEFT JOIN inv_prod on inv_prod.id = com_orden_compra_detalle.inv_prod_id "
                 + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "
                 + "LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = com_orden_compra_detalle.presentacion_id "
                 + "WHERE com_orden_compra_detalle.com_orden_compra_id="+id_orden_compra;
+        //0=Sin Estatus, 1=Parcial(Surtido Parcial), 2=Surtido(Surtido Completo), 3=Cancelado
         
         //System.out.println("Obtiene datos grid prefactura: "+sql_query);
         ArrayList<HashMap<String, String>> hm_grid = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
@@ -262,10 +267,15 @@ public class ComSpringDao  implements ComInterfaceDao {
                     //row.put("cantidad",StringHelper.roundDouble( rs.getString("cantidad"), rs.getInt("decimales") ));
                     row.put("cantidad",StringHelper.roundDouble( rs.getString("cantidad"), 2 ));
                     row.put("precio_unitario",StringHelper.roundDouble(rs.getDouble("precio_unitario"),4) );
-                    row.put("importe",StringHelper.roundDouble(rs.getDouble("importe"),2) );
+                    row.put("importe",StringHelper.roundDouble(rs.getDouble("importe"),4) );
                     
                     row.put("gral_imp_id",String.valueOf(rs.getInt("gral_imp_id")));
                     row.put("valor_imp",StringHelper.roundDouble(rs.getDouble("valor_imp"),2) );
+                    
+                    row.put("cant_rec",StringHelper.roundDouble(rs.getDouble("cant_rec"),2) );
+                    row.put("cant_pen",StringHelper.roundDouble(rs.getDouble("cant_pen"),2) );
+                    row.put("pstatus",rs.getString("pstatus"));
+                    row.put("estatus",rs.getString("estatus"));
                     return row;
                 }
             }
@@ -512,8 +522,7 @@ public class ComSpringDao  implements ComInterfaceDao {
                         +" com_orden_compra.id,   "
                         +" com_orden_compra.folio,   "
                         +" cxp_prov.razon_social as proveedor,  "
-                        +" (CASE WHEN com_orden_compra.status=0 then 'ORDEN GENERADA' " 
-                        +" when com_orden_compra.status=1 then 'AUTORIZADO' else 'CANCELADO' end ) as estado, "
+                        +" (CASE WHEN com_orden_compra.status=0 THEN 'ORDEN GENERADA' WHEN com_orden_compra.status=1 THEN 'AUTORIZADO' WHEN com_orden_compra.status=2 THEN 'CANCELADO' WHEN com_orden_compra.status=3 THEN 'SURTIDO PARCIAL' WHEN com_orden_compra.status=4 THEN 'SURTIDO COMPLETO' ELSE '' END ) AS estado, "
                         +" gral_mon.descripcion_abr AS denominacion,  "
                         + "to_char(com_orden_compra.momento_creacion,'dd/mm/yyyy')as momento_creacion, "
                         + "com_orden_compra.total "
