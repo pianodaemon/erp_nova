@@ -100,7 +100,7 @@ public class CompOrdenCompraController {
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
         infoConstruccionTabla.put("id", "Acciones:70");
         infoConstruccionTabla.put("folio", "Folio:80");
-        infoConstruccionTabla.put("proveedor", "Proveedor:300");
+        infoConstruccionTabla.put("proveedor", "Proveedor:350");
         infoConstruccionTabla.put("total", "Monto:100");
         infoConstruccionTabla.put("denominacion", "Moneda:70");
         infoConstruccionTabla.put("momento_creacion", "Fecha:80");
@@ -578,7 +578,9 @@ public class CompOrdenCompraController {
             if (parametros.get("formato_oc").equals("2")){
                 //Instancia a la clase que construye el pdf formato2 de la Orden de Compra
                 PdfReporteComOrdenDeCompraFormatoDos x = new PdfReporteComOrdenDeCompraFormatoDos(datosEncabezadoPie,datosOrdenCompra,conceptosOrdenCompra,razon_social_empresa,fileout,ruta_imagen);
-            }   
+            }else{
+                
+            }
         }
         
         System.out.println("Recuperando archivo: " + fileout);

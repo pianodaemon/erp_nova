@@ -723,7 +723,8 @@ public class ComSpringDao  implements ComInterfaceDao {
                     + " tblEmpAutoriza.nombre_pila||' '||tblEmpAutoriza.apellido_paterno||' '||tblEmpAutoriza.apellido_materno AS user_autoriza, "
                     + " com_orden_compra.observaciones, "
                     + "(CASE WHEN com_orden_compra.fecha_entrega IS NULL THEN '' ELSE to_char(com_orden_compra.fecha_entrega, 'dd/mm/yyyy') END) AS fecha_entrega, "
-                    + "com_orden_compra.anexa_documentos "
+                    + "com_orden_compra.anexa_documentos, "
+                    + "(CASE WHEN com_orden_compra.status=2 THEN 'CANCELADO' ELSE '' END ) AS estado_oc "
                 + " FROM com_orden_compra "
                 + " JOIN cxp_prov ON cxp_prov.id=com_orden_compra.proveedor_id "
                 + " JOIN gral_mun ON gral_mun.id=cxp_prov.municipio_id "
@@ -766,6 +767,7 @@ public class ComSpringDao  implements ComInterfaceDao {
         mappdf.put("observaciones", mapdatosquery.get("observaciones").toString());
         mappdf.put("fecha_entrega", mapdatosquery.get("fecha_entrega").toString());
         mappdf.put("anexar_doc", String.valueOf(mapdatosquery.get("anexa_documentos")));
+        mappdf.put("estado_oc", String.valueOf(mapdatosquery.get("estado_oc")));
         return mappdf;
     }
     

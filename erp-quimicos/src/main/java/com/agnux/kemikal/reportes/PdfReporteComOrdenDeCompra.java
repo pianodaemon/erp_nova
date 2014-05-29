@@ -68,6 +68,7 @@ public class PdfReporteComOrdenDeCompra {
         Font fuentenegrita = new Font(Font.getFamily("ARIAL"),7,Font.BOLD,BaseColor.BLACK);
         Font encabezado = new Font(Font.getFamily("ARIAL"),7,Font.NORMAL,BaseColor.BLACK);
         Font pedido = new Font(Font.getFamily("ARIAL"),8,Font.NORMAL,BaseColor.BLACK);
+        Font boldFontBlack8 = new Font(Font.getFamily("ARIAL"),8,Font.BOLD,BaseColor.BLACK);
         
         TablaDetalleCompraPDF tablita = new TablaDetalleCompraPDF();
         //variable para colocar el total del importe
@@ -136,7 +137,8 @@ public class PdfReporteComOrdenDeCompra {
             //LOGOTIPO DE LA EMPRESA
             celdaHead = new PdfPCell(imagenpdf.addContent());
             celdaHead.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            celdaHead.setRowspan(4);celdaHead.setBorder(0);
+            celdaHead.setRowspan(4);
+            celdaHead.setBorder(0);
             tablaHead.addCell(celdaHead);
 
             //RAZON SOCIAL AQUI VA EL NOMBRE DE LA EMPRESA
@@ -169,7 +171,7 @@ public class PdfReporteComOrdenDeCompra {
             tablaHead.addCell(celdaHead);
             
             //ESTE ESPACIO QUEDARÁ EN BLANCO
-            celdaHead = new PdfPCell(new Paragraph("",pedido));
+            celdaHead = new PdfPCell(new Paragraph(datosOrdenCompra.get("estado_oc"),boldFontBlack8));
             celdaHead.setHorizontalAlignment(Element.ALIGN_CENTER);
             celdaHead.setRowspan(2);
             celdaHead.setBorder(0);

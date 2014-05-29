@@ -69,6 +69,7 @@ public class PdfReporteComOrdenDeCompraFormatoDos {
         Font fuentenegrita = new Font(Font.getFamily("ARIAL"),7,Font.BOLD,BaseColor.BLACK);
         Font encabezado = new Font(Font.getFamily("ARIAL"),7,Font.NORMAL,BaseColor.BLACK);
         Font pedido = new Font(Font.getFamily("ARIAL"),8,Font.NORMAL,BaseColor.BLACK);
+        Font boldFontBlack8 = new Font(Font.getFamily("ARIAL"),8,Font.BOLD,BaseColor.BLACK);
         
         TablaDetalleCompraPDF tablita = new TablaDetalleCompraPDF();
         //variable para colocar el total del importe
@@ -129,7 +130,24 @@ public class PdfReporteComOrdenDeCompraFormatoDos {
             PdfPTable tablaHead = new PdfPTable(tam_tablaHead);
             PdfPCell celdaHead;
             tablaHead.setKeepTogether(false);
-
+            
+            //Esta fila es para imprimir la leyenda CANCELADO cuando la OC ha sido camcelado
+            celdaHead = new PdfPCell(new Paragraph("",fuentenegrita));
+            celdaHead.setHorizontalAlignment(Element.ALIGN_CENTER);
+            celdaHead.setBorder(0);
+            tablaHead.addCell(celdaHead);
+            
+            celdaHead = new PdfPCell(new Paragraph("",fuentenegrita));
+            celdaHead.setHorizontalAlignment(Element.ALIGN_CENTER);
+            celdaHead.setBorder(0);
+            tablaHead.addCell(celdaHead);
+            
+            celdaHead = new PdfPCell(new Paragraph(datosOrdenCompra.get("estado_oc"),boldFontBlack8));
+            celdaHead.setHorizontalAlignment(Element.ALIGN_CENTER);
+            celdaHead.setBorder(0);
+            tablaHead.addCell(celdaHead);
+            
+            
             //IMAGEN --> logo empresa
             celdaHead = new PdfPCell(imagenpdf.addContent());
             celdaHead.setBorder(0);
@@ -142,7 +160,8 @@ public class PdfReporteComOrdenDeCompraFormatoDos {
             //RAZON SOCIAL AQUI VA EL NOMBRE DE LA EMPRESA
             celdaHead = new PdfPCell(new Paragraph(empresa,encabezado));
             celdaHead.setHorizontalAlignment(Element.ALIGN_CENTER);
-            celdaHead.setRowspan(15);celdaHead.setBorder(0);
+            celdaHead.setRowspan(15);
+            celdaHead.setBorder(0);
             tablaHead.addCell(celdaHead);
 
             //NOMBRE DE ORDEN DE COMPRA
@@ -183,7 +202,7 @@ public class PdfReporteComOrdenDeCompraFormatoDos {
             //esto es un espacio en blanco PARA DESPEGAR LAS TABLAS
             celdaHead = new PdfPCell(new Paragraph("\n",fuentenegrita));
             celdaHead.setBorder(1);
-            celdaHead.setColspan(4);
+            celdaHead.setColspan(3);
             tablaHead.addCell(celdaHead);
             
             reporte.add(tablaHead);
