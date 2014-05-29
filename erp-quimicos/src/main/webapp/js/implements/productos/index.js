@@ -1753,6 +1753,10 @@ $(function() {
 							jAlert("El producto no pudo ser eliminado porque forma parte de la Configuraci&oacute;n de un Envase.\nElimine la configuraci&oacute;n del Envase en el M&oacute;dulo de Envasado y despu&oacute;s proceda a eliminar el producto.", 'Atencion!');
 						}
 						
+						if ( entry['success'] == '06' ){
+							jAlert("El producto no pudo ser eliminado porque tiene existencia en almacen.", 'Atencion!');
+						}
+						
 						$get_datos_grid();
 					});
 				};
@@ -2405,7 +2409,7 @@ $(function() {
 					$select_seleccionados.append(pres_hmtl);
 					
 					
-					//carga select de Presentacion Default
+					//Carga select de Presentacion Default
 					$select_pres_default.children().remove();
 					var pres_def_hmtl = '<option value="0" selected="yes">[--Presentaci&oacute;n--]</option>';
 					$.each(entry['PresOn'],function(entryIndex,presdef){
@@ -2453,17 +2457,16 @@ $(function() {
 						var tabla = $grid_productos_componentes.find('tbody');
 						tabla.append(trr);
 						
-						$total_porcentaje.val(parseFloat($total_porcentaje.val())+parseFloat(ingrediente['porcentaje']));
-						
+						$total_porcentaje.val(parseFloat($total_porcentaje.val())+parseFloat(ingrediente['cantidad']));
 						//alert($total_porcentaje.val());
 						
 						tabla.find('a').bind('click',function(event){
 							var total_porcentaje=0;
 							if(parseInt($(this).parent().find('#delete').val()) != 0){
-								//alert("Alert1: "+total_porcentaje+"  Campo total:"+$total_porcentaje.val());
+								//alert("total_porcentaje1: "+total_porcentaje+"    $total_porcentaje::"+$total_porcentaje.val());
 								total_porcentaje = parseFloat($total_porcentaje.val())-parseFloat(parseFloat($(this).parent().parent().find('#porcentaje').val()).toFixed(4));
 								$total_porcentaje.val(total_porcentaje);
-								//alert("Alert2: "+total_porcentaje+"  Campo total:"+$total_porcentaje.val());
+								//alert("total_porcentaje2: "+total_porcentaje+"      $total_porcentaje:"+$total_porcentaje.val());
 								$(this).parent().find('#delete').val(0);
 								$(this).parent().parent().hide();
 							}

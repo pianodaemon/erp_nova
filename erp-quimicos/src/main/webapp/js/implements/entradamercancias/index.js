@@ -1275,219 +1275,226 @@ $(function() {
 								$select_denominacion.append(moneda_hmtl);
 							}
 							
-							if(entry['DetallesOC'] != null){
-								$.each(entry['DetallesOC'],function(entryIndex,Grid){
-									var trCount = $("tr", $grid_productos).size();
-									trCount++;
-									
-									var id_ieps = Grid['ieps_id'];
-									var tasa_ieps = Grid['ieps_tasa'];
-									var importe_ieps=0;
-									
-									if(parseInt(entry['DatosOC'][0]['proveedortipo_id'])==2){
-										//Proveedor extranjero
-										id_ieps=0;
-										tasa_ieps=0;
-										importe_ieps=0;
-									}
-									
-									importe_ieps = parseFloat(parseFloat(Grid['importe']) * parseFloat(parseFloat(tasa_ieps)/100)).toFixed(4);
-									
-									var valor_pedimento=" ";
-									var tr_prod='';
-									
-									tr_prod += '<tr>';
-										tr_prod += '<td width="49" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-											tr_prod += '<a href="elimina_producto" id="eliminaprod'+ trCount +'">Eliminar</a>';
-											tr_prod += '<input type="hidden" name="eliminado" id="eliminado" value="1">';//el 1 significa que el registro no ha sido eliminado
-										tr_prod += '</td>';
+							if(parseInt($hidden_id_proveedor.val())==parseInt(entry['DatosOC'][0]['proveedor_id'])){
+								if(parseInt(entry['DetallesOC'].length)>0){
+									$.each(entry['DetallesOC'],function(entryIndex,Grid){
+										var trCount = $("tr", $grid_productos).size();
+										trCount++;
 										
-										tr_prod += '<td width="49" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-											tr_prod += '<input type="text" name="nooc" id="nooc" value="'+ $campo_ordencompra.val() +'" class="borde_oculto" style="width:46px;" readOnly="true">';
-											tr_prod += '<input type="hidden" name="iddetoc" id="iddetoc" value="'+ Grid['id_det_oc'] +'">';
-										tr_prod += '</td>';
+										var id_ieps = Grid['ieps_id'];
+										var tasa_ieps = Grid['ieps_tasa'];
+										var importe_ieps=0;
 										
-										tr_prod += '<td width="100" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-											tr_prod += '<input type="hidden" name="id_prod_grid" id="idprod" value="'+  Grid['producto_id'] +'">';
-											tr_prod += '<input type="text" id="skup" name="sku'+ trCount +'" value="' + Grid['sku'] + '" class="borde_oculto" style="width:96px;" readOnly="true">';
-										tr_prod += '</td>';
-										tr_prod += '<td width="200" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-											tr_prod += '<input type="text" name="titulo'+ trCount +'" value="' + Grid['titulo'] + '" class="borde_oculto" style="width:196px;" readOnly="true">';
-										tr_prod += '</td>';
-										tr_prod += '<td width="70" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-											tr_prod += '<input type="text" name="unidad" class="borde_oculto" value="' + Grid['unidad'] + '" readOnly="true" style="width:66px;">';
-										tr_prod += '</td>';
-										tr_prod += '<td width="70" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-											tr_prod += '<input type="hidden" name="id_pres" id="idpres" value="'+ Grid['id_presentacion'] +'">';
-											tr_prod += '<input type="text" name="presentacion" id="pres" class="borde_oculto" value="' + Grid['presentacion'] + '" readOnly="true" style="width:66px;">';
-										tr_prod += '</td>';
-										tr_prod += '<td width="70" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-											tr_prod += '<input type="text" name="cantidad" id="cant" class="cant'+trCount+'" value="' + Grid['cantidad'] + '" style="width:66px;">';
-										tr_prod += '</td>';
-										tr_prod += '<td width="75" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-											tr_prod += '<input type="text" name="costo" id="cost" class="cost'+trCount+'" value="' + Grid['costo'] + '" style="width:69px;">';
-										tr_prod += '</td>';
-										tr_prod += '<td width="90" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-											tr_prod += '<input type="text" name="importe'+ trCount +'" id="import" value="' + Grid['importe'] + '" class="borde_oculto" style="width:86px; text-align:right;" readOnly="true">';
-										tr_prod += '</td>';
-										tr_prod += '<td width="82" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-											tr_prod += '<select name="impuesto" id="imp" style="width:80px;">';
-											//tr_prod += '<option value="0">[--  --]</option>';
-											//aqui se carga el select con los tipos de iva
-											$.each(tiposIva,function(entryIndex,tipos){
-												if(tipos['id'] == Grid['tipo_impuesto']){
-													tr_prod += '<option value="' + tipos['id'] + '"  selected="yes">' + tipos['descripcion'] + '</option>';
-												}else{
-													tr_prod += '<option value="' + tipos['id'] + '"  >' + tipos['descripcion'] + '</option>';
+										if(parseInt(entry['DatosOC'][0]['proveedortipo_id'])==2){
+											//Proveedor extranjero
+											id_ieps=0;
+											tasa_ieps=0;
+											importe_ieps=0;
+										}
+										
+										importe_ieps = parseFloat(parseFloat(Grid['importe']) * parseFloat(parseFloat(tasa_ieps)/100)).toFixed(4);
+										
+										var valor_pedimento=" ";
+										var tr_prod='';
+										
+										tr_prod += '<tr>';
+											tr_prod += '<td width="49" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
+												tr_prod += '<a href="elimina_producto" id="eliminaprod'+ trCount +'">Eliminar</a>';
+												tr_prod += '<input type="hidden" name="eliminado" id="eliminado" value="1">';//el 1 significa que el registro no ha sido eliminado
+											tr_prod += '</td>';
+											
+											tr_prod += '<td width="49" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
+												tr_prod += '<input type="text" name="nooc" id="nooc" value="'+ $campo_ordencompra.val() +'" class="borde_oculto" style="width:46px;" readOnly="true">';
+												tr_prod += '<input type="hidden" name="iddetoc" id="iddetoc" value="'+ Grid['id_det_oc'] +'">';
+											tr_prod += '</td>';
+											
+											tr_prod += '<td width="100" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
+												tr_prod += '<input type="hidden" name="id_prod_grid" id="idprod" value="'+  Grid['producto_id'] +'">';
+												tr_prod += '<input type="text" id="skup" name="sku'+ trCount +'" value="' + Grid['sku'] + '" class="borde_oculto" style="width:96px;" readOnly="true">';
+											tr_prod += '</td>';
+											tr_prod += '<td width="200" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
+												tr_prod += '<input type="text" name="titulo'+ trCount +'" value="' + Grid['titulo'] + '" class="borde_oculto" style="width:196px;" readOnly="true">';
+											tr_prod += '</td>';
+											tr_prod += '<td width="70" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
+												tr_prod += '<input type="text" name="unidad" class="borde_oculto" value="' + Grid['unidad'] + '" readOnly="true" style="width:66px;">';
+											tr_prod += '</td>';
+											tr_prod += '<td width="70" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
+												tr_prod += '<input type="hidden" name="id_pres" id="idpres" value="'+ Grid['id_presentacion'] +'">';
+												tr_prod += '<input type="text" name="presentacion" id="pres" class="borde_oculto" value="' + Grid['presentacion'] + '" readOnly="true" style="width:66px;">';
+											tr_prod += '</td>';
+											tr_prod += '<td width="70" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
+												tr_prod += '<input type="text" name="cantidad" id="cant" class="cant'+trCount+'" value="' + Grid['cantidad'] + '" style="width:66px;">';
+											tr_prod += '</td>';
+											tr_prod += '<td width="75" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
+												tr_prod += '<input type="text" name="costo" id="cost" class="cost'+trCount+'" value="' + Grid['costo'] + '" style="width:69px;">';
+											tr_prod += '</td>';
+											tr_prod += '<td width="90" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
+												tr_prod += '<input type="text" name="importe'+ trCount +'" id="import" value="' + Grid['importe'] + '" class="borde_oculto" style="width:86px; text-align:right;" readOnly="true">';
+											tr_prod += '</td>';
+											tr_prod += '<td width="82" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
+												tr_prod += '<select name="impuesto" id="imp" style="width:80px;">';
+												//tr_prod += '<option value="0">[--  --]</option>';
+												//aqui se carga el select con los tipos de iva
+												$.each(tiposIva,function(entryIndex,tipos){
+													if(tipos['id'] == Grid['tipo_impuesto']){
+														tr_prod += '<option value="' + tipos['id'] + '"  selected="yes">' + tipos['descripcion'] + '</option>';
+													}else{
+														tr_prod += '<option value="' + tipos['id'] + '"  >' + tipos['descripcion'] + '</option>';
+													}
+												});
+												
+												tr_prod += '</select>';
+												tr_prod += '<input type="hidden" name="valorimp" id="v_imp" value="' + Grid['valor_imp'] + '">';
+												tr_prod += '<input type="hidden" name="totalimpuesto'+ trCount +'" id="totimp" value="0">';
+											tr_prod += '</td>';
+											
+											
+											
+											tr_prod += '<td width="80" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
+												tr_prod += '<select name="select_ieps" id="selectIeps" style="width:76px;">';
+												if(parseInt(id_ieps)<=0){
+													tr_prod += '<option value="0">[-- --]</option>';
 												}
-											});
+												$.each(arrayIeps,function(entryIndex,ieps){
+													if(ieps['id'] == id_ieps){
+														tr_prod += '<option value="' + ieps['id'] + '"  selected="yes">' + ieps['titulo'] + '</option>';
+													}
+												});
+												tr_prod += '</select>';
+												tr_prod += '<input type="hidden" name="valorieps" id="tIeps" value="' + tasa_ieps + '">';
+											tr_prod += '</td>';
 											
-											tr_prod += '</select>';
-											tr_prod += '<input type="hidden" name="valorimp" id="v_imp" value="' + Grid['valor_imp'] + '">';
-											tr_prod += '<input type="hidden" name="totalimpuesto'+ trCount +'" id="totimp" value="0">';
-										tr_prod += '</td>';
-										
-										
-										
-										tr_prod += '<td width="80" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-											tr_prod += '<select name="select_ieps" id="selectIeps" style="width:76px;">';
-											if(parseInt(id_ieps)<=0){
-												tr_prod += '<option value="0">[-- --]</option>';
-											}
-											$.each(arrayIeps,function(entryIndex,ieps){
-												if(ieps['id'] == id_ieps){
-													tr_prod += '<option value="' + ieps['id'] + '"  selected="yes">' + ieps['titulo'] + '</option>';
-												}
-											});
-											tr_prod += '</select>';
-											tr_prod += '<input type="hidden" name="valorieps" id="tIeps" value="' + tasa_ieps + '">';
-										tr_prod += '</td>';
-										
-										tr_prod += '<td width="65" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-											tr_prod += '<input type="text" name="importe_ieps'+ trCount +'" id="import_ieps" value="'+parseFloat(importe_ieps).toFixed(4)+'" class="borde_oculto" style="width:61px; text-align:right;" readOnly="true">';
-										tr_prod += '</td>';
-										
-										
-									tr_prod += '</tr>';
-									$grid_productos.append(tr_prod);
-									
-									//Al iniciar el campo tiene un  caracter en blanco, al obtener el foco se elimina el  espacio por comillas
-									$grid_productos.find('input.cost'+trCount).focus(function(e){
-										if($(this).val() == ' '){
-											$(this).val('');
-										}
-									});
-									
-									$grid_productos.find('input.cost'+trCount).blur(function(e){
-										var $campoCostoU=$(this);
-										var $campoCant=$(this).parent().parent().find('#cant');
-										var $campoImport=$(this).parent().parent().find('#import');
-										var $campoImportIeps=$(this).parent().parent().find('#import_ieps');
-										var $campoTasaIeps=$(this).parent().parent().find('#tIeps');
-										
-										if ($campoCostoU.val() == ''  || $campoCostoU.val() == null){
-											$campoCostoU.val(' ');
-										}
-										
-										if( ($campoCostoU.val().trim() != '') && ($campoCant.val().trim() != '') ){	
-											//Calcula y redondea el importe
-											$campoImport.val(parseFloat(parseFloat($campoCostoU.val()) * parseFloat($campoCant.val())).toFixed(4));
+											tr_prod += '<td width="65" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
+												tr_prod += '<input type="text" name="importe_ieps'+ trCount +'" id="import_ieps" value="'+parseFloat(importe_ieps).toFixed(4)+'" class="borde_oculto" style="width:61px; text-align:right;" readOnly="true">';
+											tr_prod += '</td>';
 											
-											//Calcular y redondear el Importe del IEPS
-											$campoImportIeps.val(parseFloat(parseFloat($campoImport.val()) * parseFloat(parseFloat($campoTasaIeps.val())/100)).toFixed(4));
-										}else{
-											$campoImport.val('');
-										}
-										$calcula_totales();//llamada a la funcion que calcula totales
-									});
-														
-									//Al iniciar el campo tiene un  caracter en blanco, al obtener el foco se elimina el  espacio por comillas
-									$grid_productos.find('input.cant'+trCount).focus(function(e){
-										if($(this).val() == ' '){
-											$(this).val('');
-										}
-									});
-									
-									
-									
-									//recalcula importe al perder enfoque el campo cantidad
-									$grid_productos.find('input.cant'+trCount).blur(function(e){
-										var $campoCostoU=$(this).parent().parent().find('#cost');
-										var $campoCant=$(this);
-										var $campoImport=$(this).parent().parent().find('#import');
-										var $campoImportIeps=$(this).parent().parent().find('#import_ieps');
-										var $campoTasaIeps=$(this).parent().parent().find('#tIeps');
-										
-										if ($campoCant.val().trim() == ''  || $campoCant.val() == null){
-											$campoCant.val(' ');
-										}
-										if( ($campoCant.val().trim() != '') && ($campoCostoU.val().trim() != '') ){						
-											//Calcula y redondea el importe
-											$campoImport.val(parseFloat(parseFloat($campoCostoU.val()) * parseFloat($campoCant.val())).toFixed(4));
 											
-											//Calcular y redondear el Importe del IEPS
-											$campoImportIeps.val(parseFloat(parseFloat($campoImport.val()) * parseFloat(parseFloat($campoTasaIeps.val())/100)).toFixed(4));
-										}else{
-											$campoImport.val('');
-										}
-										$calcula_totales();//llamada a la funcion que calcula totales
-									});
-									
-									
-									//Validar campo costo, solo acepte numeros y punto
-									$grid_productos.find('input.cost'+trCount).keypress(function(e){
-										// Permitir  numeros, borrar, suprimir, TAB, puntos, comas
-										if (e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
-											return true;
-										}else {
-											return false;
-										}
-									});
-									
-									//Validar campo cantidad, solo acepte numeros y punto
-									$grid_productos.find('input.cant'+trCount).keypress(function(e){
-										// Permitir  numeros, borrar, suprimir, TAB, puntos, comas
-										if (e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
-											return true;
-										}else {
-											return false;
-										}
-									});
-
-
-									//elimina un producto del grid
-									$grid_productos.find('#eliminaprod'+ trCount).bind('click',function(event){
-										event.preventDefault();
-										if(parseInt($(this).parent().find('#eliminado').val()) != 0){
-											//asigna espacios en blanco a todos los input de la fila eliminada
-											$(this).parent().parent().find('input').val(' ');
-											//asigna un 0 al input eliminado como bandera para saber que esta eliminado
-											$(this).parent().find('#eliminado').val(0);//cambiar valor del campo a 0 para indicar que se ha elimnado
-											//oculta la fila eliminada
-											$(this).parent().parent().hide();
-											$calcula_totales();//llamada a la funcion que calcula totales
-										}
-									});
-									
-									//seleccionar tipo de  impuesto
-									$grid_productos.find('select[name=impuesto]').change(function(){
-										var valorImpuesto=0;
-										var id_ivatipo = $(this).val();
-										$.each(tiposIva,function(entryIndex,tipos){
-											if(parseInt(tipos['id'])==parseInt(id_ivatipo)){
-												valorImpuesto = tipos['iva_1'];
+										tr_prod += '</tr>';
+										$grid_productos.append(tr_prod);
+										
+										//Al iniciar el campo tiene un  caracter en blanco, al obtener el foco se elimina el  espacio por comillas
+										$grid_productos.find('input.cost'+trCount).focus(function(e){
+											if($(this).val() == ' '){
+												$(this).val('');
 											}
 										});
-										$(this).parent().find('input[name=valorimp]').val(valorImpuesto);
 										
-										$calcula_totales();//llamada a la funcion que calcula totales
+										$grid_productos.find('input.cost'+trCount).blur(function(e){
+											var $campoCostoU=$(this);
+											var $campoCant=$(this).parent().parent().find('#cant');
+											var $campoImport=$(this).parent().parent().find('#import');
+											var $campoImportIeps=$(this).parent().parent().find('#import_ieps');
+											var $campoTasaIeps=$(this).parent().parent().find('#tIeps');
+											
+											if ($campoCostoU.val() == ''  || $campoCostoU.val() == null){
+												$campoCostoU.val(' ');
+											}
+											
+											if( ($campoCostoU.val().trim() != '') && ($campoCant.val().trim() != '') ){	
+												//Calcula y redondea el importe
+												$campoImport.val(parseFloat(parseFloat($campoCostoU.val()) * parseFloat($campoCant.val())).toFixed(4));
+												
+												//Calcular y redondear el Importe del IEPS
+												$campoImportIeps.val(parseFloat(parseFloat($campoImport.val()) * parseFloat(parseFloat($campoTasaIeps.val())/100)).toFixed(4));
+											}else{
+												$campoImport.val('');
+											}
+											$calcula_totales();//llamada a la funcion que calcula totales
+										});
+															
+										//Al iniciar el campo tiene un  caracter en blanco, al obtener el foco se elimina el  espacio por comillas
+										$grid_productos.find('input.cant'+trCount).focus(function(e){
+											if($(this).val() == ' '){
+												$(this).val('');
+											}
+										});
+										
+										
+										
+										//recalcula importe al perder enfoque el campo cantidad
+										$grid_productos.find('input.cant'+trCount).blur(function(e){
+											var $campoCostoU=$(this).parent().parent().find('#cost');
+											var $campoCant=$(this);
+											var $campoImport=$(this).parent().parent().find('#import');
+											var $campoImportIeps=$(this).parent().parent().find('#import_ieps');
+											var $campoTasaIeps=$(this).parent().parent().find('#tIeps');
+											
+											if ($campoCant.val().trim() == ''  || $campoCant.val() == null){
+												$campoCant.val(' ');
+											}
+											if( ($campoCant.val().trim() != '') && ($campoCostoU.val().trim() != '') ){						
+												//Calcula y redondea el importe
+												$campoImport.val(parseFloat(parseFloat($campoCostoU.val()) * parseFloat($campoCant.val())).toFixed(4));
+												
+												//Calcular y redondear el Importe del IEPS
+												$campoImportIeps.val(parseFloat(parseFloat($campoImport.val()) * parseFloat(parseFloat($campoTasaIeps.val())/100)).toFixed(4));
+											}else{
+												$campoImport.val('');
+											}
+											$calcula_totales();//llamada a la funcion que calcula totales
+										});
+										
+										
+										//Validar campo costo, solo acepte numeros y punto
+										$grid_productos.find('input.cost'+trCount).keypress(function(e){
+											// Permitir  numeros, borrar, suprimir, TAB, puntos, comas
+											if (e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
+												return true;
+											}else {
+												return false;
+											}
+										});
+										
+										//Validar campo cantidad, solo acepte numeros y punto
+										$grid_productos.find('input.cant'+trCount).keypress(function(e){
+											// Permitir  numeros, borrar, suprimir, TAB, puntos, comas
+											if (e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
+												return true;
+											}else {
+												return false;
+											}
+										});
+
+
+										//elimina un producto del grid
+										$grid_productos.find('#eliminaprod'+ trCount).bind('click',function(event){
+											event.preventDefault();
+											if(parseInt($(this).parent().find('#eliminado').val()) != 0){
+												//asigna espacios en blanco a todos los input de la fila eliminada
+												$(this).parent().parent().find('input').val(' ');
+												//asigna un 0 al input eliminado como bandera para saber que esta eliminado
+												$(this).parent().find('#eliminado').val(0);//cambiar valor del campo a 0 para indicar que se ha elimnado
+												//oculta la fila eliminada
+												$(this).parent().parent().hide();
+												$calcula_totales();//llamada a la funcion que calcula totales
+											}
+										});
+										
+										//seleccionar tipo de  impuesto
+										$grid_productos.find('select[name=impuesto]').change(function(){
+											var valorImpuesto=0;
+											var id_ivatipo = $(this).val();
+											$.each(tiposIva,function(entryIndex,tipos){
+												if(parseInt(tipos['id'])==parseInt(id_ivatipo)){
+													valorImpuesto = tipos['iva_1'];
+												}
+											});
+											$(this).parent().find('input[name=valorimp]').val(valorImpuesto);
+											
+											$calcula_totales();//llamada a la funcion que calcula totales
+										});
+															
 									});
-														
+									
+									
+									$calcula_totales();//llamada a la funcion que calcula totales
+								}
+							}else{
+								jAlert('Para agregar mas de una Orden de Compra a &eacute;sta factura es necesario que sea del mismo proveedor.', 'Atencion!', function(r) { 
+									$campo_ordencompra.focus();
 								});
-								
-								
-								$calcula_totales();//llamada a la funcion que calcula totales
 							}
+							
 						}else{
 							jAlert('La Orden de Compra '+$campo_ordencompra.val()+' no esta existe o no est&aacute; disponible.\nVerifique es estado de la Orden de Compra.', 'Atencion!', function(r) { 
 								$campo_ordencompra.focus();

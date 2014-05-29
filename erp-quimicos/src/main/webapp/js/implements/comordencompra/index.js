@@ -944,6 +944,7 @@ $(function() {
 					trr += '<a href="elimina_producto" id="delete'+ tr +'">Eliminar</a>';
 					trr += '<input type="hidden" 	name="eliminado" id="elim" value="1">';//el 1 significa que el registro no ha sido eliminado
 					trr += '<input type="hidden" 	name="iddetalle" id="idd" value="0">';//este es el id del registro que ocupa el producto en la tabla pocpedidos_detalles
+					trr += '<a href="cancela_partida" id="cancela_partida'+ tr +'">Cancelar</a>';
 				trr += '</td>';
 				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="114">';
 					trr += '<input type="hidden" 	name="idproducto" id="idprod" value="'+ id_prod +'">';
@@ -963,15 +964,29 @@ $(function() {
 				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
 					trr += '<INPUT TYPE="text" 	name="cantidad" value=" " id="cant" class="cant'+ tr +'" style="width:76px;">';
 				trr += '</td>';
+				
+				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
+					trr += '<INPUT TYPE="text" 	name="cant_rec" value="0.00" id="cant_rec" class="borde_oculto" style="width:76px; text-align:right;" readOnly="true">';
+				trr += '</td>';
+				
+				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
+					trr += '<INPUT TYPE="text" 	name="cant_pen" value="0.00" id="cant_pen" class="borde_oculto" style="width:76px; text-align:right;" readOnly="true">';
+				trr += '</td>';
+				
+							
 				trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
 					trr += '<INPUT TYPE="text" 	name="costo" 	value="'+ prec_unitario +'" id="cost" style="width:76px; text-align:right;">';
 				trr += '</td>';
 				trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
-					trr += '<INPUT TYPE="text"      name="importe'+ tr +'" 	 value="" id="import" readOnly="true" style="width:86px; text-align:right;">';
+					trr += '<INPUT TYPE="text"      name="importe'+ tr +'" 	 value="" id="import" class="borde_oculto"  style="width:86px; text-align:right;" readOnly="true">';
 					trr += '<INPUT type="hidden"    name="id_imp_prod"    	 value="'+  $id_impuesto.val()    +'" id="idimppord">';
 					trr += '<INPUT type="hidden"    name="valor_imp"     	 value="'+  $valor_impuesto.val() +'" id="ivalorimp">';
 					trr += '<input type="hidden" 	name="totimpuesto'+ tr +'"        id="totimp" value="0">';
 				trr += '</td>';
+				trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
+					trr += '<INPUT TYPE="text" 	name="estatus'+ tr +'" 	value=" " 	id="estatus" class="borde_oculto" style="width:76px; text-align:left;" readOnly="true">';
+				trr += '</td>';
+				
 			trr += '</tr>';
 
 			$grid_productos.append(trr);
@@ -1141,6 +1156,7 @@ $(function() {
 			});
 			
 			
+			$grid_productos.find('#cancela_partida'+ tr).hide();
 			$grid_productos.find('.cant'+ tr).focus();
 			
 		}else{
