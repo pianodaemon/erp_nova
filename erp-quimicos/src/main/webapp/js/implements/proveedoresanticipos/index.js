@@ -86,16 +86,26 @@ $(function() {
 		valor_retorno += "fecha_inicial" + signo_separador + $busqueda_fecha_inicial.val() + "|";
 		valor_retorno += "fecha_final" + signo_separador + $busqueda_fecha_final.val();
 		return valor_retorno;
+		alert(valor_retorno);
 	};
 	
 	cadena = to_make_one_search_string();
 	$cadena_busqueda = cadena.toCharCode();
 	
-	$buscar.click(function(event){
+		$buscar.click(function(event){
 		event.preventDefault();
 		cadena = to_make_one_search_string();
 		$cadena_busqueda = cadena.toCharCode();
 		$get_datos_grid();
+	});
+	
+		$limpiar.click(function(event){
+		event.preventDefault();
+		$busqueda_num_transaccion.val('');
+		$busqueda_proveedor.val('');
+		$busqueda_fecha_inicial.val('');
+		$busqueda_fecha_final.val('');
+		$busqueda_num_transaccion.focus();
 	});
     
     
@@ -136,6 +146,11 @@ $(function() {
 			 $('#cuerpo').css({'height': pix_alto});
 		};
 	});
+	
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_num_transaccion, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_proveedor, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_fecha_inicial, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_fecha_final, $buscar);
 	
 	
 	
@@ -506,6 +521,11 @@ $(function() {
 		});
 		
 		
+		//$(this).aplicarEventoKeypressEjecutaTrigger($campo_no_proveedor, $buscar_plugin_proveedor);
+		$(this).aplicarEventoKeypressEjecutaTrigger($campo_rfc, $buscar_plugin_proveedor);
+		$(this).aplicarEventoKeypressEjecutaTrigger($campo_nombre, $buscar_plugin_proveedor);
+		
+		
 		$cancelar_plugin_busca_proveedor.click(function(event){
 			//event.preventDefault();
 			var remove = function() { $(this).remove(); };
@@ -728,7 +748,7 @@ $(function() {
 				$('#forma-proveedoresanticipos-window').find('div.interrogacion').css({'display':'none'});
 				
 				if ( data['error_cheque'] == "false" ){
-					jAlert('Anticipo registrado con &eacute;xito.\nN&uacute;mero de transacci&oacute;n: '+data['numero_transaccion'],'Atencion!')
+					jAlert('Anticipo registrado con &eacute;xito.\nN&uacute;mero de transacci&oacute;n: '+data['identificador_anticipo'],'Atencion!')
 					$registra_anticipo.hide();
 					/*
 					var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
@@ -1040,7 +1060,7 @@ $(function() {
 			var $cancelar_plugin = $('#forma-proveedoresanticipos-window').find('#boton_cancelar');
 			var $registra_anticipo = $('#forma-proveedoresanticipos-window').find('#submit');
 			
-			//$tr_cheque.hide();
+			$tr_cheque.hide();
 			$tr_transferencia.hide();
 			$tr_tarjeta.hide();
 			$busca_proveedor.hide();
@@ -1049,7 +1069,7 @@ $(function() {
 			
 			$pdf_anticipo.hide();
 			
-			//$registra_anticipo.hide();
+			$registra_anticipo.hide();
 			$no_transaccion.css({'background' : '#DDDDDD'});
 			
 			if(accion_mode == 'edit'){
@@ -1092,7 +1112,8 @@ $(function() {
 					$id_proveedor.attr({ 'value' : entry['Datos']['0']['cxp_prov_id'] });
 					$no_transaccion.attr({ 'value' : entry['Datos']['0']['folio'] });
 					$proveedor.attr({ 'value' : entry['Datos']['0']['razon_social'] });
-					$observaciones_anticipo.attr({ 'value' : entry['Datos']['0']['observaciones'] });
+					//$observaciones_anticipo.attr({ 'value' : entry['Datos']['0']['observaciones'] });
+					$observaciones_anticipo.text(entry['Datos'][0]['observaciones']);
 					$tipo_cambio.attr({ 'value' : entry['Datos']['0']['tipo_cambio'] });
 					$fecha_anticipo.attr({ 'value' : entry['Datos']['0']['fecha_anticipo'] });
 					$num_cheque.attr({ 'value' : entry['Datos']['0']['numero_cheque'] });
@@ -1101,7 +1122,7 @@ $(function() {
 					
 					if( entry['Datos']['0']['cancelado'] =='false' ){
 						$cancelar_anticipo.show();
-						//$pdf_anticipo.show();
+						$pdf_anticipo.show();
 					}
 					
 					//cargar select de tipos de movimiento
@@ -1134,6 +1155,7 @@ $(function() {
 					
 					elemento_seleccionado = entry['Datos']['0']['tes_ban_id'];
 					texto_elemento_cero='Seleccionar Banco';
+					
 					//cheque
 					if(parseInt(entry['Datos']['0']['tes_mov_tipo_id'])==2){
 						$tr_cheque.show();
@@ -1227,16 +1249,16 @@ $(function() {
 				});//termina cancelar factura
                 
 				
-				/*
-				//descargar pdf de pago
+				
+				//descargar pdf de anticipo
 				$pdf_anticipo.click(function(event){
 					if(parseInt($id_anticipo.val()) !=0){
 						var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
-						var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/getPdfReporteAplicacionPagoProveedor/'+$id_anticipo.val()+'/'+$id_proveedor.val()+'/'+iu+'/out.json';
+						var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/getPdfReporteAplicacionAnticipoProveedor/'+$id_anticipo.val()+'/'+$id_proveedor.val()+'/'+iu+'/out.json';
 						window.location.href=input_json;
 					}
 				});
-				*/
+				
 				
 				//Ligamos el boton cancelar al evento click para eliminar la forma
 				$cancelar_plugin.bind('click',function(){
