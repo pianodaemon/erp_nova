@@ -5,6 +5,7 @@
 package com.agnux.kemikal.controllers;
 
 import com.agnux.cfd.v2.Base64Coder;
+import com.agnux.common.helpers.FileHelper;
 import com.agnux.common.helpers.StringHelper;
 import com.agnux.common.helpers.n2t;
 import com.agnux.common.obj.DataPost;
@@ -13,7 +14,7 @@ import com.agnux.common.obj.UserSessionData;
 import com.agnux.kemikal.interfacedaos.CxpInterfaceDao;
 import com.agnux.kemikal.interfacedaos.GralInterfaceDao;
 import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
-import com.agnux.kemikal.reportes.PdfAplicacionPagoProveedor;
+import com.agnux.kemikal.reportes.PdfAplicacionAnticiposProveedor;
 import com.itextpdf.text.DocumentException;
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -30,19 +31,19 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  *
@@ -145,7 +146,7 @@ public class ProveedoresAnticiposController {
         //System.out.println("id_usuario: "+id_usuario);
         
         //variables para el buscador
-        String num_transaccion = StringHelper.isNullString(String.valueOf(has_busqueda.get("num_transaccion")));
+        String num_transaccion = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("num_transaccion")))+"%";
         String proveedor = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("proveedor")))+"%";
         String fecha_inicial = ""+StringHelper.isNullString(String.valueOf(has_busqueda.get("fecha_inicial")))+"";
         String fecha_final = ""+StringHelper.isNullString(String.valueOf(has_busqueda.get("fecha_final")))+"";
@@ -167,7 +168,7 @@ public class ProveedoresAnticiposController {
         jsonretorno.put("Data", this.getCxpDao().getProveedoresAnticipos_PaginaGrid(data_string, offset, items_por_pag, orderby, desc));
         //obtiene el hash para los datos que necesita el datagrid
         jsonretorno.put("DataForGrid", dataforpos.formaHashForPos(dataforpos));
-        
+        System.out.println("data_string:"+data_string);
         return jsonretorno;
     }
     
@@ -391,7 +392,7 @@ public class ProveedoresAnticiposController {
         if( String.valueOf(succes.get("success")).equals("true") ){
             actualizo = this.getCxpDao().selectFunctionForCxpAdmProcesos(data_string, extra_data_array);
             jsonretorno.put("error_cheque",String.valueOf(actualizo.split("___")[0]));
-            jsonretorno.put("numero_transaccion",String.valueOf(actualizo.split("___")[1]));
+            jsonretorno.put("num_transaccion",String.valueOf(actualizo.split("___")[1]));
             jsonretorno.put("identificador_anticipo",String.valueOf(actualizo.split("___")[2]));
         }
         
@@ -400,6 +401,104 @@ public class ProveedoresAnticiposController {
         log.log(Level.INFO, "Salida json {0}", String.valueOf(jsonretorno.get("success")));
         return jsonretorno;
     }
+    
+    
+     //cancelacion de anticipo de pagos
+    @RequestMapping(method = RequestMethod.POST, value="/cancelar_anticipo.json")
+    public @ResponseBody HashMap<String, String> CancelarPagosJson(
+            @RequestParam(value="id_anticipo", required=true) String id_anticipo,
+            @RequestParam(value="motivo", required=true) String motivo,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+        ) {
+        
+        HashMap<String, String> jsonretorno = new HashMap<String, String>();
+        Integer app_selected = 61;
+        String command_selected = "cancelacion";
+        
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        //System.out.println("id_usuario: "+id_usuario);
+        
+        String extra_data_array = "'sin datos'";
+        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_anticipo+"___"+motivo.toUpperCase();
+        
+        System.out.println("Ejecutando Anticipo de Pago");
+        jsonretorno.put("success",String.valueOf( this.getCxpDao().selectFunctionForCxpAdmProcesos(data_string,extra_data_array)) );
+        
+        log.log(Level.INFO, "Salida json {0}", String.valueOf(jsonretorno.get("success")));
+        
+        return jsonretorno;
+    }
+    
+    
+    
+    //Genera pdf del reporte de aplicacion de Anticipos a Proveedor, al registrar un pago
+    @RequestMapping(value = "/getPdfReporteAplicacionAnticipoProveedor/{id_anticipo}/{id_proveedor}/{iu}/out.json", method = RequestMethod.GET ) 
+    public ModelAndView getGeneraPdfFacturacionJson(
+                @PathVariable("id_anticipo") Integer id_anticipo,
+                @PathVariable("id_proveedor") Integer id_proveedor,
+                @PathVariable("iu") String id_user,
+                HttpServletRequest request, 
+                HttpServletResponse response, 
+                Model model)
+            throws ServletException, IOException, URISyntaxException, DocumentException, Exception {
+        
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        
+        
+        System.out.println("Generando pdf de aplicacion de Anticipos a Proveedor");
+        
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        String rfc_empresa = this.getGralDao().getRfcEmpresaEmisora(id_empresa);
+        
+        String razon_social_empresa = this.getGralDao().getRazonSocialEmpresaEmisora(id_empresa);
+        
+        //obtener el directorio temporal
+        String dir_tmp = this.getGralDao().getTmpDir();
+        
+        
+        //String[] array_company = razon_social_empresa.split(" ");
+        //String company_name= array_company[0].toLowerCase();
+        //String ruta_imagen = this.getGralDao().getImagesDir() +"logo_"+ company_name +".png";
+        String ruta_imagen = this.getGralDao().getImagesDir()+rfc_empresa+"_logo.png";
+        
+        File file_dir_tmp = new File(dir_tmp);
+        //System.out.println("Directorio temporal: "+file_dir_tmp.getCanonicalPath());
+        
+        String file_name = "RECIBO_ANTICIPO_PROVEEDOR_"+rfc_empresa+".pdf";
+        //ruta de archivo de salida
+        String fileout = file_dir_tmp +"/"+  file_name;
+        
+        ArrayList<HashMap<String, String>> lista_facturas = new ArrayList<HashMap<String, String>>();
+        
+        //obtiene las el listado de los pagos aplicados en esta transaccion
+        lista_facturas = this.getCxpDao().getProveedoresAnticipos_Aplicados(id_anticipo,id_proveedor);
+        
+        //instancia a la clase que construye el pdf del reporte
+        PdfAplicacionAnticiposProveedor x = new PdfAplicacionAnticiposProveedor(fileout,ruta_imagen,razon_social_empresa,lista_facturas);
+        
+        
+        System.out.println("Recuperando archivo: " + fileout);
+        File file = new File(fileout);
+        int size = (int) file.length(); // Tamaño del archivo
+        BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
+        response.setBufferSize(size);
+        response.setContentLength(size);
+        response.setContentType("application/pdf");
+        response.setHeader("Content-Disposition","attachment; filename=\"" + file.getCanonicalPath() +"\"");
+        FileCopyUtils.copy(bis, response.getOutputStream());  	
+        response.flushBuffer();
+        
+        FileHelper.delete(fileout);
+        
+        return null;
+        
+    } 
     
     
     
