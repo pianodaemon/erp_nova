@@ -302,7 +302,7 @@
 											<li>
 												<a href="#" class="sub">Reportes&raquo;</a>
 												<ul>
-													<li class="topline"><a href="../comrepbackorder/startup.agnux">Backorders</a></li>
+													<!--<li class="topline"><a href="../comrepbackorder/startup.agnux">Backorders</a></li>-->
 													<li class="topline"><a href="../invrepcomprasnetasporproducto/startup.agnux">Compras Netas por Producto</a></li>
 													<li class="topline"><a href="../repestadisticocompras/startup.agnux">Estad&iacute;stico de Compras</a></li>
 													<li class="topline"><a href="../comdiasentrega/startup.agnux">D&iacute;as de Entrega</a></li>
