@@ -2373,8 +2373,8 @@ public class CxpSpringDao implements CxpInterfaceDao{
         );
         return hm;
     }
-
-
+    
+    
     
     //aplicativo Anticipos a proveedores
     @Override
@@ -2391,7 +2391,8 @@ public class CxpSpringDao implements CxpInterfaceDao{
                                     +"to_char(cxp_ant.fecha_anticipo,'dd-mm-yyyy') AS fecha_anticipo "
                             +"FROM cxp_ant "
                             +"JOIN cxp_prov ON cxp_prov.id=cxp_ant.cxp_prov_id "
-                            +"JOIN tes_mov_tipos ON tes_mov_tipos.id=cxp_ant.cxp_mov_tipo_id "
+                            //+"JOIN tes_mov_tipos ON tes_mov_tipos.id=cxp_ant.cxp_mov_tipo_id "
+                            +"JOIN tes_mov_tipos ON tes_mov_tipos.id=cxp_ant.tes_mov_tipo_id "
                             +"JOIN gral_mon ON gral_mon.id=cxp_ant.moneda_id " 
                             +"JOIN ("+sql_busqueda+") as subt on subt.id=cxp_ant.id "
                             +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
@@ -2417,8 +2418,10 @@ public class CxpSpringDao implements CxpInterfaceDao{
             }
         );
         return hm;
-        
     }
+    
+    
+    
     
     @Override
     public ArrayList<HashMap<String, String>> getProveedoresAnticipos_FormasPago() {
@@ -2499,6 +2502,63 @@ public class CxpSpringDao implements CxpInterfaceDao{
         return datos;
     }
     
+    
+    
+    
+    
+	//obtiene Anticipos los Aplicados a proveedores
+    @Override
+    public ArrayList<HashMap<String, String>> getProveedoresAnticipos_Aplicados(Integer id_anticipo, Integer id_proveedor) {
+            String sql_to_query = ""
+            + "SELECT cxp_prov.razon_social AS proveedor,"
+                    + "cxp_ant.folio,"
+                    + "to_char(cxp_ant.fecha_anticipo::timestamp with time zone,'dd/mm/yyyy') AS fecha_anticipo,"
+                    + "gral_mon.descripcion AS moneda_anticipo,"
+                    + "gral_mon.simbolo AS simbolo_moneda_anticipo,"
+                    + "cxp_ant.cantidad AS monto_anticipo ,"
+                    + "tes_ban.titulo AS banco,"
+                    + "tes_mov_tipos.titulo AS forma_pago, "
+                    + "cxp_ant.tipo_cambio AS tipo_cambio, "
+                   // + "(CASE WHEN cxp_ant.tes_mov_tipo_id=2 THEN cxp_ant.ref_num::integer ELSE cxp_ant.referencia::character varying END ) AS cheque_referencia, "
+                    + "(CASE WHEN (cxp_ant.moneda_id=1) THEN  "
+                            //+ "(CASE WHEN (cxp_ant.moneda_id=2) THEN cxp_ant.cantidad * cxp_ant.tipo_cambio  ELSE cxp_ant.cantidad  END) "
+                            + "(CASE WHEN (cxp_ant.moneda_id!=1) THEN cxp_ant.cantidad * cxp_ant.tipo_cambio  ELSE cxp_ant.cantidad  END) "
+                   + "ELSE  "
+                            + "(CASE WHEN (cxp_ant.moneda_id=1) THEN  cxp_ant.cantidad / cxp_ant.tipo_cambio ELSE cxp_ant.cantidad END) "
+                   + "END) AS monto_anticipo_proveedor "
+                   // + "cxp_ant_detalles.tipo_cambio "
+            + "FROM cxp_ant "
+            + "JOIN cxp_prov ON cxp_prov.id=cxp_ant.cxp_prov_id "
+            + "JOIN gral_mon ON gral_mon.id=cxp_ant.moneda_id "
+            + "LEFT JOIN tes_ban ON tes_ban.id=cxp_ant.tes_ban_id "
+            + "JOIN tes_mov_tipos ON tes_mov_tipos.id=cxp_ant.tes_mov_tipo_id "
+            + "WHERE cxp_ant.id="+ id_anticipo;
+            
+        //System.out.println("Buscando datos para reporte aplicacion de pago: "+sql_to_query);
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("proveedor",rs.getString("proveedor"));
+                    row.put("folio",rs.getString("folio"));
+                    row.put("fecha_anticipo",rs.getString("fecha_anticipo"));
+                    row.put("moneda_anticipo",rs.getString("moneda_anticipo"));
+                    row.put("simbolo_moneda_anticipo",rs.getString("simbolo_moneda_anticipo"));
+                    row.put("banco",rs.getString("banco"));
+                    row.put("forma_pago",rs.getString("forma_pago"));
+                    //row.put("cheque_referencia",rs.getString("cheque_referencia"));
+                    row.put("monto_anticipo",StringHelper.roundDouble(rs.getString("monto_anticipo"),2));
+                    row.put("tipo_cambio",StringHelper.roundDouble(rs.getString("tipo_cambio"),4));
+                    row.put("monto_anticipo_proveedor",StringHelper.roundDouble(rs.getDouble("monto_anticipo_proveedor"), 2));
+                    return row;
+                }
+            }
+        );
+        return hm; 
+    }
+
     
     
     

@@ -432,7 +432,7 @@ public class ProveedoresAnticiposController {
     }
     
     
-    
+    //http://localhost:8080//erp-quimicos/controllers/proveedoresanticipos/getPdfReporteAplicacionAnticipoProveedor/8/56/MQ==/out.json
     //Genera pdf del reporte de aplicacion de Anticipos a Proveedor, al registrar un pago
     @RequestMapping(value = "/getPdfReporteAplicacionAnticipoProveedor/{id_anticipo}/{id_proveedor}/{iu}/out.json", method = RequestMethod.GET ) 
     public ModelAndView getGeneraPdfFacturacionJson(

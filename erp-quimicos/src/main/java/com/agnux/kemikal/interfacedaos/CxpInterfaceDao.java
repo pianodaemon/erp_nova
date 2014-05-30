@@ -107,6 +107,7 @@ public interface CxpInterfaceDao {
     public ArrayList<HashMap<String, Object>> getProveedoresAnticipos_PaginaGrid(String data_string, int offset, int pageSize, String orderBy , String asc);
     public ArrayList<HashMap<String, String>> getProveedoresAnticipos_Datos(Integer id_anticipo);
     public ArrayList<HashMap<String, String>> getProveedoresAnticipos_FormasPago();
+    public ArrayList<HashMap<String, String>> getProveedoresAnticipos_Aplicados(Integer id_anticipo, Integer id_proveedor);
     
     //Aplicativo Parametros de Anticipos proveedor
     public ArrayList<HashMap<String, String>> getSucursales(Integer id_empresa);
