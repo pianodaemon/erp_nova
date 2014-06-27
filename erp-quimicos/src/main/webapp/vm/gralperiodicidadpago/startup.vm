@@ -86,7 +86,7 @@
                         <div class="columns" >
                             <div class=" fixed column">
                                 <ul class="pestanas">
-                                    <li><a href="#tabx-1"><strong>Periodicidad de Pago</strong></a></li>
+                                    <li><a href="#tabx-1"><strong>Periodicidad&nbsp;de&nbsp;Pago</strong></a></li>
                                 </ul>
                             </div>
                         </div>
@@ -99,7 +99,7 @@
                                             <tr>
                                                 <td width="5"></td>
                                                 <td width="120">Titulo</td>
-                                                <td width="220"><INPUT TYPE="text" name="titulo" style="width:220px;"></td>
+                                                <td width="220"><INPUT TYPE="text" name="titulo" style="width:220px;" title="Titulo de la periodicidad de pago"></td>
                                                 <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_titulo"></div></td>
                                                 <td width="5"></td>
                                             </tr>
@@ -108,8 +108,8 @@
                                             </tr>
                                              <tr>
                                                 <td width="5"></td>
-                                                <td width="120">N&uacute;mero Periodo</td>
-                                                <td width="220"><INPUT TYPE="text" name="num_periodos" style="width:120px;"></td>
+                                                <td width="120">N&uacute;mero&nbsp;de&nbsp;Periodos</td>
+                                                <td width="220"><INPUT TYPE="text" name="num_periodos" style="width:120px;" title="N&uacute;mero de Periodos al a&ntilde;o"></td>
                                                 <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_periodos"></div></td>
                                                 <td width="5"></td>
                                             </tr>

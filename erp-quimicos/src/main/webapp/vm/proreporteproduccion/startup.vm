@@ -35,6 +35,9 @@
                     <div class="repproduccion" >
                         <table id="filtros" border="0" style="background-color:#ffffff;" >
                             <tr>
+                                <td colspan="19" height="9"></td>
+                            </tr>
+                            <tr>
                                 <td >&nbsp;</td>
                                 <td>Tipo&nbsp;de&nbsp;Reporte</td>
                                 <td colspan="16">
@@ -48,7 +51,7 @@
                                 <td>&nbsp;</td>
                             </tr>
                             <tr>
-                                <td colspan="19">&nbsp;&nbsp;</td>
+                                <td colspan="19" height="9"></td>
                             </tr>
                             <tr >
                                 <td>&nbsp;&nbsp;</td>
@@ -97,7 +100,7 @@
                             </tr>
 
                             <tr>
-                                <td colspan="19">&nbsp;&nbsp;</td>
+                                <td colspan="19" height="9"></td>
                             </tr>
                         </table>
                     </div>

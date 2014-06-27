@@ -584,7 +584,7 @@ $(function() {
                         trr += '<select id="unidad_default'+trCount+'" name="unidad_default" >';
                         unidad = unidad.toUpperCase();
                         
-                        if(/^KILO*|KILOGRAMO$/.test(unidad)){
+                        if(/^KILO*|KILOGRAMO$/.test(unidad.toUpperCase())){
                             trr += '<option value="'+unidad_id+'" name="unidad_id" selected="yes">'+unidad+'</option>';
                             trr += '<option value="0">LITRO</option>';
                             //, unidad_id, densidad
@@ -1109,7 +1109,7 @@ $(function() {
                         return false;
                 }
             });
-	}
+		}
         
         $aplicar_evento_keypress_input_lote = function( $campo_input ){
             //validar campo cantidad recibida, solo acepte numeros y punto
@@ -1125,25 +1125,25 @@ $(function() {
                     return false;
                 }
             });
-	}
+		}
         
         
-	$aplicar_evento_focus_input_lote = function( $campo_input ){
+		$aplicar_evento_focus_input_lote = function( $campo_input ){
             //al iniciar el campo tiene un  caracter en blanco, al obtener el foco se elimina el  espacio por comillas
             $campo_input.focus(function(e){
                 if($(this).val() == ' '){
                     $(this).val('');
                 }
             });
-	}
+		}
         
         
-	$aplicar_evento_click_input_lote = function( $campo_input ){
+		$aplicar_evento_click_input_lote = function( $campo_input ){
             //validar campo cantidad recibida, solo acepte numeros y punto
             $campo_input.dblclick(function(e){
                 $(this).select();
             });
-	}
+		}
 	
         $aplicar_evento_blur_input_lote = function( $campo_input ){
             //pone espacio en blanco al perder el enfoque, cuando no se ingresa un valor
@@ -1156,7 +1156,7 @@ $(function() {
                     //$obtiene_datos_lote($tr_padre);
                 }
             });
-	}
+		}
         
         $aplicar_evento_focus_input_lote = function( $campo_input ){
             //al iniciar el campo tiene un  caracter en blanco, al obtener el foco se elimina el  espacio por comillas
@@ -1165,7 +1165,7 @@ $(function() {
                         $(this).val('');
                 }
             });
-	}
+		}
         
         /* Plugin para agregar las espedificaciones */
         //$tr_parent//el ter al que se le da click
@@ -2233,11 +2233,7 @@ $(function() {
                                                     lotes_completos = 0;
                                                 }
                                                 
-                                                cadena_pos += eliminar_tmp+"___"+id_reg_tmp+"___"+id_prod_detalle_tmp+"___"+ 
-                                                    cantidad_elemento_tmp+"___"+cantidad_adicional_tmp+"___"+lote_tmp+"___"+//inv_osal_id
-                                                    inv_prod_id_elemento_tmp+"___"+id_reg_parent+"___"+$subproceso_id.val()+
-                                                        "___"+id_reg_det+"___"+inv_osal_id+"___"+almacen_id+"___"+sucursal_id+"___"+
-                                                        agregado+"___"+cantidad_real_tmp+"$$$$";
+                                                cadena_pos += eliminar_tmp+"___"+id_reg_tmp+"___"+id_prod_detalle_tmp+"___"+cantidad_elemento_tmp+"___"+cantidad_adicional_tmp+"___"+lote_tmp+"___"+inv_prod_id_elemento_tmp+"___"+id_reg_parent+"___"+$subproceso_id.val()+"___"+id_reg_det+"___"+inv_osal_id+"___"+almacen_id+"___"+sucursal_id+"___"+agregado+"___"+cantidad_real_tmp+"$$$$";
                                             }
                                             
                                         });
@@ -2442,6 +2438,7 @@ $(function() {
                 tmp_html += '</td>';
                 tmp_html += '<td width="90px" class="grid1">';
                     tmp_html += '<input type="text" id="cantidad_adicional'+trCount+'" name="cantidad_adicional" value="'+cantidad_adicional+'"  style="width:70px;" readOnly="true">';
+                    //tmp_html += '<input type="text" id="cantidad_adicional'+trCount+'" name="cantidad_adicional" value="'+cantidad_adicional+'"  style="width:70px;">';
                 tmp_html += '</td>';
                 tmp_html += '<td width="90px" class="grid1">';
                     tmp_html += '<input type="text" id="cantidad_real'+trCount+'" name="cantidad_real" value="'+cantidad_usada+'"  style="width:70px;" >';
@@ -2605,6 +2602,7 @@ $(function() {
             });
             
             $tmp_tr.find('#cantidad_elemento'+trCount).change(function() {
+				alert("hola");
                 $valor = isNaN(parseFloat($(this).val())) ? 0 : parseFloat($(this).val());
                 $this_tr_tpm = $(this).parent().parent();
                 $cantidad_this_tr = isNaN(parseFloat($this_tr_tpm.find('input[name=existencia]').val())) ? 0 : parseFloat($this_tr_tpm.find('input[name=existencia]').val());

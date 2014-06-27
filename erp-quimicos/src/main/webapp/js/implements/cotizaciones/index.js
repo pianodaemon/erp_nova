@@ -9,6 +9,11 @@ $(function() {
 	    return work.join(',');
 	};
 	
+	//Arreglo que almacena las unidades de medida
+	var arrayUM;
+	//Variable que indica si se debe permitir cambiar la unidad de medida al agregar el producto
+	var cambiarUM;
+	
 	$('#header').find('#header1').find('span.emp').text($('#lienzo_recalculable').find('input[name=emp]').val());
 	$('#header').find('#header1').find('span.suc').text($('#lienzo_recalculable').find('input[name=suc]').val());
     var $username = $('#header').find('#header1').find('span.username');
@@ -385,6 +390,25 @@ $(function() {
 		return $valor.split(',').join('');
 	}
 	
+	
+	//carga los campos select con los datos que recibe como parametro
+	$carga_campos_select = function($campo_select, $arreglo_elementos, elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem){
+		var select_html = '';
+		
+		if(texto_elemento_cero != ''){
+			select_html = '<option value="0">'+texto_elemento_cero+'</option>';
+		}
+		
+		$.each($arreglo_elementos,function(entryIndex,elemento){
+			if( parseInt(elemento[index_elem]) == parseInt(elemento_seleccionado) ){
+				select_html += '<option value="' + elemento[index_elem] + '" selected="yes">' + elemento[index_text_elem] + '</option>';
+			}else{
+				select_html += '<option value="' + elemento[index_elem] + '" >' + elemento[index_text_elem] + '</option>';
+			}
+		});
+		$campo_select.children().remove();
+		$campo_select.append(select_html);
+	}
 	
 	
 	
@@ -829,6 +853,49 @@ $(function() {
 					
 					//verifica si el arreglo  retorno datos
 					if (entry['Presentaciones'].length > 0){
+						
+						if(parseInt(entry['Presentaciones'].length)==1){
+							
+							var id_detalle=0;
+							var id_prod = entry['Presentaciones'][0]['id'];
+							var sku = entry['Presentaciones'][0]['sku'];
+							var titulo = entry['Presentaciones'][0]['titulo'];
+							var imagen = entry['Presentaciones'][0]['archivo_img'];
+							var descripcion = entry['Presentaciones'][0]['descripcion_larga'];
+							var unidadId = entry['Presentaciones'][0]['unidad_id'];
+							var unidad = entry['Presentaciones'][0]['unidad'];
+							var id_pres = entry['Presentaciones'][0]['id_presentacion'];
+							var pres = entry['Presentaciones'][0]['presentacion'];
+							var precio = entry['Presentaciones'][0]['precio'];
+							//id de la moneda en la que viene el precio
+							var idmonpre = entry['Presentaciones'][0]['id_moneda'];
+							//tipo de cambio de la moneda del precio del producto
+							var tcMonProd = entry['Presentaciones'][0]['tc'];
+							var exislp = entry['Presentaciones'][0]['exis_prod_lp'];
+							
+							var cantidad = 0;
+							var importe = 0;
+							var idmonpartida=0;
+							var idImpto = pres['id_impto'];
+							var valorImpto = pres['valor_impto'];
+							
+							if($('#forma-cotizacions-window').find('input[name=tc]').val()!='' && $('#forma-cotizacions-window').find('input[name=tc]').val()!=' '){
+								if(exislp=='1'){
+									//aqui se pasan datos a la funcion que agrega el tr en el grid
+									//$agrega_producto_grid($grid_productos, id_detalle, id_prod, sku, titulo, imagen, descripcion, unidad, id_pres, pres, precio, cantidad, importe, mon_id, arrayMonedas, idImp, valorImp);
+									$agrega_producto_grid($grid_productos, id_detalle, id_prod, sku, titulo, imagen, descripcion, unidadId, unidad, id_pres, pres, precio, cantidad, importe, idmonpre, arrayMonedas, idImpto, valorImpto, tcMonProd, idmonpartida);
+								}else{
+									jAlert(exislp, 'Atencion!', function(r) { 
+										$('#forma-cotizacions-window').find('input[name=sku_producto]').focus();
+									});
+								}
+							}else{
+								jAlert('Es necesario ingresar el Tipo de Cambio.', 'Atencion!');
+							}
+							
+							
+						}else{
+							
 							$(this).modalPanel_Buscapresentacion();
 							var $dialogoc =  $('#forma-buscapresentacion-window');
 							$dialogoc.append($('div.buscador_presentaciones').find('table.formaBusqueda_presentaciones').clone());
@@ -847,6 +914,7 @@ $(function() {
 									trr += '</td>';
 									trr += '<td width="250"><span class="titulo">'+pres['titulo']+'</span></td>';
 									trr += '<td width="80">';
+										trr += '<span class="unidadId" style="display:none">'+pres['unidad_id']+'</span>';
 										trr += '<span class="unidad" style="display:none">'+pres['unidad']+'</span>';
 										trr += '<span class="id_pres" style="display:none">'+pres['id_presentacion']+'</span>';
 										trr += '<span class="pres">'+pres['presentacion']+'</span>';
@@ -886,6 +954,7 @@ $(function() {
 								var titulo = $(this).find('span.titulo').html();
 								var imagen =$(this).find('span.img').html();
 								var descripcion =$(this).find('span.desclarga').html();
+								var unidadId = $(this).find('span.unidadId').html();
 								var unidad = $(this).find('span.unidad').html();
 								var id_pres = $(this).find('span.id_pres').html();
 								var pres = $(this).find('span.pres').html();
@@ -906,7 +975,7 @@ $(function() {
 									if(exislp=='1'){
 										//aqui se pasan datos a la funcion que agrega el tr en el grid
 										//$agrega_producto_grid($grid_productos, id_detalle, id_prod, sku, titulo, imagen, descripcion, unidad, id_pres, pres, precio, cantidad, importe, mon_id, arrayMonedas, idImp, valorImp);
-										$agrega_producto_grid($grid_productos, id_detalle, id_prod, sku, titulo, imagen, descripcion, unidad, id_pres, pres, precio, cantidad, importe, idmonpre, arrayMonedas, idImpto, valorImpto, tcMonProd, idmonpartida);
+										$agrega_producto_grid($grid_productos, id_detalle, id_prod, sku, titulo, imagen, descripcion, unidadId, unidad, id_pres, pres, precio, cantidad, importe, idmonpre, arrayMonedas, idImpto, valorImpto, tcMonProd, idmonpartida);
 									}else{
 										jAlert(exislp, 'Atencion!', function(r) { 
 											$('#forma-cotizacions-window').find('input[name=sku_producto]').focus();
@@ -929,6 +998,7 @@ $(function() {
 								//regresa el enfoque al campo sku para permitir ingresar uno nuevo
 								$('#forma-cotizacions-window').find('input[name=sku_producto]').focus();
 							});
+						}
 						
 					}else{
 						jAlert('El producto que intenta agregar no existe, pruebe ingresando otro.\nHaga clic en Buscar.', 'Atencion!', function(r) { 
@@ -959,7 +1029,7 @@ $(function() {
 	
 	
 	//agregar producto al grid
-	$agrega_producto_grid = function($grid_productos, id_detalle, id_prod, sku, titulo, imagen, descripcion, unidad, id_pres, pres, precio, cantidad, importe, idmonpre, arrayMonedas, idImp, valorImp, tcMonProd, idmonpartida){
+	$agrega_producto_grid = function($grid_productos, id_detalle, id_prod, sku, titulo, imagen, descripcion, unidadId, unidad, id_pres, pres, precio, cantidad, importe, idmonpre, arrayMonedas, idImp, valorImp, tcMonProd, idmonpartida){
 		var $id_impuesto = $('#forma-cotizacions-window').find('input[name=id_impuesto]');
 		var $valor_impuesto = $('#forma-cotizacions-window').find('input[name=valorimpuesto]');
 		var $check_descripcion_larga =$('#forma-cotizacions-window').find('input[name=check_descripcion_larga]');
@@ -1119,7 +1189,8 @@ $(function() {
 				trr += '</td>';
 				
 				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
-					trr += '<input type="text" 	name="unidad" value="'+ unidad +'" id="uni" class="borde_oculto" readOnly="true" style="width:86px;">';
+					trr += '<select name="select_umedida" class="select_umedida'+ tr +'" style="width:86px;"></select>';
+					trr += '<input type="text" 	name="unidad'+ tr +'" value="'+ unidad +'" id="uni" class="borde_oculto" readOnly="true" style="width:86px;">';
 				trr += '</td>';
 				
 				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="100">';
@@ -1152,6 +1223,58 @@ $(function() {
 				
 			trr += '</tr>';
 			$grid_productos.append(trr);
+			
+			
+			
+			var unidadLitroKilo=false;
+			
+			if(parseInt(unidad.toUpperCase().search(/KILO/))>-1){
+				unidadLitroKilo=true;
+			}else{
+				if(parseInt(unidad.toUpperCase().search(/LITRO/))>-1){
+					unidadLitroKilo=true;
+				}
+			}
+			
+			
+			var hmtl_um="";
+			if(cambiarUM.trim()=='true'){
+				if(unidadLitroKilo){
+					$grid_productos.find('select.select_umedida'+tr).children().remove();
+					$.each(arrayUM,function(entryIndex,um){
+						if(parseInt(unidadId) == parseInt(um['id'])){
+							hmtl_um += '<option value="' + um['id'] + '" selected="yes" >' + um['titulo'] + '</option>';
+						}else{
+							if(parseInt(um['titulo'].toUpperCase().search(/KILO/))>-1 || parseInt(um['titulo'].toUpperCase().search(/LITRO/))>-1){
+								hmtl_um += '<option value="' + um['id'] + '">' + um['titulo'] + '</option>';
+							}
+						}
+					});
+					$grid_productos.find('select.select_umedida'+tr).append(hmtl_um);
+				}else{
+					$grid_productos.find('select.select_umedida'+tr).children().remove();
+					$.each(arrayUM,function(entryIndex,um){
+						if(parseInt(unidadId) == parseInt(um['id'])){
+							hmtl_um += '<option value="' + um['id'] + '" selected="yes" >' + um['titulo'] + '</option>';
+						}
+					});
+					$grid_productos.find('select.select_umedida'+tr).append(hmtl_um);
+				}
+				//Ocultar campo input porque se debe mostrar select para permitir cambio de unidad de medida
+				$grid_productos.find('input[name=unidad'+ tr +']').hide();
+			}else{
+				//Carga select de pais Origen
+				var elemento_seleccionado = unidadId;
+				var texto_elemento_cero = '';
+				var index_elem = 'id';
+				var index_text_elem = 'titulo';
+				$carga_campos_select($grid_productos.find('select.select_umedida'+tr), arrayUM, elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem);
+				
+				//Ocultar porque no se permitirá cambiar de unidad de medida
+				$grid_productos.find('select.select_umedida'+tr).hide();
+			}
+			
+			
 			
 			$aplicar_evento_click_checkbox($check_descripcion_larga);
 			
@@ -2054,6 +2177,12 @@ $(function() {
 		$forma_selected.ajaxForm(options);
 		
 		$.post(input_json,$arreglo,function(entry){
+			//Almacenar el arreglo de unidades de medida en la variable
+			arrayUM = entry['UM'];
+			
+			//Almacenar valor para variable que indica si se debe permitir el cambio de la unidad de medida
+			cambiarUM = entry['Extras'][0]['cambioUM'];
+			
 			//carga select de incoterms
 			$select_incoterms.children().remove();
 			var incoterms_hmtl = '';
@@ -2538,6 +2667,12 @@ $(function() {
 				
 				//aqui se cargan los campos al editar
 				$.post(input_json,$arreglo,function(entry){
+					//Almacenar el arreglo de unidades de medida en la variable
+					arrayUM = entry['UM'];
+					
+					//Almacenar valor para variable que indica si se debe permitir el cambio de la unidad de medida
+					cambiarUM = entry['Extras'][0]['cambioUM']
+					
 					//carga select de incoterms
 					$select_incoterms.children().remove();
 					var incoterms_hmtl = '';
@@ -2706,6 +2841,7 @@ $(function() {
 							var imagen = prod['archivo_img'];
 							var descripcion = prod['descripcion_larga'];
 							var unidad = prod['unidad'];
+							var unidadId = prod['unidad_id'];
 							var id_pres = prod['presentacion_id'];
 							var pres = prod['presentacion'];
 							var precio = prod['precio_unitario'];
@@ -2717,7 +2853,7 @@ $(function() {
 							var tcMonProd = entry['datosCotizacion'][0]['tipo_cambio'];
 							var idmonpartida = prod['moneda_id'];
 							//aqui se pasan datos a la funcion que agrega el tr en el grid
-							$agrega_producto_grid($grid_productos, id_detalle, id_prod, sku, titulo, imagen, descripcion, unidad, id_pres, pres, precio, cantidad, importe, mon_id, entry['Monedas'], idImp, valorImp, tcMonProd, idmonpartida);
+							$agrega_producto_grid($grid_productos, id_detalle, id_prod, sku, titulo, imagen, descripcion, unidadId, unidad, id_pres, pres, precio, cantidad, importe, mon_id, entry['Monedas'], idImp, valorImp, tcMonProd, idmonpartida);
 							
 						});
 					}

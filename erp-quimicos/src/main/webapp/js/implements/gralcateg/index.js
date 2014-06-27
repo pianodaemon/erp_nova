@@ -305,7 +305,7 @@ $(function() {
 		
 		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getCateg_Datos.json'; //getCateg_Datos
 		
-                $arreglo = {'id':id_to_show};
+		$arreglo = {'id':id_to_show, 'iu': $('#lienzo_recalculable').find('input[name=iu]').val()};
 		
 		$.post(input_json,$arreglo,function(entry){
 			//Alimentando los campos select de puestos

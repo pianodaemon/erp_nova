@@ -282,7 +282,7 @@ $(function() {
 		
 		//mayor_seleccionado 1=Activo	clasifica=1(Activo Circulante)
 		//mayor_seleccionado 5=Egresos	clasifica=1(Costo de Ventas)
-		//mayor_seleccionado 4=Activo	clasifica=1
+		//mayor_seleccionado 4=Activo	clasifica=1(Ventas)
 		if(parseInt(tipo)==1 ){mayor_seleccionado=1; detalle=1; clasifica=1; };
 		if(parseInt(tipo)==2 ){mayor_seleccionado=5; detalle=1; clasifica=1; };
 		if(parseInt(tipo)==3 ){mayor_seleccionado=4; detalle=1; clasifica=1; };
@@ -1337,7 +1337,7 @@ $(function() {
 						}
 					}
 					
-					//recargar select tipo de producto
+					//Recargar select tipo de producto
 					$select_prod_tipo.children().remove();
 					var prodtipo_hmtl = '<option value="0" >[--Seleccionar Tipo--]</option>';
 					$.each(entry['ProdTipos'],function(entryIndex,tip){
@@ -1385,8 +1385,8 @@ $(function() {
 					if( parseInt(valor_tipo)==3 ){
 						$deshabilitar_campos("desahabilitar",$proveedor,$tiempos_de_entrega,$select_prod_tipo,$select_estatus,$select_seccion,$select_grupo,$select_linea,$select_marca,$select_clase,$select_familia,$select_subfamilia,$select_unidad,$select_clasifstock,$select_iva,$select_ieps,$check_noserie,$check_nom,$check_nolote,$check_pedimento,$check_stock,$check_ventaext,$check_compraext,$select_disponibles,$select_seleccionados,$agregar_pres,$remover_pres,$densidad, $valor_maximo, $valor_minimo, $punto_reorden);
 						$tipo_producto_anterior.val(valor_tipo);
-						//visualizar grid para agregar productos componentes
 						
+						//visualizar grid para agregar productos componentes
 						$('div.contenedor_grid_prod').css({'display':'block'});
 						$('#forma-product-window').find('.product_div_one').css({'height':'505px'});
 					}
@@ -1395,6 +1395,42 @@ $(function() {
 					if( parseInt(valor_tipo)==4 ){
 						$deshabilitar_campos("desahabilitar",$proveedor,$tiempos_de_entrega,$select_prod_tipo,$select_estatus,$select_seccion,$select_grupo,$select_linea,$select_marca,$select_clase,$select_familia,$select_subfamilia,$select_unidad,$select_clasifstock,$select_iva,$select_ieps,$check_noserie,$check_nom,$check_nolote,$check_pedimento,$check_stock,$check_ventaext,$check_compraext,$select_disponibles,$select_seleccionados,$agregar_pres,$remover_pres,$densidad, $valor_maximo, $valor_minimo, $punto_reorden);
 						$tipo_producto_anterior.val(valor_tipo);
+						
+						//Recargar select de unidades. Carga solo la unidad SERVICIO
+						$select_unidad.children().remove();
+						var unidads_hmtl = '<option value="0">[--Seleccionar Unidad--]</option>';
+						$.each(entry['Unidades'],function(entryIndex,uni){
+							if(/^SERVICIO*|SERVICIOS$/.test(uni['titulo'].toUpperCase())){
+								unidads_hmtl += '<option value="' + uni['id'] + '"  >' + uni['titulo'] + '</option>';
+							}
+						});
+						$select_unidad.append(unidads_hmtl);
+						
+						//Recargar presentaciones default. Carga solo la Presentacion SERVICIO
+						$select_pres_default.children().remove();
+						presentaciones_hmtl = '<option value="0" selected="yes">[--Presentaci&oacute;n--]</option>';
+						$.each(entry['Presentaciones'],function(entryIndex,pres){
+							if(/^SERVICIO*|SERVICIOS$/.test(pres['titulo'].toUpperCase())){
+								presentaciones_hmtl += '<option value="' + pres['id'] + '"  >' + pres['titulo'] + '</option>';
+							}
+						});
+						$select_pres_default.append(presentaciones_hmtl);
+					}else{
+						//recarga select de unidades para permitir seleccionar una nueva unidad
+						$select_unidad.children().remove();
+						var unidads_hmtl = '<option value="0">[--Seleccionar Unidad--]</option>';
+						$.each(entry['Unidades'],function(entryIndex,uni){
+							unidads_hmtl += '<option value="' + uni['id'] + '"  >' + uni['titulo'] + '</option>';
+						});
+						$select_unidad.append(unidads_hmtl);
+						
+						//Recarga select de presentacion default
+						$select_pres_default.children().remove();
+						presentaciones_hmtl = '<option value="0" selected="yes">[--Presentaci&oacute;n--]</option>';
+						$.each(entry['Presentaciones'],function(entryIndex,pres){
+							presentaciones_hmtl += '<option value="' + pres['id'] + '"  >' + pres['titulo'] + '</option>';
+						});
+						$select_pres_default.append(presentaciones_hmtl);
 					}
 				}//termina id que valida existencia de productos componentes en el grid
 				
@@ -1430,7 +1466,7 @@ $(function() {
 						});
 						$select_unidad.append(unidads_hmtl);
 					}else{
-						jAlert("La unidad "+$select_unidad.find('option:selected').html()+" no es para crear Subensambles, seleccione otra diferente",'! Atencion');
+						jAlert("La unidad "+$select_unidad.find('option:selected').html()+" no es para para productos formulados, seleccione otra diferente",'! Atencion');
 						
 						//recarga select de unidades para permitir seleccionar una nueva unidad
 						$select_unidad.children().remove();
@@ -2289,7 +2325,7 @@ $(function() {
 							
 							//tipo=3 es KIT, tipo=4 es SERVICIOS
 							if(parseInt(entry['Producto'][0]['tipo_de_producto_id'])==3 || parseInt(entry['Producto'][0]['tipo_de_producto_id'])==4 ){
-									$deshabilitar_campos("desahabilitar",$proveedor,$tiempos_de_entrega,$select_prod_tipo,$select_estatus,$select_seccion,$select_grupo,$select_linea,$select_marca,$select_clase,$select_familia,$select_subfamilia,$select_unidad,$select_clasifstock,$select_iva,$select_ieps,$check_noserie,$check_nom,$check_nolote,$check_pedimento,$check_stock,$check_ventaext,$check_compraext,$select_disponibles,$select_seleccionados,$agregar_pres,$remover_pres,$densidad, $valor_maximo, $valor_minimo, $punto_reorden);
+								$deshabilitar_campos("desahabilitar",$proveedor,$tiempos_de_entrega,$select_prod_tipo,$select_estatus,$select_seccion,$select_grupo,$select_linea,$select_marca,$select_clase,$select_familia,$select_subfamilia,$select_unidad,$select_clasifstock,$select_iva,$select_ieps,$check_noserie,$check_nom,$check_nolote,$check_pedimento,$check_stock,$check_ventaext,$check_compraext,$select_disponibles,$select_seleccionados,$agregar_pres,$remover_pres,$densidad, $valor_maximo, $valor_minimo, $punto_reorden);
 							}else{
 									//$deshabilitar_campos("habilitar",$proveedor,$tiempos_de_entrega,$select_prod_tipo,$select_estatus,$select_seccion,$select_grupo,$select_linea,$select_marca,$select_clase,$select_familia,$select_subfamilia,$select_unidad,$select_clasifstock,$select_iva,$select_ieps,$check_noserie,$check_nom,$check_nolote,$check_pedimento,$check_stock,$check_ventaext,$check_compraext,$select_disponibles,$select_seleccionados,$agregar_pres,$remover_pres);
 							}
@@ -2409,17 +2445,40 @@ $(function() {
 					$select_seleccionados.append(pres_hmtl);
 					
 					
-					//Carga select de Presentacion Default
-					$select_pres_default.children().remove();
-					var pres_def_hmtl = '<option value="0" selected="yes">[--Presentaci&oacute;n--]</option>';
-					$.each(entry['PresOn'],function(entryIndex,presdef){
-						if(parseInt(presdef['id']) == parseInt(entry['Producto'][0]['presentacion_id'])){
-							pres_def_hmtl += '<option value="' + presdef['id'] + '" selected="yes">' + presdef['titulo'] + '</option>';
+					if(parseInt(entry['PresOn'].length)<=0){
+						if(parseInt(entry['Producto'][0]['tipo_de_producto_id'])==4){
+							//Carga select de Presentacion Default
+							$select_pres_default.children().remove();
+							var pres_def_hmtl = '<option value="0" selected="yes">[--Presentaci&oacute;n--]</option>';
+							$.each(entry['Presentaciones'],function(entryIndex,pres){
+								if(/^SERVICIO*|SERVICIOS$/.test(pres['titulo'].toUpperCase())){
+									pres_def_hmtl += '<option value="' + pres['id'] + '"  >' + pres['titulo'] + '</option>';
+								}
+							});
+							$select_pres_default.append(pres_def_hmtl);
 						}else{
-							pres_def_hmtl += '<option value="' + presdef['id'] + '"  >' + presdef['titulo'] + '</option>';
+							//Carga select de Presentacion Default
+							$select_pres_default.children().remove();
+							var pres_def_hmtl = '<option value="0" selected="yes">[--Presentaci&oacute;n--]</option>';
+							$.each(entry['Presentaciones'],function(entryIndex,pres){
+								pres_def_hmtl += '<option value="' + pres['id'] + '"  >' + pres['titulo'] + '</option>';
+							});
+							$select_pres_default.append(pres_def_hmtl);
 						}
-					});
-					$select_pres_default.append(pres_def_hmtl);
+					}else{
+						//Carga select de Presentacion Default
+						$select_pres_default.children().remove();
+						var pres_def_hmtl = '<option value="0" selected="yes">[--Presentaci&oacute;n--]</option>';
+						$.each(entry['PresOn'],function(entryIndex,presdef){
+							if(parseInt(presdef['id']) == parseInt(entry['Producto'][0]['presentacion_id'])){
+								pres_def_hmtl += '<option value="' + presdef['id'] + '" selected="yes">' + presdef['titulo'] + '</option>';
+							}else{
+								pres_def_hmtl += '<option value="' + presdef['id'] + '"  >' + presdef['titulo'] + '</option>';
+							}
+						});
+						$select_pres_default.append(pres_def_hmtl);
+					}
+					
 					
 					
 					$.each(entry['Ingredientes'],function(entryIndex,ingrediente){
@@ -2524,44 +2583,91 @@ $(function() {
 						}
 					});
 					
-				});
-				
-				
-				
-				//Cambiar tipo de producto
-				$select_prod_tipo.change(function(){
-					var valor_tipo = $(this).val();
-					if(parseInt(valor_tipo)==1 || parseInt(valor_tipo)==2 || parseInt(valor_tipo)==8 || parseInt(valor_tipo)==3){
-						if(parseInt(valor_tipo)==1 || parseInt(valor_tipo)==2 || parseInt(valor_tipo)==8){
-							if($incluye_produccion.val()=='false'){
-								//aqui solo debe entrar cuando la empresa no incluya modulo de produccion
+					
+					
+					
+					//Cambiar tipo de producto
+					$select_prod_tipo.change(function(){
+						var valor_tipo = $(this).val();
+						if(parseInt(valor_tipo)==1 || parseInt(valor_tipo)==2 || parseInt(valor_tipo)==8 || parseInt(valor_tipo)==3){
+							if(parseInt(valor_tipo)==1 || parseInt(valor_tipo)==2 || parseInt(valor_tipo)==8){
+								if($incluye_produccion.val()=='false'){
+									//aqui solo debe entrar cuando la empresa no incluya modulo de produccion
+									$('div.contenedor_grid_prod').css({'display':'block'});
+									$('#forma-product-window').find('.product_div_one').css({'height':'505px'});
+								}
+							}else{
+								//aqui cuando el tipo de producto es kit
 								$('div.contenedor_grid_prod').css({'display':'block'});
 								$('#forma-product-window').find('.product_div_one').css({'height':'505px'});
 							}
 						}else{
-							//aqui cuando el tipo de producto es kit
-							$('div.contenedor_grid_prod').css({'display':'block'});
-							$('#forma-product-window').find('.product_div_one').css({'height':'505px'});
+							$('div.contenedor_grid_prod').css({'display':'none'});
+							$('#forma-product-window').find('.product_div_one').css({'height':'350px'});
 						}
-					}else{
-						$('div.contenedor_grid_prod').css({'display':'none'});
-						$('#forma-product-window').find('.product_div_one').css({'height':'350px'});
-					}
-					
-					var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getFamiliasByTipoProd.json';
-					$arreglo = {'tipo_prod':$select_prod_tipo.val(),
-									'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
-								};
-					
-					$.post(input_json,$arreglo,function(data){
-						$select_familia.children().remove();
-						familia_hmtl = '<option value="0">[--Seleccionar Familia--]</option>';
-						$.each(data['Familias'],function(entryIndex,fam){
-								familia_hmtl += '<option value="' + fam['id'] + '"  >' + fam['titulo'] + '</option>';
+						
+						
+						if(parseInt(valor_tipo)==4){
+							//Recargar select de unidades. Carga solo la unidad SERVICIO
+							$select_unidad.children().remove();
+							var unidads_hmtl = '<option value="0">[--Seleccionar Unidad--]</option>';
+							$.each(entry['Unidades'],function(entryIndex,uni){
+								if(/^SERVICIO*|SERVICIOS$/.test(uni['titulo'].toUpperCase())){
+									unidads_hmtl += '<option value="' + uni['id'] + '"  >' + uni['titulo'] + '</option>';
+								}
+							});
+							$select_unidad.append(unidads_hmtl);
+							
+							//Recargar presentaciones default. Carga solo la Presentacion SERVICIO
+							$select_pres_default.children().remove();
+							presentaciones_hmtl = '<option value="0" selected="yes">[--Presentaci&oacute;n--]</option>';
+							$.each(entry['Presentaciones'],function(entryIndex,pres){
+								if(/^SERVICIO*|SERVICIOS$/.test(pres['titulo'].toUpperCase())){
+									presentaciones_hmtl += '<option value="' + pres['id'] + '"  >' + pres['titulo'] + '</option>';
+								}
+							});
+							$select_pres_default.append(presentaciones_hmtl);
+						}else{
+							//recarga select de unidades para permitir seleccionar una nueva unidad
+							$select_unidad.children().remove();
+							var unidads_hmtl = '<option value="0">[--Seleccionar Unidad--]</option>';
+							$.each(entry['Unidades'],function(entryIndex,uni){
+								unidads_hmtl += '<option value="' + uni['id'] + '"  >' + uni['titulo'] + '</option>';
+							});
+							$select_unidad.append(unidads_hmtl);
+							
+							//Recarga select de presentacion default
+							$select_pres_default.children().remove();
+							presentaciones_hmtl = '<option value="0" selected="yes">[--Presentaci&oacute;n--]</option>';
+							$.each(entry['Presentaciones'],function(entryIndex,pres){
+								presentaciones_hmtl += '<option value="' + pres['id'] + '"  >' + pres['titulo'] + '</option>';
+							});
+							$select_pres_default.append(presentaciones_hmtl);
+						}
+						
+						var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getFamiliasByTipoProd.json';
+						$arreglo = {'tipo_prod':$select_prod_tipo.val(),
+										'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
+									};
+						
+						$.post(input_json,$arreglo,function(data){
+							$select_familia.children().remove();
+							familia_hmtl = '<option value="0">[--Seleccionar Familia--]</option>';
+							$.each(data['Familias'],function(entryIndex,fam){
+									familia_hmtl += '<option value="' + fam['id'] + '"  >' + fam['titulo'] + '</option>';
+							});
+							$select_familia.append(familia_hmtl);
 						});
-						$select_familia.append(familia_hmtl);
 					});
+						
+					
+					
+					
 				});
+				
+				
+				
+
                                 
                                 
 				$select_familia.change(function(){

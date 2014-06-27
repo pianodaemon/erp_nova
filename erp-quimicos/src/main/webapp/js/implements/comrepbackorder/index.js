@@ -58,14 +58,14 @@ $(function() {
 	//barra para el buscador 
 	$('#barra_buscador').hide();
 	
-	var $tabla_existencias = $('#lienzo_recalculable').find('#table_exis');
+	var $div_reporte= $('#lienzo_recalculable').find('#div_reporte');
 	var $select_opciones = $('#lienzo_recalculable').find('select[name=opciones]');
 	var $no_oc = $('#lienzo_recalculable').find('input[name=no_oc]');
 	var $codigo = $('#lienzo_recalculable').find('input[name=codigo]');
 	var $descripcion = $('#lienzo_recalculable').find('input[name=descripcion]');
 	var $proveedor = $('#lienzo_recalculable').find('input[name=proveedor]');
-	var $fecha_inicial = $('#lienzo_recalculable').find('input[name=busqueda_fecha_inicial]');
-	var $fecha_final = $('#lienzo_recalculable').find('input[name=busqueda_fecha_final]');
+	var $fecha_inicial = $('#lienzo_recalculable').find('input[name=fecha_inicial]');
+	var $fecha_final = $('#lienzo_recalculable').find('input[name=fecha_final]');
 	
 	var $genera_pdf = $('#lienzo_recalculable').find('#genera_reporte');
 	var $buscar = $('#lienzo_recalculable').find('#boton_buscador');
@@ -77,8 +77,137 @@ $(function() {
 	$select_opciones.append(almacen_hmtl);
 	
 	
+	$genera_pdf.hide();
 	
 	
+
+	//----------------------------------------------------------------
+	//valida la fecha seleccionada
+	function mayor(fecha, fecha2){
+		var xMes=fecha.substring(5, 7);
+		var xDia=fecha.substring(8, 10);
+		var xAnio=fecha.substring(0,4);
+		var yMes=fecha2.substring(5, 7);
+		var yDia=fecha2.substring(8, 10);
+		var yAnio=fecha2.substring(0,4);
+
+		if (xAnio > yAnio){
+			return(true);
+		}else{
+			if (xAnio == yAnio){
+				if (xMes > yMes){
+					return(true);
+				}
+				if (xMes == yMes){
+					if (xDia > yDia){
+						return(true);
+					}else{
+						return(false);
+					}
+				}else{
+					return(false);
+				}
+			}else{
+				return(false);
+			}
+		}
+	}
+	
+	//muestra la fecha actual
+	var mostrarFecha = function mostrarFecha(){
+		var ahora = new Date();
+		var anoActual = ahora.getFullYear();
+		var mesActual = ahora.getMonth();
+		mesActual = mesActual+1;
+		mesActual = (mesActual <= 9)?"0" + mesActual : mesActual;
+		var diaActual = ahora.getDate();
+		diaActual = (diaActual <= 9)?"0" + diaActual : diaActual;
+		var Fecha = anoActual + "-" + mesActual + "-" + diaActual;
+		return Fecha;
+	}
+
+	var fecha_actual = mostrarFecha();
+	$fecha_inicial.val(fecha_actual.split('-')[0]+"-"+fecha_actual.split('-')[1]+"-01");
+	$fecha_final.val(fecha_actual);
+	
+	
+	$fecha_inicial.click(function (s){
+		var a=$('div.datepicker');
+		a.css({'z-index':100});
+	});
+
+	$fecha_inicial.DatePicker({
+		format:'Y-m-d',
+		date: $fecha_inicial.val(),
+		current: $fecha_inicial.val(),
+		starts: 1,
+		position: 'bottom',
+		locale: {
+			days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
+			daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
+			daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
+			months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
+			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
+			weekMin: 'se'
+		},
+		onChange: function(formated, dates){
+			var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
+			$fecha_inicial.val(formated);
+			if (formated.match(patron) ){
+				var valida_fecha=mayor($fecha_inicial.val(),mostrarFecha());
+
+				if (valida_fecha==true){
+					jAlert("Fecha no valida",'! Atencion');
+					$fecha_inicial.val(mostrarFecha());
+				}else{
+					$fecha_inicial.DatePickerHide();
+				}
+			}
+		}
+	});
+
+	$fecha_final.click(function (s){
+		var a=$('div.datepicker');
+		a.css({'z-index':100});
+	});
+
+	$fecha_final.DatePicker({
+		format:'Y-m-d',
+		date: $fecha_final.val(),
+		current: $fecha_final.val(),
+		starts: 1,
+		position: 'bottom',
+		locale: {
+			days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
+			daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
+			daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
+			months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
+			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
+			weekMin: 'se'
+		},
+		onChange: function(formated, dates){
+			var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
+			$fecha_final.val(formated);
+			if (formated.match(patron) ){
+				var valida_fecha=mayor($fecha_final.val(),mostrarFecha());
+
+				if (valida_fecha==true){
+					jAlert("Fecha no valida",'! Atencion');
+					$fecha_final.val(mostrarFecha());
+				}else{
+					$fecha_final.DatePickerHide();
+				}
+			}
+		}
+	});
+	
+	
+	
+	
+	
+	
+	
+	/*
 	$genera_pdf.click(function(event){
 		event.preventDefault();
 		
@@ -106,163 +235,104 @@ $(function() {
 		
 		var busqueda = $select_opciones.val() +"___"+ $select_almacen.val() +"___"+ codigo +"___"+ descripcion + "___"+lote_interno;
 		
-		var input_json = config.getUrlForGetAndPost() + '/getReporteExistencias/'+busqueda+'/'+config.getUi()+'/out.json';
+		var input_json = config.getUrlForGetAndPost() + '/getReportedatastencias/'+busqueda+'/'+config.getUi()+'/out.json';
 		if(parseInt($select_almacen.val()) > 0){
 			window.location.href=input_json;
 		}else{
 			alert("Selecciona un Almacen.");
 		}
 	});
+	*/
 	
 	
 	
 	
-	
-	var height2 = $('#cuerpo').css('height');
-	var alto = parseInt(height2)-240;
-	var pix_alto=alto+'px';
-	
-	
-	$('#table_exis').tableScroll({height:parseInt(pix_alto)});
-	
-	
+
 	$buscar.click(function(event){
-		var id_almacen = $select_almacen.val();
+		
 		var primero=0;
-		$tabla_existencias.find('tbody').children().remove();
-		var input_json = config.getUrlForGetAndPost()+'/getExistencias.json';
-		$arreglo = {'tipo':$select_opciones.val(), 
-					'almacen':id_almacen, 
-					'codigo':$codigo_producto.val(), 
+		
+		$div_reporte.children().remove();
+		
+		var input_json = config.getUrlForGetAndPost()+'/getBackorder.json';
+		$arreglo = {
+					'tipo':$select_opciones.val(), 
+					'oc':$no_oc.val(), 
+					'codigo':$codigo.val(), 
 					'descripcion':$descripcion.val(),
-					'lote_interno':$lote_interno.val(),
+					'proveedor':$proveedor.val(),
+					'finicial':$fecha_inicial.val(),
+					'ffinal':$fecha_final.val(),
 					'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
-					};
-		if(parseInt($select_almacen.val()) > 0){
+				};
+				
+		if($fecha_inicial.val()!='' && $fecha_final.val()!=''){
+			
 			$.post(input_json,$arreglo,function(entry){
-				$.each(entry['Existencias'],function(entryIndex,exi){
-					var trCount = $("tr", $tabla_existencias.find('tbody')).size();
+				
+				if(parseInt(entry['Datos'].length) > 0 ){
 					
-					var tr_first='';
-					if(primero==0){
-						tr_first='class="first"';
-						primero=1;
-					}else{
-						tr_first='';
-					}
+					var height2 = $('#cuerpo').css('height');
+					var alto = parseInt(height2)-270;
+					var pix_alto=alto+'px';
 					
-					var tr = '<tr '+tr_first+'>';
-						tr += '<td width="20">';
-							tr += '<input type="hidden" name="id_lote" class="idlote'+trCount+'" value="'+exi['id_lote']+'">';
-							tr += '<input type="hidden" name="selec" class="selec'+trCount+'" value="0">';
-							tr += '<input type="checkbox" name="micheck" class="micheck'+trCount+'" value="true">';
-						tr += '</td>';
-						tr += '<td width="60">';
-							tr += '<input type="text" name="cant" class="cant'+trCount+'" value="" readOnly="true" style="width:58px; background:#dddddd; height:15px;">';
-							tr += '<input type="hidden" name="tipo_prod" value="'+exi['id_tipo_producto']+'">';
-						tr += '</td>';
-                                                tr += '<td width="60">';
-							tr += '<input type="text" name="cantProd" class="cantProd'+trCount+'" value="" readOnly="true" style="width:58px; background:#dddddd; height:15px;">';
-						tr += '</td>';
-						tr += '<td width="60">';
-							tr += '<select name="select_medida" style="width:58px;">';
-							//aqui se carga el select con los tipos de iva
-							$.each(entry['MedidasEtiqueta'],function(entryIndex,med){
-								if(med['id'] == exi['id_medida_etiqueta']){
-									tr += '<option value="' + med['id'] + '"  selected="yes">' + med['titulo'] + '</option>';
-								}else{
-									tr += '<option value="' + med['id'] + '"  >' + med['titulo'] + '</option>';
-								}
-							});
-							tr += '</select>';
-						tr += '</td>';
-						tr += '<td width="100">'+exi['lote_int']+'</td>';
-						tr += '<td width="100">'+exi['lote_prov']+'</td>';
-						tr += '<td width="100">'+exi['codigo']+'</td>';
-						tr += '<td width="350">'+exi['descripcion']+'</td>';
-						tr += '<td width="100">'+exi['unidad_medida']+'</td>';
-						tr += '<td width="100" align="right">'+$(this).agregar_comas(parseFloat(exi['existencia']).toFixed(4))+'</td>';
-						tr += '<td width="100">'+exi['fecha_entrada']+'</td>';
-					tr += '</tr>';
-					$tabla_existencias.find('tbody').append(tr);
-					
-					
-					//aplicar click a los campso check del grid
-					$tabla_existencias.find('tbody').find('input.micheck'+trCount).click(function(event){
-						if( this.checked ){
-							//Para la cantidad de etiquertas
-							$(this).parent().find('input[name=selec]').val("1");
-							$(this).parent().parent().find('input[name=cant]').css({'background' : '#ffffff'});
-							$(this).parent().parent().find('input[name=cant]').attr("readonly", false);//habilitar campo
-							$(this).parent().parent().find('input[name=cant]').val("1");
-								
-							//Para la cantidad de productos
-							$(this).parent().parent().find('input[name=cantProd]').css({'background' : '#ffffff'});
-							$(this).parent().parent().find('input[name=cantProd]').attr("readonly", false);//habilitar campo
-							$(this).parent().parent().find('input[name=cantProd]').val("1");
-						}else{
-							//Para la cantidad de etiquetas
-							$(this).parent().find('input[name=selec]').val("0");
-							$(this).parent().parent().find('input[name=cant]').val("");
-							$(this).parent().parent().find('input[name=cant]').css({'background' : '#dddddd'});
-							$(this).parent().parent().find('input[name=cant]').attr("readonly", true);//deshabilitar campo
-							
-							//Para la cantidad de producto
-							$(this).parent().parent().find('input[name=cantProd]').val("");
-							$(this).parent().parent().find('input[name=cantProd]').css({'background' : '#dddddd'});
-							$(this).parent().parent().find('input[name=cantProd]').attr("readonly", true);//deshabilitar campo
-						}
+					var html_reporte = '<table class="table_main" width="1430">';
+					html_reporte +='<thead><tr>';
+					html_reporte +='<td class="grid_head" width="90">Orde Compra</td>';
+					html_reporte +='<td class="grid_head" width="90">Fecha</td>';
+					html_reporte +='<td class="grid_head" width="320">Proveedor</td>';
+					html_reporte +='<td class="grid_head" width="120">Codigo Producto</td>';
+					html_reporte +='<td class="grid_head" width="300">Descripcion</td>';
+					html_reporte +='<td class="grid_head" width="100">Unidad</td>';
+					html_reporte +='<td class="grid_head" width="100">Cant. Venta</td>';
+					html_reporte +='<td class="grid_head" width="100">Cant. Recibida</td>';
+					html_reporte +='<td class="grid_head" width="105">Cant. Pendiente</td>';
+					html_reporte +='<td class="grid_head" width="105">Estado</td>';
+					html_reporte +='</tr></thead>';
+					html_reporte +='<tbody>';
+					html_reporte +='<tr>';
+					html_reporte +='<td colspan="10">';
+					html_reporte +='<div id="reporte" style="background-color:#ffffff; overflow:scroll; overflow-x:hidden; overflow-y:auto; height:'+pix_alto+'; width=1430px; align=top; border:1px solid #ccc;">';
+					html_reporte +='<table class="table_reporte" width="1415">';
+					$.each(entry['Datos'],function(entryIndex,data){
+						html_reporte +='<tr>';
+						html_reporte +='<td class="grid_datos" width="90" align="left">'+data["no_oc"]+'</td>';
+						html_reporte +='<td class="grid_datos" width="90" align="left">'+data["fecha_oc"]+'</td>';
+						html_reporte +='<td class="grid_datos" width="320" align="left">'+data["proveedor"]+'</td>';  
+						html_reporte +='<td class="grid_datos" width="120" align="left">'+data["codigo"]+'</td>';
+						html_reporte +='<td class="grid_datos" width="300" align="left">'+data["descripcion"]+'</td>';
+						html_reporte +='<td class="grid_datos" width="100" align="left">'+data["unidad"]+'</td>';
+						html_reporte +='<td class="grid_datos" width="100" align="right">'+$(this).agregar_comas(parseFloat(data["cantidad"]).toFixed(2))+'</td>';
+						html_reporte +='<td class="grid_datos" width="100" align="right">'+$(this).agregar_comas(parseFloat(data["cant_rec"]).toFixed(2))+'</td>';
+						html_reporte +='<td class="grid_datos" width="105" align="right">'+$(this).agregar_comas(parseFloat(data["cant_pen"]).toFixed(2))+'</td>';
+						html_reporte +='<td class="grid_datos" width="90" align="left">'+data["pstatus"]+'</td>';
+						html_reporte +='</tr>';
 					});
+					html_reporte +='</table>';
+					html_reporte +='</div>';
+					html_reporte +='</td>';
+					html_reporte +='</tr>';
+					html_reporte +='</tbody>';
+					html_reporte += '</table>';
 					
+					$div_reporte.append(html_reporte);
 					
-					$tabla_existencias.find('tbody').find('input.cant'+trCount).keypress(function(e){
-						// Permitir  numeros, borrar, suprimir, TAB, puntos, comas
-						if (e.which == 8 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
-							return true;
-						}else {
-							return false;
-						}
+					$('#div_reporte').css('height:'+pix_alto+'px');
+                                
+				}else{
+					jAlert('No hay datos para mostrar.', 'Atencion!', function(r) { 
+						$no_oc.focus(); 
 					});
-					
-					$tabla_existencias.find('tbody').find('input.cantProd'+trCount).keypress(function(e){
-						// Permitir  numeros, borrar, suprimir, TAB, puntos, comas
-						if (e.which == 8 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
-							return true;
-						}else {
-							return false;
-						}
-					});
-					
-					//pone uno al perder el enfoque, cuando no se ingresa un valor o cuando el valor es igual a cero, si hay un valor mayor que cero no hace nada
-					$tabla_existencias.find('tbody').find('input.cantProd'+trCount).blur(function(e){
-						if(parseFloat($(this).val())==0 || $(this).val()==""){
-							if($(this).parent().parent().find('input[name=selec]').val() == '1'){
-								$(this).val(1);
-							}
-						}
-					});
-                                        
-					//pone uno al perder el enfoque, cuando no se ingresa un valor o cuando el valor es igual a cero, si hay un valor mayor que cero no hace nada
-					$tabla_existencias.find('tbody').find('input.cant'+trCount).blur(function(e){
-						if(parseFloat($(this).val())==0 || $(this).val()==""){
-							if($(this).parent().parent().find('input[name=selec]').val() == '1'){
-								$(this).val(1);
-							}
-						}
-					});
-					
-					
-					
-				});
+				}
 				
 				var height2 = $('#cuerpo').css('height');
 				var alto = parseInt(height2)-240;
 				var pix_alto=alto+'px';
 				
-				$('#table_exis').tableScroll({height:parseInt(pix_alto)});
+				$('#table_datas').tableScroll({height:parseInt(pix_alto)});
 			});//termina llamada json
 		}else{
-			jAlert("Selecciona un Almacen.",'! Atencion');
+			jAlert("Es necesario definir las dos fechas para el periodo de busqueda.",'! Atencion');
 		}
 	});
 	

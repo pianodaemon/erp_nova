@@ -1009,7 +1009,7 @@ $(function() {
     $(this).aplicarEventoKeypressEjecutaTrigger($select_tipo_reporte, $Buscar_reporte_produccion);
     $(this).aplicarEventoKeypressEjecutaTrigger($select_tipo_equipo, $Buscar_reporte_produccion);
     $(this).aplicarEventoKeypressEjecutaTrigger($select_Operario, $Buscar_reporte_produccion);
-
+	
     $select_tipo_reporte.focus();
 
 });

@@ -6,7 +6,7 @@
         #include("${layoutheader}")
 		
         <!--  css for this catalogo -->
-        <!--  <link rel="stylesheet" href="../../css/modalbox/comrepbackorder/formacomrepbackorder.css" type="text/css" />-->
+        <link rel="stylesheet" href="../../css/modalbox/comrepbackorder/repbackorder.css" type="text/css" />
 		
         <!--  js for this catalogo -->
         <script type="text/javascript" src="../../js/components/jquery-form/jquery-form.js"></script>
@@ -50,7 +50,7 @@
 							<td width="200">Proveedor</td>
 							
 							<td width="20">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-							<td colspan="5">Fecha&nbsp;de&nbsp;creaci&oacute;n</td>
+							<td colspan="5">Fecha&nbsp;de&nbsp;la&nbsp;Orden&nbsp;de&nbsp;Compra</td>
 							
 							<td width="30"></td>
 							<td width="50"></td>
@@ -72,10 +72,10 @@
 							
 							<td width="20">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 							<td width="25"><IMG SRC="../../img/catalogo/calendario.png" ALIGN="top"></td>
-							<td width="90"><input type="text" name="busqueda_fecha_inicial" style="width:80px;" readOnly="true"></td>
+							<td width="90"><input type="text" name="fecha_inicial" style="width:80px;" readOnly="true"></td>
 							<td width="10"></td>
 							<td width="25"><IMG SRC="../../img/catalogo/calendario.png" ALIGN="top"></td>
-							<td width="90"><input type="text" name="busqueda_fecha_final" style="width:80px;" readOnly="true"></td>
+							<td width="90"><input type="text" name="fecha_final" style="width:80px;" readOnly="true"></td>
 							
 							<td width="30">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 							<td width="50"><INPUT TYPE="button" id="boton_buscador" value="Buscar" style="width:50px;"></td>
@@ -92,7 +92,7 @@
             <tr>
                 <td>&nbsp;&nbsp;</td>
                 <td>
-					<div id="div_reporte" style="overflow:scroll; overflow-x:auto; overflow-y:auto; width:1300px; align=top; background-color:#dddddd;"></div>
+					<div id="div_reporte" style="overflow:scroll; overflow-x:auto; overflow-y:auto; width:1430px; align=top; background-color:#FFFFFF;"></div>
                 </td>
             </tr>
 		</table>
