@@ -75,4 +75,7 @@ public interface ComInterfaceDao {
     
     //Reporte de Dias de entrega OC
     public ArrayList<HashMap<String, String>> getOC_DiasEntrega(Integer tipo_reporte,String proveedor, String f_inicial,String f_final,Integer id_empresa);
+    
+    //Metodo para el reporte de BackOrder
+    public ArrayList<HashMap<String, String>> getCom_DatosRepBackOrder(Integer tipo, String oc, String codigo_producto, String descripcion, String proveedor, String finicial, String ffinal, Integer id_empresa);
 }

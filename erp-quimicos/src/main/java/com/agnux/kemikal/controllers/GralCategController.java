@@ -99,37 +99,42 @@ public class GralCategController {
     @RequestParam(value="iu", required=true) String id_user_cod,
     Model model
     ){
-    log.log(Level.INFO, "Ejecutando getCategJson de {0}", GralCategController.class.getName());
+        log.log(Level.INFO, "Ejecutando getCategJson de {0}", GralCategController.class.getName());
+
+
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        ArrayList<HashMap<String, String>> datosCateg = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> puestos = new ArrayList<HashMap<String, String>>();
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        
+        if( id != 0 ){
+            datosCateg = this.getGralDao().getCateg_Datos(id);
+        }
+        
+        puestos = this.getGralDao().getPuestos(id_empresa);
+        //datos categs tos es lo que me trajo de la consulta y los pone en el json
+        jsonretorno.put("Categ", datosCateg);
+        jsonretorno.put("Puestos", puestos);
+        return jsonretorno;
+    }
     
     
-    HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
-    HashMap<String, String> userDat = new HashMap<String, String>();
-    ArrayList<HashMap<String, String>> datosCateg = new ArrayList<HashMap<String, String>>();
-    ArrayList<HashMap<String, String>> puestos = new ArrayList<HashMap<String, String>>();
-    //decodificar id de usuario
-    Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
-    userDat = this.getHomeDao().getUserById(id_usuario);
-    // Integer id = Integer.parseInt(userDat.get("id"));
-    if( id != 0 ){
-    datosCateg = this.getGralDao().getCateg_Datos(id);
-    }
-    puestos = this.getGralDao().getPuestos();
-    //datos categs tos es lo que me trajo de la consulta y los pone en el json
-    jsonretorno.put("Categ", datosCateg);
-    jsonretorno.put("Puestos", puestos);
-    return jsonretorno;
-    }
     @RequestMapping(value="/getAllCategs.json", method = RequestMethod.POST)
-    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getAllCategsJson(
-    @RequestParam(value="orderby", required=true) String orderby,
-    @RequestParam(value="desc", required=true) String desc,
-    @RequestParam(value="items_por_pag", required=true) int items_por_pag,
-    @RequestParam(value="pag_start", required=true) int pag_start,
-    @RequestParam(value="display_pag", required=true) String display_pag,
-    @RequestParam(value="input_json", required=true) String input_json,
-    @RequestParam(value="cadena_busqueda", required=true) String cadena_busqueda,
-    @RequestParam(value="iu", required=true) String id_user_cod,
-    Model modcel) {
+        public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getAllCategsJson(
+        @RequestParam(value="orderby", required=true) String orderby,
+        @RequestParam(value="desc", required=true) String desc,
+        @RequestParam(value="items_por_pag", required=true) int items_por_pag,
+        @RequestParam(value="pag_start", required=true) int pag_start,
+        @RequestParam(value="display_pag", required=true) String display_pag,
+        @RequestParam(value="input_json", required=true) String input_json,
+        @RequestParam(value="cadena_busqueda", required=true) String cadena_busqueda,
+        @RequestParam(value="iu", required=true) String id_user_cod,
+        Model modcel
+    ) {
         
         HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
         HashMap<String,String> has_busqueda = StringHelper.convert2hash(StringHelper.ascii2string(cadena_busqueda));
@@ -238,8 +243,11 @@ public class GralCategController {
             ) {        
             HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
             ArrayList<HashMap<String, String>> puestos = new ArrayList<HashMap<String, String>>();
-            Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));        
-            puestos = this.getGralDao().getPuestos();
+            HashMap<String, String> userDat = new HashMap<String, String>();
+            Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
+            userDat = this.getHomeDao().getUserById(id_usuario);
+            Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+            puestos = this.getGralDao().getPuestos(id_empresa);
             jsonretorno.put("Puestos", puestos);       
             return jsonretorno;         
     }
@@ -254,17 +262,21 @@ public class GralCategController {
     @RequestMapping(method = RequestMethod.POST, value="/getCateg_Datos.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getCateg_DatosJson(
         @RequestParam(value="id", required=true) Integer id,
+        @RequestParam(value="iu", required=true) String id_user_cod,
         Model model ) {
-
             log.log(Level.INFO, "Ejecutando getCateg_Datos de {0}", GralCategController.class.getName());
             HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
             ArrayList<HashMap<String, String>> categ = new ArrayList<HashMap<String, String>>();
             ArrayList<HashMap<String, String>> puestos = new ArrayList<HashMap<String, String>>();
-
+            HashMap<String, String> userDat = new HashMap<String, String>();
+            Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
+            userDat = this.getHomeDao().getUserById(id_usuario);
+            Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+            
             if( id != 0  ){
                 categ = this.getGralDao().getCateg_Datos(id);
             }
-            puestos = this.getGralDao().getPuestos();
+            puestos = this.getGralDao().getPuestos(id_empresa);
             jsonretorno.put("Puestos", puestos);
             jsonretorno.put("Categ", categ);
 

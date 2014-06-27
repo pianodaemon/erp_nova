@@ -133,9 +133,12 @@ public class SendEmailWithFileHelper {
             
             //props.setProperty("mail.smtp.ssl.trust", this.getIpServidor());
             
-            
-            props.put("mail.smtp.ssl.enable", false);
-            props.put("mail.smtp.starttls.enable", false);
+            if(this.getIpServidor().toLowerCase().equals("smtp.gmail.com")){
+                props.setProperty("mail.smtp.starttls.enable", "true");
+            }else{
+                props.put("mail.smtp.ssl.enable", false);
+                props.put("mail.smtp.starttls.enable", false);
+            }
             
 
             

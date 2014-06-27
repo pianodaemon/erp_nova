@@ -75,8 +75,8 @@ public class ProInstrumentosMedicionController {
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
         
         //infoConstruccionTabla.put("id", "Acciones:90");
-        infoConstruccionTabla.put("id", "Acciones:70");
-        infoConstruccionTabla.put("titulo", "Titulo:100");
+        infoConstruccionTabla.put("id", "Acciones:90");
+        infoConstruccionTabla.put("titulo", "Titulo:400");
         
         
         ModelAndView x = new ModelAndView("proinstrumentosmedicion/startup", "title", "Instrumentos de Medici&oacute;n");

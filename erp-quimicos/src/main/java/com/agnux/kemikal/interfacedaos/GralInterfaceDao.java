@@ -183,7 +183,7 @@ public interface GralInterfaceDao {
     //esto es para cat categoras
     public ArrayList<HashMap<String, String>> getCateg_Datos(Integer id);
     public ArrayList<HashMap<String, Object>> getCateg_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
-    public ArrayList<HashMap<String, String>> getPuestos(); 
+    public ArrayList<HashMap<String, String>> getPuestos(Integer id_empresa); 
     
     //catalogo de inventario gral departamentos
     public ArrayList<HashMap<String, Object>> getGralDeptos_PaginaGrid(String data_string, int offset, int pageSize, String orderBy , String asc);

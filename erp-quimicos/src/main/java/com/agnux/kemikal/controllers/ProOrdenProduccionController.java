@@ -486,7 +486,7 @@ public class ProOrdenProduccionController {
             command_selected1 = "edit";
         }
         
-        
+        //                                                                                             3                                                        3                 lotes
         String data_string = app_selected+"___"+command_selected1+"___"+id_usuario+"___"+id+"___"+tipoorden+"___"+fecha_elavorar+"___"+observaciones+"___"+command_selected+"___"+accion+"___"+id_formula;
         
         System.err.println("data_string: "+data_string);

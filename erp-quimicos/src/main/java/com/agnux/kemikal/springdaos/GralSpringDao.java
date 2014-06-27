@@ -1285,9 +1285,9 @@ public class GralSpringDao implements GralInterfaceDao{
     }
 
     @Override
-    public ArrayList<HashMap<String, Object>> getReligion(Integer id_religion) {
-        String sql_to_query = "select id,titulo from gral_religions order by titulo";
-
+    public ArrayList<HashMap<String, Object>> getReligion(Integer id_empresa) {
+        String sql_to_query = "select id,titulo from gral_religions where gral_emp_id="+ id_empresa +" order by titulo";
+        
         ArrayList<HashMap<String, Object>> religion = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -1936,13 +1936,10 @@ public class GralSpringDao implements GralInterfaceDao{
 
 
 
-//ESTO VA PARA EL MISMO DE CATEGORIAS YA QUE SE EXTRAEN LOS PUESTOS PARA UN SELECT
+    //ESTO VA PARA EL MISMO DE CATEGORIAS YA QUE SE EXTRAEN LOS PUESTOS PARA UN SELECT
     @Override
-    public ArrayList<HashMap<String, String>> getPuestos() {
-        //String sql_to_query = "SELECT DISTINCT cve_pais ,pais_ent FROM municipios;";
-        String sql_to_query = "SELECT id, "
-        + " titulo as puesto "
-        + " from gral_puestos ;";
+    public ArrayList<HashMap<String, String>> getPuestos(Integer id_empresa) {
+        String sql_to_query = "SELECT id, titulo as puesto from gral_puestos where gral_emp_id="+id_empresa+";";
         ArrayList<HashMap<String, String>> puesto = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
         sql_to_query,
             new Object[]{}, new RowMapper(){

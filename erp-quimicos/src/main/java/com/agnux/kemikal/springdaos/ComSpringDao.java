@@ -1698,4 +1698,101 @@ public class ComSpringDao  implements ComInterfaceDao {
         mapDatos.put("formato_oc", String.valueOf(map.get("formato_oc")));
         return mapDatos;
     }
+    
+    
+    
+    //Metodos para Reporte de BackOrder
+    @Override
+    public ArrayList<HashMap<String, String>> getCom_DatosRepBackOrder(Integer tipo, String oc, String codigo_producto, String descripcion, String proveedor, String finicial, String ffinal, Integer id_empresa) {
+        String cadena_where="";
+        String order_by="";
+        
+        //Orden de Compra
+        if(tipo==1){
+            order_by += " ORDER BY com_orden_compra.id, cxp_prov.razon_social ";
+        }
+        
+        //Producto
+        if(tipo==2){
+            order_by += " ORDER BY inv_prod.descripcion, com_orden_compra.id ";
+        }
+        
+        //Proveedor
+        if(tipo==3){
+            order_by += " ORDER BY cxp_prov.razon_social, com_orden_compra.id ";
+        }
+        
+        if(!oc.equals("")){
+            cadena_where += " AND com_orden_compra.folio ILIKE '%"+ oc +"%'";
+        }
+        
+        if(!codigo_producto.equals("")){
+            cadena_where += " AND inv_prod.sku ILIKE '%"+ codigo_producto +"%'";
+        }
+        
+        if(!descripcion.equals("")){
+            cadena_where += " AND inv_prod.descripcion ILIKE '%"+ descripcion +"%'";
+        }
+        
+        if(!proveedor.equals("")){
+            cadena_where += " AND cxp_prov.razon_social ILIKE '%"+ proveedor +"%'";
+        }
+        
+        
+        String sql_query = ""
+        + "SELECT "
+            + "com_orden_compra.folio AS no_oc,"
+            + "to_char(com_orden_compra.momento_creacion,'dd/mm/yyyy') AS fecha_oc,"
+            + "cxp_prov.razon_social AS proveedor,"
+            + "inv_prod.sku AS codigo,"
+            + "inv_prod.descripcion,"
+            + "(CASE WHEN inv_prod_unidades.titulo IS NULL THEN '' ELSE inv_prod_unidades.titulo END) as unidad,"
+            + "(CASE WHEN inv_prod_presentaciones.titulo IS NULL THEN '' ELSE inv_prod_presentaciones.titulo END) as presentacion,"
+            + "com_orden_compra_detalle.cantidad,"
+            + "com_orden_compra_detalle.precio_unitario,"
+            + "(com_orden_compra_detalle.cantidad * com_orden_compra_detalle.precio_unitario) AS importe, "
+            + "com_orden_compra_detalle.cant_surtido AS cant_rec,"
+            + "(CASE WHEN (com_orden_compra_detalle.cantidad::double precision - com_orden_compra_detalle.cant_surtido)<=0.0001 THEN 0 ELSE (com_orden_compra_detalle.cantidad::double precision - com_orden_compra_detalle.cant_surtido) END) AS cant_pen, "
+            + "(CASE WHEN com_orden_compra_detalle.estatus=1 THEN 'PARCIAL' WHEN com_orden_compra_detalle.estatus=2 THEN 'COMPLETO' WHEN com_orden_compra_detalle.estatus=3 THEN 'CANCELADO' ELSE '' END) AS pstatus "
+        + "FROM com_orden_compra "
+        + "JOIN com_orden_compra_detalle ON com_orden_compra_detalle.com_orden_compra_id=com_orden_compra.id "
+        + "LEFT JOIN inv_prod on inv_prod.id = com_orden_compra_detalle.inv_prod_id  "
+        + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id  "
+        + "LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = com_orden_compra_detalle.presentacion_id  "
+        + "JOIN cxp_prov ON cxp_prov.id=com_orden_compra.proveedor_id "
+        + "WHERE com_orden_compra.gral_emp_id=? "
+        + "AND com_orden_compra_detalle.surtir=TRUE "
+        + "AND com_orden_compra_detalle.estatus IN (0,1) "
+        + "AND (to_char(com_orden_compra.momento_creacion,'yyyymmdd') BETWEEN  to_char('"+finicial+"'::timestamp with time zone,'yyyymmdd') AND to_char('"+ffinal+"'::timestamp with time zone,'yyyymmdd')) "
+        + ""+cadena_where+" "
+        + ""+order_by+";";
+        
+        //System.out.println("sql_query: "+sql_query);
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_query,  
+            new Object[]{new Integer (id_empresa)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("no_oc",rs.getString("no_oc"));
+                    row.put("fecha_oc",rs.getString("fecha_oc"));
+                    row.put("proveedor",rs.getString("proveedor"));
+                    row.put("codigo",rs.getString("codigo"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("unidad",rs.getString("unidad"));
+                    row.put("presentacion",rs.getString("presentacion"));
+                    row.put("cantidad",StringHelper.roundDouble(rs.getDouble("cantidad"), 2));
+                    row.put("cant_rec",StringHelper.roundDouble(rs.getDouble("cant_rec"), 2));
+                    row.put("cant_pen",StringHelper.roundDouble(rs.getDouble("cant_pen"), 2));
+                    row.put("precio_unitario",StringHelper.roundDouble(rs.getDouble("precio_unitario"), 4));
+                    row.put("importe",StringHelper.roundDouble(rs.getDouble("importe"), 4));
+                    row.put("pstatus",rs.getString("pstatus"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
 }

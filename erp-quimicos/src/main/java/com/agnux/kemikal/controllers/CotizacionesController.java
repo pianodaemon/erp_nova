@@ -264,6 +264,7 @@ public class CotizacionesController {
         HashMap<String, String> extra = new HashMap<String, String>();
         HashMap<String, String> tc = new HashMap<String, String>();
         ArrayList<HashMap<String, String>> tipoCambioActual = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> parametros = new HashMap<String, String>();
         
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
@@ -272,6 +273,9 @@ public class CotizacionesController {
         Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
         String dirImgProd="";
         
+        //Aqui se obtienen los parametros de la facturacion, nos intersa saber si se debe permitir cambiar_unidad_medida
+        parametros = this.getPocDao().getPocPedido_Parametros(id_empresa, id_sucursal);
+        extra.put("cambioUM", parametros.get("cambiar_unidad_medida"));
         extra.put("mod_crm", userDat.get("incluye_crm"));
         arrayExtra.add(0,extra);
         
@@ -285,6 +289,7 @@ public class CotizacionesController {
             datosGrid = this.getPocDao().getCotizacion_DatosGrid(Integer.parseInt(id_cotizacion));
         }
         
+        
         valorIva= this.getPocDao().getValoriva(id_sucursal);
         monedas = this.getPocDao().getMonedas();
         tc.put("tipo_cambio", StringHelper.roundDouble(this.getPocDao().getTipoCambioActual(), 4));
@@ -292,6 +297,10 @@ public class CotizacionesController {
         
         agentes = this.getPocDao().getAgentes(id_empresa, id_sucursal);
         incoterms = this.getPocDao().getCotizacion_Incoterms(id_empresa, Integer.parseInt(id_cotizacion));
+        
+        if(parametros.get("cambiar_unidad_medida").toLowerCase().equals("true")){
+            jsonretorno.put("UM", this.getPocDao().getUnidadesMedida());
+        }
         
         jsonretorno.put("datosCotizacion", datosCotizacion);
         jsonretorno.put("DatosCP", DatosCliPros);
@@ -546,6 +555,7 @@ public class CotizacionesController {
             @RequestParam(value="iddetalle", required=true) String[] iddetalle,
             @RequestParam(value="eliminado", required=true) String[] eliminado,
             @RequestParam(value="idproducto", required=true) String[] idproducto,
+            @RequestParam(value="select_umedida", required=false) String[] select_umedida,
             @RequestParam(value="id_presentacion", required=true) String[] id_presentacion,
             @RequestParam(value="cantidad", required=true) String[] cantidad,
             @RequestParam(value="precio", required=true) String[] precio,
@@ -569,24 +579,16 @@ public class CotizacionesController {
             String actualizo = "0";
             
             command_selected=select_accion;
-            /*
-            if( identificador==0 ){
-                command_selected = "new";
-            }else{
-                command_selected = "edit";
-            }
-            */
             
             for(int i=0; i<eliminado.length; i++) { 
+                select_umedida[i] = StringHelper.verificarSelect(select_umedida[i]);
                 //Imprimir el contenido de cada celda 
-                arreglo[i]= "'"+eliminado[i] +"___" + iddetalle[i] +"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + cantidad[i] +"___" + StringHelper.removerComas(precio[i]) +"___" + monedagrid[i]+"___"+notr[i]+"___"+id_imp_prod[i]+"___"+valor_imp[i]+"'";
+                arreglo[i]= "'"+eliminado[i] +"___" + iddetalle[i] +"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + cantidad[i] +"___" + StringHelper.removerComas(precio[i]) +"___" + monedagrid[i]+"___"+notr[i]+"___"+id_imp_prod[i]+"___"+valor_imp[i]+"___"+select_umedida[i]+"'";
                 //System.out.println("arreglo["+i+"] = "+arreglo[i]);
             }
             
-            //serializar el arreglo
+            //Serializar el arreglo
             String extra_data_array = StringUtils.join(arreglo, ",");
-            
-            //System.out.println("tamaño: "+select_incoterms.length);
             
             //System.out.println("select_incoterms: "+select_incoterms);
             String incoterms="";
@@ -607,22 +609,7 @@ public class CotizacionesController {
             check_descripcion_larga = StringHelper.verificarCheckBox(check_descripcion_larga);
             check_incluye_iva = StringHelper.verificarCheckBox(check_incluye_iva);
             
-            String data_string = 
-                    app_selected + "___"+ 
-                    command_selected + "___"+ 
-                    id_usuario + "___"+ 
-                    identificador + "___"+ 
-                    select_tipo_cotizacion + "___"+ 
-                    id_cliente + "___"+ 
-                    check_descripcion_larga + "___"+ 
-                    observaciones.toUpperCase() + "___"+ 
-                    tc+"___"+
-                    moneda_id+"___"+
-                    fecha+"___"+
-                    select_agente+"___"+
-                    vigencia+"___"+
-                    check_incluye_iva+"___"+
-                    incoterms;
+            String data_string = app_selected + "___"+ command_selected + "___"+ id_usuario + "___"+ identificador + "___"+ select_tipo_cotizacion + "___"+ id_cliente + "___"+ check_descripcion_larga + "___"+ observaciones.toUpperCase() + "___"+ tc+"___"+moneda_id+"___"+fecha+"___"+select_agente+"___"+vigencia+"___"+check_incluye_iva+"___"+incoterms;
             
             succes = this.getPocDao().selectFunctionValidateAaplicativo(data_string, app_selected, extra_data_array);
             

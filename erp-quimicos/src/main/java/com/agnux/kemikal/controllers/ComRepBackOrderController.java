@@ -91,7 +91,7 @@ public class ComRepBackOrderController {
             @ModelAttribute("user") UserSessionData user)
             throws ServletException, IOException {
         
-        log.log(Level.INFO, "Ejecutando starUp de {0}", RepInvExisController.class.getName());
+        log.log(Level.INFO, "Ejecutando starUp de {0}", ComRepBackOrderController.class.getName());
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
         
         
@@ -153,23 +153,25 @@ public class ComRepBackOrderController {
     
     
     
-    /*
+   
     //obtiene la existencia de un Almacen en especifico
-    @RequestMapping(method = RequestMethod.POST, value="/getExistencias.json")
-    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getExistenciasJson(
+    @RequestMapping(method = RequestMethod.POST, value="/getBackorder.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getBackorderJson(
             @RequestParam("tipo") Integer tipo,
-            @RequestParam("almacen") Integer almacen,
+            @RequestParam("oc") String oc,
             @RequestParam("codigo") String codigo_producto,
             @RequestParam("descripcion") String descripcion,
-            @RequestParam("lote_interno") String lote_interno,
+            @RequestParam("proveedor") String proveedor,
+            @RequestParam("finicial") String finicial,
+            @RequestParam("ffinal") String ffinal,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
-            ) {
+        ) {
+                                        
         
-        log.log(Level.INFO, "Ejecutando getExistenciasJson de {0}", RepInvExisController.class.getName());
+        log.log(Level.INFO, "Ejecutando getBackorder de {0}", ComRepBackOrderController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
-        ArrayList<HashMap<String, String>> existencias = new ArrayList<HashMap<String, String>>();
-        ArrayList<HashMap<String, String>> medidas_etiqueta = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> datos = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
         
         //decodificar id de usuario
@@ -178,16 +180,14 @@ public class ComRepBackOrderController {
         
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         
-        existencias = this.getComDao().getReporteExistenciasLotes_Datos(almacen, codigo_producto, descripcion, tipo, lote_interno);
-        medidas_etiqueta = this.getComDao().getReporteExistenciasLotes_MedidasEtiquetas();
+        datos = this.getComDao().getCom_DatosRepBackOrder(tipo, oc, codigo_producto, descripcion, proveedor, finicial, ffinal, id_empresa);
         
-        jsonretorno.put("Existencias", existencias);
-        jsonretorno.put("MedidasEtiqueta", medidas_etiqueta);
+        jsonretorno.put("Datos", datos);
         
         return jsonretorno;
     }
     
-    */
+   
     
     
 

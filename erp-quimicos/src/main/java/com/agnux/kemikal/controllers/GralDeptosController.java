@@ -70,8 +70,8 @@ public class GralDeptosController {
         
         log.log(Level.INFO, "Ejecutando starUp de {0}", GralDeptosController.class.getName());
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
-        infoConstruccionTabla.put("id", "Acciones:70");
-        infoConstruccionTabla.put("depto", "Departamento:100");
+        infoConstruccionTabla.put("id", "Acciones:90");
+        infoConstruccionTabla.put("depto", "Departamento:300");
         infoConstruccionTabla.put("costo", "Costo:100");
         
         ModelAndView x = new ModelAndView("graldeptos/startup", "title", "Cat&aacute;logo de Departamentos");

@@ -2794,6 +2794,7 @@ public class PocSpringDao implements PocInterfaceDao{
                     + "inv_prod.descripcion as producto, "
                     + "(CASE WHEN inv_prod.descripcion_larga IS NULL THEN '' ELSE inv_prod.descripcion_larga END) AS descripcion_larga, "
                     + "(CASE WHEN inv_prod.archivo_img='' THEN '' ELSE inv_prod.archivo_img END) AS archivo_img, "
+                    + "(CASE WHEN poc_cot_detalle.inv_prod_unidad_id=0 THEN inv_prod_unidades.id ELSE poc_cot_detalle.inv_prod_unidad_id END ) AS unidad_id, "
                     + "inv_prod_unidades.titulo as unidad, "
                     + "inv_prod_presentaciones.id as presentacion_id, "
                     + "inv_prod_presentaciones.titulo as presentacion, "
@@ -2806,7 +2807,7 @@ public class PocSpringDao implements PocInterfaceDao{
                     + "poc_cot_detalle.valor_imp "
                 + "FROM poc_cot_detalle  "
                 + "LEFT JOIN inv_prod on inv_prod.id = poc_cot_detalle.inv_prod_id  "
-                + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id  "
+                + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = poc_cot_detalle.inv_prod_unidad_id  "
                 + "LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = poc_cot_detalle.inv_presentacion_id  "
                 + "LEFT JOIN gral_mon on gral_mon.id = poc_cot_detalle.gral_mon_id  "
                 + "WHERE poc_cot_detalle.poc_cot_id= ? "
@@ -2826,6 +2827,7 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("producto",rs.getString("producto"));
                     row.put("descripcion_larga",rs.getString("descripcion_larga"));
                     row.put("archivo_img",rs.getString("archivo_img"));
+                    row.put("unidad_id",String.valueOf(rs.getInt("unidad_id")));
                     row.put("unidad",rs.getString("unidad"));
                     row.put("presentacion_id",rs.getString("presentacion_id"));
                     row.put("presentacion",rs.getString("presentacion"));

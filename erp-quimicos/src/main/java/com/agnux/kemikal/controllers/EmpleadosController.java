@@ -222,7 +222,7 @@ public class EmpleadosController {
         escolaridad=this.getGralDao().getEscolaridad(id_empresa);
         genero=this.getGralDao().getGeneroSexual();
         civil=this.getGralDao().getEdoCivil();
-        religion=this.getGralDao().getReligion(id_usuario);
+        religion=this.getGralDao().getReligion(id_empresa);
         tipo_sangre=this.getGralDao().getTiposangre(id_empresa);
         puesto=this.getGralDao().getPuesto(id_empresa);
         departamentos=this.getGralDao().getDepartamentos(id_empresa);
