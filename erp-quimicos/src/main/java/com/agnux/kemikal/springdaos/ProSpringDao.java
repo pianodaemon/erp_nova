@@ -4161,7 +4161,7 @@ public class ProSpringDao implements ProInterfaceDao{
                 + ") order by elemento;";
 
         //and tmp_salida.cantidad_tmp=tmp_det.cantidad // se quito, por que no mostraba los lotes
-        //System.out.println("Ejecutando query de: "+ sql_to_query);
+        System.out.println("ProElementos: "+ sql_to_query);
 
         ArrayList<HashMap<String, String>> hm_datos_entrada = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,

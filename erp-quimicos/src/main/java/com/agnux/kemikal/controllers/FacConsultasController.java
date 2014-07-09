@@ -9,7 +9,10 @@ import com.agnux.cfd.v2.BeanFromCfdXml;
 import com.agnux.cfd.v2.CryptoEngine;
 import com.agnux.cfdi.BeanCancelaCfdi;
 import com.agnux.cfdi.BeanFromCfdiXml;
-import com.agnux.common.helpers.*;
+import com.agnux.common.helpers.FileHelper;
+import com.agnux.common.helpers.SendEmailWithFileHelper;
+import com.agnux.common.helpers.StringHelper;
+import com.agnux.common.helpers.XmlHelper;
 import com.agnux.common.obj.DataPost;
 import com.agnux.common.obj.ResourceProject;
 import com.agnux.common.obj.UserSessionData;
@@ -28,24 +31,16 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * @author gpmarsan@gmail.com
@@ -363,7 +358,7 @@ public class FacConsultasController {
         response.setBufferSize(size);
         response.setContentLength(size);
         response.setContentType("text/plain");
-        response.setHeader("Content-Disposition","attachment; filename=\"" + file.getCanonicalPath() +"\"");
+        response.setHeader("Content-Disposition","attachment; filename=\"" + file.getName() +"\"");
         FileCopyUtils.copy(bis, response.getOutputStream());
         response.flushBuffer();
         
@@ -683,7 +678,7 @@ public class FacConsultasController {
         response.setBufferSize(size);
         response.setContentLength(size);
         response.setContentType("application/pdf");
-        response.setHeader("Content-Disposition","attachment; filename=\"" + file.getCanonicalPath() +"\"");
+        response.setHeader("Content-Disposition","attachment; filename=\"" + file.getName() +"\"");
         FileCopyUtils.copy(bis, response.getOutputStream());  	
         response.flushBuffer();
         
@@ -749,7 +744,7 @@ public class FacConsultasController {
             response.setBufferSize(size);
             response.setContentLength(size);
             response.setContentType("text/plain");
-            response.setHeader("Content-Disposition","attachment; filename=\"" + file.getCanonicalPath() +"\"");
+            response.setHeader("Content-Disposition","attachment; filename=\"" + file.getName() +"\"");
             FileCopyUtils.copy(bis, response.getOutputStream());  	
             response.flushBuffer();
             

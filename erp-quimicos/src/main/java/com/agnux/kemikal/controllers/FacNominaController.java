@@ -758,7 +758,7 @@ public class FacNominaController {
             response.setBufferSize(size);
             response.setContentLength(size);
             response.setContentType("text/plain");
-            response.setHeader("Content-Disposition","attachment; filename=\"" + file.getCanonicalPath() +"\"");
+            response.setHeader("Content-Disposition","attachment; filename=\"" + file.getName() +"\"");
             FileCopyUtils.copy(bis, response.getOutputStream());  	
             response.flushBuffer();
             
@@ -1262,7 +1262,7 @@ public class FacNominaController {
         response.setBufferSize(size);
         response.setContentLength(size);
         response.setContentType("application/pdf");
-        response.setHeader("Content-Disposition","attachment; filename=\"" + file.getCanonicalPath() +"\"");
+        response.setHeader("Content-Disposition","attachment; filename=\"" + file.getName() +"\"");
         FileCopyUtils.copy(bis, response.getOutputStream());  	
         response.flushBuffer();
         

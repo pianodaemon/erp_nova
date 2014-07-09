@@ -351,6 +351,52 @@ public class InvSpringDao implements InvInterfaceDao{
         
         
         
+        //Obtiene lista de productos para descargar formato, para la aplicacion de Carga de Inventario Fisico
+        if(id_app==178){
+            sql_to_query = "select * from inv_reporte('"+campos_data+"')as foo("
+                                        + "id_prod integer,"
+                                        +"codigo_producto character varying, "
+					+"descripcion_producto character varying, "
+					+"unidad character varying, "
+					+"tipo_producto character varying, "
+                                        +"no_almacen integer,"
+					+"almacen character varying, "
+					+"familia character varying, "
+					+"subfamilia character varying, "
+                                        +"linea character varying, "
+					+"existencia double precision "
+                                    +") ORDER BY codigo_producto ASC;";
+            
+ 
+            //System.out.println("InvReporte: "+sql_to_query);
+
+            ArrayList<HashMap<String, String>> hm178 = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+                sql_to_query,
+                new Object[]{}, new RowMapper(){
+                    @Override
+                    public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                        HashMap<String, String> row = new HashMap<String, String>();
+                        row.put("id_prod",String.valueOf(rs.getInt("id_prod")));
+                        row.put("codigo_producto",rs.getString("codigo_producto"));
+                        row.put("descripcion_producto",rs.getString("descripcion_producto"));
+                        row.put("unidad",rs.getString("unidad"));
+                        row.put("tipo_producto",rs.getString("tipo_producto"));
+                        row.put("no_almacen",String.valueOf(rs.getInt("no_almacen")));
+                        row.put("almacen",rs.getString("almacen"));
+                        row.put("familia",rs.getString("familia"));
+                        row.put("subfamilia",rs.getString("subfamilia"));
+                        row.put("linea",rs.getString("linea"));
+                        row.put("existencia",StringHelper.roundDouble(rs.getDouble("existencia"),2));
+                        
+                        return row;
+                    }
+                }
+            );
+            data=hm178;
+        }
+
+        
+        
         
         
         

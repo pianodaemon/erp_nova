@@ -853,6 +853,8 @@ public class ProOrdenProduccionController {
             ) {
         HashMap<String, String> userDat = new HashMap<String, String>();
         
+        System.err.println("detalle_elementos_prod_formula");
+        
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
         Integer app_selected = 93;//catalogo de preorden produccion

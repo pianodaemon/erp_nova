@@ -128,6 +128,11 @@ public class TimeHelper {
 		return fechasalida;
 	}
         
+	public static String getFechaActualYMDHMS(){
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+		String fechasalida = sdf.format(new Date());				
+		return fechasalida;
+	}
         
 	public static String convertirDateToString(Date fecha){
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");

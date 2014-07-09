@@ -55,7 +55,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 @SessionAttributes({"user"})
 @RequestMapping("/invtraspasos/")
 public class InvTraspasosController {
-    private static final Logger log  = Logger.getLogger(InvAjustesController.class.getName());
+    private static final Logger log  = Logger.getLogger(InvTraspasosController.class.getName());
     ResourceProject resource = new ResourceProject();
     
     @Autowired
@@ -547,7 +547,7 @@ public class InvTraspasosController {
         response.setBufferSize(size);
         response.setContentLength(size);
         response.setContentType("application/pdf");
-        response.setHeader("Content-Disposition","attachment; filename=\"" + file.getCanonicalPath() +"\"");
+        response.setHeader("Content-Disposition","attachment; filename=\"" + file.getName() +"\"");
         FileCopyUtils.copy(bis, response.getOutputStream());  	
         response.flushBuffer();
         
