@@ -351,7 +351,7 @@ xmlns:beans="http://www.springframework.org/schema/beans"
             authentication-failure-url="/loginerror.jsp"
             always-use-default-target="true"
         />
-        <logout logout-url="/controllers/home/logout.agnux"  logout-success-url="/index.jsp"  />
+        <logout logout-url="/controllers/home/logout.agnux" delete-cookies="JSESSIONID"  logout-success-url="/index.jsp"  />
     </http>
     
     
