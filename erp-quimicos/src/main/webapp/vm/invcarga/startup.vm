@@ -59,7 +59,7 @@
 		
 		
         <!--form for invcarga -->
-        <form id="formainvcarga00" action="edit.json" method="POST" >
+        <form id="formainvcarga00" action="process_file.json" method="POST" >
         <!--clase la quite por causar problemas      tabulador -->
                 <div id="div_one" class="panelcito_modal invcarga_div_one"  style="display:none;" title="">
                 <input type="hidden" name="identificador">
@@ -91,11 +91,77 @@
 										
                                         <table border="0" style="margin:0; padding:0;">
 											<tr>
-												<td width="650"></td>
-											</tr>
-											<tr>
 												<td width="650" height="10"></td>
 											</tr>
+											<tr>
+												<td width="650">
+													<fieldset style="border:solid 1px #313E74; margin:0px; padding:0px;">
+														<legend>&nbsp;Datos de busqueda para el reporte&nbsp;</legend>
+														<table border="0" class="gral">
+															<tr><td colspan="6" height="10"></td></tr>
+															<tr>
+																<td width="5"></td>
+																<td width="100">Almacen</td>
+																<td width="300"><select name="select_almacen" style="width:300px;" title="Seleccionar el Almacen"></select></td>
+																<td width="40"></td>
+																<td width="100"></td>
+																<td width="25"></td>
+															</tr>
+															<tr><td colspan="6" height="10"></td></tr>
+															<tr>
+																<td width="5"></td>
+																<td width="100">Linea</td>
+																<td width="300"><select name="select_linea" style="width:300px;" title="Seleccionar Linea"></select></td>
+																<td width="40"></td>
+																<td width="100"></td>
+																<td width="25"></td>
+															</tr>
+															<tr><td colspan="6" height="10"></td></tr>
+															<tr>
+																<td width="5"></td>
+																<td width="100">Marca</td>
+																<td width="300"><select name="select_marca" style="width:300px;" title="Seleccionar Marca"></select></td>
+																<td width="40"></td>
+																<td width="100"></td>
+																<td width="25"></td>
+															</tr>
+															<tr><td colspan="6" height="10"></td></tr>
+															
+															<tr>
+																<td width="5"></td>
+																<td width="100">Tipo de Producto</td>
+																<td width="300"><select name="select_prod_tipo" style="width:300px;" title="Seleccionar Tipo de Producto"></select></td>
+																<td width="40"></td>
+																<td width="100"></td>
+																<td width="25"></td>
+															</tr>
+															<tr><td colspan="6" height="10"></td></tr>
+															<tr>
+																<td width="5"></td>
+																<td width="100">Familia</td>
+																<td width="300"><select name="select_familia" style="width:300px;" title="Seleccionar Familia"></select></td>
+																<td width="40"></td>
+																<td width="100"></td>
+																<td width="25"></td>
+															</tr>
+															<tr><td colspan="6" height="10"></td></tr>
+															<tr>
+																<td width="5"></td>
+																<td width="100">Sub-Familia</td>
+																<td width="300"><select name="select_subfamilia" style="width:300px;" title="Seleccionar Sub-Familia"></select></td>
+																<td width="40"></td>
+																<td width="100"></td>
+																<td width="25"></td>
+															</tr>
+														</table>
+													</fieldset>
+												</td>
+											</tr>
+											<tr>
+												<td width="650" height="20"></td>
+											</tr>
+
+
 											<tr>
 												<td width="650">
 													<fieldset style="border:solid 1px #313E74; margin:0px; padding:0px;">
@@ -104,8 +170,8 @@
 															<tr><td colspan="6" height="10"></td></tr>
 															<tr>
 																<td width="5"></td>
-																<td width="50">Almacen</td>
-																<td width="200"><select name="select_almacen" style="width:200px;" title="Seleccionar el Almacen"></select></td>
+																<td width="100">Tipo de Reporte</td>
+																<td width="300"><select name="select_tipo_reporte" style="width:300px;" title="Tipo de Reporte"></select></td>
 																<td width="40"></td>
 																<td width="100"><input type="button" id="descargar_formato" value="Descargar" style="width:100px; font-weight:bold;"></td>
 																<td width="25"></td>
@@ -115,11 +181,9 @@
 												</td>
 											</tr>
 											<tr>
-												<td width="650" height="10"></td>
+												<td width="650" height="20"></td>
 											</tr>
-											<tr>
-												<td width="650" height="10"></td>
-											</tr>
+
 											<tr>
 												<td width="650">
 													<fieldset style="border:solid 1px #313E74; margin:0px; padding:0px;">
@@ -128,10 +192,13 @@
 															<tr><td colspan="6" height="10"></td></tr>
 															<tr>
 																<td width="5"></td>
-																<td width="50">Archivo</td>
-																<td width="200"><input type="text" id="nombre_archivo" value="" style="width:200px; font-weight:bold;" readonly="true"></td>
+																<td width="100">Archivo a Cargar</td>
+																<td width="300"><input type="text" id="nombre_archivo" name="nombre_archivo" value="" style="width:300px; font-weight:bold;" readonly="true"></td>
 																<td width="40"></td>
-																<td width="100"><input type="button" id="seleccionar_archivo" value="Seleccionar" style="width:100px; font-weight:bold;"></td>
+																<td width="100">
+																	<input type="button" id="seleccionar_archivo" value="Seleccionar" style="width:100px; font-weight:bold;">
+																	<input type="button" id="eliminar_archivo" value="Eliminar" style="width:100px; font-weight:bold;">
+																</td>
 																<td width="25"></td>
 															</tr>
 														</table>

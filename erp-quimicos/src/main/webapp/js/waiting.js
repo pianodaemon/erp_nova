@@ -1,6 +1,11 @@
 $(function(){
-
+        
+	$.blockUI.defaults.message='Procesando...';
+	$(document).ajaxStart($.blockUI).ajaxStop($.unblockUI);
+        /*
 	$('body').ajaxStart(function() {
+            
+            
 		var docHeight = $(document).height();		
 		var $overlay = $("<div id='overlay-for-body'></div>");
 
@@ -26,4 +31,5 @@ $(function(){
 		$(this).find('#ajax-load').fadeOut().remove();
 		$(this).find('#overlay-for-body').fadeOut().remove();
 	});
+        */
 });

@@ -174,8 +174,25 @@ $(function() {
 	}
 	
 	
-
 	
+	
+	//Funcion para eliminar el archivo cargado si es que no se decide actualizar los datos del inventario
+	deleteFile = function( $nombre_archivo, id_user, $buttonSeleccionarArchivo, $eliminar_archivo, $nombre_archivo ){
+		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/deleteFile.json';
+		var arreglo_parametros = {'file': $nombre_archivo.val(), 'iu':id_user };
+		$.post(input_json,arreglo_parametros,function(entry){
+			if(entry['success']==true){
+				$buttonSeleccionarArchivo.show();
+				$eliminar_archivo.hide();
+				$nombre_archivo.val('');
+			}
+			
+			jAlert(entry['msj'], 'Atencion!', function(r) { 
+				$eliminar_archivo.focus();
+			});
+			
+		});
+	}
 	
 	
 	
@@ -205,36 +222,21 @@ $(function() {
 					};
         
 		var $identificador = $('#forma-invcarga-window').find('input[name=identificador]');
-		var $folio = $('#forma-invcarga-window').find('input[name=folio]');
-		var $exis_pres = $('#forma-invcarga-window').find('input[name=exis_pres]');
-		
 		
 		var $select_almacen = $('#forma-invcarga-window').find('select[name=select_almacen]');
 		var $descargar_formato = $('#forma-invcarga-window').find('#descargar_formato');
 		var $seleccionar_archivo = $('#forma-invcarga-window').find('#seleccionar_archivo');
+		var $eliminar_archivo = $('#forma-invcarga-window').find('#eliminar_archivo');
 		var $nombre_archivo = $('#forma-invcarga-window').find('#nombre_archivo');
 		
+		var $select_prod_tipo = $('#forma-invcarga-window').find('select[name=select_prod_tipo]');
+		var $select_linea = $('#forma-invcarga-window').find('select[name=select_linea]');
+		var $select_marca = $('#forma-invcarga-window').find('select[name=select_marca]');
+		var $select_familia = $('#forma-invcarga-window').find('select[name=select_familia]');
+		var $select_subfamilia = $('#forma-invcarga-window').find('select[name=select_subfamilia]');
 		
-		var $tipo_ajuste = $('#forma-invcarga-window').find('input[name=tipo_ajuste]');
+		var $select_tipo_reporte = $('#forma-invcarga-window').find('select[name=select_tipo_reporte]');
 		
-		var $fecha_ajuste = $('#forma-invcarga-window').find('input[name=fecha_ajuste]');
-		var $select_tipo_mov = $('#forma-invcarga-window').find('select[name=select_tipo_mov]');
-		var $id_tipo_mov = $('#forma-invcarga-window').find('input[name=id_tipo_mov]');
-		
-		var $tipo_costo = $('#forma-invcarga-window').find('input[name=tipo_costo]');
-		var $select_almacen = $('#forma-invcarga-window').find('select[name=select_almacen]');
-		var $id_almacen = $('#forma-invcarga-window').find('input[name=id_almacen]');
-		
-		var $observaciones = $('#forma-invcarga-window').find('textarea[name=observaciones]');
-		
-		var $sku_producto = $('#forma-invcarga-window').find('input[name=sku_producto]');
-		var $nombre_producto = $('#forma-invcarga-window').find('input[name=nombre_producto]');
-		
-		//buscar producto
-		var $busca_sku = $('#forma-invcarga-window').find('a[href*=busca_sku]');
-		//href para agregar producto al grid
-		var $agregar_producto = $('#forma-invcarga-window').find('a[href*=agregar_producto]');
-		var $descargarpdf = $('#forma-invcarga-window').find('#descargarpdf');
 		
 		//grid de productos
 		var $grid_productos = $('#forma-invcarga-window').find('#grid_productos');
@@ -246,74 +248,31 @@ $(function() {
 		var $cancelar_plugin = $('#forma-invcarga-window').find('#boton_cancelar');
 		var $submit_actualizar = $('#forma-invcarga-window').find('#submit');
 		
-		//$campo_factura.css({'background' : '#ffffff'});
-		
-		//ocultar boton de facturar y descargar pdf. Solo debe estar activo en editar
-		$descargarpdf.attr('disabled','-1');
-		$identificador.val(0);//para nueva pedido el id es 0
-		
-		$folio.css({'background' : '#F0F0F0'});
+
+
+		$eliminar_archivo.hide();
 		
 		var respuestaProcesada = function(data){
 			if ( data['success'] == "true" ){
-				jAlert("El Ajuste se guard&oacute; con &eacute;xito", 'Atencion!');
 				var remove = function() {$(this).remove();};
 				$('#forma-invcarga-overlay').fadeOut(remove);
-				$get_datos_grid();
-			}else{
-				//habilitar boton actualizar
-				$submit_actualizar.removeAttr('disabled');
-				// Desaparece todas las interrogaciones si es que existen
-				$('#forma-invcarga-window').find('.invcarga_div_one').css({'height':'550px'});//con errores
-				$('#forma-invcarga-window').find('div.interrogacion').css({'display':'none'});
-				$grid_productos.find('input[name=cant_ajuste]').css({'background' : '#ffffff'});
-				$grid_productos.find('input[name=costo_ajuste]').css({'background' : '#ffffff'});
-				
-				$('#forma-invcarga-window').find('#div_warning_grid').css({'display':'none'});
-				$('#forma-invcarga-window').find('#div_warning_grid').find('#grid_warning').children().remove();
-				
-				var valor = data['success'].split('___');
-				//muestra las interrogaciones
-				for (var element in valor){
-					tmp = data['success'].split('___')[element];
-					longitud = tmp.split(':');
-					if( longitud.length > 1 ){
-						$('#forma-invcarga-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
-						.parent()
-						.css({'display':'block'})
-						.easyTooltip({tooltipId: "easyTooltip2",content: tmp.split(':')[1]});
-						
-						var campo = tmp.split(':')[0];
-						
-						$('#forma-invcarga-window').find('#div_warning_grid').css({'display':'block'});
-						var $campo = $grid_productos.find('.'+campo).css({'background' : '#d41000'});
-						
-						var codigo_producto = $campo.parent().parent().find('input[name=codigo]').val();
-						var titulo_producto = $campo.parent().parent().find('input[name=nombre]').val();
-						
-						var tr_warning = '<tr>';
-								tr_warning += '<td width="20"><div><IMG SRC="../../img/icono_advertencia.png" ALIGN="top" rel="warning_sku"></td>';
-								tr_warning += '<td width="150"><INPUT TYPE="text" value="' + codigo_producto + '" class="borde_oculto" readOnly="true" style="width:150px; color:red"></td>';
-								tr_warning += '<td width="250"><INPUT TYPE="text" value="' + titulo_producto + '" class="borde_oculto" readOnly="true" style="width:250px; color:red"></td>';
-								tr_warning += '<td width="380"><INPUT TYPE="text" value="'+  tmp.split(':')[1] +'" class="borde_oculto" readOnly="true" style="width:350px; color:red"></td>';
-						tr_warning += '</tr>';
-						
-						$('#forma-invcarga-window').find('#div_warning_grid').find('#grid_warning').append(tr_warning);
-						
-					}
-				}
-				$('#forma-invcarga-window').find('#div_warning_grid').find('#grid_warning').find('tr:odd').find('td').css({ 'background-color' : '#FFFFFF'});
-				$('#forma-invcarga-window').find('#div_warning_grid').find('#grid_warning').find('tr:even').find('td').css({ 'background-color' : '#e7e8ea'});
 			}
+			
+			jAlert(data['msj'], 'Atencion!');
 		}
 		
-		var options = {dataType :  'json', success : respuestaProcesada};
+		
+		var options = {dataType:'json', success:respuestaProcesada};
 		$forma_selected.ajaxForm(options);
 		
-		//$.getJSON(json_string,function(entry){
 		$.post(input_json,$arreglo,function(entry){
 			
-			
+			//Alimentar select de tipo de reporte
+			$select_tipo_reporte.children().remove();
+			var tipo_reporte_html = '<option value="1">Inventario</option>';
+			tipo_reporte_html += '<option value="2">Lotes</option>';
+			//tipo_reporte_html += '<option value="3">[--Presentaciones--]</option>';
+			$select_tipo_reporte.append(tipo_reporte_html);
 			
 			//carga select Con los almacenes
 			$select_almacen.children().remove();
@@ -323,210 +282,99 @@ $(function() {
 			});
 			$select_almacen.append(alm_hmtl);
 			
-			
-			/*
-			$fecha_ajuste.val(entry['AnoActual'][0]['fecha_actual']);
-			$exis_pres.val(entry['Par'][0]['exis_pres']);
-			
-			$select_tipo_ajuste.children().remove();
-			var select_html = '';
-			for(var i in arrayTiposAjuste){
-				select_html += '<option value="' + i + '" >' + arrayTiposAjuste[i] + '</option>';
-			}
-			$select_tipo_ajuste.append(select_html);
-			
-			//guardamos el tipo de ajuste
-			$tipo_ajuste.val($select_tipo_ajuste.val());
-			
-			
-			//carga select con los tipos de Movimientos
-			$select_tipo_mov.children().remove();
-			var tmov_hmtl = '';
-			$.each(entry['TMov'],function(entryIndex,mov){
-				if(parseInt($select_tipo_ajuste.val())==parseInt(mov['grupo'])){
-					tmov_hmtl += '<option value="' + mov['id'] + '"  >' + mov['titulo'] + '</option>';
-				}
+			//Alimentando select de lineas
+			$select_linea.children().remove();
+			var lineas_hmtl = '<option value="0">[--Seleccionar Linea--]</option>';
+			$.each(entry['Lineas'],function(entryIndex,lin){
+				lineas_hmtl += '<option value="' + lin['id'] + '"  >' + lin['titulo'] + '</option>';
 			});
-			$select_tipo_mov.append(tmov_hmtl);
-			$id_tipo_mov.val($select_tipo_mov.val());
+			$select_linea.append(lineas_hmtl);
 			
-			
-			//tomar el tipo de Costo que se utilizara de acuerdo al tipo de movimiento selecionado
-			//el tipo de costo en la vista define si el campo costo ajuste debe estar habilitado para edicion o no.
-			$.each(entry['TMov'],function(entryIndex,mov){
-				if(parseInt($select_tipo_mov.val())==parseInt(mov['id'])){
-					$tipo_costo.val(mov['tipo_costo']);
-				}
+			//Alimentando select de marcas
+			$select_marca.children().remove();
+			var marcas_hmtl = '<option value="0">[--Seleccionar Marca--]</option>';
+			$.each(entry['Marcas'],function(entryIndex,mar){
+				marcas_hmtl += '<option value="' + mar['id'] + '"  >' + mar['titulo'] + '</option>';
 			});
+			$select_marca.append(marcas_hmtl);
 			
-			
-			//carga select con todos los Almacenes de la Empresa
-			$select_almacen.children().remove();
-			var almacen_hmtl = '';
-			$.each(entry['Almacenes'],function(entryIndex,almacen){
-				almacen_hmtl += '<option value="' + almacen['id'] + '"  >' + almacen['titulo'] + '</option>';
+			//carga select de tipos de producto
+			$select_prod_tipo.children().remove();
+			var prodtipos_hmtl = '<option value="0" selected="yes">[--Seleccionar Tipo--]</option>';
+			$.each(entry['Tipos'],function(entryIndex,tipo){
+				prodtipos_hmtl += '<option value="' + tipo['id'] + '"  >' + tipo['titulo'] + '</option>';
 			});
-			$select_almacen.append(almacen_hmtl);
-			$id_almacen.val($select_almacen.val());
+			$select_prod_tipo.append(prodtipos_hmtl);
+			
+			//Alimentando select de familias
+			$select_familia.children().remove();
+			var familia_hmtl = '<option value="0">[--Seleccionar Familia--]</option>';
+			$select_familia.append(familia_hmtl);
+			
+			//Alimentando select de familias
+			$select_subfamilia.children().remove();
+			var subfamilia_hmtl = '<option value="0">[--Seleccionar Sub-Familia--]</option>';
+			$select_subfamilia.append(subfamilia_hmtl);
 			
 			
-			//cambiar tipo de ajuste
-			$select_tipo_ajuste.change(function(){
+			$select_prod_tipo.change(function(){
 				var valor_tipo = $(this).val();
-				var valor_tipo_anterior = $tipo_ajuste.val();//tomamos el valor anterior
+				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getFamiliasByTipoProd.json';
+				$arreglo = {	'tipo_prod':$select_prod_tipo.val(),
+								'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
+							};
 				
-				//0:"Positivo", //grupo Entradas en la tabla tipos de movimiento de Invetario
-				//2:"Negativo",//grupo salidas en la tabla tipos de movimiento de Invetario
-				
-				if (parseInt($("tr", $grid_productos).size()) > 0 ){
-					//aqui regresamos el tipo seleccionado anteriormente porque hay productos en el grid
-					$select_tipo_ajuste.children().remove();
-					var select_html = '';
-					for(var i in arrayTiposAjuste){
-						if(valor_tipo_anterior == i){
-							select_html += '<option value="' + i + '" selected="yes">' + arrayTiposAjuste[i] + '</option>';
-						}else{
-							select_html += '<option value="' + i + '">' + arrayTiposAjuste[i] + '</option>';
-						}
-					}
-					$select_tipo_ajuste.append(select_html);
-					jAlert("No es posible cambiar el Tipo de Ajuste mientras existan productos en el listado.", 'Atencion!');
-				}else{
-					$select_tipo_mov.children().remove();
-					var tmov_hmtl = '';
-					$.each(entry['TMov'],function(entryIndex,mov){
-						if(parseInt(valor_tipo)==parseInt(mov['grupo'])){
-							tmov_hmtl += '<option value="' + mov['id'] + '"  >' + mov['titulo'] + '</option>';
-							$tipo_costo.val(mov['tipo_costo']);
-						}
+				$.post(input_json,$arreglo,function(data){
+					$select_familia.children().remove();
+					var familia_hmtl = '<option value="0">[--Seleccionar Familia--]</option>';
+					$.each(data['Familias'],function(entryIndex,fam){
+						familia_hmtl += '<option value="' + fam['id'] + '"  >' + fam['titulo'] + '</option>';
 					});
-					$select_tipo_mov.append(tmov_hmtl);
-					$tipo_ajuste.val(valor_tipo);//tomamos el valor del nuevo tipo seleccionado
-					$id_tipo_mov.val($select_tipo_mov.val());
-				}
+					$select_familia.append(familia_hmtl);
+				});
+				
 			});
 			
 			
-			//cambiar el tipo de Movimiento
-			$select_tipo_mov.change(function(){
-				var valor_tipo = $(this).val();
-				var valor_tipo_mov_anterior = $id_tipo_mov.val();//tomamos el valor anterior
-				
-				if (parseInt($("tr", $grid_productos).size()) > 0 ){
-					$select_tipo_mov.children().remove();
-					var tmov_hmtl = '';
-					$.each(entry['TMov'],function(entryIndex,mov){
-						if(parseInt($select_tipo_ajuste.val())==parseInt(mov['grupo'])){
-							if(parseInt(valor_tipo_mov_anterior)==parseInt(mov['id'])){
-								tmov_hmtl += '<option value="' + mov['id'] + '" selected="yes">' + mov['titulo'] + '</option>';
-							}else{
-								tmov_hmtl += '<option value="' + mov['id'] + '"  >' + mov['titulo'] + '</option>';
+			$select_familia.change(function(){
+				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getSubFamiliasByFamProd.json';
+				$arreglo = {'fam':$select_familia.val(),
+								'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
 							}
-						}
+				//Alimentando select de Subfamilias
+				$.post(input_json,$arreglo,function(data){
+					$select_subfamilia.children().remove();
+					var subfamilia_hmtl = '<option value="0">[--Seleccionar Subfmilia--]</option>';
+					$.each(data['SubFamilias'],function(dataIndex,subfam){
+						subfamilia_hmtl += '<option value="' + subfam['id'] + '"  >' + subfam['titulo'] + '</option>';
 					});
-					$select_tipo_mov.append(tmov_hmtl);
-					
-					jAlert("No es posible cambiar el Tipo de Movimiento mientras existan productos en el listado.", 'Atencion!');
-				}else{
-					$id_tipo_mov.val(valor_tipo);//guardamos el nuevo tipo seleccionado
-					
-					//tomar el tipo de Costo que se utilizara de acuerdo al tipo de movimiento selecionado
-					//el tipo de costo en la vista define si el campo costo ajuste debe estar habilitado para edicion o no.
-					$.each(entry['TMov'],function(entryIndex,mov){
-						if(parseInt($select_tipo_mov.val())==parseInt(mov['id'])){
-							$tipo_costo.val(mov['tipo_costo']);
-						}
-					});
-					
-					
-					
-				}
+					$select_subfamilia.append(subfamilia_hmtl);
+				});
+				
+				//Reiniciar select de subfamilias
+				$select_subfamilia.children().remove();
+				var subfamilia_hmtl = '<option value="0">[--Seleccionar Sub-Familia--]</option>';
+				$select_subfamilia.append(subfamilia_hmtl);
 			});
 			
 			
-			
-			
-			
-			//cambiar el almacen
-			$select_tipo_mov.change(function(){
-				var valor_tipo = $(this).val();
-				var valor_tipo_mov_anterior = $id_tipo_mov.val();//tomamos el valor anterior
-				
-				if (parseInt($("tr", $grid_productos).size()) > 0 ){
-					$select_tipo_mov.children().remove();
-					var tmov_hmtl = '';
-					$.each(entry['TMov'],function(entryIndex,mov){
-						if(parseInt($select_tipo_ajuste.val())==parseInt(mov['grupo'])){
-							if(parseInt(valor_tipo_mov_anterior)==parseInt(mov['id'])){
-								tmov_hmtl += '<option value="' + mov['id'] + '" selected="yes">' + mov['titulo'] + '</option>';
-							}else{
-								tmov_hmtl += '<option value="' + mov['id'] + '"  >' + mov['titulo'] + '</option>';
-							}
-						}
-					});
-					$select_tipo_mov.append(tmov_hmtl);
-					
-					jAlert("No es posible cambiar el Tipo de Movimiento mientras existan productos en el listado.", 'Atencion!');
-					
-				}else{
-					$id_tipo_mov.val(valor_tipo);//guardamos el nuevo tipo seleccionado
-				}
-			});
-			
-			
-			
-			//cambiar el almacen
-			$select_almacen.change(function(){
-				var valor_alm = $(this).val();
-				var valor_alm_anterior = $id_almacen.val();//tomamos el valor anterior
-				
-				if (parseInt($("tr", $grid_productos).size()) > 0 ){
-					$select_almacen.children().remove();
-					var almacen_hmtl = '';
-					$.each(entry['Almacenes'],function(entryIndex,almacen){
-						if(parseInt(valor_alm_anterior)==parseInt(almacen['id'])){
-							almacen_hmtl += '<option value="' + almacen['id'] + '" selected="yes">' + almacen['titulo'] + '</option>';
-						}else{
-							almacen_hmtl += '<option value="' + almacen['id'] + '"  >' + almacen['titulo'] + '</option>';
-						}
-					});
-					$select_almacen.append(almacen_hmtl);
-					jAlert("No es posible cambiar el Tipo de Movimiento mientras existan productos en el listado.", 'Atencion!');
-				}else{
-					$id_almacen.val(valor_alm);//guardamos el nuevo id de almacen seleccionado
-				}
-			});
-			
-			
-			
-			//agregar producto al grid
-			$agregar_producto.click(function(event){
-				event.preventDefault();
-				var codigo_producto = $sku_producto.val();
-				var id_alm = $select_almacen.val();
-				var fecha = $fecha_ajuste.val();
-				var tipo_costo = $tipo_costo.val();
-				var exisPres = $exis_pres.val();
-				
-				//alert("tipo_costo:"+$tipo_costo.val());
-				$buscador_datos_producto($grid_productos, codigo_producto, id_alm, fecha, tipo_costo, exisPres, $select_tipo_ajuste);
-				
-			});
-			*/
 			
 		},"json");//termina llamada json
 		
 		
-		
-		/*
-		var $select_almacen = $('#forma-invcarga-window').find('select[name=select_almacen]');
-		var $descargar_formato = $('#forma-invcarga-window').find('#descargar_formato');
-		var $buttonSeleccionarArchivo = $('#forma-invcarga-window').find('#seleccionar_archivo');
-		var $nombre_archivo = $('#forma-invcarga-window').find('#nombre_archivo');
-		*/
-		
-		
-		
+		$descargar_formato.click(function(event){
+			event.preventDefault();
+			
+			var parametros = $select_tipo_reporte.val()+"/"+$select_almacen.val()+"/"+$select_linea.val()+"/"+$select_marca.val()+"/"+$select_prod_tipo.val()+"/"+$select_familia.val()+"/"+$select_subfamilia.val();
+			
+			var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
+			var input_json = document.location.protocol + '//' + document.location.host + '/'+controller + '/getFormato/'+parametros+'/'+iu+'/out.json'
+			window.location.href=input_json;
+			
+		});//termina llamada json
+
+
+
 		/*Codigo para subir la xls*/
 		var input_json_upload = document.location.protocol + '//' + document.location.host + '/'+controller+'/fileUpload.json';
 		var $buttonSeleccionarArchivo = $('#forma-invcarga-window').find('#seleccionar_archivo'), interval;
@@ -548,30 +396,20 @@ $(function() {
 				this.enable();
 				$nombre_archivo.val(file);
 				if(response=="true"){
-					
+					$buttonSeleccionarArchivo.hide();
+					$eliminar_archivo.show();
 				}
-				//$edito_pdf.val(1);
-				//$('#forma-invcarga-window').find('#contenidofile_pdf').text(file);
 			},
 		});
 		
 		
-
-
-
-
-		$descargar_formato.click(function(event){
+		
+		
+		$eliminar_archivo.click(function(event){
 			event.preventDefault();
-			
-			var cadena = $select_almacen.val();
-			
-			var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
-			var input_json = document.location.protocol + '//' + document.location.host + '/'+controller + '/getFormato/'+cadena+'/'+iu+'/out.json'
-			window.location.href=input_json;
-			
+			var id_user = $('#lienzo_recalculable').find('input[name=iu]').val();
+			deleteFile( $nombre_archivo, id_user, $buttonSeleccionarArchivo, $eliminar_archivo, $nombre_archivo );
 		});//termina llamada json
-
-
 
 		
 		
@@ -582,10 +420,19 @@ $(function() {
 			}
 		});
 		
-		
 				
 		
 		$submit_actualizar.bind('click',function(){
+			
+			if($nombre_archivo.val().trim()==''){
+				jAlert("No se ha seleccionado ningun archivo para actualizar datos del inventario.", 'Atencion!', function(r) { 
+					$buttonSeleccionarArchivo.focus();
+				});
+				return false;
+			}else{
+				return true;
+			}
+			
 			var trCount = $("tr", $grid_productos).size();
 			if(parseInt(trCount) > 0){
 				return true;
@@ -597,12 +444,22 @@ $(function() {
 		
 		//cerrar plugin
 		$cerrar_plugin.bind('click',function(){
+			if($nombre_archivo.val().trim()!=''){
+				var id_user = $('#lienzo_recalculable').find('input[name=iu]').val();
+				deleteFile( $nombre_archivo, id_user, $buttonSeleccionarArchivo, $eliminar_archivo, $nombre_archivo );
+			}
+			
 			var remove = function() {$(this).remove();};
 			$('#forma-invcarga-overlay').fadeOut(remove);
 		});
 		
 		//boton cancelar y cerrar plugin
 		$cancelar_plugin.click(function(event){
+			if($nombre_archivo.val().trim()!=''){
+				var id_user = $('#lienzo_recalculable').find('input[name=iu]').val();
+				deleteFile( $nombre_archivo, id_user, $buttonSeleccionarArchivo, $eliminar_archivo, $nombre_archivo );
+			}
+			
 			var remove = function() {$(this).remove();};
 			$('#forma-invcarga-overlay').fadeOut(remove);
 		});
