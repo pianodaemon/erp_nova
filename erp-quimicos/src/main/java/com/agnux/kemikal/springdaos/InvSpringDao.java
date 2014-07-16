@@ -10,12 +10,8 @@ import com.agnux.common.helpers.TimeHelper;
 import com.agnux.kemikal.interfacedaos.InvInterfaceDao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.logging.Level;
+import java.sql.Types;
+import java.util.*;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -353,46 +349,99 @@ public class InvSpringDao implements InvInterfaceDao{
         
         //Obtiene lista de productos para descargar formato, para la aplicacion de Carga de Inventario Fisico
         if(id_app==178){
-            sql_to_query = "select * from inv_reporte('"+campos_data+"')as foo("
-                                        + "id_prod integer,"
-                                        +"codigo_producto character varying, "
-					+"descripcion_producto character varying, "
-					+"unidad character varying, "
-					+"tipo_producto character varying, "
-                                        +"no_almacen integer,"
-					+"almacen character varying, "
-					+"familia character varying, "
-					+"subfamilia character varying, "
-                                        +"linea character varying, "
-					+"existencia double precision "
-                                    +") ORDER BY codigo_producto ASC;";
             
- 
-            //System.out.println("InvReporte: "+sql_to_query);
+            String tr[] = campos_data.split("___");
+                
+            String tipoReporte = tr[9];
+            
+            //Formato para carga de Inventario
+            if(tipoReporte.equals("1")){
+                
+                sql_to_query = "select * from inv_reporte('"+campos_data+"')as foo("
+                                            + "id_prod integer,"
+                                            +"codigo_producto character varying, "
+                                            +"descripcion_producto character varying, "
+                                            +"unidad character varying, "
+                                            +"tipo_producto character varying, "
+                                            +"no_almacen integer,"
+                                            +"almacen character varying, "
+                                            +"familia character varying, "
+                                            +"subfamilia character varying, "
+                                            +"linea character varying, "
+                                            +"marca character varying, "
+                                            +"existencia double precision "
+                                        +") ORDER BY no_almacen, codigo_producto ASC;";
 
-            ArrayList<HashMap<String, String>> hm178 = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-                sql_to_query,
-                new Object[]{}, new RowMapper(){
-                    @Override
-                    public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
-                        HashMap<String, String> row = new HashMap<String, String>();
-                        row.put("id_prod",String.valueOf(rs.getInt("id_prod")));
-                        row.put("codigo_producto",rs.getString("codigo_producto"));
-                        row.put("descripcion_producto",rs.getString("descripcion_producto"));
-                        row.put("unidad",rs.getString("unidad"));
-                        row.put("tipo_producto",rs.getString("tipo_producto"));
-                        row.put("no_almacen",String.valueOf(rs.getInt("no_almacen")));
-                        row.put("almacen",rs.getString("almacen"));
-                        row.put("familia",rs.getString("familia"));
-                        row.put("subfamilia",rs.getString("subfamilia"));
-                        row.put("linea",rs.getString("linea"));
-                        row.put("existencia",StringHelper.roundDouble(rs.getDouble("existencia"),2));
-                        
-                        return row;
+
+                //System.out.println("InvReporte: "+sql_to_query);
+
+                ArrayList<HashMap<String, String>> hm178 = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+                    sql_to_query,
+                    new Object[]{}, new RowMapper(){
+                        @Override
+                        public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                            HashMap<String, String> row = new HashMap<String, String>();
+                            row.put("id_prod",String.valueOf(rs.getInt("id_prod")));
+                            row.put("codigo_producto",rs.getString("codigo_producto"));
+                            row.put("descripcion_producto",rs.getString("descripcion_producto"));
+                            row.put("unidad",rs.getString("unidad"));
+                            row.put("tipo_producto",rs.getString("tipo_producto"));
+                            row.put("no_almacen",String.valueOf(rs.getInt("no_almacen")));
+                            row.put("almacen",rs.getString("almacen"));
+                            row.put("familia",rs.getString("familia"));
+                            row.put("subfamilia",rs.getString("subfamilia"));
+                            row.put("linea",rs.getString("linea"));
+                            row.put("marca",rs.getString("marca"));
+                            row.put("existencia",StringHelper.roundDouble(rs.getDouble("existencia"),4));
+                            
+                            return row;
+                        }
                     }
-                }
-            );
-            data=hm178;
+                );
+                data=hm178;
+            }
+            
+                
+            
+            //Formato para carga de LOTES
+            if(tipoReporte.equals("2")){
+                
+                sql_to_query = "select * from inv_reporte('"+campos_data+"')as foo(no_prod integer, codigo_producto character varying, descripcion_producto character varying, unidad character varying, no_almacen integer, almacen character varying, lote_interno character varying, lote_proveedor character varying, existencia double precision, tipo_producto character varying, familia character varying, subfamilia character varying, linea character varying, marca character varying ) ORDER BY no_almacen, codigo_producto ASC;";
+
+                //System.out.println("InvReporte: "+sql_to_query);
+
+                ArrayList<HashMap<String, String>> hm178 = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+                    sql_to_query,
+                    new Object[]{}, new RowMapper(){
+                        @Override
+                        public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                            HashMap<String, String> row = new HashMap<String, String>();
+                            row.put("no_prod",String.valueOf(rs.getInt("no_prod")));
+                            row.put("codigo_producto",rs.getString("codigo_producto"));
+                            row.put("descripcion_producto",rs.getString("descripcion_producto"));
+                            row.put("unidad",rs.getString("unidad"));
+                            row.put("no_almacen",String.valueOf(rs.getInt("no_almacen")));
+                            row.put("almacen",rs.getString("almacen"));
+                            row.put("lote_interno",rs.getString("lote_interno"));
+                            row.put("lote_proveedor",rs.getString("lote_proveedor"));
+                            row.put("existencia",StringHelper.roundDouble(rs.getDouble("existencia"),4));
+                            row.put("tipo_producto",rs.getString("tipo_producto"));
+                            row.put("familia",rs.getString("familia"));
+                            row.put("subfamilia",rs.getString("subfamilia"));
+                            row.put("linea",rs.getString("linea"));
+                            row.put("marca",rs.getString("marca"));
+                            
+                            return row;
+                        }
+                    }
+                );
+                data=hm178;
+            }
+                
+            
+            
+            
+            
         }
 
         
@@ -734,6 +783,29 @@ public class InvSpringDao implements InvInterfaceDao{
         return hm_tp;
     }
 
+    
+    
+    
+    //Tipo de producto inventariable 
+    @Override
+    public ArrayList<HashMap<String, String>> getProducto_TiposInventariable() {
+	String sql_query = "SELECT DISTINCT id,titulo FROM inv_prod_tipos WHERE borrado_logico=false and id!=3 and id!=4 order by titulo ASC;";
+        ArrayList<HashMap<String, String>> hm_tp = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",rs.getString("id"));
+                    row.put("titulo",rs.getString("titulo"));
+                    return row;
+                }
+            }
+        );
+
+        return hm_tp;
+    }
+    
 
 
     //obtiene lineas de productos
@@ -1677,6 +1749,34 @@ public class InvSpringDao implements InvInterfaceDao{
         return hm_alm;
     }
 
+    
+    
+    //Obtiene almacenes de la sucursal especificada.
+    //Se utiliza en la Carga de Inventario Fisico
+    @Override
+    public ArrayList<HashMap<String, String>> getAlmacenesSucursal(Integer id_empresa, Integer id_sucursal) {
+	String sql_query = ""
+                + "SELECT DISTINCT "
+                    + "inv_alm.id, "
+                    + "inv_alm.titulo "
+                + "FROM inv_alm  "
+                + "JOIN inv_suc_alm ON inv_suc_alm.almacen_id = inv_alm.id "
+                + "JOIN gral_suc ON gral_suc.id = inv_suc_alm.sucursal_id "
+                + "WHERE gral_suc.empresa_id=? AND gral_suc.id=? AND inv_alm.borrado_logico=FALSE;";
+        ArrayList<HashMap<String, String>> hm_alm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{new Integer(id_empresa), new Integer(id_sucursal)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("titulo",rs.getString("titulo"));
+                    return row;
+                }
+            }
+        );
+        return hm_alm;
+    }
 
 
     //obtiene datos para el buscador de proveedores
@@ -8367,5 +8467,77 @@ public class InvSpringDao implements InvInterfaceDao{
         
         return data;
     }
+    
+    @Override
+    public int getInsertInvExiTmp(String data_string) {
+        int row=0;
+        try{
+            String param[] = data_string.split("___");
+            
+            String insertSql = "INSERT INTO inv_exi_tmp (emp_id, prod_id, codigo, alm_id, exi, fecha) VALUES(?, ?, ?, ?, ?, now());";
+            //System.out.println("insertSql: "+insertSql);
+            
+            // define query arguments
+            Object[] params = new Object[] { new Integer(param[0]), new Integer(param[1]), new String(param[2]), new Integer(param[3]), new Double(param[4]) };
+
+            // define SQL types of the arguments
+            int[] types = new int[] { Types.SMALLINT, Types.BIGINT, Types.VARCHAR, Types.SMALLINT, Types.DOUBLE };
+            
+            // execute insert query to insert the data
+            // return number of row / rows processed by the executed query
+            row = this.getJdbcTemplate().update(insertSql, params, types);
+            
+            //System.out.println(row + " row inserted.");
+        } catch (Exception e) {
+            System.out.println("ERROR: "+e.getMessage());
+            row=0;
+        }
+        
+        return row;
+    }
+
+    
+    
+    
+    @Override
+    public int getDeleteFromInvExiTmp(Integer id_emp) {
+        int row=0;
+        try{
+            String updateSql = "DELETE FROM inv_exi_tmp WHERE emp_id=?;";
+            //System.out.println("updateSql: "+updateSql);
+            
+            // define query arguments
+            Object[] params = new Object[] { new Integer(id_emp)};
+            
+            // define SQL types of the arguments
+            int[] types = new int[] { Types.SMALLINT };
+            
+            // execute insert query to insert the data
+            // return number of row / rows processed by the executed query
+            row = this.getJdbcTemplate().update(updateSql, params, types);
+            
+            //System.out.println(row + " row inserted.");
+        } catch (Exception e) {
+            System.out.println("ERROR: "+e.getMessage());
+            row=0;
+        }
+        
+        return row;
+    }
+    
+    
+    //Ejecutar procedimiento para actualizar los datos de la tabla inv_exi
+    @Override
+    public String getUpdateInvExi(Integer usuario_id, Integer empresa_id, Integer sucursal_id, Integer tipo) {
+        String sql_to_query = "select * from inv_carga_inventario_fisico("+usuario_id+","+empresa_id+","+sucursal_id+","+tipo+");";
+        
+        String valor_retorno="";
+        Map<String, Object> update = this.getJdbcTemplate().queryForMap(sql_to_query);
+
+        valor_retorno = update.get("inv_carga_inventario_fisico").toString();
+
+        return valor_retorno;
+    }
+    
     
 }

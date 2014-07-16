@@ -34,8 +34,10 @@ public interface InvInterfaceDao {
     public ArrayList<HashMap<String, String>> getDatosProveedorByNoProv(String noProveedor, Integer id_empresa);
     public ArrayList<HashMap<String, String>> getSucursales(Integer id_empresa);
     public ArrayList<HashMap<String, String>> getAlmacenes(Integer id_empresa);
-    //se utiliza en traspasos, reporte de existencias, reporte de existencias por Lote, Facturas Compras(Entradas Mercnacias)
+    //Se utiliza en traspasos, reporte de existencias, reporte de existencias por Lote, Facturas Compras(Entradas Mercnacias)
     public ArrayList<HashMap<String, String>> getAlmacenes2(Integer id_empresa);
+    //Obtiene almacenes de la sucursal especificada.
+    public ArrayList<HashMap<String, String>> getAlmacenesSucursal(Integer id_empresa, Integer id_sucursal);
     public ArrayList<HashMap<String, String>> getMonedas();
     public ArrayList<HashMap<String, String>> getMonedas2();//solo se utiliza en listas de precios
     public ArrayList<HashMap<String, String>> getAllTiposMovimientoInventario(Integer id_empresa);
@@ -55,6 +57,7 @@ public interface InvInterfaceDao {
     public ArrayList<HashMap<String, String>> getProducto_ClasificacionStock(Integer id_empresa);
     public ArrayList<HashMap<String, String>> getProducto_Clases(Integer id_empresa);
     public ArrayList<HashMap<String, String>> getProducto_Tipos();
+    public ArrayList<HashMap<String, String>> getProducto_TiposInventariable();
     public ArrayList<HashMap<String, String>> getProducto_Ingredientes(Integer id_producto);
     public ArrayList<HashMap<String, String>> getProducto_PresentacionesON(Integer id_producto);
     public ArrayList<HashMap<String, String>> getProducto_Unidades();
@@ -342,5 +345,9 @@ public interface InvInterfaceDao {
     //Metodo para verificar si un usuario es Administrador
     public HashMap<String, String> getUserRolAdmin(Integer id_user);
     public HashMap<String, String> getUserRolAgenteVenta(Integer id_user);
+    
+    public int getInsertInvExiTmp(String data_string);
+    public int getDeleteFromInvExiTmp(Integer empresa_id);
+    public String getUpdateInvExi(Integer usuario_id, Integer empresa_id, Integer sucursal_id, Integer tipo);
     
 }

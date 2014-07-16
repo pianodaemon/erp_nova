@@ -6,6 +6,7 @@ package com.agnux.kemikal.controllers;
 
 import com.agnux.cfd.v2.Base64Coder;
 import com.agnux.common.helpers.FileHelper;
+import com.agnux.common.helpers.StringHelper;
 import com.agnux.common.helpers.TimeHelper;
 import com.agnux.common.obj.ResourceProject;
 import com.agnux.common.obj.UserSessionData;
@@ -27,6 +28,13 @@ import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.lang.StringUtils;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -82,7 +90,6 @@ public class InvCargaController {
         log.log(Level.INFO, "Ejecutando starUp de {0}", InvCargaController.class.getName());
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
         
-        
         ModelAndView x = new ModelAndView("invcarga/startup", "title", "Carga de inventario f&iacute;sico");
         
         x = x.addObject("layoutheader", resource.getLayoutheader());
@@ -114,7 +121,6 @@ public class InvCargaController {
         log.log(Level.INFO, "Ejecutando getCargarJson de {0}", InvCargaController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
-        ArrayList<HashMap<String, String>> almacenes = new ArrayList<HashMap<String, String>>();
         
         //Decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
@@ -123,10 +129,65 @@ public class InvCargaController {
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
         
-        almacenes = this.getInvDao().getAlmacenes(id_empresa);
+        jsonretorno.put("Alms", this.getInvDao().getAlmacenesSucursal(id_empresa, id_sucursal));
+        jsonretorno.put("Lineas", this.getInvDao().getProducto_Lineas(id_empresa));
+        jsonretorno.put("Marcas", this.getInvDao().getProducto_Marcas(id_empresa));
+        jsonretorno.put("Tipos", this.getInvDao().getProducto_TiposInventariable());
         
+        return jsonretorno;
+    }
+    
+    
+    
+    
+    //obtiene los Familias del producto seleccionado
+    @RequestMapping(method = RequestMethod.POST, value="/getSubFamiliasByFamProd.json")
+    //public @ResponseBody HashMap<java.lang.String,java.lang.Object> getProveedorJson(
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getSubFamiliasByFamProdJson(
+            @RequestParam(value="fam", required=true) String familia_id,
+            @RequestParam(value="iu", required=true) String id_user_cod,
+            Model model
+            ) {
         
-        jsonretorno.put("Alms", almacenes);
+        log.log(Level.INFO, "Ejecutando getSubFamiliasByFamProdJson de {0}", InvCargaController.class.getName());
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        ArrayList<HashMap<String, String>> subfamilias = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        
+        subfamilias = this.getInvDao().getProducto_Subfamilias(id_empresa,familia_id );
+        
+        jsonretorno.put("SubFamilias", subfamilias);
+        
+        return jsonretorno;
+    }
+    
+    
+    //obtiene los Familias del producto seleccionado
+    @RequestMapping(method = RequestMethod.POST, value="/getFamiliasByTipoProd.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getFamiliasByTipoProdJson(
+            @RequestParam(value="tipo_prod", required=true) String tipo_prod,
+            @RequestParam(value="iu", required=true) String id_user_cod,
+            Model model
+            ) {
+        
+        log.log(Level.INFO, "Ejecutando getFamiliasByTipoProdJson de {0}", InvCargaController.class.getName());
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        ArrayList<HashMap<String, String>> familias = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        
+        familias = this.getInvDao().getInvProdSubFamiliasByTipoProd(id_empresa, tipo_prod);
+        
+        jsonretorno.put("Familias", familias);
         
         return jsonretorno;
     }
@@ -136,17 +197,34 @@ public class InvCargaController {
     
     
     
+    
     //Genera Reporte de Dicas Promedio de entrega de OC
-    @RequestMapping(value = "/getFormato/{cadena}/{iu}/out.json", method = RequestMethod.GET ) 
+    @RequestMapping(value = "/getFormato/{tipo_reporte}/{almacen}/{linea}/{marca}/{tipo}/{familia}/{subfamilia}/{iu}/out.json", method = RequestMethod.GET ) 
     public ModelAndView getReporteJson(
-                @PathVariable("cadena") String almacen,
+                @PathVariable("tipo_reporte") String tipo_reporte,
+                @PathVariable("almacen") String almacen,
+                @PathVariable("linea") String linea,
+                @PathVariable("marca") String marca,
+                @PathVariable("tipo") String tipo,
+                @PathVariable("familia") String familia,
+                @PathVariable("subfamilia") String subfamilia,
                 @PathVariable("iu") String id_user_cod,
                 HttpServletRequest request,
                 HttpServletResponse response, 
                 Model model)
             throws ServletException, IOException, URISyntaxException, DocumentException, Exception {
         
+        
+        
         HashMap<String, String> userDat = new HashMap<String, String>();
+        ArrayList<HashMap<String, String>> lista_productos = new ArrayList<HashMap<String, String>>();
+        int app_selected=178;
+        Integer id_empresa = 0;
+        String rfcEmpresa="";
+        String dir_tmp = "";
+        String file_name = "";
+        String fileout = "";
+        String data_string = "";
         
         String tituloReporte="Descargar fomato en excel";
         System.out.println(tituloReporte);
@@ -156,34 +234,35 @@ public class InvCargaController {
         //System.out.println("id_usuario: "+id_usuario);
         
         userDat = this.getHomeDao().getUserById(id_usuario);
-        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         
-        String rfcEmpresa = this.getGralDao().getRfcEmpresaEmisora(id_empresa);
+        rfcEmpresa = this.getGralDao().getRfcEmpresaEmisora(id_empresa);
         
        
         //obtener el directorio temporal
         //String dir_tmp = System.getProperty("java.io.tmpdir");
-        String dir_tmp = this.getGralDao().getTmpDir();
+        dir_tmp = this.getGralDao().getTmpDir();
         
         
-        File file_dir_tmp = new File(dir_tmp);
+        //File file_dir_tmp = new File(dir_tmp);
         //System.out.println("Directorio temporal: "+file_dir_tmp.getCanonicalPath());
         
-        String file_name = rfcEmpresa+"_Productos"+TimeHelper.getFechaActualYMDHMS()+".xls";
+        if(tipo_reporte.equals("1")){
+            file_name = rfcEmpresa+"_Productos"+TimeHelper.getFechaActualYMDHMS()+".xls";
+        }
+        
+        if(tipo_reporte.equals("2")){
+            file_name = rfcEmpresa+"_Lotes"+TimeHelper.getFechaActualYMDHMS()+".xls";
+        }
+        
         //ruta de archivo de salida
-        String fileout = file_dir_tmp +"/"+  file_name;
+        fileout = dir_tmp + file_name;
         
-        ArrayList<HashMap<String, String>> lista_productos = new ArrayList<HashMap<String, String>>();
-        
-        
-        String periodo="";
-        int app_selected=178;
-        
-        String data_string = app_selected+"___"+id_usuario+"___"+id_empresa+"___"+almacen;
+        data_string = app_selected+"___"+id_usuario+"___"+id_empresa+"___"+almacen+"___"+linea+"___"+marca+"___"+tipo+"___"+familia+"___"+subfamilia+"___"+tipo_reporte;
         
         lista_productos = this.getInvDao().selectFunctionForInvReporte(app_selected,data_string);
         
-        InvListaProductosXls excel = new InvListaProductosXls(fileout,lista_productos);
+        InvListaProductosXls excel = new InvListaProductosXls(tipo_reporte, fileout,lista_productos);
         
         System.out.println("Recuperando archivo: " + fileout);
         File file = new File(fileout);
@@ -214,37 +293,225 @@ public class InvCargaController {
         ) {
         HashMap<String, String> jsonretorno = new HashMap<String, String>();
         String retorno="";
-            if (!upload.isEmpty()) {
-                try {
-                    byte[] bytes = upload.getBytes();
-
-                    System.out.println("FileHelper: "+this.getGralDao().getTmpDir()+upload.getOriginalFilename());
-                    String urlSave = FileHelper.saveByteFile(bytes, this.getGralDao().getTmpDir()+upload.getOriginalFilename());
-
-                    String ul_img = upload.getOriginalFilename();
-
-                    //System.out.println("getTmpDir:"+this.getGralDao().getTmpDir());
-
-                    System.err.println("urlSave: "+urlSave);
-
-
-                    jsonretorno.put("url",ul_img);
-                    jsonretorno.put("success","true");
-                    retorno="true";
-                } catch (IOException ex) {
-                    System.out.println("errorMessage2: "+ex.getMessage());
-                    retorno="false";
-                }
-
-            } else {
-                log.log(Level.INFO, "Test upload {0}", "uploadFailure");
-                jsonretorno.put("url","no");
-                jsonretorno.put("success","false");
+        if (!upload.isEmpty()) {
+            try {
+                byte[] bytes = upload.getBytes();
+                String urlSave = FileHelper.saveByteFile(bytes, this.getGralDao().getTmpDir()+upload.getOriginalFilename());
+                
+                String ul_img = upload.getOriginalFilename();
+                
+                jsonretorno.put("url",ul_img);
+                jsonretorno.put("success","true");
+                retorno="true";
+            } catch (IOException ex) {
                 retorno="false";
             }
-        
+
+        } else {
+            log.log(Level.INFO, "Test upload {0}", "uploadFailure");
+            jsonretorno.put("url","no");
+            jsonretorno.put("success","false");
+            retorno="false";
+        }
         return retorno;
+    }
     
+    
+    
+    @RequestMapping(method = RequestMethod.POST, value="/deleteFile.json")
+    public @ResponseBody HashMap<String, Object> getDeleteFileJson(
+            @RequestParam(value="file", required=true) String file_name,
+            @RequestParam(value="iu", required=true) String id_user_cod,
+            Model model
+        ){
+        
+        log.log(Level.INFO, "Ejecutando getDeleteFileJson de {0}", InvCargaController.class.getName());
+        HashMap<String, Object> jsonretorno = new HashMap<String, Object>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        
+        //Decodificar id de usuario
+        //Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
+        //userDat = this.getHomeDao().getUserById(id_usuario);
+        
+        //Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        //Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+
+        String dir_tmp = this.getGralDao().getTmpDir();
+        
+        //ruta de archivo de salida
+        String fileout = dir_tmp + file_name;
+        
+        File file = new File(fileout);
+        boolean delete = false;
+        String msj="";
+        
+        if(file.exists()){
+            try {
+                delete = FileHelper.delete(fileout);
+                msj = "El Archivo cargado fue eliminado";
+            } catch (Exception ex) {
+                msj = "No se ha podido eliminar el Archivo. Intente nuevamente";
+            }
+        }
+        
+        jsonretorno.put("success", delete);
+        jsonretorno.put("msj", msj);
+        
+        return jsonretorno;
+    }
+    
+    
+    
+    
+    @RequestMapping(method = RequestMethod.POST, value="/process_file.json")
+    public @ResponseBody HashMap<String,Object> getProcessFileJson(
+            @RequestParam(value="select_tipo_reporte", required=true) String select_tipo_reporte,
+            @RequestParam(value="nombre_archivo", required=true) String file_name,
+            @ModelAttribute("user") UserSessionData user
+        ) {
+            //Cargar arkchivo
+            ArrayList<HashMap<String, String>> errors = new ArrayList<HashMap<String, String>>();
+            HashMap<String, Object> jsonretorno = new HashMap<String, Object>();
+            HashMap<String, String> userDat = new HashMap<String, String>();
+            
+            Integer app_selected = 178;
+            String command_selected = "new";
+            Integer id_usuario= user.getUserId();//variable para el id  del usuario
+            String data_string="";
+            String success="true";
+            String msj="";
+            boolean actualizar=true;
+            
+            userDat = this.getHomeDao().getUserById(id_usuario);
+            Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+            Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+            
+            String dir_tmp = this.getGralDao().getTmpDir();
+            
+            //ruta de archivo de salida
+            String fileout = dir_tmp + file_name;
+            
+            //Este es para eliminar todos los registros de la tabla temporal
+            int delete = this.getInvDao().getDeleteFromInvExiTmp(id_empresa);
+            
+            String id_prod = "";
+            String codigo = "";
+            String id_almacen = "";
+            String existencia = "";
+            
+            try {
+                FileInputStream input = new FileInputStream(fileout);
+                POIFSFileSystem fs = new POIFSFileSystem(input);
+                HSSFWorkbook wb = new HSSFWorkbook(fs);
+                HSSFSheet sheet = wb.getSheetAt(0);
+                Row row;
+                int y=0;
+                for (int i=1; i<=sheet.getLastRowNum(); i++) {
+                    row = sheet.getRow(i);
+                    
+                    if(row.getCell(0).getCellType() == Cell.CELL_TYPE_STRING){
+                        id_prod = row.getCell(0).getStringCellValue();
+                    }
+                    if(row.getCell(1).getCellType() == Cell.CELL_TYPE_STRING){
+                        codigo = row.getCell(1).getStringCellValue();
+                    }
+                    if(row.getCell(5).getCellType() == Cell.CELL_TYPE_STRING){
+                        id_almacen = row.getCell(5).getStringCellValue();
+                    }
+                    if(row.getCell(11).getCellType() == Cell.CELL_TYPE_STRING){
+                        existencia = StringHelper.roundDouble(row.getCell(11).getStringCellValue(), 4);
+                    }
+                    
+                    if(row.getCell(0).getCellType() == Cell.CELL_TYPE_NUMERIC){
+                        id_prod = String.valueOf(row.getCell(0).getNumericCellValue());
+                    }
+                    if(row.getCell(1).getCellType() == Cell.CELL_TYPE_NUMERIC){
+                        codigo = String.valueOf(row.getCell(1).getNumericCellValue());
+                    }
+                    if(row.getCell(5).getCellType() == Cell.CELL_TYPE_NUMERIC){
+                        id_almacen = String.valueOf(row.getCell(5).getNumericCellValue());
+                    }
+                    if(row.getCell(11).getCellType() == Cell.CELL_TYPE_NUMERIC){
+                        existencia = StringHelper.roundDouble(row.getCell(11).getNumericCellValue(), 4);
+                    }
+                    
+                    existencia = StringHelper.removerComas(existencia);
+                    
+                    
+                    System.out.println("Fila "+(i+1) +" => "+id_empresa+"___"+id_prod+"___"+codigo+"___"+id_almacen+"___"+existencia);
+                    
+                    if(!id_almacen.matches("[0-9]*")){
+                        success="false";
+                        msj = "Valor para NO_ALMACEN no valido. <br>Fila "+(i+1) +"  =>   no_prod: <b>"+id_prod+"</b>     codigo: <b>"+codigo+"</b>      no_almacen: <b>"+id_almacen+"</b>      existencia: <b>"+existencia+"</b>";
+                        actualizar=false;
+                        break;
+                    }
+
+                    if(!id_prod.matches("[0-9]*")){
+                        success="false";
+                        msj = "Valor para NO_PROD no valido. <br>Fila "+(i+1) +"  =>   no_prod: <b>"+id_prod+"</b>     codigo: <b>"+codigo+"</b>      no_almacen: <b>"+id_almacen+"</b>      existencia: <b>"+existencia+"</b>";
+                        actualizar=false;
+                        break;
+                    }
+                    /*
+                    if(!existencia.matches("^[0-9]{1,7}+.[0-9]{0,4}")){
+                        success="false";
+                        msj = "Valor para Existencia no valido. <br>Fila "+(i+1) +"  =>   no_prod: <b>"+id_prod+"</b>     codigo: <b>"+codigo+"</b>      no_almacen: <b>"+id_almacen+"</b>      existencia: <b>"+existencia+"</b>";
+                        actualizar=false;
+                        break;
+                    }
+                    */
+                    data_string = id_empresa+"___"+id_prod+"___"+codigo+"___"+id_almacen+"___"+existencia;
+                    
+                    int affectedRow = this.getInvDao().getInsertInvExiTmp(data_string);
+
+                    if(affectedRow<=0){
+                        //Aqui entra porque hubo errores al intentar insertar el registro en inv_exi_tmp
+                        success="false";
+                        msj = "Error al intentar actualizar datos: <br>Fila "+(i+1) +"  =>   no_prod: <b>"+id_prod+"</b>     codigo: <b>"+codigo+"</b>      no_almacen: <b>"+id_almacen+"</b>      existencia: <b>"+existencia+"</b>";
+                        System.out.println(msj);
+
+                        //Eliminar contenido de la tabla inv_exi_tmp
+                        delete = this.getInvDao().getDeleteFromInvExiTmp(id_empresa);
+                        
+                        actualizar=false;
+                        break;
+                    }
+                    
+                    y++;
+                }
+                
+                //Cerrar archivo
+                input.close();
+
+
+                if(actualizar){
+                    //Ejecutar procedimiento de actualizacion de inventario(Actualizar registros en inv_exi)
+                    success = this.getInvDao().getUpdateInvExi(id_usuario, id_empresa, id_sucursal, 1);
+                    
+                    if(success.equals("true")){
+                        msj="El Inventario se ha ctualizado con exito.";
+                    }else{
+                        success="false";
+                        msj="No se ha podido actualizarl el inventario debido a errores en el proceso. Intente nuevamente.";
+                    }
+
+                }
+
+
+                System.out.println("Total => "+ y);
+
+            } catch (IOException ioe) {
+                success="false";
+                msj="No fue posible leer el archivo. Cargue nuevamente.";
+            }
+            
+            jsonretorno.put("success", success);
+            jsonretorno.put("msj", msj);
+            
+            System.out.println("success:"+jsonretorno.get("success")+"   msj:"+jsonretorno.get("msj"));
+            
+        return jsonretorno;
     }
     
     
