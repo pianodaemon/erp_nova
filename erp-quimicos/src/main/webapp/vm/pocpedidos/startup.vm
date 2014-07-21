@@ -10,7 +10,7 @@
         <link rel="stylesheet" href="../../css/modalbox/pocpedidos/formaBuscaclientes.css" type="text/css" />
         <link rel="stylesheet" href="../../css/modalbox/pocpedidos/formaBuscapresentaciones.css" type="text/css" />
         <link rel="stylesheet" href="../../css/modalbox/pocpedidos/formaBuscaproducto.css" type="text/css" />
-        <link rel="stylesheet" href="../../css/modalbox/pocpedidos/formaCancelaEmision.css" type="text/css" />
+        <!--<link rel="stylesheet" href="../../css/modalbox/pocpedidos/formaCancelaEmision.css" type="text/css" />-->
         <link rel="stylesheet" href="../../css/modalbox/pocpedidos/formaDireccionesFiscales.css" type="text/css" />
         
         <link rel="stylesheet" href="../../css/modalbox/pocpedidos/formaBuscaUnidad.css" type="text/css" />
@@ -29,7 +29,7 @@
         <script type="text/javascript" src="../../js/components/modalbox/pocpedidos/modalboxBuscacliente.js"></script>
         <script type="text/javascript" src="../../js/components/modalbox/pocpedidos/modalboxBuscapresentaciones.js"></script>
         <script type="text/javascript" src="../../js/components/modalbox/pocpedidos/modalboxBuscaproducto.js"></script>
-        <script type="text/javascript" src="../../js/components/modalbox/pocpedidos/modalboxCancelaEmision.js"></script>
+        <!--<script type="text/javascript" src="../../js/components/modalbox/pocpedidos/modalboxCancelaEmision.js"></script>-->
         <script type="text/javascript" src="../../js/components/modalbox/pocpedidos/modalboxDireccionesFiscales.js"></script>
         
         <script type="text/javascript" src="../../js/components/modalbox/pocpedidos/modalboxBuscaUnidad.js"></script>
@@ -318,11 +318,11 @@
 																	<select name="select_almacen" style="width:180px"></select>
 																</td>
 																<td width="25"></td>
-																<td width="93"></td>
-																<td width="45"></td>
+																<td width="93">Asignar&nbsp;a&nbsp;ruta</td>
+																<td width="45"><input type="checkbox" name="check_ruta"></td>
 																<td width="20"></td>
                                                             </tr>
-                                                            
+																
                                                             <tr><td colspan="20" height="5"></td></tr>
                                                             
                                                             
@@ -348,12 +348,12 @@
 																	<select name="select_condiciones_original" style="display:none"></select>
 																</td>
 																<td width="25"></td>
-																<td width="93"></td>
-																<td width="45"></td>
+																<td width="93"><span id="permite_descto">Aplicar Descuento</span></td>
+																<td width="45"><input type="checkbox" name="check_descto" id="permite_descto"></td>
 																<td width="20"></td>
 															</tr>
                                                             
-                                                            
+																
                                                             <tr><td colspan="20" height="5"></td></tr>
                                                             
                                                             
@@ -379,9 +379,9 @@
 																	<select name="vendedor_original" style="display:none"></select>
 																</td>
 																<td width="25"></td>
-																<td width="93"><span id="permite_descto">Aplicar Descuento</span></td>
-																<td width="45"><input type="checkbox" name="check_descto" id="permite_descto"></td>
-																<td width="20"></td>
+																<td width="93"><span id="permite_descto">% del Descuento</span></td>
+																<td width="45"><input type="text" name="valor_descto" style="width:45px;" maxlength="7" id="permite_descto"></td>
+																<td width="20"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_valordescto"></div></td>
                                                             </tr>
                                                             
                                                             <tr><td colspan="20" height="5"></td></tr>
@@ -400,13 +400,13 @@
 																<td></td>
 																-->
                                                                 <td width="30"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_lugarentrega"></div></td>
-																<td width="90" colspan="2">Asignar&nbsp;a&nbsp;ruta</td>
+																<td width="90" colspan="2"></td>
 																<td>&nbsp;&nbsp;</td>
-																<td width="140"><input type="checkbox" name="check_ruta"></td>
+																<td width="140"></td>
 																<td width="25"></td>
-																<td width="93"><span id="permite_descto">% del Descuento</span></td>
-																<td width="45"><input type="text" name="valor_descto" style="width:45px;" maxlength="7" id="permite_descto"></td>
-																<td width="20"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_valordescto"></div></td>
+																<td width="93"></td>
+																<td width="45"></td>
+																<td width="20"></td>
                                                             </tr>
                                                             
                                                         </table>
