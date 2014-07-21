@@ -346,8 +346,8 @@ public interface InvInterfaceDao {
     public HashMap<String, String> getUserRolAdmin(Integer id_user);
     public HashMap<String, String> getUserRolAgenteVenta(Integer id_user);
     
-    public int getInsertInvExiTmp(String data_string);
-    public int getDeleteFromInvExiTmp(Integer empresa_id);
+    public int getInsertInvExiTmp(String tipo, String data_string);
+    public int getDeleteFromInvExiTmp(String tipo, Integer empresa_id);
     public String getUpdateInvExi(Integer usuario_id, Integer empresa_id, Integer sucursal_id, Integer tipo);
     
 }

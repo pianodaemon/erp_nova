@@ -54,14 +54,15 @@ public class InvListaProductosXls {
             createCell(libro, fila5,(short) 1, CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_CENTER, "CODIGO_PROD", Font.BOLDWEIGHT_BOLD, formatoNumerico, sin_formato);
             createCell(libro, fila5,(short) 2, CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_CENTER, "DESCRIPCION_PROD", Font.BOLDWEIGHT_BOLD, formatoNumerico, sin_formato);
             createCell(libro, fila5,(short) 3, CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_CENTER, "UNIDAD", Font.BOLDWEIGHT_BOLD, formatoNumerico, sin_formato);
-            createCell(libro, fila5,(short) 4, CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_CENTER, "TIPO_PROD", Font.BOLDWEIGHT_BOLD, formatoNumerico, sin_formato);
-            createCell(libro, fila5,(short) 5, CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_CENTER, "NO_ALMACEN", Font.BOLDWEIGHT_BOLD, formatoNumerico, sin_formato);
-            createCell(libro, fila5,(short) 6, CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_CENTER, "ALMACEN", Font.BOLDWEIGHT_BOLD, formatoNumerico, sin_formato);
-            createCell(libro, fila5,(short) 7, CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_CENTER, "FAMILIA", Font.BOLDWEIGHT_BOLD, formatoNumerico, sin_formato);
-            createCell(libro, fila5,(short) 8, CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_CENTER, "SUBFAMILIA", Font.BOLDWEIGHT_BOLD, formatoNumerico, sin_formato);
-            createCell(libro, fila5,(short) 9, CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_CENTER, "LINEA", Font.BOLDWEIGHT_BOLD, formatoNumerico, sin_formato);
-            createCell(libro, fila5,(short) 10, CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_CENTER, "MARCA", Font.BOLDWEIGHT_BOLD, formatoNumerico, sin_formato);
-            createCell(libro, fila5,(short) 11, CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_CENTER, "EXISTENCIA", Font.BOLDWEIGHT_BOLD, formatoNumerico, sin_formato);
+            createCell(libro, fila5,(short) 4, CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_CENTER, "NO_ALMACEN", Font.BOLDWEIGHT_BOLD, formatoNumerico, sin_formato);
+            createCell(libro, fila5,(short) 5, CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_CENTER, "ALMACEN", Font.BOLDWEIGHT_BOLD, formatoNumerico, sin_formato);
+            createCell(libro, fila5,(short) 6, CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_CENTER, "EXISTENCIA", Font.BOLDWEIGHT_BOLD, formatoNumerico, sin_formato);
+            createCell(libro, fila5,(short) 7, CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_CENTER, "TIPO_PROD", Font.BOLDWEIGHT_BOLD, formatoNumerico, sin_formato);
+            createCell(libro, fila5,(short) 8, CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_CENTER, "FAMILIA", Font.BOLDWEIGHT_BOLD, formatoNumerico, sin_formato);
+            createCell(libro, fila5,(short) 9, CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_CENTER, "SUBFAMILIA", Font.BOLDWEIGHT_BOLD, formatoNumerico, sin_formato);
+            createCell(libro, fila5,(short) 10, CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_CENTER, "LINEA", Font.BOLDWEIGHT_BOLD, formatoNumerico, sin_formato);
+            createCell(libro, fila5,(short) 11, CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_CENTER, "MARCA", Font.BOLDWEIGHT_BOLD, formatoNumerico, sin_formato);
+            
 
             noRow=1;
             if(datos.size()>0){
@@ -72,14 +73,15 @@ public class InvListaProductosXls {
                     createCell(libro, fila,(short) 1, CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_CENTER, registro.get("codigo_producto"), Font.BOLDWEIGHT_NORMAL, formatoNumerico, sin_formato);
                     createCell(libro, fila,(short) 2, CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_CENTER, registro.get("descripcion_producto"), Font.BOLDWEIGHT_NORMAL, formatoNumerico, sin_formato);
                     createCell(libro, fila,(short) 3, CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_CENTER, registro.get("unidad"), Font.BOLDWEIGHT_NORMAL, formatoNumerico, sin_formato);
-                    createCell(libro, fila,(short) 4, CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_CENTER, registro.get("tipo_producto"), Font.BOLDWEIGHT_NORMAL, formatoNumerico, sin_formato);
-                    createCell(libro, fila,(short) 5, CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_CENTER, registro.get("no_almacen"), Font.BOLDWEIGHT_NORMAL, formatoNumerico, sin_formato);
-                    createCell(libro, fila,(short) 6, CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_CENTER, registro.get("almacen"), Font.BOLDWEIGHT_NORMAL, formatoNumerico, sin_formato);
-                    createCell(libro, fila,(short) 7, CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_CENTER, registro.get("familia"), Font.BOLDWEIGHT_NORMAL, formatoNumerico, sin_formato);
-                    createCell(libro, fila,(short) 8, CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_CENTER, registro.get("subfamilia"), Font.BOLDWEIGHT_NORMAL, formatoNumerico, sin_formato);
-                    createCell(libro, fila,(short) 9, CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_CENTER, registro.get("linea"), Font.BOLDWEIGHT_NORMAL, formatoNumerico, sin_formato);
-                    createCell(libro, fila,(short) 10, CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_CENTER, registro.get("marca"), Font.BOLDWEIGHT_NORMAL, formatoNumerico, sin_formato);
-                    createCell(libro, fila,(short) 11, CellStyle.ALIGN_RIGHT, CellStyle.VERTICAL_CENTER, registro.get("existencia"), Font.BOLDWEIGHT_NORMAL, formatoNumerico, sin_formato);
+                    createCell(libro, fila,(short) 4, CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_CENTER, registro.get("no_almacen"), Font.BOLDWEIGHT_NORMAL, formatoNumerico, sin_formato);
+                    createCell(libro, fila,(short) 5, CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_CENTER, registro.get("almacen"), Font.BOLDWEIGHT_NORMAL, formatoNumerico, sin_formato);
+                    createCell(libro, fila,(short) 6, CellStyle.ALIGN_RIGHT, CellStyle.VERTICAL_CENTER, registro.get("existencia"), Font.BOLDWEIGHT_NORMAL, formatoNumerico, sin_formato);
+                    createCell(libro, fila,(short) 7, CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_CENTER, registro.get("tipo_producto"), Font.BOLDWEIGHT_NORMAL, formatoNumerico, sin_formato);
+                    createCell(libro, fila,(short) 8, CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_CENTER, registro.get("familia"), Font.BOLDWEIGHT_NORMAL, formatoNumerico, sin_formato);
+                    createCell(libro, fila,(short) 9, CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_CENTER, registro.get("subfamilia"), Font.BOLDWEIGHT_NORMAL, formatoNumerico, sin_formato);
+                    createCell(libro, fila,(short) 10, CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_CENTER, registro.get("linea"), Font.BOLDWEIGHT_NORMAL, formatoNumerico, sin_formato);
+                    createCell(libro, fila,(short) 11, CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_CENTER, registro.get("marca"), Font.BOLDWEIGHT_NORMAL, formatoNumerico, sin_formato);
+                    
 
                     //System.out.println(registro.get("codigo_producto") +" => "+registro.get("existencia"));
                     noRow++;

@@ -32,9 +32,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -381,6 +379,9 @@ public class InvCargaController {
             String success="true";
             String msj="";
             boolean actualizar=true;
+            boolean formato_corrcto=false;
+            String patron_enteros = "[0-9]*";
+            String patron_decimales = "^[0-9]{1,7}+.[0-9]{0,4}";
             
             userDat = this.getHomeDao().getUserById(id_usuario);
             Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
@@ -392,12 +393,16 @@ public class InvCargaController {
             String fileout = dir_tmp + file_name;
             
             //Este es para eliminar todos los registros de la tabla temporal
-            int delete = this.getInvDao().getDeleteFromInvExiTmp(id_empresa);
+            int delete = this.getInvDao().getDeleteFromInvExiTmp(select_tipo_reporte, id_empresa);
+            
             
             String id_prod = "";
             String codigo = "";
             String id_almacen = "";
             String existencia = "";
+            
+            String lote_int = "";
+            String lote_prov = "";
             
             try {
                 FileInputStream input = new FileInputStream(fileout);
@@ -405,97 +410,182 @@ public class InvCargaController {
                 HSSFWorkbook wb = new HSSFWorkbook(fs);
                 HSSFSheet sheet = wb.getSheetAt(0);
                 Row row;
+                //Cell cell;
                 int y=0;
-                for (int i=1; i<=sheet.getLastRowNum(); i++) {
-                    row = sheet.getRow(i);
-                    
-                    if(row.getCell(0).getCellType() == Cell.CELL_TYPE_STRING){
-                        id_prod = row.getCell(0).getStringCellValue();
+                
+                System.out.println("sheet.getSheetName(): "+sheet.getSheetName());
+                
+                
+                if (sheet.getSheetName().indexOf("PRODUCT") > -1){
+                    if (select_tipo_reporte.equals("1")){
+                        formato_corrcto=true;
                     }
-                    if(row.getCell(1).getCellType() == Cell.CELL_TYPE_STRING){
-                        codigo = row.getCell(1).getStringCellValue();
+                }else{
+                    if (sheet.getSheetName().indexOf("LOTE") > -1){
+                        if (select_tipo_reporte.equals("2")){
+                            formato_corrcto=true;
+                        }
                     }
-                    if(row.getCell(5).getCellType() == Cell.CELL_TYPE_STRING){
-                        id_almacen = row.getCell(5).getStringCellValue();
-                    }
-                    if(row.getCell(11).getCellType() == Cell.CELL_TYPE_STRING){
-                        existencia = StringHelper.roundDouble(row.getCell(11).getStringCellValue(), 4);
-                    }
-                    
-                    if(row.getCell(0).getCellType() == Cell.CELL_TYPE_NUMERIC){
-                        id_prod = String.valueOf(row.getCell(0).getNumericCellValue());
-                    }
-                    if(row.getCell(1).getCellType() == Cell.CELL_TYPE_NUMERIC){
-                        codigo = String.valueOf(row.getCell(1).getNumericCellValue());
-                    }
-                    if(row.getCell(5).getCellType() == Cell.CELL_TYPE_NUMERIC){
-                        id_almacen = String.valueOf(row.getCell(5).getNumericCellValue());
-                    }
-                    if(row.getCell(11).getCellType() == Cell.CELL_TYPE_NUMERIC){
-                        existencia = StringHelper.roundDouble(row.getCell(11).getNumericCellValue(), 4);
-                    }
-                    
-                    existencia = StringHelper.removerComas(existencia);
-                    
-                    
-                    System.out.println("Fila "+(i+1) +" => "+id_empresa+"___"+id_prod+"___"+codigo+"___"+id_almacen+"___"+existencia);
-                    
-                    if(!id_almacen.matches("[0-9]*")){
-                        success="false";
-                        msj = "Valor para NO_ALMACEN no valido. <br>Fila "+(i+1) +"  =>   no_prod: <b>"+id_prod+"</b>     codigo: <b>"+codigo+"</b>      no_almacen: <b>"+id_almacen+"</b>      existencia: <b>"+existencia+"</b>";
-                        actualizar=false;
-                        break;
-                    }
-
-                    if(!id_prod.matches("[0-9]*")){
-                        success="false";
-                        msj = "Valor para NO_PROD no valido. <br>Fila "+(i+1) +"  =>   no_prod: <b>"+id_prod+"</b>     codigo: <b>"+codigo+"</b>      no_almacen: <b>"+id_almacen+"</b>      existencia: <b>"+existencia+"</b>";
-                        actualizar=false;
-                        break;
-                    }
-                    /*
-                    if(!existencia.matches("^[0-9]{1,7}+.[0-9]{0,4}")){
-                        success="false";
-                        msj = "Valor para Existencia no valido. <br>Fila "+(i+1) +"  =>   no_prod: <b>"+id_prod+"</b>     codigo: <b>"+codigo+"</b>      no_almacen: <b>"+id_almacen+"</b>      existencia: <b>"+existencia+"</b>";
-                        actualizar=false;
-                        break;
-                    }
-                    */
-                    data_string = id_empresa+"___"+id_prod+"___"+codigo+"___"+id_almacen+"___"+existencia;
-                    
-                    int affectedRow = this.getInvDao().getInsertInvExiTmp(data_string);
-
-                    if(affectedRow<=0){
-                        //Aqui entra porque hubo errores al intentar insertar el registro en inv_exi_tmp
-                        success="false";
-                        msj = "Error al intentar actualizar datos: <br>Fila "+(i+1) +"  =>   no_prod: <b>"+id_prod+"</b>     codigo: <b>"+codigo+"</b>      no_almacen: <b>"+id_almacen+"</b>      existencia: <b>"+existencia+"</b>";
-                        System.out.println(msj);
-
-                        //Eliminar contenido de la tabla inv_exi_tmp
-                        delete = this.getInvDao().getDeleteFromInvExiTmp(id_empresa);
-                        
-                        actualizar=false;
-                        break;
-                    }
-                    
-                    y++;
                 }
+                
+                
+                if(formato_corrcto){
+                    System.out.println("::INICIA CARGA DE DATOS A LA TABLA TEMPORAL:::::::::::::::::::::::::::::");
+
+                    for (int i=1; i<=sheet.getLastRowNum(); i++) {
+                        row = sheet.getRow(i);
+
+                        //Inventario
+                        if(select_tipo_reporte.equals("1")){
+                            id_prod = verificarTipoDatoCelda(row.getCell(0), false);
+                            codigo = verificarTipoDatoCelda(row.getCell(1), false);
+                            id_almacen = verificarTipoDatoCelda(row.getCell(4), false);
+                            existencia = verificarTipoDatoCelda(row.getCell(6), true);
+
+                            existencia = StringHelper.removerComas(existencia);
+
+                            if(!id_almacen.matches(patron_enteros)){
+                                success="false";
+                                msj = "Valor para NO_ALMACEN no valido. <br>Fila "+(i+1) +"  =>   no_prod: <b>"+id_prod+"</b>     codigo: <b>"+codigo+"</b>      no_almacen: <b>"+id_almacen+"</b>      existencia: <b>"+existencia+"</b>";
+                                actualizar=false;
+                                break;
+                            }
+
+                            if(!id_prod.matches(patron_enteros)){
+                                success="false";
+                                msj = "Valor para NO_PROD no valido. <br>Fila "+(i+1) +"  =>   no_prod: <b>"+id_prod+"</b>     codigo: <b>"+codigo+"</b>      no_almacen: <b>"+id_almacen+"</b>      existencia: <b>"+existencia+"</b>";
+                                actualizar=false;
+                                break;
+                            }
+
+                            if(!existencia.equals("")){
+                                /*
+                                if(!existencia.matches(patron_decimales)){
+                                    success="false";
+                                    msj = "Valor para Existencia no valido. <br>Fila "+(i+1) +"  =>   no_prod: <b>"+id_prod+"</b>     codigo: <b>"+codigo+"</b>      no_almacen: <b>"+id_almacen+"</b>      existencia: <b>"+existencia+"</b>";
+                                    actualizar=false;
+                                    break;
+                                }
+                                */
+
+                                data_string = id_empresa+"___"+id_prod+"___"+codigo+"___"+id_almacen+"___"+existencia;
+
+                                int affectedRow = this.getInvDao().getInsertInvExiTmp(select_tipo_reporte, data_string);
+
+                                if(affectedRow<=0){
+                                    //Aqui entra porque hubo errores al intentar insertar el registro en inv_exi_tmp
+                                    success="false";
+                                    msj = "Error al intentar actualizar datos: <br>Fila "+(i+1) +"  =>   no_prod: <b>"+id_prod+"</b>     codigo: <b>"+codigo+"</b>      no_almacen: <b>"+id_almacen+"</b>      existencia: <b>"+existencia+"</b>";
+                                    System.out.println(msj);
+
+                                    //Eliminar contenido de la tabla inv_exi_tmp
+                                    delete = this.getInvDao().getDeleteFromInvExiTmp(select_tipo_reporte, id_empresa);
+
+                                    actualizar=false;
+                                    break;
+                                }
+                            }
+                        }
+
+
+                        //LOTES
+                        if(select_tipo_reporte.equals("2")){
+
+                            id_prod = verificarTipoDatoCelda(row.getCell(0), false);
+                            codigo = verificarTipoDatoCelda(row.getCell(1), false);
+                            id_almacen = verificarTipoDatoCelda(row.getCell(4), false);
+                            lote_int = verificarTipoDatoCelda(row.getCell(6), false);
+                            lote_prov = verificarTipoDatoCelda(row.getCell(7), false);
+                            existencia = verificarTipoDatoCelda(row.getCell(8), true);
+
+                            existencia = StringHelper.removerComas(existencia);
+
+                            //System.out.println("Fila "+(i+1) +" => "+id_empresa+"___"+id_prod+"___"+codigo+"___"+id_almacen+"___"+lote_int+"___"+lote_prov+"___"+existencia);
+
+                            if(!id_almacen.matches(patron_enteros)){
+                                success="false";
+                                msj = "Valor para NO_ALMACEN no valido. <br>Fila "+(i+1) +"  =>   no_prod: <b>"+id_prod+"</b>     codigo: <b>"+codigo+"</b>      no_almacen: <b>"+id_almacen+"</b>      lote_int: <b>"+lote_int+"</b>      lote_prov: <b>"+lote_prov+"</b>      existencia: <b>"+existencia+"</b>";
+                                actualizar=false;
+                                break;
+                            }
+
+                            if(!id_prod.matches(patron_enteros)){
+                                success="false";
+                                msj = "Valor para NO_PROD no valido. <br>Fila "+(i+1) +"  =>   no_prod: <b>"+id_prod+"</b>     codigo: <b>"+codigo+"</b>      no_almacen: <b>"+id_almacen+"</b>      lote_int: <b>"+lote_int+"</b>      lote_prov: <b>"+lote_prov+"</b>      existencia: <b>"+existencia+"</b>";
+                                actualizar=false;
+                                break;
+                            }
+
+                            if(!existencia.equals("")){
+                                /*
+                                if(!existencia.matches(patron_decimales)){
+                                    success="false";
+                                    msj = "Valor para Existencia no valido. <br>Fila "+(i+1) +"  =>   no_prod: <b>"+id_prod+"</b>     codigo: <b>"+codigo+"</b>      no_almacen: <b>"+id_almacen+"</b>      lote_int: <b>"+lote_int+"</b>      lote_prov: <b>"+lote_prov+"</b>      existencia: <b>"+existencia+"</b>";
+                                    actualizar=false;
+                                    break;
+                                }
+                                */
+                                data_string = id_empresa+"___"+id_prod+"___"+codigo+"___"+id_almacen+"___"+lote_int+"___"+lote_prov+"___"+existencia;
+
+                                int affectedRow = this.getInvDao().getInsertInvExiTmp(select_tipo_reporte, data_string);
+
+                                if(affectedRow<=0){
+                                    //Aqui entra porque hubo errores al intentar insertar el registro en inv_lote_tmp
+                                    success="false";
+                                    msj = "Error al intentar actualizar datos: <br>Fila "+(i+1) +"  =>   no_prod: <b>"+id_prod+"</b>     codigo: <b>"+codigo+"</b>      no_almacen: <b>"+id_almacen+"</b>      lote_int: <b>"+lote_int+"</b>      lote_prov: <b>"+lote_prov+"</b>      existencia: <b>"+existencia+"</b>";
+                                    System.out.println(msj);
+
+                                    //Eliminar contenido de la tabla inv_exi_tmp
+                                    delete = this.getInvDao().getDeleteFromInvExiTmp(select_tipo_reporte, id_empresa);
+
+                                    actualizar=false;
+                                    break;
+                                }
+                            }
+                        }
+
+                        y++;
+                    }
+
+                    System.out.println("::FINALIZA LA CARGA DE DATOS A LA TABLA TEMPORAL:::::::::::::::::::::::::::::");
+                    
+                }else{
+                    success="false";
+                    msj = "Error: No es posible realizar la carga, el formato no corresponde al Tipo de Reporte seleccionado.";
+                    actualizar=false;
+                }
+
+                
+                
                 
                 //Cerrar archivo
                 input.close();
 
 
                 if(actualizar){
+                    
+                    System.out.println("::INICIA EJECUCION DE PROCESO QUE ACTUALIZA EL INVENTARIO::::::::::::::::::::::::::::");
+                    
                     //Ejecutar procedimiento de actualizacion de inventario(Actualizar registros en inv_exi)
-                    success = this.getInvDao().getUpdateInvExi(id_usuario, id_empresa, id_sucursal, 1);
+                    success = this.getInvDao().getUpdateInvExi(id_usuario, id_empresa, id_sucursal, Integer.valueOf(select_tipo_reporte));
                     
                     if(success.equals("true")){
-                        msj="El Inventario se ha ctualizado con exito.";
+                        if (select_tipo_reporte.equals("1")){
+                            msj="El Inventario se ha ctualizado con &eacute;xito.";
+                        }else{
+                            if (select_tipo_reporte.equals("2")){
+                                msj="El Inventario de Lotes se ha ctualizado con &eacute;xito.";
+                            }else{
+                                msj="El Inventario se ha ctualizado con &eacute;xito.";
+                            }
+                        }
+
                     }else{
                         success="false";
                         msj="No se ha podido actualizarl el inventario debido a errores en el proceso. Intente nuevamente.";
                     }
-
+                    
+                    System.out.println("::TERMINA DE PROCESO QUE ACTUALIZA EL INVENTARIO => "+msj);
                 }
 
 
@@ -513,6 +603,28 @@ public class InvCargaController {
             
         return jsonretorno;
     }
+    
+    
+    
+    
+    private String verificarTipoDatoCelda(Cell celda, boolean decimal){
+        String dato="";
+        
+        if(celda.getCellType() == Cell.CELL_TYPE_STRING){
+            dato = celda.getStringCellValue();
+        }
+        
+        if(celda.getCellType() == Cell.CELL_TYPE_NUMERIC){
+            if(decimal){
+                dato = StringHelper.roundDouble(celda.getNumericCellValue(), 4);
+            }else{
+                dato = String.valueOf(celda.getNumericCellValue());
+            }
+        }
+        
+        return dato;
+    }
+    
     
     
 }

@@ -1758,7 +1758,7 @@ public class InvSpringDao implements InvInterfaceDao{
 	String sql_query = ""
                 + "SELECT DISTINCT "
                     + "inv_alm.id, "
-                    + "inv_alm.titulo "
+                    + "inv_alm.id||' '||inv_alm.titulo AS titulo "
                 + "FROM inv_alm  "
                 + "JOIN inv_suc_alm ON inv_suc_alm.almacen_id = inv_alm.id "
                 + "JOIN gral_suc ON gral_suc.id = inv_suc_alm.sucursal_id "
@@ -8469,23 +8469,45 @@ public class InvSpringDao implements InvInterfaceDao{
     }
     
     @Override
-    public int getInsertInvExiTmp(String data_string) {
+    public int getInsertInvExiTmp(String tipo, String data_string) {
         int row=0;
+        String insertSql = "";
+        
         try{
             String param[] = data_string.split("___");
             
-            String insertSql = "INSERT INTO inv_exi_tmp (emp_id, prod_id, codigo, alm_id, exi, fecha) VALUES(?, ?, ?, ?, ?, now());";
-            //System.out.println("insertSql: "+insertSql);
             
-            // define query arguments
-            Object[] params = new Object[] { new Integer(param[0]), new Integer(param[1]), new String(param[2]), new Integer(param[3]), new Double(param[4]) };
+            if(tipo.equals("1")){
+                //Cargar en la tabla INV_EXI_TMP
+                insertSql = "INSERT INTO inv_exi_tmp (emp_id, prod_id, codigo, alm_id, exi, fecha) VALUES(?, ?, ?, ?, ?, now());";
+                //System.out.println("insertSql: "+insertSql);
 
-            // define SQL types of the arguments
-            int[] types = new int[] { Types.SMALLINT, Types.BIGINT, Types.VARCHAR, Types.SMALLINT, Types.DOUBLE };
-            
-            // execute insert query to insert the data
-            // return number of row / rows processed by the executed query
-            row = this.getJdbcTemplate().update(insertSql, params, types);
+                // define query arguments
+                Object[] params = new Object[] { new Integer(param[0]), new Integer(param[1]), new String(param[2]), new Integer(param[3]), new Double(param[4]) };
+
+                // define SQL types of the arguments
+                int[] types = new int[] { Types.SMALLINT, Types.BIGINT, Types.VARCHAR, Types.SMALLINT, Types.DOUBLE };
+
+                // execute insert query to insert the data
+                // return number of row / rows processed by the executed query
+                row = this.getJdbcTemplate().update(insertSql, params, types);
+            }
+
+            if(tipo.equals("2")){
+                
+                insertSql = "INSERT INTO inv_lote_tmp (emp_id, prod_id, codigo, alm_id, lote_int, lote_prov, exi, fecha) VALUES(?, ?, ?, ?, ?, ?, ?, now());";
+                System.out.println("insertSql: "+insertSql);
+                
+                // define query arguments
+                Object[] params = new Object[] { new Integer(param[0]), new Integer(param[1]), new String(param[2]), new Integer(param[3]), new String(param[4]), new String(param[5]), new Double(param[6]) };
+
+                // define SQL types of the arguments
+                int[] types = new int[] { Types.SMALLINT, Types.BIGINT, Types.VARCHAR, Types.SMALLINT, Types.VARCHAR, Types.VARCHAR, Types.DOUBLE };
+
+                // execute insert query to insert the data
+                // return number of row / rows processed by the executed query
+                row = this.getJdbcTemplate().update(insertSql, params, types);
+            }
             
             //System.out.println(row + " row inserted.");
         } catch (Exception e) {
@@ -8500,10 +8522,18 @@ public class InvSpringDao implements InvInterfaceDao{
     
     
     @Override
-    public int getDeleteFromInvExiTmp(Integer id_emp) {
+    public int getDeleteFromInvExiTmp(String tipo, Integer id_emp) {
         int row=0;
+        String updateSql="";
+        
         try{
-            String updateSql = "DELETE FROM inv_exi_tmp WHERE emp_id=?;";
+            if(tipo.equals("1")){
+                updateSql = "DELETE FROM inv_exi_tmp WHERE emp_id=?;";
+            }
+            if(tipo.equals("2")){
+                updateSql = "DELETE FROM inv_lote_tmp WHERE emp_id=?;";
+            }
+            
             //System.out.println("updateSql: "+updateSql);
             
             // define query arguments
@@ -8533,9 +8563,9 @@ public class InvSpringDao implements InvInterfaceDao{
         
         String valor_retorno="";
         Map<String, Object> update = this.getJdbcTemplate().queryForMap(sql_to_query);
-
+        
         valor_retorno = update.get("inv_carga_inventario_fisico").toString();
-
+        
         return valor_retorno;
     }
     
