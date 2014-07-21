@@ -382,7 +382,8 @@ $(function() {
 			action: input_json_upload, 
 			name: 'file',
 			onSubmit : function(file , ext){
-				if ((/^(xls)$/.test(ext)) || (/^(xlsx)$/.test(ext))){
+				//if ((/^(xls)$/.test(ext)) || (/^(xlsx)$/.test(ext))){
+				if(/^(xls)$/.test(ext)){
 					$buttonSeleccionarArchivo.text('Cargando..');
 					this.disable();
 				} else {
