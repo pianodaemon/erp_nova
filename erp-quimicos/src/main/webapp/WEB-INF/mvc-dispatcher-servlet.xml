@@ -63,7 +63,7 @@
 	     <property name="password" value="ms" />
 	</bean>
         
-
+        
         
         <!--<bean name="beanOutCfdi" class="com.agnux.cfdi.BeanSolicitidesOut"></bean>-->
         
