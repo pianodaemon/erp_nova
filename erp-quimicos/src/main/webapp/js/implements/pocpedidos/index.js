@@ -1036,6 +1036,8 @@ $(function() {
 		var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDireccionesFiscalesCliente.json';
 		$arreglo2 = { 'id_cliente':id_cliente }
 		$.post(input_json2,$arreglo2,function(entrydf){
+			$('#forma-pocpedidos-window').find('input[name=no_cotizacion]').focus();
+			
 			//crea el tr con los datos del producto seleccionado
 			$.each(entrydf['DirFiscal'],function(entryIndex ,df){
 				trr = '<tr>';
@@ -1725,11 +1727,15 @@ $(function() {
 							var valorImpto = entry['Presentaciones'][0]['valor_impto'];
 							var iepsId = entry['Presentaciones'][0]['ieps_id'];
 							var iepsTasa = entry['Presentaciones'][0]['ieps_tasa'];
+							var id_cot="0";
+							var no_cot="0";
+							var id_det_cot="0";
+							var cantPartida=" ";
 							
-							if($tipo_cambio.val()!='' && $tipo_cambio.val()!=' '){
+							if($tipo_cambio.val().trim()!=''){
 								if(exislp=='1'){
 									//llamada a la funcion que agrega el producto al grid
-									$agrega_producto_grid($grid_productos, id_prod, sku, titulo, unidadId, unidad, id_pres,pres,prec_unitario,$select_moneda,id_moneda,$tipo_cambio,num_dec, arrayMonedas, tcMonProd, idImpto, valorImpto, iepsId, iepsTasa, vdescto);
+									$agrega_producto_grid($grid_productos, id_prod, sku, titulo, unidadId, unidad, id_pres,pres,prec_unitario,$select_moneda,id_moneda,$tipo_cambio,num_dec, arrayMonedas, tcMonProd, idImpto, valorImpto, iepsId, iepsTasa, vdescto, id_cot, no_cot, id_det_cot, cantPartida);
 								}else{
 									jAlert(exislp, 'Atencion!', function(r) { 
 										$('#forma-pocpedidos-window').find('input[name=sku_producto]').focus();
@@ -1821,11 +1827,15 @@ $(function() {
 									var iepsId = $(this).find('span.iepsId').html();
 									var iepsTasa = $(this).find('span.iepsTasa').html();
 									
+									var id_cot="0";
+									var no_cot="0";
+									var id_det_cot="0";
+									var cantPartida=" ";
 									
-									if($tipo_cambio.val()!='' && $tipo_cambio.val()!=' '){
+									if($tipo_cambio.val().trim()!=''){
 										if(exislp=='1'){
 											//llamada a la funcion que agrega el producto al grid
-											$agrega_producto_grid($grid_productos, id_prod, sku, titulo, unidadId, unidad, id_pres,pres,prec_unitario,$select_moneda,id_moneda,$tipo_cambio,num_dec, arrayMonedas, tcMonProd, idImpto, valorImpto, iepsId, iepsTasa, vdescto);
+											$agrega_producto_grid($grid_productos, id_prod, sku, titulo, unidadId, unidad, id_pres,pres,prec_unitario,$select_moneda,id_moneda,$tipo_cambio,num_dec, arrayMonedas, tcMonProd, idImpto, valorImpto, iepsId, iepsTasa, vdescto, id_cot, no_cot, id_det_cot, cantPartida);
 										}else{
 											jAlert(exislp, 'Atencion!', function(r) { 
 												$('#forma-pocpedidos-window').find('input[name=sku_producto]').focus();
@@ -2035,7 +2045,7 @@ $(function() {
 	
 	
 	//agregar producto al grid
-	$agrega_producto_grid = function($grid_productos, id_prod, sku, titulo, unidadId, unidad,id_pres,pres,prec_unitario,$select_moneda, id_moneda, $tipo_cambio,num_dec, arrayMonedas, tcMonProd, idImpto, valorImpto, id_ieps, tasa_ieps, vdescto){
+	$agrega_producto_grid = function($grid_productos, id_prod, sku, titulo, unidadId, unidad,id_pres,pres,prec_unitario,$select_moneda, id_moneda, $tipo_cambio,num_dec, arrayMonedas, tcMonProd, idImpto, valorImpto, id_ieps, tasa_ieps, vdescto, id_cot, no_cot, id_det_cot, cantPartida){
 		var $id_impuesto = $('#forma-pocpedidos-window').find('input[name=id_impuesto]');
 		var $valor_impuesto = $('#forma-pocpedidos-window').find('input[name=valorimpuesto]');
 		var $incluye_produccion = $('#forma-pocpedidos-window').find('input[name=incluye_pro]');
@@ -2119,6 +2129,11 @@ $(function() {
 					trr += '<input type="hidden" 	name="eliminado" id="elim" value="1">';//el 1 significa que el registro no ha sido eliminado
 					trr += '<input type="hidden" 	name="iddetalle" id="idd" value="0">';//este es el id del registro que ocupa el producto en la tabla pocpedidos_detalles
 					trr += '<input type="hidden" 	name="noTr" value="'+ tr +'">';
+					
+					trr += '<input type="hidden" name="idcot" id="idcot" value="'+ id_cot +'">';
+					trr += '<input type="hidden" name="nocot" id="nocot" value="'+ no_cot +'">';
+					trr += '<input type="hidden" name="iddetcot" id="iddetcot" value="'+ id_det_cot +'">';
+					
 				trr += '</td>';
 				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="116">';
 					trr += '<input type="hidden" 	name="idproducto" id="idprod" value="'+ id_prod +'">';
@@ -2137,7 +2152,7 @@ $(function() {
 					trr += '<input type="text" 	name="presentacion'+ tr +'" value="'+  pres +'" id="pres" class="borde_oculto" readOnly="true" style="width:96px;">';
 				trr += '</td>';
 				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
-					trr += '<input type="text" name="cantidad" value=" " class="cantidad'+ tr +'" id="cant" style="width:76px;">';
+					trr += '<input type="text" name="cantidad" value="'+cantPartida+'" class="cantidad'+ tr +'" id="cant" style="width:76px;">';
 				trr += '</td>';
 				trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
 					trr += '<input type="text" name="costo" value="'+ precioCambiado +'" class="costo'+ tr +'" id="cost" style="width:86px; text-align:right;">';
@@ -2618,6 +2633,8 @@ $(function() {
 		var $lugar_entrega = $('#forma-pocpedidos-window').find('input[name=lugar_entrega]');
 		var $fecha_compromiso = $('#forma-pocpedidos-window').find('input[name=fecha_compromiso]');
 		var $select_almacen = $('#forma-pocpedidos-window').find('select[name=select_almacen]');
+		
+		var $no_cotizacion = $('#forma-pocpedidos-window').find('input[name=no_cotizacion]');
 		
 		var $sku_producto = $('#forma-pocpedidos-window').find('input[name=sku_producto]');
 		var $nombre_producto = $('#forma-pocpedidos-window').find('input[name=nombre_producto]');
@@ -3409,20 +3426,161 @@ $(function() {
 			});
 			
 			
+			
+			//Obtiene datos de la cotizacion
+			$no_cotizacion.keypress(function(e){
+				if(e.which == 13){
+					
+					var encontrado = 0;
+					//busca el sku y la presentacion en el grid
+					$grid_productos.find('tr').each(function (index){
+						if($(this).find('#nocot').val() == $no_cotizacion.val()){
+							encontrado=1;//el producto ya esta en el grid
+						}
+					});
+					
+					
+					//trr += '<input type="hidden" name="idcot" id="idcot" value="'+ id_cot +'">';
+					//trr += '<input type="hidden" name="nocot" id="nocot" value="'+ no_cot +'">';
+					//trr += '<input type="hidden" name="iddetcot" id="iddetcot" value="'+ id_det_cot +'">';
+					/*
+					jConfirm('Los datos de la cotizaci&oacute;n  <b>'+$no_cotizacion.val()+'</b> ya se encuentra en el listado. <br/>Desea cambiar la cotizaci&oacute;n?', 'Dialogo de Confirmacion', function(r) {
+						// If they confirmed, manually trigger a form submission
+						if (r) {
+							
+						}else{
+							//aqui no hay nada
+						}
+					});
+					*/
+					
+					if(parseInt(encontrado)<=0){
+						var input_json3 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDatosCotizacion.json';
+						$arreglo3 = {'no_cot':$no_cotizacion.val(),  'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
+						
+						$.post(input_json3,$arreglo3,function(entry3){
+							
+							if(parseInt(entry3['COTDATOS'].length) > 0 ){
+								/*
+								row.put("id_cot",String.valueOf(rs.getInt("id_cot")));
+								row.put("tipo_documento",String.valueOf(rs.getInt("tipo_documento")));
+								row.put("folio",rs.getString("folio"));
+								row.put("proceso_flujo_id",String.valueOf(rs.getInt("proceso_flujo_id")));
+								row.put("observaciones",rs.getString("observaciones"));
+								row.put("df_id",String.valueOf(rs.getInt("cxc_clie_df_id")));
+								row.put("monto_descto",StringHelper.roundDouble(rs.getDouble("monto_descto"),2));
+								row.put("subtotal",StringHelper.roundDouble(rs.getDouble("subtotal"),2));
+								row.put("monto_ieps",StringHelper.roundDouble(rs.getDouble("monto_ieps"),2));
+								row.put("impuesto",StringHelper.roundDouble(rs.getDouble("impuesto"),2));
+								row.put("retencion",StringHelper.roundDouble(rs.getDouble("monto_retencion"),2));
+								row.put("total",StringHelper.roundDouble(rs.getDouble("total"),2));
+								row.put("tipo_cambio",StringHelper.roundDouble(rs.getDouble("tipo_cambio"),4));
+								
+								row.put("no_cuenta",rs.getString("no_cuenta"));
+								row.put("enviar_ruta",String.valueOf(rs.getBoolean("enviar_ruta")));
+								row.put("enviar_obser",String.valueOf(rs.getBoolean("enviar_obser_fac")));
+								row.put("flete",String.valueOf(rs.getBoolean("flete")));
+								//row.put("pdescto",String.valueOf(rs.getBoolean("pdescto")));
+								row.put("mdescto",rs.getString("mdescto"));
+								//row.put("porcentaje_descto",StringHelper.roundDouble(rs.getDouble("porcentaje_descto"),4));
+								*/
+								
+								/*
+								$('#forma-pocpedidos-window').find('input[name=id_df]').val(0);
+								if(parseFloat(vdescto)>0){
+									$('#forma-pocpedidos-window').find('input[name=check_descto]').attr('checked',  (pdescto == 'true')? true:false );
+									$('#forma-pocpedidos-window').find('input[name=valor_descto]').attr("readonly", false);
+									$('#forma-pocpedidos-window').find('input[name=valor_descto]').css({'background' : '#ffffff'});
+								}
+								$('#forma-pocpedidos-window').find('input[name=pdescto]').val(pdescto);
+								$('#forma-pocpedidos-window').find('input[name=valor_descto]').val(vdescto);
+								*/
+								
+								var id_cliente = entry3['COTDATOS'][0]['cliente_id'];
+								var no_control = entry3['COTDATOS'][0]['numero_control'];
+								var razon_social = entry3['COTDATOS'][0]['razon_social'];
+								var dir_cliente = entry3['COTDATOS'][0]['direccion'];
+								var empresa_immex = entry3['COTDATOS'][0]['empresa_immex'];
+								var tasa_ret_immex = entry3['COTDATOS'][0]['tasa_retencion_immex'];
+								var cuenta_mn = entry3['COTDATOS'][0]['cta_pago_mn'];
+								var cuenta_usd = entry3['COTDATOS'][0]['cta_pago_usd'];
+								var id_moneda = entry3['COTDATOS'][0]['moneda_id'];
+								var id_termino = entry3['COTDATOS'][0]['dias_credito_id'];
+								var id_vendedor = entry3['COTDATOS'][0]['cxc_agen_id'];
+								var num_lista_precio = entry3['COTDATOS'][0]['lista_precio'];
+								var id_metodo_de_pago = entry3['COTDATOS'][0]['metodo_pago_id'];
+								var tiene_dir_fiscal = entry3['COTDATOS'][0]['tiene_df'];
+								var cred_susp = entry3['COTDATOS'][0]['credito_suspendido'];
+								var pdescto = entry3['COTDATOS'][0]['pdescto'];
+								var vdescto = entry3['COTDATOS'][0]['porcentaje_descto'];
+								
+								$agregarDatosClienteSeleccionado($select_moneda,$select_condiciones,$select_vendedor, $select_metodo_pago, entry['Monedas'], entry['Condiciones'],entry['Vendedores'], entry['MetodosPago'], $no_cuenta, $etiqueta_digit, id_cliente, no_control, razon_social, dir_cliente, empresa_immex, tasa_ret_immex, cuenta_mn, cuenta_usd, id_moneda, id_termino, id_vendedor, num_lista_precio, id_metodo_de_pago, tiene_dir_fiscal, cred_susp, pdescto, vdescto);
+								
+								//Cargar lista de productos de la cotizacion para el nuevo pedido
+								if(parseInt(entry3['COTGRID'].length) > 0 ){
+									$.each(entry3['COTGRID'],function(entryIndex,prod){
+										var id_prod = prod['id'];
+										var sku = prod['sku'];
+										var titulo = prod['titulo'];
+										var unidadId = prod['unidad_id'];
+										var unidad = prod['unidad'];
+										var id_pres = prod['id_presentacion'];
+										var pres = prod['presentacion'];
+										var num_dec = prod['decimales'];
+										var prec_unitario = prod['precio'];
+										var id_moneda = entry3['COTDATOS'][0]['moneda_id'];
+										var tcMonProd = entry3['COTDATOS'][0]['tipo_cambio'];
+										var idImpto = prod['iva_id'];
+										var valorImpto = prod['valor_impto_prod'];
+										var iepsId = prod['ieps_id'];
+										var iepsTasa = prod['ieps_tasa'];
+										var id_cot = entry3['COTDATOS'][0]['id_cot']
+										var no_cot = $no_cotizacion.val();
+										var id_det_cot = prod['id_det'];
+										var cantPartida = prod['cantidad'];
+										
+										//llamada a la funcion que agrega el producto al grid
+										$agrega_producto_grid($grid_productos, id_prod, sku, titulo, unidadId, unidad, id_pres,pres,prec_unitario,$select_moneda,id_moneda,$tipo_cambio,num_dec, entry['Monedas'], tcMonProd, idImpto, valorImpto, iepsId, iepsTasa, vdescto, id_cot, no_cot, id_det_cot, cantPartida);
+										
+									});
+								}
+							}
+						},"json");//termina llamada json
+						
+					}else{
+						jAlert('No se puede agregar mas de una cotizaci&oacute;n en el pedido.', 'Atencion!', function(r) { 
+							$no_cotizacion.focus();
+						});
+					}
+				}
+			});
+				
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
 			//agregar producto al grid
 			$agregar_producto.click(function(event){
 				event.preventDefault();
 				$buscador_presentaciones_producto($id_cliente,$nocliente.val(), $sku_producto.val(),$nombre_producto,$grid_productos,$select_moneda,$tipo_cambio, entry['Monedas']);
 			});
-		
+			
 		},"json");//termina llamada json
 		
 		
 		//asignar evento keypress al campo Razon Social del cliente
 		$(this).aplicarEventoKeypressEjecutaTrigger($razon_cliente, $busca_cliente);
-		
-		//asignar evento keypress al campo Numero de Control del cliente
-		//$(this).aplicarEventoKeypressEjecutaTrigger($nocliente, $busca_cliente);
 		
 		
 		//$fecha_compromiso.val(mostrarFecha());
@@ -3511,8 +3669,8 @@ $(function() {
 				$recalcular_importes_partidas($grid_productos, $pdescto, $campo_descto);
 			}
 		});
-
-
+		
+		
 		
 		
 		//cambiar metodo de pago
@@ -3751,6 +3909,8 @@ $(function() {
 			var $fecha_compromiso = $('#forma-pocpedidos-window').find('input[name=fecha_compromiso]');
 			var $fecha_compromiso_original = $('#forma-pocpedidos-window').find('input[name=fecha_compromiso_original]');
 			
+			var $no_cotizacion = $('#forma-pocpedidos-window').find('input[name=no_cotizacion]');
+			
 			//var $select_almacen = $('#forma-pocpedidos-window').find('select[name=almacen]');
 			var $sku_producto = $('#forma-pocpedidos-window').find('input[name=sku_producto]');
 			var $nombre_producto = $('#forma-pocpedidos-window').find('input[name=nombre_producto]');
@@ -3856,6 +4016,8 @@ $(function() {
 			$valor_descto.css({'background' : '#F0F0F0'});
 			$valor_descto.val(parseFloat(0).toFixed(4));
 			$permitir_solo_numeros($valor_descto);
+			$no_cotizacion.attr("readonly", true);
+			
 			$('#forma-pocpedidos-window').find('#permite_descto').hide();
 			
 			
@@ -4041,6 +4203,7 @@ $(function() {
 					$cliente_listaprecio.val(entry['datosPedido'][0]['lista_precio']);
 					$pdescto.val(entry['datosPedido'][0]['pdescto']);
 					$motivo_descuento.val(entry['datosPedido'][0]['mdescto']);
+					$no_cotizacion.val(entry['datosPedido'][0]['folio_cot']);
 					
 					if($pdescto.val()=='true'){
 						$('#forma-pocpedidos-window').find('input[name=check_descto]').attr('checked',  ($pdescto.val() == 'true')? true:false );
@@ -4228,7 +4391,7 @@ $(function() {
 					
 					
 					
-					if(entry['datosGrid'] != null){
+					if(parseInt(entry['datosGrid'].length) > 0 ){
 						$.each(entry['datosGrid'],function(entryIndex,prod){
 							
 							//Obtiene numero de trs
@@ -4245,6 +4408,13 @@ $(function() {
 									trr += '<input type="hidden" name="iddetalle" id="idd" value="'+ prod['id_detalle'] +'">';
 									trr += '<input type="hidden" name="noTr" value="'+ tr +'">';
 									//trr += '<span id="elimina">1</span>';
+									
+									//prod['no_cot']
+									//prod['id_det_cot']
+									
+									//trr += '<input type="hidden" name="nocot" id="nocot" value="'+ no_cot +'">';
+									//trr += '<input type="hidden" name="iddetcot" id="iddetcot" value="'+ id_det_cot +'">';
+									
 							trr += '</td>';
 							trr += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="116">';
 									trr += '<input type="hidden" name="idproducto" id="idprod" value="'+ prod['inv_prod_id'] +'">';

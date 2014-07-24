@@ -1217,7 +1217,7 @@ $(function() {
 		});
 		
 		
-		//busca datos de la orden de compra al presionar Enter estando en el campo Orden Compra
+		//Busca datos de la orden de compra al presionar Enter estando en el campo Orden Compra
 		$campo_ordencompra.keypress(function(e){
 			
 			if(e.which == 13){

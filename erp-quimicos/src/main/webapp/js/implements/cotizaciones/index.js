@@ -876,8 +876,8 @@ $(function() {
 							var cantidad = 0;
 							var importe = 0;
 							var idmonpartida=0;
-							var idImpto = pres['id_impto'];
-							var valorImpto = pres['valor_impto'];
+							var idImpto = entry['id_impto'];
+							var valorImpto = entry['valor_impto'];
 							
 							if($('#forma-cotizacions-window').find('input[name=tc]').val()!='' && $('#forma-cotizacions-window').find('input[name=tc]').val()!=' '){
 								if(exislp=='1'){
