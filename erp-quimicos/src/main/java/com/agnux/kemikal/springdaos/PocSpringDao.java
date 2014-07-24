@@ -170,7 +170,8 @@ public class PocSpringDao implements PocInterfaceDao{
                 + "poc_pedidos.flete,"
                 + "(CASE WHEN poc_pedidos.monto_descto>0 THEN true ELSE false END) AS pdescto, "
                 + "(CASE WHEN poc_pedidos.monto_descto>0 THEN (CASE WHEN poc_pedidos.motivo_descto IS NULL THEN '' ELSE poc_pedidos.motivo_descto END) ELSE '' END) AS mdescto, "
-                + "(CASE WHEN poc_pedidos.monto_descto IS NULL THEN 0 ELSE poc_pedidos.porcentaje_descto END) AS porcentaje_descto "
+                + "(CASE WHEN poc_pedidos.monto_descto IS NULL THEN 0 ELSE poc_pedidos.porcentaje_descto END) AS porcentaje_descto,"
+                + "poc_pedidos.folio_cot "
         + "FROM poc_pedidos "
         + "LEFT JOIN erp_proceso ON erp_proceso.id = poc_pedidos.proceso_id "
         + "LEFT JOIN gral_mon ON gral_mon.id = poc_pedidos.moneda_id "
@@ -225,6 +226,7 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("pdescto",String.valueOf(rs.getBoolean("pdescto")));
                     row.put("mdescto",rs.getString("mdescto"));
                     row.put("porcentaje_descto",StringHelper.roundDouble(rs.getDouble("porcentaje_descto"),4));
+                    row.put("folio_cot",rs.getString("folio_cot"));
                     return row;
                 }
             }
@@ -258,11 +260,14 @@ public class PocSpringDao implements PocInterfaceDao{
             + "(CASE WHEN poc_pedidos_detalle.backorder=TRUE THEN 'checked' ELSE '' END) AS valor_check, "
             + "(CASE WHEN poc_pedidos_detalle.backorder=TRUE THEN 1 ELSE 0 END) AS valor_selecionado, "
             + "(poc_pedidos_detalle.cantidad - poc_pedidos_detalle.reservado) AS cant_produccion, "
-            + "(CASE WHEN poc_pedidos_detalle.descto IS NULL THEN 0 ELSE poc_pedidos_detalle.descto END) AS descto "
+            + "(CASE WHEN poc_pedidos_detalle.descto IS NULL THEN 0 ELSE poc_pedidos_detalle.descto END) AS descto,"
+            + "(CASE WHEN poc_ped_cot.id IS NULL THEN 0 ELSE poc_ped_cot.poc_cot_id END) as id_cot, "
+            + "(CASE WHEN poc_ped_cot.id IS NULL THEN 0 ELSE poc_ped_cot.poc_cot_det_id END) as id_cot_det "
         + "FROM poc_pedidos_detalle "
         + "LEFT JOIN inv_prod on inv_prod.id = poc_pedidos_detalle.inv_prod_id "
         + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = poc_pedidos_detalle.inv_prod_unidad_id "
         + "LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = poc_pedidos_detalle.presentacion_id "
+        + "LEFT JOIN poc_ped_cot on (poc_ped_cot.poc_ped_id = poc_pedidos_detalle.poc_pedido_id and poc_ped_cot.poc_ped_det_id=poc_pedidos_detalle.id) "
         + "WHERE poc_pedidos_detalle.poc_pedido_id="+id_pedido;
         
         //System.out.println("Obtiene datos grid prefactura: "+sql_query);
@@ -300,6 +305,9 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("importe_ieps",StringHelper.roundDouble(rs.getDouble("importe_ieps"),2) );
                     
                     row.put("descto",StringHelper.roundDouble(rs.getDouble("descto"),4) );
+                    
+                    row.put("id_cot",String.valueOf(rs.getInt("id_cot")));
+                    row.put("id_cot_det",String.valueOf(rs.getInt("id_cot_det")));
                     return row;
                 }
             }
@@ -308,6 +316,189 @@ public class PocSpringDao implements PocInterfaceDao{
     }
 
 
+    
+    
+    //obtine datos de la cotizacion
+    @Override
+    public ArrayList<HashMap<String, String>> getPocPedido_DatosCotizacion(String folio_cotizacion, Integer id_empresa) {
+        String sql_query = ""
+        + "SELECT "
+            + "poc_cot.id as id_cot,"
+            + "poc_cot.folio,"
+            + "erp_proceso.proceso_flujo_id,"
+            + "poc_cot.gral_mon_id AS moneda_id,"
+            + "gral_mon.descripcion AS moneda,"
+            + "poc_cot.observaciones,"
+            + "cxc_clie.id AS cliente_id,"
+            + "cxc_clie.numero_control,"
+            + "cxc_clie.razon_social,"
+            + "(CASE WHEN tbldf.cxc_clie_id IS NULL THEN false ELSE true END ) AS tiene_dir_fiscal,"
+            +"cxc_clie.calle||' '||cxc_clie.numero||', '||cxc_clie.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo||' C.P. '||cxc_clie.cp as direccion, "
+            + "0::double precision AS monto_descto,"
+            + "poc_cot.subtotal,"
+            + "0::double precision AS monto_ieps,"
+            + "poc_cot.impuesto,"
+            + "0::double precision AS monto_retencion,"
+            + "poc_cot.total,"
+            + "poc_cot.tipo_cambio,"
+            + "poc_cot.cxc_agen_id,"
+            + "cxc_clie.dias_credito_id,"
+            + "cxc_clie.credito_suspendido, "
+            + "cxc_clie.empresa_immex,"
+            + "cxc_clie.tasa_ret_immex,"
+            + "cxc_clie.fac_metodos_pago_id AS metodo_pago_id,"
+            + "''::character varying  AS no_cuenta, "
+            + "false::boolean AS enviar_ruta, "
+            + "cxc_clie.cta_pago_mn, "
+            + "cxc_clie.cta_pago_usd,"
+            + "cxc_clie.lista_precio,"
+            + "false::boolean AS enviar_obser_fac,"
+            + "false::boolean AS flete,"
+            + "true::boolean pdescto, "
+            + "0::double precision AS mdescto, "
+            + "0::double precision AS porcentaje_descto "
+        + "FROM poc_cot JOIN poc_cot_clie ON poc_cot_clie.poc_cot_id=poc_cot.id "
+        + "LEFT JOIN erp_proceso ON erp_proceso.id = poc_cot.proceso_id  "
+        + "LEFT JOIN gral_mon ON gral_mon.id = poc_cot.gral_mon_id  "
+        + "JOIN cxc_clie ON cxc_clie.id=poc_cot_clie.cxc_clie_id "
+        + "JOIN gral_pais ON gral_pais.id = cxc_clie.pais_id "
+        + "JOIN gral_edo ON gral_edo.id = cxc_clie.estado_id "
+        + "JOIN gral_mun ON gral_mun.id = cxc_clie.municipio_id "
+        + "LEFT JOIN (SELECT DISTINCT cxc_clie_id FROM cxc_clie_df WHERE borrado_logico=false) AS tbldf ON tbldf.cxc_clie_id=cxc_clie.id "
+        + "WHERE poc_cot.folio=? AND erp_proceso.empresa_id=?";
+        
+        /*
+        + "LEFT JOIN ("
+            + "SELECT sbtdir.id_df,sbtdir.cxc_clie_id, (CASE WHEN sbtdir.calle IS NULL THEN '' ELSE sbtdir.calle END) AS calle, (CASE WHEN sbtdir.numero_interior IS NULL THEN '' ELSE (CASE WHEN sbtdir.numero_interior IS NULL OR sbtdir.numero_interior='' THEN '' ELSE 'NO.INT.'||sbtdir.numero_interior END)  END) AS numero_interior, (CASE WHEN sbtdir.numero_exterior IS NULL THEN '' ELSE (CASE WHEN sbtdir.numero_exterior IS NULL OR sbtdir.numero_exterior='' THEN '' ELSE 'NO.EXT.'||sbtdir.numero_exterior END )  END) AS numero_exterior, (CASE WHEN sbtdir.colonia IS NULL THEN '' ELSE sbtdir.colonia END) AS colonia, (CASE WHEN gral_mun.id IS NULL OR gral_mun.id=0 THEN '' ELSE gral_mun.titulo END) AS municipio, (CASE WHEN gral_edo.id IS NULL OR gral_edo.id=0 THEN '' ELSE gral_edo.titulo END) AS estado, (CASE WHEN gral_pais.id IS NULL OR gral_pais.id=0 THEN '' ELSE gral_pais.titulo END) AS pais, (CASE WHEN sbtdir.cp IS NULL THEN '' ELSE sbtdir.cp END) AS cp "
+            + "FROM ( "
+                + "SELECT  'DEFAULT'::character varying AS tipo_dir, cxc_clie.id AS cxc_clie_id, 0::integer AS id_df, cxc_clie.calle, cxc_clie.numero AS numero_interior, cxc_clie.numero_exterior, cxc_clie.colonia, cxc_clie.cp AS cp, cxc_clie.pais_id AS gral_pais_id, cxc_clie.estado_id AS gral_edo_id, cxc_clie.municipio_id AS gral_mun_id FROM cxc_clie "
+                + "UNION "
+                + "SELECT 'DIRFISCAL'::character varying AS tipo_dir, cxc_clie_df.cxc_clie_id, cxc_clie_df.id AS id_df,  cxc_clie_df.calle, cxc_clie_df.numero_interior, cxc_clie_df.numero_exterior, cxc_clie_df.colonia, cxc_clie_df.cp AS cp, cxc_clie_df.gral_pais_id, cxc_clie_df.gral_edo_id, cxc_clie_df.gral_mun_id FROM cxc_clie_df WHERE cxc_clie_df.borrado_logico=false "
+            + ")AS sbtdir LEFT JOIN gral_pais ON gral_pais.id = sbtdir.gral_pais_id LEFT JOIN gral_edo ON gral_edo.id = sbtdir.gral_edo_id LEFT JOIN gral_mun ON gral_mun.id = sbtdir.gral_mun_id 	"
+        + ") AS sbtdf ON sbtdf.cxc_clie_id = poc_cot_clie.cxc_clie_id WHERE poc_cot.folio=? AND erp_proceso.empresa_id=?";
+        */
+        System.out.println("Obteniendo datos de la cotizacion: "+sql_query);
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{new String(folio_cotizacion), new Integer(id_empresa)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id_cot",String.valueOf(rs.getInt("id_cot")));
+                    row.put("folio",rs.getString("folio"));
+                    row.put("proceso_flujo_id",String.valueOf(rs.getInt("proceso_flujo_id")));
+                    row.put("moneda_id",rs.getString("moneda_id"));
+                    row.put("moneda",rs.getString("moneda"));
+                    row.put("observaciones",rs.getString("observaciones"));
+                    row.put("cliente_id",rs.getString("cliente_id"));
+                    row.put("numero_control",rs.getString("numero_control"));
+                    row.put("razon_social",rs.getString("razon_social"));
+                    row.put("direccion",rs.getString("direccion"));
+                    row.put("monto_descto",StringHelper.roundDouble(rs.getDouble("monto_descto"),2));
+                    row.put("subtotal",StringHelper.roundDouble(rs.getDouble("subtotal"),2));
+                    row.put("monto_ieps",StringHelper.roundDouble(rs.getDouble("monto_ieps"),2));
+                    row.put("impuesto",StringHelper.roundDouble(rs.getDouble("impuesto"),2));
+                    row.put("retencion",StringHelper.roundDouble(rs.getDouble("monto_retencion"),2));
+                    row.put("total",StringHelper.roundDouble(rs.getDouble("total"),2));
+                    row.put("tipo_cambio",StringHelper.roundDouble(rs.getDouble("tipo_cambio"),4));
+                    row.put("cxc_agen_id",rs.getString("cxc_agen_id"));
+                    row.put("dias_credito_id",rs.getString("dias_credito_id"));
+                    row.put("credito_suspendido",String.valueOf(rs.getBoolean("credito_suspendido")));
+                    row.put("tiene_df",String.valueOf(rs.getBoolean("tiene_dir_fiscal")));
+                    row.put("empresa_immex",String.valueOf(rs.getBoolean("empresa_immex")));
+                    row.put("tasa_retencion_immex",StringHelper.roundDouble(rs.getDouble("tasa_ret_immex"),2));
+                    row.put("metodo_pago_id",String.valueOf(rs.getInt("metodo_pago_id")));
+                    row.put("no_cuenta",rs.getString("no_cuenta"));
+                    row.put("enviar_ruta",String.valueOf(rs.getBoolean("enviar_ruta")));
+                    
+                    row.put("cta_pago_mn",rs.getString("cta_pago_mn"));
+                    row.put("cta_pago_usd",rs.getString("cta_pago_usd"));
+                    row.put("lista_precio",rs.getString("lista_precio"));
+                    row.put("enviar_obser",String.valueOf(rs.getBoolean("enviar_obser_fac")));
+                    row.put("flete",String.valueOf(rs.getBoolean("flete")));
+                    row.put("pdescto",String.valueOf(rs.getBoolean("pdescto")));
+                    row.put("mdescto",rs.getString("mdescto"));
+                    row.put("porcentaje_descto",StringHelper.roundDouble(rs.getDouble("porcentaje_descto"),4));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    
+    
+    
+    
+    
+    //obtine datos del cliente
+    @Override
+    public ArrayList<HashMap<String, String>> getPocPedido_DatosCotizacionGrid(String id_cot) {
+        String sql_query = ""
+        + "SELECT "
+            + "poc_cot_detalle.id AS id_det,"
+            + "inv_prod.id,"
+            + "inv_prod.sku,"
+            + "inv_prod.descripcion AS titulo,"
+            + "poc_cot_detalle.gral_impto_id AS iva_id,"
+            + "poc_cot_detalle.valor_imp AS valor_impto_prod,"
+            + "(CASE WHEN inv_prod.ieps=0 THEN 0 ELSE gral_ieps.id END) AS ieps_id, "
+            + "(CASE WHEN inv_prod.ieps=0 THEN 0 ELSE gral_ieps.tasa END) AS ieps_tasa, "
+            + "inv_prod.unidad_id,"
+            + "(CASE WHEN inv_prod_unidades.titulo IS NULL THEN '' ELSE inv_prod_unidades.titulo END) AS unidad,"
+            + "(CASE WHEN inv_prod_presentaciones.id IS NULL THEN 0 ELSE inv_prod_presentaciones.id END) AS id_presentacion,"
+            + "(CASE WHEN inv_prod_presentaciones.titulo IS NULL THEN '' ELSE inv_prod_presentaciones.titulo END) AS presentacion, "
+            + "(CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS  decimales,  "
+            + "poc_cot_detalle.cantidad,"
+            + "poc_cot_detalle.precio_unitario AS precio "
+        + "FROM poc_cot_detalle  "
+        + "LEFT JOIN inv_prod on inv_prod.id = poc_cot_detalle.inv_prod_id "
+        + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = poc_cot_detalle.inv_prod_unidad_id "
+        + "LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = poc_cot_detalle.inv_presentacion_id "
+        + "LEFT JOIN gral_ieps ON gral_ieps.id=inv_prod.ieps "
+        + "WHERE poc_cot_detalle.poc_cot_id=?;";
+
+        //System.out.println("Obteniendo datos de la cotizacion: "+sql_query);
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{new Integer(id_cot)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id_det",String.valueOf(rs.getInt("id_det")));
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("sku",rs.getString("sku"));
+                    row.put("titulo",rs.getString("titulo"));
+                    row.put("iva_id",String.valueOf(rs.getInt("iva_id")));
+                    row.put("valor_impto_prod",StringHelper.roundDouble(rs.getDouble("valor_impto_prod"),2));
+                    row.put("ieps_id",String.valueOf(rs.getInt("ieps_id")));
+                    row.put("ieps_tasa",StringHelper.roundDouble(rs.getDouble("ieps_tasa"),4));
+                    row.put("unidad_id",String.valueOf(rs.getInt("unidad_id")));
+                    row.put("unidad",rs.getString("unidad"));
+                    row.put("id_presentacion",String.valueOf(rs.getInt("id_presentacion")));
+                    row.put("presentacion",rs.getString("presentacion"));
+                    row.put("decimales",StringHelper.roundDouble(rs.getDouble("decimales"),2));
+                    
+                    row.put("cantidad",StringHelper.roundDouble(rs.getDouble("cantidad"),4));
+                    row.put("precio",StringHelper.roundDouble(rs.getDouble("precio"),4));
+                    
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
    @Override
     public HashMap<String, String> getDatosPDF(Integer id_pedido) {

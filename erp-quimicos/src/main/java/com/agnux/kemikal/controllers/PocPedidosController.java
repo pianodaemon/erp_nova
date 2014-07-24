@@ -30,19 +30,13 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  *
@@ -391,6 +385,48 @@ public class PocPedidosController {
         
         return jsonretorno;
     }
+    
+    
+    
+    
+    
+    //Obtener datos del cliente a partir del Numero de Control
+    @RequestMapping(method = RequestMethod.POST, value="/getDatosCotizacion.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getDatosCotizacionJson(
+            @RequestParam(value="no_cot", required=true) String folio_cot,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+        ) {
+        
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        ArrayList<HashMap<String, String>> datosCotizacion = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> datosGridCotizacion = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        HashMap<String, String> parametros = new HashMap<String, String>();
+        
+        //Decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        
+        parametros = this.getPocDao().getPocPedido_Parametros(id_empresa, id_sucursal);
+        String permite_descto = parametros.get("permitir_descto").toLowerCase();
+        
+        datosCotizacion = this.getPocDao().getPocPedido_DatosCotizacion(folio_cot, id_empresa);
+        if(datosCotizacion.size()>0){
+            datosGridCotizacion = this.getPocDao().getPocPedido_DatosCotizacionGrid(datosCotizacion.get(0).get("id_cot"));
+        }
+        
+        jsonretorno.put("COTDATOS", datosCotizacion);
+        jsonretorno.put("COTGRID", datosGridCotizacion);
+        
+        return jsonretorno;
+    }
+    
+    
     
     
     
@@ -794,6 +830,8 @@ public class PocPedidosController {
             @RequestParam(value="pdescto", required=true) String permitir_descto,
             @RequestParam(value="motivo_descuento", required=true) String motivo_descuento,
             @RequestParam(value="valor_descto", required=true) String porcentaje_descto,
+            @RequestParam(value="nocot", required=true) String nocot,
+            
             
             @RequestParam(value="eliminado", required=false) String[] eliminado,
             @RequestParam(value="iddetalle", required=false) String[] iddetalle,
@@ -803,14 +841,14 @@ public class PocPedidosController {
             @RequestParam(value="id_imp_prod", required=false) String[] id_impuesto,
             @RequestParam(value="valor_imp", required=false) String[] valor_imp,
             @RequestParam(value="vdescto", required=false) String[] vdescto,
-            
             @RequestParam(value="idIeps", required=false) String[] idIeps,
             @RequestParam(value="tasaIeps", required=false) String[] tasaIeps,
-            
             @RequestParam(value="cantidad", required=false) String[] cantidad,
             @RequestParam(value="costo", required=false) String[] costo,
             @RequestParam(value="noTr", required=false) String[] noTr,
             @RequestParam(value="seleccionado", required=false) String[] seleccionado,
+            @RequestParam(value="idcot", required=false) String[] idcot,
+            @RequestParam(value="iddetcot", required=false) String[] iddetcot,
             
             @RequestParam(value="transportista", required=true) String transportista,
             @RequestParam(value="check_flete", required=false) String check_flete,
@@ -851,7 +889,7 @@ public class PocPedidosController {
             
             for(int i=0; i<eliminado.length; i++) { 
                 select_umedida[i] = StringHelper.verificarSelect(select_umedida[i]);
-                arreglo[i]= "'"+eliminado[i] +"___" + iddetalle[i] +"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + id_impuesto[i] +"___" + cantidad[i] +"___" + costo[i] + "___"+valor_imp[i] + "___"+noTr[i] + "___"+seleccionado[i]+ "___" + select_umedida[i] + "___" + idIeps[i] + "___" + tasaIeps[i]+ "___"+ vdescto[i] +"'";
+                arreglo[i]= "'"+eliminado[i] +"___" + iddetalle[i] +"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + id_impuesto[i] +"___" + cantidad[i] +"___" + costo[i] + "___"+valor_imp[i] + "___"+noTr[i] + "___"+seleccionado[i]+ "___" + select_umedida[i] + "___" + idIeps[i] + "___" + tasaIeps[i]+ "___"+ vdescto[i] +"___"+ idcot[i] +"___"+ iddetcot[i] +"'";
                 //System.out.println(arreglo[i]);
             }
             
@@ -936,7 +974,8 @@ public class PocPedidosController {
                     observaciones_transportista+"___"+
                     permitir_descto+"___"+
                     motivo_descuento.toUpperCase()+"___"+
-                    porcentaje_descto;
+                    porcentaje_descto+"___"+
+                    nocot;
             
             //System.out.println("data_string: "+data_string);
             

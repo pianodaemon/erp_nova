@@ -52,6 +52,9 @@ public interface PocInterfaceDao{
     public ArrayList<HashMap<String, Object>> getPocPedidos_PaginaGrid(String data_string,int offset, int pageSize, String orderBy , String asc);
     public ArrayList<HashMap<String, String>> getPocPedido_Datos(Integer id_pedido);
     public ArrayList<HashMap<String, String>> getPocPedido_DatosGrid(Integer id_pedido);
+    public ArrayList<HashMap<String, String>> getPocPedido_DatosCotizacion(String folio_cotizacion, Integer id_empresa);
+    public ArrayList<HashMap<String, String>> getPocPedido_DatosCotizacionGrid(String id_cot);
+    
     public ArrayList<HashMap<String, String>> getPocPedido_Almacenes(Integer id_sucursal);
     public HashMap<String, String>  getPocPedido_Parametros(Integer id_emp, Integer id_suc);
     public ArrayList<HashMap<String, String>> getPocPedido_DireccionesFiscalesCliente(Integer id_cliente);

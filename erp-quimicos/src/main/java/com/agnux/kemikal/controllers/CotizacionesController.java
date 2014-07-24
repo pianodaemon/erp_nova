@@ -298,9 +298,9 @@ public class CotizacionesController {
         agentes = this.getPocDao().getAgentes(id_empresa, id_sucursal);
         incoterms = this.getPocDao().getCotizacion_Incoterms(id_empresa, Integer.parseInt(id_cotizacion));
         
-        if(parametros.get("cambiar_unidad_medida").toLowerCase().equals("true")){
+        //if(parametros.get("cambiar_unidad_medida").toLowerCase().equals("true")){
             jsonretorno.put("UM", this.getPocDao().getUnidadesMedida());
-        }
+        //}
         
         jsonretorno.put("datosCotizacion", datosCotizacion);
         jsonretorno.put("DatosCP", DatosCliPros);
@@ -520,17 +520,19 @@ public class CotizacionesController {
         
         File file = new File(varDir+"/"+name_img);
         
-        byte[] fichero = FileHelper.BytesFromFile(file);
-        response.setContentType ("application/png");
-        response.setHeader ( "Content-disposition", "inline; filename=" + name_img );
-        response.setHeader ( "Cache-Control", "max-age=30" );
-        response.setHeader ( "Pragma", "No-cache" );
-        response.setDateHeader ("Expires", 0);
-        response.setContentLength (fichero.length);
-        out = response.getOutputStream ();
-        out.write (fichero, 0, fichero.length);
-        out.flush ();
-        out.close ();
+        if(file.exists()){
+            byte[] fichero = FileHelper.BytesFromFile(file);
+            response.setContentType ("application/png");
+            response.setHeader ( "Content-disposition", "inline; filename=" + name_img );
+            response.setHeader ( "Cache-Control", "max-age=30" );
+            response.setHeader ( "Pragma", "No-cache" );
+            response.setDateHeader ("Expires", 0);
+            response.setContentLength (fichero.length);
+            out = response.getOutputStream ();
+            out.write (fichero, 0, fichero.length);
+            out.flush ();
+            out.close ();
+        }
         
         return null;
     }
