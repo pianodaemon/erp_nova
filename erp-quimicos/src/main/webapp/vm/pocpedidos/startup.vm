@@ -348,7 +348,7 @@
 																	<select name="select_condiciones_original" style="display:none"></select>
 																</td>
 																<td width="25"></td>
-																<td width="93"><span id="permite_descto">Aplicar Descuento</span></td>
+																<td width="93"><span id="permite_descto">Aplicar&nbsp;Descuento</span></td>
 																<td width="45"><input type="checkbox" name="check_descto" id="permite_descto"></td>
 																<td width="20"></td>
 															</tr>
@@ -360,12 +360,14 @@
                                                             
                                                             <tr>
                                                                 <td width="10"></td>
-                                                                <td width="80">Transporte</td>
-                                                                <td width="270" colspan="5">
-																	<input type="text" name="transporte" style="width:270px;">
-																	<input type="text" name="transporte_original" style="display:none">
-                                                                </td>
-                                                                <td width="30"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_transporte"></div></td>
+                                                                <td width="70">No.&nbsp;Cotizaci&oacute;n</td>
+                                                                <td width="90"><INPUT TYPE="text" name="no_cotizacion" style="width:90px; border:2px solid #000;"></td>
+                                                                <td width="10"></td>
+                                                                <td width="90"></td>
+                                                                <td width="10"></td>
+                                                                <td width="70"></td>
+                                                                
+                                                                <td width="30"></td>
 																<td width="75">Fecha&nbsp;Compromiso</td>
 																<td>&nbsp;&nbsp;</td>
 																<td>
@@ -379,7 +381,7 @@
 																	<select name="vendedor_original" style="display:none"></select>
 																</td>
 																<td width="25"></td>
-																<td width="93"><span id="permite_descto">% del Descuento</span></td>
+																<td width="93"><span id="permite_descto">%&nbsp;del&nbsp;Descuento</span></td>
 																<td width="45"><input type="text" name="valor_descto" style="width:45px;" maxlength="7" id="permite_descto"></td>
 																<td width="20"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_valordescto"></div></td>
                                                             </tr>
@@ -400,13 +402,19 @@
 																<td></td>
 																-->
                                                                 <td width="30"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_lugarentrega"></div></td>
-																<td width="90" colspan="2"></td>
+																<td width="90" colspan="2">Transporte</td>
 																<td>&nbsp;&nbsp;</td>
+																<td width="303" colspan="4">
+																	<input type="text" name="transporte" style="width:303px;">
+																	<input type="text" name="transporte_original" style="display:none">
+																</td>
+																<!--
 																<td width="140"></td>
 																<td width="25"></td>
 																<td width="93"></td>
 																<td width="45"></td>
-																<td width="20"></td>
+																-->
+																<td width="20"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_transporte"></div></td>
                                                             </tr>
                                                             
                                                         </table>
