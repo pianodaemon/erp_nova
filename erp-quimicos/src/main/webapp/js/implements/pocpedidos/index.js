@@ -4390,7 +4390,6 @@ $(function() {
 					
 					
 					
-					
 					if(parseInt(entry['datosGrid'].length) > 0 ){
 						$.each(entry['datosGrid'],function(entryIndex,prod){
 							
@@ -4409,11 +4408,9 @@ $(function() {
 									trr += '<input type="hidden" name="noTr" value="'+ tr +'">';
 									//trr += '<span id="elimina">1</span>';
 									
-									//prod['no_cot']
-									//prod['id_det_cot']
-									
-									//trr += '<input type="hidden" name="nocot" id="nocot" value="'+ no_cot +'">';
-									//trr += '<input type="hidden" name="iddetcot" id="iddetcot" value="'+ id_det_cot +'">';
+									trr += '<input type="hidden" name="idcot" id="idcot" value="'+ prod['id_cot'] +'">';
+									trr += '<input type="hidden" name="nocot" id="nocot" value="'+ $no_cotizacion.val() +'">';
+									trr += '<input type="hidden" name="iddetcot" id="iddetcot" value="'+ prod['id_cot_det'] +'">';
 									
 							trr += '</td>';
 							trr += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="116">';
