@@ -830,7 +830,7 @@ public class PocPedidosController {
             @RequestParam(value="pdescto", required=true) String permitir_descto,
             @RequestParam(value="motivo_descuento", required=true) String motivo_descuento,
             @RequestParam(value="valor_descto", required=true) String porcentaje_descto,
-            @RequestParam(value="nocot", required=true) String nocot,
+            
             
             
             @RequestParam(value="eliminado", required=false) String[] eliminado,
@@ -849,6 +849,7 @@ public class PocPedidosController {
             @RequestParam(value="seleccionado", required=false) String[] seleccionado,
             @RequestParam(value="idcot", required=false) String[] idcot,
             @RequestParam(value="iddetcot", required=false) String[] iddetcot,
+            @RequestParam(value="nocot", required=true) String[] nocot,
             
             @RequestParam(value="transportista", required=true) String transportista,
             @RequestParam(value="check_flete", required=false) String check_flete,
@@ -882,12 +883,18 @@ public class PocPedidosController {
             
             Integer app_selected = 64;
             String command_selected = "new";
-            Integer id_usuario= user.getUserId();//variable para el id  del usuario
+            Integer id_usuario= user.getUserId();
+            String folio_cot="";
             
             String arreglo[];
             arreglo = new String[eliminado.length];
             
             for(int i=0; i<eliminado.length; i++) { 
+                
+                if(!nocot[i].equals("") && !nocot[i].equals("0")){
+                    folio_cot=nocot[i];
+                }
+                
                 select_umedida[i] = StringHelper.verificarSelect(select_umedida[i]);
                 arreglo[i]= "'"+eliminado[i] +"___" + iddetalle[i] +"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + id_impuesto[i] +"___" + cantidad[i] +"___" + costo[i] + "___"+valor_imp[i] + "___"+noTr[i] + "___"+seleccionado[i]+ "___" + select_umedida[i] + "___" + idIeps[i] + "___" + tasaIeps[i]+ "___"+ vdescto[i] +"___"+ idcot[i] +"___"+ iddetcot[i] +"'";
                 //System.out.println(arreglo[i]);
@@ -975,7 +982,7 @@ public class PocPedidosController {
                     permitir_descto+"___"+
                     motivo_descuento.toUpperCase()+"___"+
                     porcentaje_descto+"___"+
-                    nocot;
+                    folio_cot;
             
             //System.out.println("data_string: "+data_string);
             
