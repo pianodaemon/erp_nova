@@ -8,14 +8,10 @@
 package com.agnux.kemikal.springdaos;
 
 import com.agnux.common.helpers.StringHelper;
-import com.agnux.common.helpers.TimeHelper;
 import com.agnux.kemikal.interfacedaos.CxcInterfaceDao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -5103,7 +5099,7 @@ return subfamilias;
     + ") AS sbt "
     +")as sbt2 "
     +"GROUP BY razon_social ";
-        System.out.println("Generando Consulta Reporte Ventas Anuales por Cliente:"+sql_to_query+"");
+        //System.out.println("Generando Consulta Reporte Ventas Anuales por Cliente:"+sql_to_query+"");
 
         ArrayList<HashMap<String, String>> hm_facturas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -5173,7 +5169,7 @@ return subfamilias;
                         +"JOIN ("+sql_busqueda+") AS sbt ON sbt.id = cxc_clie_descto.id "
                         +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
 
-        System.out.println("Busqueda GetPage: "+sql_to_query);
+        //System.out.println("Busqueda GetPage: "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
@@ -5201,7 +5197,7 @@ return subfamilias;
                 + " FROM cxc_clie_descto "
                 +" LEFT JOIN cxc_clie on cxc_clie.id= cxc_clie_descto.cxc_clie_id "
                 + "WHERE cxc_clie_descto.id =" +id;
-        System.out.print(sql_query);
+        //System.out.print(sql_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_query,
             new Object[]{}, new RowMapper() {
@@ -5214,7 +5210,7 @@ return subfamilias;
                     row.put("razon_social",rs.getString("razon_social"));
                     row.put("tipo",rs.getString("tipo"));
                     row.put("valor",StringHelper.roundDouble(rs.getString("valor"),4));
-
+                    
                     return row;
                 }
             }
@@ -5223,4 +5219,105 @@ return subfamilias;
     }
     //Termina Metodo Descuentos asignados a los clientes.
     
+    @Override
+    public ArrayList<HashMap<String, String>> getDatosReporteIepsCobrado(ArrayList<HashMap<String, String>> listaIeps, String ciente, String finicial, String ffinal, Integer id_empresa) {
+        final ArrayList<HashMap<String, String>> tiposIeps = listaIeps;
+        String condiciones="";
+        String campos1="";
+        String campos2="";
+        
+        if(!ciente.trim().equals("")){
+            condiciones += condiciones + " and cxc_clie.razon_social ilike '%"+ciente+"%'";
+        }
+        
+        //Crear nombres de campos dinamicamente
+        for( HashMap<String,String> i : tiposIeps ){
+            campos1 += ",sum(ieps"+i.get("id")+") as ieps"+i.get("id")+" ";
+            campos2 += ",(CASE WHEN fac_det.gral_ieps_id="+i.get("id")+" THEN (CASE WHEN fac_det.gral_ieps_id>0 THEN ((fac_det.cantidad * fac_det.precio_unitario) * fac_det.valor_ieps) ELSE 0 END) ELSE 0 END) AS ieps"+i.get("id")+" ";
+        }
+        
+        String sql_to_query = ""
+        + "SELECT "
+            + "fecha_ultimo_pago"
+            + ",fecha_pago"
+            + ",cliente"
+            + ",fecha "
+            + ",factura "
+            + ",subtotal "
+            + ",retencion"
+            + ",iva"
+            + ",total"
+            + campos1
+        + "from ( "
+            + "select "
+                + "erp_h_facturas.fecha_ultimo_pago"
+                + ",cxc_clie.razon_social as cliente"
+                + ",to_char(erp_h_facturas.fecha_ultimo_pago, 'dd/mm/yyyy') as fecha_pago"
+                + ",to_char(fac_docs.momento_creacion, 'dd/mm/yyyy') as fecha"
+                + ",fac_docs.serie_folio as factura"
+                + ",fac_docs.subtotal"
+                + ",fac_docs.monto_retencion as retencion"
+                + ",fac_docs.impuesto as iva"
+                + ",fac_docs.total"
+                + campos2 
+            + "from fac_docs "
+            + "join fac_docs_detalles as fac_det on fac_det.fac_doc_id=fac_docs.id "
+            + "join erp_h_facturas on (erp_h_facturas.serie_folio=fac_docs.serie_folio and erp_h_facturas.cliente_id=fac_docs.cxc_clie_id and erp_h_facturas.pagado=true and erp_h_facturas.cancelacion=false) "
+            + "join cxc_clie on cxc_clie.id=fac_docs.cxc_clie_id "
+            + "where fac_det.gral_ieps_id>0 and cxc_clie.borrado_logico=false and cxc_clie.empresa_id=? "+condiciones +" "
+            +" AND (to_char(erp_h_facturas.fecha_ultimo_pago,'yyyymmdd')::integer BETWEEN to_char('"+finicial+"'::timestamp with time zone,'yyyymmdd')::integer AND to_char('"+ffinal+"'::timestamp with time zone,'yyyymmdd')::integer) "
+        + ") as sbt "
+        + "group by fecha_ultimo_pago, cliente,fecha_pago,fecha, factura, subtotal,retencion,iva,total "
+        + "order by fecha_ultimo_pago"; 
+        
+        //System.out.println("getDatosReporteIepsCobrado:: "+sql_to_query);
+        
+        ArrayList<HashMap<String, String>> arraydata = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(id_empresa)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    
+                    row.put("fecha_pago",rs.getString("fecha_pago"));
+                    row.put("fecha",rs.getString("fecha"));
+                    row.put("factura",rs.getString("factura"));
+                    row.put("subtotal",StringHelper.AgregaComas(StringHelper.roundDouble(rs.getDouble("subtotal"), 2)));
+                    row.put("retencion",StringHelper.AgregaComas(StringHelper.roundDouble(rs.getDouble("retencion"), 2)));
+                    row.put("iva",StringHelper.AgregaComas(StringHelper.roundDouble(rs.getDouble("iva"), 2)));
+                    row.put("total",StringHelper.AgregaComas(StringHelper.roundDouble(rs.getDouble("total"), 2)));
+                    
+                    //Crear nombres de campos dinamicamente
+                    for( HashMap<String,String> i : tiposIeps ){
+                        row.put("ieps"+i.get("id"),StringHelper.AgregaComas(StringHelper.roundDouble(rs.getDouble("ieps"+i.get("id")), 2)));
+                    }
+                    return row;
+                }
+            }
+        );
+        return arraydata;
+    }
+    
+    
+    @Override
+    public ArrayList<HashMap<String, String>> getListaIeps(Integer id_empresa) {
+        
+        String sql_to_query = "select id, titulo, tasa from gral_ieps where gral_emp_id=? and borrado_logico=false;"; 
+        
+        //System.out.println("CxC_DatosReporteSaldoMensual:: "+sql_to_query);
+        ArrayList<HashMap<String, String>> arraydata = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(id_empresa)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",rs.getString("id"));
+                    row.put("titulo",rs.getString("titulo"));
+                    row.put("tasa",StringHelper.roundDouble(rs.getDouble("tasa"), 2));
+                    return row;
+                }
+            }
+        );
+        return arraydata;
+    }
 }
