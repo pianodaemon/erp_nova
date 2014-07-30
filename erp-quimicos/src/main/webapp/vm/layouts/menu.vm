@@ -192,6 +192,8 @@
 													
 													<li class="topline"><a href="../repclientes/startup.agnux">Clientes</a></li>
 													<li class="topline"><a href="../cxcrepsaldomes/startup.agnux">Saldo Mensual</a></li>
+													<li class="topline"><a href="../cxcrepiepscobrado/startup.agnux">IEPS Cobrado</a></li>
+													
 													
 													<!--
 													<!--esto se agrego, estaba en menu cunetas por cobrar-->
@@ -302,6 +304,8 @@
 													<li class="topline"><a href="../invrepcomprasnetasporproducto/startup.agnux">Compras Netas por Producto</a></li>
 													<li class="topline"><a href="../repestadisticocompras/startup.agnux">Estad&iacute;stico de Compras</a></li>
 													<li class="topline"><a href="../comdiasentrega/startup.agnux">D&iacute;as de Entrega</a></li>
+													<li class="topline"><a href="../comrepbackorder/startup.agnux">Backorder</a></li>
+													
 												</ul>
 											</li>
 										</ul>

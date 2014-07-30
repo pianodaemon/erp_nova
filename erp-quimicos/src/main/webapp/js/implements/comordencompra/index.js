@@ -733,6 +733,9 @@ $(function() {
 							
 							//llamada a la funcion que agrega el producto al grid
 							$agrega_producto_grid($grid_productos,id_prod,sku,titulo,unidad,id_pres,pres,prec_unitario,$select_moneda,id_moneda,$tipo_cambio,num_dec);
+							
+							$('#forma-comordencompra-window').find('input[name=sku_producto]').val('');
+							$('#forma-comordencompra-window').find('input[name=nombre_producto]').val('');
 						}else{
 							
 							$(this).modalPanel_Buscapresentacion();
