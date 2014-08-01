@@ -5219,6 +5219,7 @@ return subfamilias;
     }
     //Termina Metodo Descuentos asignados a los clientes.
     
+    
     @Override
     public ArrayList<HashMap<String, String>> getDatosReporteIepsCobrado(ArrayList<HashMap<String, String>> listaIeps, String ciente, String finicial, String ffinal, Integer id_empresa) {
         final ArrayList<HashMap<String, String>> tiposIeps = listaIeps;
@@ -5233,7 +5234,7 @@ return subfamilias;
         //Crear nombres de campos dinamicamente
         for( HashMap<String,String> i : tiposIeps ){
             campos1 += ",sum(ieps"+i.get("id")+") as ieps"+i.get("id")+" ";
-            campos2 += ",(CASE WHEN fac_det.gral_ieps_id="+i.get("id")+" THEN (CASE WHEN fac_det.gral_ieps_id>0 THEN ((fac_det.cantidad * fac_det.precio_unitario) * fac_det.valor_ieps) ELSE 0 END) ELSE 0 END) AS ieps"+i.get("id")+" ";
+            campos2 += ",(CASE WHEN fac_det.gral_ieps_id="+i.get("id")+" THEN (CASE WHEN fac_det.gral_ieps_id>0 THEN ((fac_det.cantidad * (fac_det.precio_unitario * fac_docs.tipo_cambio)) * fac_det.valor_ieps) ELSE 0 END) ELSE 0 END) AS ieps"+i.get("id")+" ";
         }
         
         String sql_to_query = ""
@@ -5255,10 +5256,10 @@ return subfamilias;
                 + ",to_char(erp_h_facturas.fecha_ultimo_pago, 'dd/mm/yyyy') as fecha_pago"
                 + ",to_char(fac_docs.momento_creacion, 'dd/mm/yyyy') as fecha"
                 + ",fac_docs.serie_folio as factura"
-                + ",fac_docs.subtotal"
-                + ",fac_docs.monto_retencion as retencion"
-                + ",fac_docs.impuesto as iva"
-                + ",fac_docs.total"
+                + ",(fac_docs.subtotal * fac_docs.tipo_cambio) as subtotal"
+                + ",(fac_docs.monto_retencion * fac_docs.tipo_cambio) as retencion"
+                + ",(fac_docs.impuesto * fac_docs.tipo_cambio) as iva"
+                + ",(fac_docs.total * fac_docs.tipo_cambio) as total"
                 + campos2 
             + "from fac_docs "
             + "join fac_docs_detalles as fac_det on fac_det.fac_doc_id=fac_docs.id "
@@ -5270,7 +5271,7 @@ return subfamilias;
         + "group by fecha_ultimo_pago, cliente,fecha_pago,fecha, factura, subtotal,retencion,iva,total "
         + "order by fecha_ultimo_pago"; 
         
-        //System.out.println("getDatosReporteIepsCobrado:: "+sql_to_query);
+        System.out.println("getDatosReporteIepsCobrado:: "+sql_to_query);
         
         ArrayList<HashMap<String, String>> arraydata = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,

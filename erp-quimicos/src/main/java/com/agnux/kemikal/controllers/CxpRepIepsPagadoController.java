@@ -9,10 +9,11 @@ import com.agnux.common.helpers.FileHelper;
 import com.agnux.common.helpers.StringHelper;
 import com.agnux.common.obj.ResourceProject;
 import com.agnux.common.obj.UserSessionData;
-import com.agnux.kemikal.interfacedaos.CxcInterfaceDao;
+import com.agnux.kemikal.interfacedaos.CxpInterfaceDao;
 import com.agnux.kemikal.interfacedaos.GralInterfaceDao;
 import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
 import com.agnux.kemikal.reportes.PdfCxcIepsCobrado;
+import com.agnux.kemikal.reportes.PdfCxpIepsPagado;
 import com.itextpdf.text.DocumentException;
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -39,18 +40,18 @@ import org.springframework.web.servlet.ModelAndView;
  *
  * @author Noe Martinez
  * gpmarsan@gmail.com
- * 28/julio/2014
+ * 30/julio/2014
  */
 @Controller
 @SessionAttributes({"user"})
-@RequestMapping("/cxcrepiepscobrado/")
-public class CxcRepIepsCobradoController {
-    private static final Logger log  = Logger.getLogger(CxcRepIepsCobradoController.class.getName());
+@RequestMapping("/cxprepiepspagado/")
+public class CxpRepIepsPagadoController {
+    private static final Logger log  = Logger.getLogger(CxpRepIepsPagadoController.class.getName());
     ResourceProject resource = new ResourceProject();
     
     @Autowired
-    @Qualifier("daoCxc")
-    private CxcInterfaceDao cxcDao;
+    @Qualifier("daoCxp")
+    private CxpInterfaceDao cxpDao;
     
     @Autowired
     @Qualifier("daoHome")
@@ -69,19 +70,20 @@ public class CxcRepIepsCobradoController {
         return gralDao;
     }
     
-    public CxcInterfaceDao getCxcDao() {
-        return cxcDao;
+    public CxpInterfaceDao getCxpDao() {
+        return cxpDao;
     }
+    
     
     @RequestMapping(value="/startup.agnux")
     public ModelAndView startUp(HttpServletRequest request, HttpServletResponse response, 
             @ModelAttribute("user") UserSessionData user)
             throws ServletException, IOException {
         
-        log.log(Level.INFO, "Ejecutando starUp de {0}", CxcRepIepsCobradoController.class.getName());
+        log.log(Level.INFO, "Ejecutando starUp de {0}", CxpRepIepsPagadoController.class.getName());
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
         
-        ModelAndView x = new ModelAndView("cxcrepiepscobrado/startup", "title", "Reporte de IEPS cobrado");
+        ModelAndView x = new ModelAndView("cxprepiepspagado/startup", "title", "Reporte de IEPS Pagado");
         
         x = x.addObject("layoutheader", resource.getLayoutheader());
         x = x.addObject("layoutmenu", resource.getLayoutmenu());
@@ -104,11 +106,13 @@ public class CxcRepIepsCobradoController {
     
     
     
-    //obtiene la existencia de un Almacen en especifico
+    
+
+    //Obtiene datos para el reporte
     @RequestMapping(method = RequestMethod.POST, value="/getDatos.json")
     public @ResponseBody HashMap<String,Object> getDatosReporteJson(
             //@RequestParam("tipo") Integer tipo,
-            @RequestParam("ciente") String ciente,
+            @RequestParam("proveedor") String proveedor,
             @RequestParam("finicial") String finicial,
             @RequestParam("ffinal") String ffinal,
             @RequestParam(value="iu", required=true) String id_user,
@@ -116,7 +120,7 @@ public class CxcRepIepsCobradoController {
         ) {
                                         
         
-        log.log(Level.INFO, "Ejecutando getDatosIEPSCobradoJson de {0}", CxcRepIepsCobradoController.class.getName());
+        log.log(Level.INFO, "Ejecutando getDatosIEPSPagadoJson de {0}", CxpRepIepsPagadoController.class.getName());
         HashMap<String,Object> jsonretorno = new HashMap<String,Object>();
         ArrayList<HashMap<String, String>> datos = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> listaIeps = new ArrayList<HashMap<String, String>>();
@@ -136,7 +140,7 @@ public class CxcRepIepsCobradoController {
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         
         //Obtener los tipos de IEPS
-        listaIeps = this.getCxcDao().getListaIeps(id_empresa);
+        listaIeps = this.getCxpDao().getListaIeps(id_empresa);
         
         //Crear columnas para la Tabla de la vista
         //columnsHead = Es para los encabezados de las columnas, incluye el TITULO, Ancho y Alineacion del texto en la celda
@@ -159,6 +163,20 @@ public class CxcRepIepsCobradoController {
         widthMainTable += 90;
         noCols++;
         
+        keyIndex="moneda_fac";
+        columnsHead.put(keyIndex, "DENOM:60:left");
+        columnsBody.put(keyIndex, "60:left");
+        widthMainTable += 60;
+        noCols++;
+        
+        keyIndex="moneda_simbolo_subtotal";
+        columnsHead.put(keyIndex, " :15:right");
+        columnsBody.put(keyIndex, "15:right");
+        //indexTotales.add(keyIndex);
+        totales1.put(keyIndex, "$");
+        widthMainTable += 15;
+        noCols++;
+        
         keyIndex="subtotal";
         columnsHead.put(keyIndex, "SUBTOTAL:90:right");
         columnsBody.put(keyIndex, "90:right");
@@ -167,12 +185,28 @@ public class CxcRepIepsCobradoController {
         widthMainTable += 90;
         noCols++;
         
+        keyIndex="moneda_simbolo_retencion";
+        columnsHead.put(keyIndex, " :15:right");
+        columnsBody.put(keyIndex, "15:right");
+        //indexTotales.add(keyIndex);
+        totales1.put(keyIndex, "$");
+        widthMainTable += 15;
+        noCols++;
+        
         keyIndex="retencion";
         columnsHead.put(keyIndex, "RETENCION:90:right");
         columnsBody.put(keyIndex, "90:right");
         indexTotales.add(keyIndex);
         totales1.put(keyIndex, "0");
         widthMainTable += 90;
+        noCols++;
+        
+        keyIndex="moneda_simbolo_iva";
+        columnsHead.put(keyIndex, " :15:right");
+        columnsBody.put(keyIndex, "15:right");
+        //indexTotales.add(keyIndex);
+        totales1.put(keyIndex, "$");
+        widthMainTable += 15;
         noCols++;
         
         keyIndex="iva";
@@ -185,6 +219,14 @@ public class CxcRepIepsCobradoController {
         
         //Crear nombres de campos dinamicamente
         for( HashMap<String,String> i : listaIeps ){
+            keyIndex="moneda_simbolo_ieps"+i.get("id");
+            columnsHead.put(keyIndex, " :15:right");
+            columnsBody.put(keyIndex, "15:right");
+            //indexTotales.add(keyIndex);
+            totales1.put(keyIndex, "$");
+            widthMainTable += 15;
+            noCols++;
+        
             String key = "ieps"+i.get("id");
             columnsHead.put(key, "IEPS "+i.get("tasa")+"%:90:right");
             columnsBody.put(key, "90:right");
@@ -193,6 +235,14 @@ public class CxcRepIepsCobradoController {
             widthMainTable += 90;
             noCols++;
         }
+        
+        keyIndex="moneda_simbolo_total";
+        columnsHead.put(keyIndex, " :15:right");
+        columnsBody.put(keyIndex, "15:right");
+        //indexTotales.add(keyIndex);
+        totales1.put(keyIndex, "$");
+        widthMainTable += 15;
+        noCols++;
         
         keyIndex="total";
         //Ultima columna para encabezado
@@ -214,8 +264,8 @@ public class CxcRepIepsCobradoController {
         conf.put("widthReportTable", (widthMainTable - 20));
         
         
-        //Obtener datos del Ieps cobrado
-        datos = this.getCxcDao().getDatosReporteIepsCobrado(listaIeps, ciente, finicial, ffinal, id_empresa);
+        //Obtener datos del Ieps Pagado
+        datos = this.getCxpDao().getDatosReporteIepsPagado(listaIeps, proveedor, finicial, ffinal, id_empresa);
         
         
         Double value=0.0000;
@@ -260,11 +310,11 @@ public class CxcRepIepsCobradoController {
     //Genera pdf de estados de cuenta
     @RequestMapping(value = "/getPdf/{cadena}/{iu}/out.json", method = RequestMethod.GET ) 
     public ModelAndView getPdfJson(
-                @PathVariable("cadena") String cadena,
-                @PathVariable("iu") String id_user_cod,
-                HttpServletRequest request, 
-                HttpServletResponse response, 
-                Model model
+            @PathVariable("cadena") String cadena,
+            @PathVariable("iu") String id_user_cod,
+            HttpServletRequest request, 
+            HttpServletResponse response, 
+            Model model
        )throws ServletException, IOException, URISyntaxException, DocumentException, Exception {
         
         HashMap<String, String> userDat = new HashMap<String, String>();
@@ -276,10 +326,10 @@ public class CxcRepIepsCobradoController {
         ArrayList<String> indexTotales = new ArrayList<String>();
         HashMap<String, Object> conf = new HashMap<String, Object>();
         HashMap<String,Object> data = new HashMap<String,Object>();
-        int widthMainTable=0;
+        //int widthMainTable=0;
         int noCols=0;
         
-        String tituloReporte="IEPS Cobrado";
+        String tituloReporte="IEPS Pagado";
         System.out.println("Generando reporte de "+tituloReporte);
         
         //decodificar id de usuario
@@ -292,7 +342,7 @@ public class CxcRepIepsCobradoController {
         String razon_social_empresa = this.getGralDao().getRazonSocialEmpresaEmisora(id_empresa);
         
         String ArrayCad[] = cadena.split("___");
-        String cliente = ArrayCad[0];
+        String proveedor = ArrayCad[0];
         String fechaInicial = ArrayCad[1];
         String fechaFinal = ArrayCad[2];
         
@@ -308,50 +358,61 @@ public class CxcRepIepsCobradoController {
         //String dir_tmp = System.getProperty("java.io.tmpdir");
         String dir_tmp = this.getGralDao().getTmpDir();
         
-        String[] array_company = razon_social_empresa.split(" ");
-        String company_name= array_company[0].toLowerCase();
-        String ruta_imagen = this.getGralDao().getImagesDir() +"logo_"+ company_name +".png";
+        //String[] array_company = razon_social_empresa.split(" ");
+        //String company_name= array_company[0].toLowerCase();
+        //String ruta_imagen = this.getGralDao().getImagesDir() +"logo_"+ company_name +".png";
         
-        System.out.println("ruta_imagen: "+ruta_imagen);
+        //System.out.println("ruta_imagen: "+ruta_imagen);
         
         File file_dir_tmp = new File(dir_tmp);
         //System.out.println("Directorio temporal: "+file_dir_tmp.getCanonicalPath());
         
-        String file_name = "CxcIepsCobrado_"+fecha_corte+".pdf";
+        String file_name = "IepsPagado_"+fecha_corte+".pdf";
         
         //ruta de archivo de salida
         String fileout = file_dir_tmp +"/"+  file_name;
         
-        //ArrayList<HashMap<String, String>> facturas = new ArrayList<HashMap<String, String>>();
-        
         
         //Obtener los tipos de IEPS
-        listaIeps = this.getCxcDao().getListaIeps(id_empresa);
+        listaIeps = this.getCxpDao().getListaIeps(id_empresa);
         
-        //Obtener datos del Ieps cobrado
-        datos = this.getCxcDao().getDatosReporteIepsCobrado(listaIeps, cliente, fechaInicial, fechaFinal, id_empresa);
-        
+        //Obtener datos del Ieps Pagado
+        datos = this.getCxpDao().getDatosReporteIepsPagado(listaIeps, proveedor, fechaInicial, fechaFinal, id_empresa);
         
         
         //Crear columnas para la Tabla de la vista
         //columnsHead = Es para los encabezados de las columnas, incluye el TITULO, Ancho y Alineacion del texto en la celda
         //columnsBody = Para mostrar los datos del reporte, incluye Ancho y Alineacion del texto en la celda
         String keyIndex="fecha_pago";
-        columnsHead.put(keyIndex, "FECHA PAGO:left");
+        columnsHead.put(keyIndex, "F. PAGO:left");
         columnsBody.put(keyIndex, "100:left");
-        widthMainTable += 100;
+        //widthMainTable += 100;
         noCols++;
         
         keyIndex="fecha";
-        columnsHead.put(keyIndex, "FECHA FAC.:left");
+        columnsHead.put(keyIndex, "F. FAC.:left");
         columnsBody.put(keyIndex, "100:left");
-        widthMainTable += 100;
+        //widthMainTable += 100;
         noCols++;
         
         keyIndex="factura";
         columnsHead.put(keyIndex, "FACTURA:left");
         columnsBody.put(keyIndex, "90:left");
-        widthMainTable += 90;
+        //widthMainTable += 90;
+        noCols++;
+        
+        keyIndex="moneda_fac";
+        columnsHead.put(keyIndex, "MON:60:left");
+        columnsBody.put(keyIndex, "60:left");
+        //widthMainTable += 60;
+        noCols++;
+        
+        keyIndex="moneda_simbolo_subtotal";
+        columnsHead.put(keyIndex, " :15:right");
+        columnsBody.put(keyIndex, "15:right");
+        //indexTotales.add(keyIndex);
+        totales1.put(keyIndex, "$");
+        //widthMainTable += 15;
         noCols++;
         
         keyIndex="subtotal";
@@ -359,7 +420,15 @@ public class CxcRepIepsCobradoController {
         columnsBody.put(keyIndex, "90:right");
         indexTotales.add(keyIndex);
         totales1.put(keyIndex, "0");
-        widthMainTable += 90;
+        //widthMainTable += 90;
+        noCols++;
+        
+        keyIndex="moneda_simbolo_retencion";
+        columnsHead.put(keyIndex, " :15:right");
+        columnsBody.put(keyIndex, "15:right");
+        //indexTotales.add(keyIndex);
+        totales1.put(keyIndex, "$");
+        //widthMainTable += 15;
         noCols++;
         
         keyIndex="retencion";
@@ -367,7 +436,15 @@ public class CxcRepIepsCobradoController {
         columnsBody.put(keyIndex, "90:right");
         indexTotales.add(keyIndex);
         totales1.put(keyIndex, "0");
-        widthMainTable += 90;
+        //widthMainTable += 90;
+        noCols++;
+        
+        keyIndex="moneda_simbolo_iva";
+        columnsHead.put(keyIndex, " :15:right");
+        columnsBody.put(keyIndex, "15:right");
+        //indexTotales.add(keyIndex);
+        totales1.put(keyIndex, "$");
+        //widthMainTable += 15;
         noCols++;
         
         keyIndex="iva";
@@ -375,19 +452,35 @@ public class CxcRepIepsCobradoController {
         columnsBody.put(keyIndex, "90:right");
         indexTotales.add(keyIndex);
         totales1.put(keyIndex, "0");
-        widthMainTable += 90;
+        //widthMainTable += 90;
         noCols++;
         
         //Crear nombres de campos dinamicamente
         for( HashMap<String,String> i : listaIeps ){
+            keyIndex="moneda_simbolo_ieps"+i.get("id");
+            columnsHead.put(keyIndex, " :15:right");
+            columnsBody.put(keyIndex, "15:right");
+            //indexTotales.add(keyIndex);
+            totales1.put(keyIndex, "$");
+            //widthMainTable += 15;
+            noCols++;
+            
             String key = "ieps"+i.get("id");
             columnsHead.put(key, "IEPS "+i.get("tasa")+"%:right");
             columnsBody.put(key, "90:right");
             indexTotales.add(key);
             totales1.put(key, "0");
-            widthMainTable += 90;
+            //widthMainTable += 90;
             noCols++;
         }
+        
+        keyIndex="moneda_simbolo_total";
+        columnsHead.put(keyIndex, " :15:right");
+        columnsBody.put(keyIndex, "15:right");
+        //indexTotales.add(keyIndex);
+        totales1.put(keyIndex, "$");
+        //widthMainTable += 15;
+        noCols++;
         
         keyIndex="total";
         //Ultima columna para encabezado
@@ -397,7 +490,7 @@ public class CxcRepIepsCobradoController {
         indexTotales.add(keyIndex);
         totales1.put(keyIndex, "0");
         //Sumar la medida de la ultima columna
-        widthMainTable += 120;
+        //widthMainTable += 120;
         //Aumentar una columna para contar la ultima
         noCols++;
         
@@ -446,7 +539,7 @@ public class CxcRepIepsCobradoController {
         
         
         //instancia a la clase que construye el pdf de la del reporte de estado de cuentas del cliente
-        PdfCxcIepsCobrado x = new PdfCxcIepsCobrado(data);
+        PdfCxpIepsPagado x = new PdfCxpIepsPagado(data);
         
         System.out.println("Recuperando archivo: " + fileout);
         File file = new File(fileout);
@@ -463,6 +556,7 @@ public class CxcRepIepsCobradoController {
         
         return null;
     }
+    
     
     
     

@@ -135,5 +135,8 @@ public interface CxpInterfaceDao {
     
     //Metodos para Reporte de Proveedores
     public ArrayList<HashMap<String, String>> getListaProveedores(String folio,String razon_proveedor,Integer empresa_id);
-
+    
+    
+    public ArrayList<HashMap<String, String>> getDatosReporteIepsPagado(ArrayList<HashMap<String, String>> listaIeps, String ciente, String finicial, String ffinal, Integer id_empresa);
+    public ArrayList<HashMap<String, String>> getListaIeps(Integer id_empresa);
 }

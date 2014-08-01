@@ -19,12 +19,12 @@ import java.util.logging.Logger;
  *
  * @author Noe Martinez
  * gpmarsan@gmail.com
- * 30/julio/2014
+ * 01/agosto/2014
  * 
  */
-public class PdfCxcIepsCobrado {
+public class PdfCxpIepsPagado {
 
-    public PdfCxcIepsCobrado(HashMap<String,Object> data) {
+    public PdfCxpIepsPagado(HashMap<String,Object> data) {
         
         ArrayList<HashMap<String, String>> datos = new ArrayList<HashMap<String, String>>();
         LinkedHashMap<String, String> columns = new LinkedHashMap<String, String>();
@@ -64,7 +64,7 @@ public class PdfCxcIepsCobrado {
             Font largeBoldFont = new Font(Font.FontFamily.HELVETICA,10,Font.BOLD,BaseColor.BLACK);
             Font smallFont = new Font(Font.FontFamily.HELVETICA,8,Font.NORMAL,BaseColor.BLACK);
             
-            HeaderFooter event = new HeaderFooter(dataHeaderFooter);
+            PdfCxcIepsCobrado.HeaderFooter event = new PdfCxcIepsCobrado.HeaderFooter(dataHeaderFooter);
             Document doc = new Document(PageSize.LETTER.rotate(),-50,-50,60,30);
             doc.addCreator("gpmarsan@gmail.com");
             PdfWriter writer = PdfWriter.getInstance(doc, new FileOutputStream(fileout));
@@ -75,19 +75,31 @@ public class PdfCxcIepsCobrado {
             doc.open();
             float[] widths = new float[noCols];
             
-            widths[0] = 2f;
-            widths[1] = 2f;
-            widths[2] = 2f;
-            widths[3] = 2f;
-            widths[4] = 2f;
-            widths[5] = 2f;
-            int x=6;
-            for(int i=x; i<(noCols-1); i++){
+            widths[0] = 1.9f;//fecha_pago
+            widths[1] = 1.9f;//fecha
+            widths[2] = 1.9f;//factura
+            widths[3] = 0.8f;//moneda_fac
+            widths[4] = 0.3f;//moneda_simbolo_subtotal
+            widths[5] = 2f;//subtotal
+            widths[6] = 0.3f;//moneda_simbolo_retencion
+            widths[7] = 2f;//retencion
+            widths[8] = 0.3f;//moneda_simbolo_iva
+            widths[9] = 2f;//iva
+            int x=10;
+            
+            do{
+                //simbolo moneda ieps
+                widths[x] = 0.3f;
+                x++;
                 //Agregar columnas para el IEPS
-                widths[i] = 2f;
+                widths[x] = 2f;
                 x++;
                 
-            }
+            }while(x<(noCols-2));
+            
+            //simbolo moneda total
+            widths[x] = 0.3f;
+            x++;
             
             //Columna total
             widths[x] = 2f;
@@ -110,6 +122,13 @@ public class PdfCxcIepsCobrado {
                 cell.setUseDescender(true);
                 cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                 cell.setBackgroundColor(BaseColor.BLACK);
+                if(key.indexOf("moneda_simbolo")<0){
+                    cell.setBorderColorRight(BaseColor.WHITE);
+                    cell.setBorderWidthRight(0.5f);
+                }else{
+                    cell.setBorderColorRight(BaseColor.BLACK);
+                    cell.setBorderWidthRight(0.5f);
+                }
                 cell.setFixedHeight(13);
                 table.addCell(cell);
             }
@@ -184,6 +203,54 @@ public class PdfCxcIepsCobrado {
                 cell.setBorderWidthBottom(0);
                 cell.setBorderWidthLeft(0);
                 cell.setBorderWidthRight(0);
+                table.addCell(cell);
+                
+                
+                //Fila vacia
+                cell= new PdfPCell(new Paragraph("",smallFont));
+                cell.setHorizontalAlignment (Element.ALIGN_LEFT);
+                cell.setBorder(0);
+                cell.setColspan(noCols);
+                table.addCell(cell);
+                
+                //FILAS DE NOTAS
+                cell= new PdfPCell(new Paragraph("* F. PAGO",smallBoldFont));
+                cell.setHorizontalAlignment (Element.ALIGN_LEFT);
+                cell.setBorder(0);
+                table.addCell(cell);
+                
+                cell= new PdfPCell(new Paragraph("Fecha de pago",smallFont));
+                cell.setHorizontalAlignment (Element.ALIGN_LEFT);
+                cell.setBorder(0);
+                cell.setColspan(noCols-1);
+                table.addCell(cell);
+                
+                cell= new PdfPCell(new Paragraph("* F. FAC.",smallBoldFont));
+                cell.setHorizontalAlignment (Element.ALIGN_LEFT);
+                cell.setBorder(0);
+                table.addCell(cell);
+                
+                cell= new PdfPCell(new Paragraph("Fecha de la factura",smallFont));
+                cell.setHorizontalAlignment (Element.ALIGN_LEFT);
+                cell.setBorder(0);
+                cell.setColspan(noCols-1);
+                table.addCell(cell);
+                
+                cell= new PdfPCell(new Paragraph("* MON.",smallBoldFont));
+                cell.setHorizontalAlignment (Element.ALIGN_LEFT);
+                cell.setBorder(0);
+                table.addCell(cell);
+                
+                cell= new PdfPCell(new Paragraph("Moneda de la factura",smallFont));
+                cell.setHorizontalAlignment (Element.ALIGN_LEFT);
+                cell.setBorder(0);
+                cell.setColspan(noCols-1);
+                table.addCell(cell);
+                
+                cell= new PdfPCell(new Paragraph("* Todas las cantidades que se muestran son en M.N.",smallFont));
+                cell.setHorizontalAlignment (Element.ALIGN_LEFT);
+                cell.setBorder(0);
+                cell.setColspan(noCols);
                 table.addCell(cell);
                 
             }else{
@@ -347,6 +414,4 @@ public class PdfCxcIepsCobrado {
         }
    }//termina clase HeaderFooter
 
-    
-    
 }

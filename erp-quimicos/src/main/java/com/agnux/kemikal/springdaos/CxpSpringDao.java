@@ -3239,4 +3239,121 @@ public class CxpSpringDao implements CxpInterfaceDao{
         return hm_ieps;
     }
     
+    
+    
+    
+    @Override
+    public ArrayList<HashMap<String, String>> getDatosReporteIepsPagado(ArrayList<HashMap<String, String>> listaIeps, String proveedor, String finicial, String ffinal, Integer id_empresa) {
+        final ArrayList<HashMap<String, String>> tiposIeps = listaIeps;
+        String condiciones="";
+        String campos1="";
+        String campos2="";
+        
+        if(!proveedor.trim().equals("")){
+            condiciones += condiciones + " and cxp_prov.razon_social ilike '%"+proveedor+"%'";
+        }
+        
+        //Crear nombres de campos dinamicamente
+        for( HashMap<String,String> i : tiposIeps ){
+            campos1 += ",sum(ieps"+i.get("id")+") as ieps"+i.get("id")+" ";
+            campos2 += ",(CASE WHEN fac_det.gral_ieps_id="+i.get("id")+" THEN (CASE WHEN fac_det.gral_ieps_id>0 THEN ((fac_det.cantidad * (fac_det.costo_unitario * (CASE WHEN cxp_facturas.moneda_id=1 THEN 1 ELSE cxp_facturas.tipo_cambio END))) * fac_det.valor_ieps) ELSE 0 END) ELSE 0 END) AS ieps"+i.get("id")+" ";
+        }
+        
+        String sql_to_query = ""
+        + "SELECT "
+            + "fecha_ultimo_pago"
+            + ",fecha_pago"
+            + ",proveedor"
+            + ",fecha "
+            + ",factura "
+            + ",moneda_fac "
+            + ",subtotal "
+            + ",retencion"
+            + ",iva"
+            + ",total"
+            + campos1 +" "
+        + "from ( "
+            + "select "
+                + "cxp_facturas.fecha_ultimo_pago"
+                + ",cxp_prov.razon_social as proveedor"
+                + ",to_char(cxp_facturas.fecha_ultimo_pago, 'dd/mm/yyyy') as fecha_pago "
+                + ",to_char(cxp_facturas.fecha_factura, 'dd/mm/yyyy') as fecha"
+                + ",cxp_facturas.serie_folio as factura "
+                + ",gral_mon.descripcion_abr as moneda_fac "
+                + ",(cxp_facturas.subtotal * (CASE WHEN cxp_facturas.moneda_id=1 THEN 1 ELSE cxp_facturas.tipo_cambio END)) as subtotal"
+                + ",(cxp_facturas.retencion * (CASE WHEN cxp_facturas.moneda_id=1 THEN 1 ELSE cxp_facturas.tipo_cambio END)) as retencion"
+                + ",(cxp_facturas.iva * (CASE WHEN cxp_facturas.moneda_id=1 THEN 1 ELSE cxp_facturas.tipo_cambio END)) as iva"
+                + ",(cxp_facturas.monto_total * (CASE WHEN cxp_facturas.moneda_id=1 THEN 1 ELSE cxp_facturas.tipo_cambio END)) as total"
+                + campos2 +" "
+            + "from cxp_facturas "
+            + "join cxp_facturas_detalle as fac_det on fac_det.cxp_facturas_id=cxp_facturas.id  "
+            + "join cxp_prov on cxp_prov.id=cxp_facturas.cxc_prov_id "
+            + "join gral_mon on gral_mon.id=cxp_facturas.moneda_id "
+            + "where fac_det.gral_ieps_id>0 and cxp_prov.borrado_logico=false and cxp_prov.empresa_id=? "+condiciones +" "
+            + "AND (to_char(cxp_facturas.fecha_ultimo_pago,'yyyymmdd')::integer BETWEEN to_char('"+finicial+"'::timestamp with time zone,'yyyymmdd')::integer AND to_char('"+ffinal+"'::timestamp with time zone,'yyyymmdd')::integer) "
+        + ") as sbt "
+        + "group by fecha_ultimo_pago, proveedor,fecha_pago,fecha, factura, moneda_fac, subtotal,retencion,iva,total "
+        + "order by fecha_ultimo_pago";
+
+        
+        
+        
+        
+        System.out.println("getDatosReporteIepPagado:: "+sql_to_query);
+        
+        ArrayList<HashMap<String, String>> arraydata = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(id_empresa)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    
+                    row.put("fecha_pago",rs.getString("fecha_pago"));
+                    row.put("fecha",rs.getString("fecha"));
+                    row.put("factura",rs.getString("factura"));
+                    row.put("moneda_fac",rs.getString("moneda_fac"));
+                    row.put("moneda_simbolo_subtotal","$");
+                    row.put("subtotal",StringHelper.AgregaComas(StringHelper.roundDouble(rs.getDouble("subtotal"), 2)));
+                    row.put("moneda_simbolo_retencion","$");
+                    row.put("retencion",StringHelper.AgregaComas(StringHelper.roundDouble(rs.getDouble("retencion"), 2)));
+                    row.put("moneda_simbolo_iva","$");
+                    row.put("iva",StringHelper.AgregaComas(StringHelper.roundDouble(rs.getDouble("iva"), 2)));
+                    row.put("moneda_simbolo_total","$");
+                    row.put("total",StringHelper.AgregaComas(StringHelper.roundDouble(rs.getDouble("total"), 2)));
+                    
+                    //Crear nombres de campos dinamicamente
+                    for( HashMap<String,String> i : tiposIeps ){
+                        row.put("moneda_simbolo_ieps"+i.get("id"),"$");
+                        row.put("ieps"+i.get("id"),StringHelper.AgregaComas(StringHelper.roundDouble(rs.getDouble("ieps"+i.get("id")), 2)));
+                    }
+                    return row;
+                }
+            }
+        );
+        return arraydata;
+    }
+    
+    
+    @Override
+    public ArrayList<HashMap<String, String>> getListaIeps(Integer id_empresa) {
+        
+        String sql_to_query = "select id, titulo, tasa from gral_ieps where gral_emp_id=? and borrado_logico=false;"; 
+        
+        //System.out.println("CxC_DatosReporteSaldoMensual:: "+sql_to_query);
+        ArrayList<HashMap<String, String>> arraydata = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(id_empresa)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",rs.getString("id"));
+                    row.put("titulo",rs.getString("titulo"));
+                    row.put("tasa",StringHelper.roundDouble(rs.getDouble("tasa"), 2));
+                    return row;
+                }
+            }
+        );
+        return arraydata;
+    }
+    
 }
