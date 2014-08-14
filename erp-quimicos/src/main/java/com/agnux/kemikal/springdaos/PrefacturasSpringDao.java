@@ -6,14 +6,14 @@ package com.agnux.kemikal.springdaos;
 
 import com.agnux.common.helpers.StringHelper;
 import com.agnux.kemikal.interfacedaos.PrefacturasInterfaceDao;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 
 /**
  *
@@ -877,7 +877,7 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                     + " AND erp_cotizacions_detalles.presentacion_id = "+id_pres
                     + " ORDER BY erp_cotizacions_detalles.momento_creacion DESC LIMIT 1;";
             
-            System.out.println("Obtiene precio_unitario:"+ sql_query);
+            //System.out.println("Obtiene precio_unitario:"+ sql_query);
             
             Map<String, Object> prec_uni = this.getJdbcTemplate().queryForMap(sql_query);
             pu2=(HashMap<String, Object>) prec_uni;

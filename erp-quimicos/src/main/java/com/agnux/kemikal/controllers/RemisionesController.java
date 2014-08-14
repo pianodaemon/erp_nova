@@ -6,6 +6,7 @@ package com.agnux.kemikal.controllers;
 
 
 import com.agnux.cfd.v2.Base64Coder;
+import com.agnux.common.helpers.FileHelper;
 import com.agnux.common.helpers.StringHelper;
 import com.agnux.common.obj.DataPost;
 import com.agnux.common.obj.ResourceProject;
@@ -97,6 +98,7 @@ public class RemisionesController {
         infoConstruccionTabla.put("cliente", "Cliente:320");
         infoConstruccionTabla.put("total", "Monto:100");
         infoConstruccionTabla.put("denominacion", "Moneda:70");
+        infoConstruccionTabla.put("folio_pedido", "Pedido:70");
         infoConstruccionTabla.put("estado", "Estado:100");
         infoConstruccionTabla.put("fecha_creacion","Fecha creacion:110");
         
@@ -154,8 +156,9 @@ public class RemisionesController {
         String codigo = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("codigo")))+"%";
         String producto = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("producto")))+"%";
         String agente = ""+StringHelper.isNullString(String.valueOf(has_busqueda.get("agente")))+"";
+        String folio_pedido = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("folio_pedido")))+"%";
         
-        String data_string = app_selected+"___"+id_usuario+"___"+folio+"___"+cliente+"___"+fecha_inicial+"___"+fecha_final+"___"+codigo+"___"+producto+"___"+agente;
+        String data_string = app_selected+"___"+id_usuario+"___"+folio+"___"+cliente+"___"+fecha_inicial+"___"+fecha_final+"___"+codigo+"___"+producto+"___"+agente+"___"+folio_pedido;
         
         //obtiene total de registros en base de datos, con los parametros de busqueda
         int total_items = this.getPocDao().countAll(data_string);
@@ -316,7 +319,7 @@ public class RemisionesController {
             @RequestParam(value="id_remision", required=true) String id_remision,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
-            ) {
+        ) {
         
         System.out.println("::::::::::::Iniciando Cancelar Remision:::::::::::::::::..");
         //decodificar id de usuario
@@ -437,9 +440,14 @@ public class RemisionesController {
         response.setBufferSize(size);
         response.setContentLength(size);
         response.setContentType("application/pdf");
-        response.setHeader("Content-Disposition","attachment; filename=\"" + file.getCanonicalPath() +"\"");
+        response.setHeader("Content-Disposition","attachment; filename=\"" + file.getName() +"\"");
         FileCopyUtils.copy(bis, response.getOutputStream());  	
         response.flushBuffer();
+        try {
+            FileHelper.delete(fileout);
+        } catch (Exception ex) {
+            System.out.println("No fue posible eliminar el fichero: "+file.getName());
+        }
         
         return null;
     } 

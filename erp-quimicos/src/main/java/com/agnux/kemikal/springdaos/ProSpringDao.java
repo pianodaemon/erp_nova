@@ -3955,7 +3955,7 @@ public class ProSpringDao implements ProInterfaceDao{
                 + "left join pro_equipos on pro_equipos.id=tmp_det_orden.pro_equipos_id "
                 + "left join pro_equipos_adic on pro_equipos_adic.id=tmp_det_orden.pro_equipos_adic_id";
 
-        //System.out.println("Ejecutando query de: "+ sql_to_query);
+        System.out.println("Ejecutando query de: "+ sql_to_query);
 
         ArrayList<HashMap<String, String>> hm_datos_entrada = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -4674,7 +4674,7 @@ public class ProSpringDao implements ProInterfaceDao{
                     }
                     
                     row.put("lote",lote);
-
+                    
                     return row;
                 }
             }

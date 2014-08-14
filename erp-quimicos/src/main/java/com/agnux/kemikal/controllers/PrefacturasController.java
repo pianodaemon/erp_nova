@@ -12,7 +12,6 @@ import com.agnux.cfdi.BeanFacturadorCfdi;
 import com.agnux.cfdi.adendas.AdendaCliente;
 import com.agnux.cfdi.timbre.BeanFacturadorCfdiTimbre;
 import com.agnux.common.helpers.FileHelper;
-import com.agnux.kemikal.interfacedaos.PrefacturasInterfaceDao;
 import com.agnux.common.helpers.StringHelper;
 import com.agnux.common.helpers.TimeHelper;
 import com.agnux.common.obj.DataPost;
@@ -21,6 +20,7 @@ import com.agnux.common.obj.UserSessionData;
 import com.agnux.kemikal.interfacedaos.FacturasInterfaceDao;
 import com.agnux.kemikal.interfacedaos.GralInterfaceDao;
 import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
+import com.agnux.kemikal.interfacedaos.PrefacturasInterfaceDao;
 import com.agnux.kemikal.reportes.pdfCfd_CfdiTimbrado;
 import com.agnux.kemikal.reportes.pdfCfd_CfdiTimbradoFormato2;
 import java.io.BufferedInputStream;
@@ -31,8 +31,6 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.Locale;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -40,19 +38,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  *
@@ -1152,7 +1144,7 @@ public class PrefacturasController {
         response.setBufferSize(size);
         response.setContentLength(size);
         response.setContentType("text/plain");
-        response.setHeader("Content-Disposition","attachment; filename=\"" + file.getCanonicalPath() +"\"");
+        response.setHeader("Content-Disposition","attachment; filename=\"" + file.getName() +"\"");
         FileCopyUtils.copy(bis, response.getOutputStream());
         response.flushBuffer();
         

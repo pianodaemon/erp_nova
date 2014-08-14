@@ -2131,20 +2131,25 @@ public class PocSpringDao implements PocInterfaceDao{
                                 +"cxc_clie.razon_social as cliente, "
                                 +"fac_rems.total, "
                                 +"gral_mon.descripcion_abr AS denominacion, "
+                                +"fac_rems.folio_pedido, "
                                 +"(CASE WHEN fac_rems.cancelado=TRUE THEN 'CANCELADO' "
                                 + "WHEN fac_rems.facturado=TRUE THEN 'FACTURADO' "
                                 + "WHEN fac_rems.estatus=1 THEN 'PAGADO' "
                                 + "ELSE "
-                                    + " '' "
+                                    + " (CASE WHEN erp_proceso_flujo.titulo IS NULL THEN '' ELSE erp_proceso_flujo.titulo END) "
                                 + "END) as estado, "
                                 +"to_char(fac_rems.momento_creacion,'dd/mm/yyyy') as fecha_creacion "
-                            +"FROM fac_rems "
-                            +"LEFT JOIN erp_proceso on erp_proceso.id = fac_rems.proceso_id "
-                            +"LEFT JOIN fac_docs on fac_docs.proceso_id = erp_proceso.id "
-                            +"LEFT JOIN erp_proceso_flujo on erp_proceso_flujo.id = erp_proceso.proceso_flujo_id "
-                            +"LEFT JOIN cxc_clie on cxc_clie.id = fac_rems.cxc_clie_id "
-                            +"LEFT JOIN gral_mon ON gral_mon.id=fac_rems.moneda_id "
-                            +"JOIN ("+sql_busqueda+") as subt on subt.id=fac_rems.id "
+                            + "FROM fac_rems "
+                            //+"LEFT JOIN erp_proceso on erp_proceso.id = fac_rems.proceso_id "
+                            //+"LEFT JOIN fac_docs on fac_docs.proceso_id = erp_proceso.id "
+                            //+"LEFT JOIN erp_proceso_flujo on erp_proceso_flujo.id = erp_proceso.proceso_flujo_id "
+                            + "LEFT JOIN cxc_clie on cxc_clie.id = fac_rems.cxc_clie_id "
+                            + "LEFT JOIN gral_mon ON gral_mon.id=fac_rems.moneda_id "
+                            + "LEFT JOIN fac_rems_docs ON fac_rems_docs.fac_rem_id=fac_rems.id "
+                            + "LEFT JOIN erp_proceso as proc_rem ON proc_rem.id=fac_rems_docs.erp_proceso_id "
+                            + "LEFT JOIN erp_proceso_flujo on erp_proceso_flujo.id = proc_rem.proceso_flujo_id "
+                
+                            + "JOIN ("+sql_busqueda+") as subt on subt.id=fac_rems.id "
                             + "order by "+orderBy+" "+asc+" limit ? OFFSET ?";
 
         //System.out.println("sql_to_query: "+sql_to_query);
@@ -2160,6 +2165,7 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("cliente",rs.getString("cliente"));
                     row.put("total",StringHelper.AgregaComas(StringHelper.roundDouble(rs.getString("total"),2)));
                     row.put("denominacion",rs.getString("denominacion"));
+                    row.put("folio_pedido",rs.getString("folio_pedido"));
                     row.put("estado",rs.getString("estado"));
                     row.put("fecha_creacion",rs.getString("fecha_creacion"));
                     return row;
@@ -2211,6 +2217,9 @@ public class PocSpringDao implements PocInterfaceDao{
                         + "fac_rems.subtotal, "
                         + "fac_rems.impuesto, "
                         + "fac_rems.total,  "
+                        + "fac_rems.monto_descto, "
+                        + "fac_rems.monto_ieps, "
+                        + "fac_rems.monto_retencion,  "
                         + "fac_rems.tipo_cambio, "
                         + "fac_rems.cxc_agen_id,  "
                         + "fac_rems.cxc_clie_credias_id,  "
@@ -2246,6 +2255,9 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("subtotal",StringHelper.roundDouble(rs.getDouble("subtotal"),2));
                     row.put("impuesto",StringHelper.roundDouble(rs.getDouble("impuesto"),2));
                     row.put("total",StringHelper.roundDouble(rs.getDouble("total"),2));
+                    row.put("monto_descto",StringHelper.roundDouble(rs.getDouble("monto_descto"),2));
+                    row.put("monto_ieps",StringHelper.roundDouble(rs.getDouble("monto_ieps"),2));
+                    row.put("monto_retencion",StringHelper.roundDouble(rs.getDouble("monto_retencion"),2));
                     row.put("tipo_cambio",StringHelper.roundDouble(rs.getDouble("tipo_cambio"),4));
                     row.put("cxc_agen_id",rs.getString("cxc_agen_id"));
                     row.put("terminos_id",rs.getString("cxc_clie_credias_id"));

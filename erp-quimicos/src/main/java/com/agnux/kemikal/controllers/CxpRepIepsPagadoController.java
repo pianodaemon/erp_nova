@@ -172,7 +172,6 @@ public class CxpRepIepsPagadoController {
         keyIndex="moneda_simbolo_subtotal";
         columnsHead.put(keyIndex, " :15:right");
         columnsBody.put(keyIndex, "15:right");
-        //indexTotales.add(keyIndex);
         totales1.put(keyIndex, "$");
         widthMainTable += 15;
         noCols++;
@@ -188,7 +187,6 @@ public class CxpRepIepsPagadoController {
         keyIndex="moneda_simbolo_retencion";
         columnsHead.put(keyIndex, " :15:right");
         columnsBody.put(keyIndex, "15:right");
-        //indexTotales.add(keyIndex);
         totales1.put(keyIndex, "$");
         widthMainTable += 15;
         noCols++;
@@ -204,7 +202,6 @@ public class CxpRepIepsPagadoController {
         keyIndex="moneda_simbolo_iva";
         columnsHead.put(keyIndex, " :15:right");
         columnsBody.put(keyIndex, "15:right");
-        //indexTotales.add(keyIndex);
         totales1.put(keyIndex, "$");
         widthMainTable += 15;
         noCols++;
@@ -222,7 +219,6 @@ public class CxpRepIepsPagadoController {
             keyIndex="moneda_simbolo_ieps"+i.get("id");
             columnsHead.put(keyIndex, " :15:right");
             columnsBody.put(keyIndex, "15:right");
-            //indexTotales.add(keyIndex);
             totales1.put(keyIndex, "$");
             widthMainTable += 15;
             noCols++;
@@ -239,7 +235,6 @@ public class CxpRepIepsPagadoController {
         keyIndex="moneda_simbolo_total";
         columnsHead.put(keyIndex, " :15:right");
         columnsBody.put(keyIndex, "15:right");
-        //indexTotales.add(keyIndex);
         totales1.put(keyIndex, "$");
         widthMainTable += 15;
         noCols++;
@@ -426,9 +421,7 @@ public class CxpRepIepsPagadoController {
         keyIndex="moneda_simbolo_retencion";
         columnsHead.put(keyIndex, " :15:right");
         columnsBody.put(keyIndex, "15:right");
-        //indexTotales.add(keyIndex);
         totales1.put(keyIndex, "$");
-        //widthMainTable += 15;
         noCols++;
         
         keyIndex="retencion";
@@ -436,7 +429,6 @@ public class CxpRepIepsPagadoController {
         columnsBody.put(keyIndex, "90:right");
         indexTotales.add(keyIndex);
         totales1.put(keyIndex, "0");
-        //widthMainTable += 90;
         noCols++;
         
         keyIndex="moneda_simbolo_iva";
@@ -444,7 +436,6 @@ public class CxpRepIepsPagadoController {
         columnsBody.put(keyIndex, "15:right");
         //indexTotales.add(keyIndex);
         totales1.put(keyIndex, "$");
-        //widthMainTable += 15;
         noCols++;
         
         keyIndex="iva";
@@ -452,7 +443,6 @@ public class CxpRepIepsPagadoController {
         columnsBody.put(keyIndex, "90:right");
         indexTotales.add(keyIndex);
         totales1.put(keyIndex, "0");
-        //widthMainTable += 90;
         noCols++;
         
         //Crear nombres de campos dinamicamente
@@ -460,9 +450,7 @@ public class CxpRepIepsPagadoController {
             keyIndex="moneda_simbolo_ieps"+i.get("id");
             columnsHead.put(keyIndex, " :15:right");
             columnsBody.put(keyIndex, "15:right");
-            //indexTotales.add(keyIndex);
             totales1.put(keyIndex, "$");
-            //widthMainTable += 15;
             noCols++;
             
             String key = "ieps"+i.get("id");
@@ -470,16 +458,13 @@ public class CxpRepIepsPagadoController {
             columnsBody.put(key, "90:right");
             indexTotales.add(key);
             totales1.put(key, "0");
-            //widthMainTable += 90;
             noCols++;
         }
         
         keyIndex="moneda_simbolo_total";
         columnsHead.put(keyIndex, " :15:right");
         columnsBody.put(keyIndex, "15:right");
-        //indexTotales.add(keyIndex);
         totales1.put(keyIndex, "$");
-        //widthMainTable += 15;
         noCols++;
         
         keyIndex="total";

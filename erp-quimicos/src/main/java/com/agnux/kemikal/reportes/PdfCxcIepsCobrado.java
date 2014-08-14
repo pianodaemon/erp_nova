@@ -75,19 +75,32 @@ public class PdfCxcIepsCobrado {
             doc.open();
             float[] widths = new float[noCols];
             
-            widths[0] = 2f;
-            widths[1] = 2f;
-            widths[2] = 2f;
-            widths[3] = 2f;
-            widths[4] = 2f;
-            widths[5] = 2f;
-            int x=6;
-            for(int i=x; i<(noCols-1); i++){
-                //Agregar columnas para el IEPS
-                widths[i] = 2f;
+            widths[0] = 1.9f;//fecha_pago
+            widths[1] = 1.9f;//fecha
+            widths[2] = 1.9f;//factura
+            widths[3] = 0.8f;//moneda_fac
+            widths[4] = 0.3f;//moneda_simbolo_subtotal
+            widths[5] = 2f;//subtotal
+            widths[6] = 0.3f;//moneda_simbolo_retencion
+            widths[7] = 2f;//retencion
+            widths[8] = 0.3f;//moneda_simbolo_iva
+            widths[9] = 2f;//iva
+            int x=10;
+            
+            do{
+                //simbolo moneda ieps
+                widths[x] = 0.3f;
                 x++;
                 
-            }
+                //Agregar columnas para el IEPS
+                widths[x] = 2f;
+                x++;
+                
+            }while(x<(noCols-2));
+            
+            //simbolo moneda total
+            widths[x] = 0.3f;
+            x++;
             
             //Columna total
             widths[x] = 2f;
@@ -185,6 +198,73 @@ public class PdfCxcIepsCobrado {
                 cell.setBorderWidthLeft(0);
                 cell.setBorderWidthRight(0);
                 table.addCell(cell);
+                
+                
+                
+                //Fila vacia
+                cell= new PdfPCell(new Paragraph("",smallFont));
+                cell.setHorizontalAlignment (Element.ALIGN_LEFT);
+                cell.setBorder(0);
+                cell.setColspan(noCols);
+                table.addCell(cell);
+                
+                //FILAS DE NOTAS
+                cell= new PdfPCell(new Paragraph("* F. PAGO",smallBoldFont));
+                cell.setHorizontalAlignment (Element.ALIGN_LEFT);
+                cell.setBorder(0);
+                table.addCell(cell);
+                
+                cell= new PdfPCell(new Paragraph("Fecha de pago",smallFont));
+                cell.setHorizontalAlignment (Element.ALIGN_LEFT);
+                cell.setBorder(0);
+                cell.setColspan(4);
+                table.addCell(cell);
+                
+                cell= new PdfPCell(new Paragraph("* Todas las cantidades que se muestran son en M.N.",smallFont));
+                cell.setHorizontalAlignment (Element.ALIGN_LEFT);
+                cell.setBorder(0);
+                cell.setColspan(noCols-5);
+                table.addCell(cell);
+                
+                
+                
+                cell= new PdfPCell(new Paragraph("* F. FAC.",smallBoldFont));
+                cell.setHorizontalAlignment (Element.ALIGN_LEFT);
+                cell.setBorder(0);
+                table.addCell(cell);
+                
+                cell= new PdfPCell(new Paragraph("Fecha de la factura",smallFont));
+                cell.setHorizontalAlignment (Element.ALIGN_LEFT);
+                cell.setBorder(0);
+                cell.setColspan(4);
+                table.addCell(cell);
+                
+                cell= new PdfPCell(new Paragraph("* Solo se muestran facturas pagas totalmente.",smallFont));
+                cell.setHorizontalAlignment (Element.ALIGN_LEFT);
+                cell.setBorder(0);
+                cell.setColspan(noCols-5);
+                table.addCell(cell);
+                
+                
+                
+                
+                cell= new PdfPCell(new Paragraph("* MON.",smallBoldFont));
+                cell.setHorizontalAlignment (Element.ALIGN_LEFT);
+                cell.setBorder(0);
+                table.addCell(cell);
+                
+                cell= new PdfPCell(new Paragraph("Moneda de la factura",smallFont));
+                cell.setHorizontalAlignment (Element.ALIGN_LEFT);
+                cell.setBorder(0);
+                cell.setColspan(4);
+                table.addCell(cell);
+                
+                cell= new PdfPCell(new Paragraph("",smallFont));
+                cell.setHorizontalAlignment (Element.ALIGN_LEFT);
+                cell.setBorder(0);
+                cell.setColspan(noCols-5);
+                table.addCell(cell);
+                
                 
             }else{
                 //Agregar fila cuando no hay resultados en el reporte

@@ -3299,7 +3299,7 @@ public class CxpSpringDao implements CxpInterfaceDao{
         
         
         
-        System.out.println("getDatosReporteIepPagado:: "+sql_to_query);
+        //System.out.println("getDatosReporteIepPagado:: "+sql_to_query);
         
         ArrayList<HashMap<String, String>> arraydata = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,

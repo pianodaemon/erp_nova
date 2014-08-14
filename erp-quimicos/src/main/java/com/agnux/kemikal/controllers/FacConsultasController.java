@@ -165,8 +165,9 @@ public class FacConsultasController {
         String codigo = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("codigo")))+"%";
         String producto = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("producto")))+"%";
         String agente = ""+StringHelper.isNullString(String.valueOf(has_busqueda.get("agente")))+"";
+        String folio_pedido = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("folio_pedido")))+"%";
         
-        String data_string = app_selected+"___"+id_usuario+"___"+factura+"___"+cliente+"___"+fecha_inicial+"___"+fecha_final+"___"+codigo+"___"+producto+"___"+agente;
+        String data_string = app_selected+"___"+id_usuario+"___"+factura+"___"+cliente+"___"+fecha_inicial+"___"+fecha_final+"___"+codigo+"___"+producto+"___"+agente+"___"+folio_pedido;
         
         //obtiene total de registros en base de datos, con los parametros de busqueda
         int total_items = this.getFacdao().countAll(data_string);

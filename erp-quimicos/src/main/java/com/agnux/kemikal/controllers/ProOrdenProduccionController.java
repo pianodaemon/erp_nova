@@ -5,6 +5,7 @@
 package com.agnux.kemikal.controllers;
 
 import com.agnux.cfd.v2.Base64Coder;
+import com.agnux.common.helpers.FileHelper;
 import com.agnux.common.helpers.StringHelper;
 import com.agnux.common.helpers.TimeHelper;
 import com.agnux.common.obj.DataPost;
@@ -31,19 +32,13 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  *
@@ -223,17 +218,27 @@ public class ProOrdenProduccionController {
         
         if( id != 0 ){
             datosOrden = this.getProDao().getProOrden_Datos(id);
-            
-            if(datosOrden.get(0).get("pro_proceso_flujo_id").equals("3")){
+            /*
+            1;"Generada"
+            2;"Programada"
+            3;"En Produccion"
+            4;"Terminada"
+            5;"Cancelada"
+            */
+            if(datosOrden.get(0).get("pro_proceso_flujo_id").equals("1")) System.err.println("Estatus 1: GENERADA");
+            if(datosOrden.get(0).get("pro_proceso_flujo_id").equals("2")) System.err.println("Estatus 2: PROGRAMADA");
+            if(datosOrden.get(0).get("pro_proceso_flujo_id").equals("3")) System.err.println("Estatus 3: EN PRODUCCION");
+            if(datosOrden.get(0).get("pro_proceso_flujo_id").equals("4")) System.err.println("Estatus 4: TERMINADA");
+            if(datosOrden.get(0).get("pro_proceso_flujo_id").equals("5")) System.err.println("Estatus 5: CANCELADA");
                 
+
+            if(datosOrden.get(0).get("pro_proceso_flujo_id").equals("3")){
                 datosOrdenDet = this.getProDao().getProOrden_EspecificacionesDetalle(id);
                 
                 almacenes = this.getProDao().getAlmacenes(id_empresa);
                 
             }else{
-                
                 datosOrdenDet = this.getProDao().getProOrden_Detalle(id);
-                
             }
             
             
@@ -1055,14 +1060,21 @@ public class ProOrdenProduccionController {
         System.out.println("Recuperando archivo: " + fileout);
         File file = new File(fileout);
         if (file.exists()){
-            int size = (int) file.length(); // Tama√±o del archivo
-            BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
-            response.setBufferSize(size);
-            response.setContentLength(size);
-            response.setContentType("text/plain");
-            response.setHeader("Content-Disposition","attachment; filename=\"" + file.getCanonicalPath() +"\"");
-            FileCopyUtils.copy(bis, response.getOutputStream());
-            response.flushBuffer();
+            try {
+                int size = (int) file.length(); // Tama√±o del archivo
+                BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
+                response.setBufferSize(size);
+                response.setContentLength(size);
+                response.setContentType("text/plain");
+                response.setHeader("Content-Disposition","attachment; filename=\"" + file.getName() +"\"");
+                FileCopyUtils.copy(bis, response.getOutputStream());
+                response.flushBuffer();
+                
+                FileHelper.delete(fileout);
+            } catch (Exception ex) {
+                System.out.println("ERROR: "+ex.getMessage());
+            }
+            
         }
         
         return null;
@@ -1135,14 +1147,20 @@ public class ProOrdenProduccionController {
         System.out.println("Recuperando archivo: " + fileout);
         File file = new File(fileout);
         if (file.exists()){
-            int size = (int) file.length(); // Tama√±o del archivo
-            BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
-            response.setBufferSize(size);
-            response.setContentLength(size);
-            response.setContentType("text/plain");
-            response.setHeader("Content-Disposition","attachment; filename=\"" + file.getCanonicalPath() +"\"");
-            FileCopyUtils.copy(bis, response.getOutputStream());
-            response.flushBuffer();
+            try {
+                int size = (int) file.length(); // Tama√±o del archivo
+                BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
+                response.setBufferSize(size);
+                response.setContentLength(size);
+                response.setContentType("text/plain");
+                response.setHeader("Content-Disposition","attachment; filename=\"" + file.getName() +"\"");
+                FileCopyUtils.copy(bis, response.getOutputStream());
+                response.flushBuffer();
+                
+                FileHelper.delete(fileout);
+            } catch (Exception ex) {
+                System.out.println("ERROR: "+ex.getMessage());
+            }            
         }
         
         return null;
@@ -1212,14 +1230,21 @@ public class ProOrdenProduccionController {
         System.out.println("Recuperando archivo: " + fileout);
         File file = new File(fileout);
         if (file.exists()){
-            int size = (int) file.length(); // Tama√±o del archivo
-            BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
-            response.setBufferSize(size);
-            response.setContentLength(size);
-            response.setContentType("text/plain");
-            response.setHeader("Content-Disposition","attachment; filename=\"" + file.getCanonicalPath() +"\"");
-            FileCopyUtils.copy(bis, response.getOutputStream());
-            response.flushBuffer();
+            try {
+                int size = (int) file.length(); // Tama√±o del archivo
+                BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
+                response.setBufferSize(size);
+                response.setContentLength(size);
+                response.setContentType("text/plain");
+                response.setHeader("Content-Disposition","attachment; filename=\"" + file.getName() +"\"");
+                FileCopyUtils.copy(bis, response.getOutputStream());
+                response.flushBuffer();
+                
+                FileHelper.delete(fileout);
+            } catch (Exception ex) {
+                System.out.println("ERROR: "+ex.getMessage());
+            }
+            
         }
         
         return null;
@@ -1305,14 +1330,20 @@ public class ProOrdenProduccionController {
         System.out.println("Recuperando archivo: " + fileout);
         File file = new File(fileout);
         if (file.exists()){
-            int size = (int) file.length(); // Tama√±o del archivo
-            BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
-            response.setBufferSize(size);
-            response.setContentLength(size);
-            response.setContentType("text/plain");
-            response.setHeader("Content-Disposition","attachment; filename=\"" + file.getCanonicalPath() +"\"");
-            FileCopyUtils.copy(bis, response.getOutputStream());
-            response.flushBuffer();
+            try {
+                int size = (int) file.length(); // Tama√±o del archivo
+                BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
+                response.setBufferSize(size);
+                response.setContentLength(size);
+                response.setContentType("text/plain");
+                response.setHeader("Content-Disposition","attachment; filename=\"" + file.getName() +"\"");
+                FileCopyUtils.copy(bis, response.getOutputStream());
+                response.flushBuffer();
+                
+                FileHelper.delete(fileout);
+            } catch (Exception ex) {
+                System.out.println("ERROR: "+ex.getMessage());
+            }
         }
         
         return null;

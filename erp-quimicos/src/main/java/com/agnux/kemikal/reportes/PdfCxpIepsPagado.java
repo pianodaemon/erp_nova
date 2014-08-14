@@ -222,8 +222,16 @@ public class PdfCxpIepsPagado {
                 cell= new PdfPCell(new Paragraph("Fecha de pago",smallFont));
                 cell.setHorizontalAlignment (Element.ALIGN_LEFT);
                 cell.setBorder(0);
-                cell.setColspan(noCols-1);
+                cell.setColspan(4);
                 table.addCell(cell);
+                
+                cell= new PdfPCell(new Paragraph("* Todas las cantidades que se muestran son en M.N.",smallFont));
+                cell.setHorizontalAlignment (Element.ALIGN_LEFT);
+                cell.setBorder(0);
+                cell.setColspan(noCols-5);
+                table.addCell(cell);
+                
+                
                 
                 cell= new PdfPCell(new Paragraph("* F. FAC.",smallBoldFont));
                 cell.setHorizontalAlignment (Element.ALIGN_LEFT);
@@ -233,8 +241,17 @@ public class PdfCxpIepsPagado {
                 cell= new PdfPCell(new Paragraph("Fecha de la factura",smallFont));
                 cell.setHorizontalAlignment (Element.ALIGN_LEFT);
                 cell.setBorder(0);
-                cell.setColspan(noCols-1);
+                cell.setColspan(4);
                 table.addCell(cell);
+                
+                cell= new PdfPCell(new Paragraph("* Solo se muestran facturas pagas totalmente.",smallFont));
+                cell.setHorizontalAlignment (Element.ALIGN_LEFT);
+                cell.setBorder(0);
+                cell.setColspan(noCols-5);
+                table.addCell(cell);
+                
+                
+                
                 
                 cell= new PdfPCell(new Paragraph("* MON.",smallBoldFont));
                 cell.setHorizontalAlignment (Element.ALIGN_LEFT);
@@ -244,13 +261,13 @@ public class PdfCxpIepsPagado {
                 cell= new PdfPCell(new Paragraph("Moneda de la factura",smallFont));
                 cell.setHorizontalAlignment (Element.ALIGN_LEFT);
                 cell.setBorder(0);
-                cell.setColspan(noCols-1);
+                cell.setColspan(4);
                 table.addCell(cell);
                 
-                cell= new PdfPCell(new Paragraph("* Todas las cantidades que se muestran son en M.N.",smallFont));
+                cell= new PdfPCell(new Paragraph("",smallFont));
                 cell.setHorizontalAlignment (Element.ALIGN_LEFT);
                 cell.setBorder(0);
-                cell.setColspan(noCols);
+                cell.setColspan(noCols-5);
                 table.addCell(cell);
                 
             }else{

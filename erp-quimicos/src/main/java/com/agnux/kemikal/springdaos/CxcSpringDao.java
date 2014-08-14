@@ -5244,6 +5244,7 @@ return subfamilias;
             + ",cliente"
             + ",fecha "
             + ",factura "
+            + ",moneda_fac "
             + ",subtotal "
             + ",retencion"
             + ",iva"
@@ -5256,6 +5257,7 @@ return subfamilias;
                 + ",to_char(erp_h_facturas.fecha_ultimo_pago, 'dd/mm/yyyy') as fecha_pago"
                 + ",to_char(fac_docs.momento_creacion, 'dd/mm/yyyy') as fecha"
                 + ",fac_docs.serie_folio as factura"
+                + ",gral_mon.descripcion_abr as moneda_fac "
                 + ",(fac_docs.subtotal * fac_docs.tipo_cambio) as subtotal"
                 + ",(fac_docs.monto_retencion * fac_docs.tipo_cambio) as retencion"
                 + ",(fac_docs.impuesto * fac_docs.tipo_cambio) as iva"
@@ -5265,10 +5267,11 @@ return subfamilias;
             + "join fac_docs_detalles as fac_det on fac_det.fac_doc_id=fac_docs.id "
             + "join erp_h_facturas on (erp_h_facturas.serie_folio=fac_docs.serie_folio and erp_h_facturas.cliente_id=fac_docs.cxc_clie_id and erp_h_facturas.pagado=true and erp_h_facturas.cancelacion=false) "
             + "join cxc_clie on cxc_clie.id=fac_docs.cxc_clie_id "
+            + "join gral_mon on gral_mon.id=fac_docs.moneda_id "
             + "where fac_det.gral_ieps_id>0 and cxc_clie.borrado_logico=false and cxc_clie.empresa_id=? "+condiciones +" "
             +" AND (to_char(erp_h_facturas.fecha_ultimo_pago,'yyyymmdd')::integer BETWEEN to_char('"+finicial+"'::timestamp with time zone,'yyyymmdd')::integer AND to_char('"+ffinal+"'::timestamp with time zone,'yyyymmdd')::integer) "
         + ") as sbt "
-        + "group by fecha_ultimo_pago, cliente,fecha_pago,fecha, factura, subtotal,retencion,iva,total "
+        + "group by fecha_ultimo_pago, cliente,fecha_pago,fecha, factura, moneda_fac, subtotal,retencion,iva,total "
         + "order by fecha_ultimo_pago"; 
         
         System.out.println("getDatosReporteIepsCobrado:: "+sql_to_query);
@@ -5283,13 +5286,19 @@ return subfamilias;
                     row.put("fecha_pago",rs.getString("fecha_pago"));
                     row.put("fecha",rs.getString("fecha"));
                     row.put("factura",rs.getString("factura"));
+                    row.put("moneda_fac",rs.getString("moneda_fac"));
+                    row.put("moneda_simbolo_subtotal","$");
                     row.put("subtotal",StringHelper.AgregaComas(StringHelper.roundDouble(rs.getDouble("subtotal"), 2)));
+                    row.put("moneda_simbolo_retencion","$");
                     row.put("retencion",StringHelper.AgregaComas(StringHelper.roundDouble(rs.getDouble("retencion"), 2)));
+                    row.put("moneda_simbolo_iva","$");
                     row.put("iva",StringHelper.AgregaComas(StringHelper.roundDouble(rs.getDouble("iva"), 2)));
+                    row.put("moneda_simbolo_total","$");
                     row.put("total",StringHelper.AgregaComas(StringHelper.roundDouble(rs.getDouble("total"), 2)));
                     
                     //Crear nombres de campos dinamicamente
                     for( HashMap<String,String> i : tiposIeps ){
+                        row.put("moneda_simbolo_ieps"+i.get("id"),"$");
                         row.put("ieps"+i.get("id"),StringHelper.AgregaComas(StringHelper.roundDouble(rs.getDouble("ieps"+i.get("id")), 2)));
                     }
                     return row;

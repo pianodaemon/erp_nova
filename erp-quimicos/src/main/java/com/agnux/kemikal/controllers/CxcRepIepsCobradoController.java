@@ -159,6 +159,19 @@ public class CxcRepIepsCobradoController {
         widthMainTable += 90;
         noCols++;
         
+        keyIndex="moneda_fac";
+        columnsHead.put(keyIndex, "DENOM:60:left");
+        columnsBody.put(keyIndex, "60:left");
+        widthMainTable += 60;
+        noCols++;
+        
+        keyIndex="moneda_simbolo_subtotal";
+        columnsHead.put(keyIndex, " :15:right");
+        columnsBody.put(keyIndex, "15:right");
+        totales1.put(keyIndex, "$");
+        widthMainTable += 15;
+        noCols++;
+        
         keyIndex="subtotal";
         columnsHead.put(keyIndex, "SUBTOTAL:90:right");
         columnsBody.put(keyIndex, "90:right");
@@ -167,12 +180,26 @@ public class CxcRepIepsCobradoController {
         widthMainTable += 90;
         noCols++;
         
+        keyIndex="moneda_simbolo_retencion";
+        columnsHead.put(keyIndex, " :15:right");
+        columnsBody.put(keyIndex, "15:right");
+        totales1.put(keyIndex, "$");
+        widthMainTable += 15;
+        noCols++;
+        
         keyIndex="retencion";
         columnsHead.put(keyIndex, "RETENCION:90:right");
         columnsBody.put(keyIndex, "90:right");
         indexTotales.add(keyIndex);
         totales1.put(keyIndex, "0");
         widthMainTable += 90;
+        noCols++;
+        
+        keyIndex="moneda_simbolo_iva";
+        columnsHead.put(keyIndex, " :15:right");
+        columnsBody.put(keyIndex, "15:right");
+        totales1.put(keyIndex, "$");
+        widthMainTable += 15;
         noCols++;
         
         keyIndex="iva";
@@ -185,6 +212,13 @@ public class CxcRepIepsCobradoController {
         
         //Crear nombres de campos dinamicamente
         for( HashMap<String,String> i : listaIeps ){
+            keyIndex="moneda_simbolo_ieps"+i.get("id");
+            columnsHead.put(keyIndex, " :15:right");
+            columnsBody.put(keyIndex, "15:right");
+            totales1.put(keyIndex, "$");
+            widthMainTable += 15;
+            noCols++;
+            
             String key = "ieps"+i.get("id");
             columnsHead.put(key, "IEPS "+i.get("tasa")+"%:90:right");
             columnsBody.put(key, "90:right");
@@ -193,6 +227,13 @@ public class CxcRepIepsCobradoController {
             widthMainTable += 90;
             noCols++;
         }
+        
+        keyIndex="moneda_simbolo_total";
+        columnsHead.put(keyIndex, " :15:right");
+        columnsBody.put(keyIndex, "15:right");
+        totales1.put(keyIndex, "$");
+        widthMainTable += 15;
+        noCols++;
         
         keyIndex="total";
         //Ultima columna para encabezado
@@ -337,13 +378,13 @@ public class CxcRepIepsCobradoController {
         //columnsHead = Es para los encabezados de las columnas, incluye el TITULO, Ancho y Alineacion del texto en la celda
         //columnsBody = Para mostrar los datos del reporte, incluye Ancho y Alineacion del texto en la celda
         String keyIndex="fecha_pago";
-        columnsHead.put(keyIndex, "FECHA PAGO:left");
+        columnsHead.put(keyIndex, "F. PAGO:left");
         columnsBody.put(keyIndex, "100:left");
         widthMainTable += 100;
         noCols++;
         
         keyIndex="fecha";
-        columnsHead.put(keyIndex, "FECHA FAC.:left");
+        columnsHead.put(keyIndex, "F. FAC.:left");
         columnsBody.put(keyIndex, "100:left");
         widthMainTable += 100;
         noCols++;
@@ -354,6 +395,17 @@ public class CxcRepIepsCobradoController {
         widthMainTable += 90;
         noCols++;
         
+        keyIndex="moneda_fac";
+        columnsHead.put(keyIndex, "MON:60:left");
+        columnsBody.put(keyIndex, "60:left");
+        noCols++;
+        
+        keyIndex="moneda_simbolo_subtotal";
+        columnsHead.put(keyIndex, " :15:right");
+        columnsBody.put(keyIndex, "15:right");
+        totales1.put(keyIndex, "$");
+        noCols++;
+        
         keyIndex="subtotal";
         columnsHead.put(keyIndex, "SUBTOTAL:right");
         columnsBody.put(keyIndex, "90:right");
@@ -362,12 +414,24 @@ public class CxcRepIepsCobradoController {
         widthMainTable += 90;
         noCols++;
         
+        keyIndex="moneda_simbolo_retencion";
+        columnsHead.put(keyIndex, " :15:right");
+        columnsBody.put(keyIndex, "15:right");
+        totales1.put(keyIndex, "$");
+        noCols++;
+        
         keyIndex="retencion";
         columnsHead.put(keyIndex, "RETENCIÓN:right");
         columnsBody.put(keyIndex, "90:right");
         indexTotales.add(keyIndex);
         totales1.put(keyIndex, "0");
         widthMainTable += 90;
+        noCols++;
+        
+        keyIndex="moneda_simbolo_iva";
+        columnsHead.put(keyIndex, " :15:right");
+        columnsBody.put(keyIndex, "15:right");
+        totales1.put(keyIndex, "$");
         noCols++;
         
         keyIndex="iva";
@@ -380,6 +444,12 @@ public class CxcRepIepsCobradoController {
         
         //Crear nombres de campos dinamicamente
         for( HashMap<String,String> i : listaIeps ){
+            keyIndex="moneda_simbolo_ieps"+i.get("id");
+            columnsHead.put(keyIndex, " :15:right");
+            columnsBody.put(keyIndex, "15:right");
+            totales1.put(keyIndex, "$");
+            noCols++;
+            
             String key = "ieps"+i.get("id");
             columnsHead.put(key, "IEPS "+i.get("tasa")+"%:right");
             columnsBody.put(key, "90:right");
@@ -389,6 +459,12 @@ public class CxcRepIepsCobradoController {
             noCols++;
         }
         
+        keyIndex="moneda_simbolo_total";
+        columnsHead.put(keyIndex, " :15:right");
+        columnsBody.put(keyIndex, "15:right");
+        totales1.put(keyIndex, "$");
+        noCols++;
+        
         keyIndex="total";
         //Ultima columna para encabezado
         columnsHead.put(keyIndex, "TOTAL:right");
@@ -397,7 +473,7 @@ public class CxcRepIepsCobradoController {
         indexTotales.add(keyIndex);
         totales1.put(keyIndex, "0");
         //Sumar la medida de la ultima columna
-        widthMainTable += 120;
+        //widthMainTable += 120;
         //Aumentar una columna para contar la ultima
         noCols++;
         
