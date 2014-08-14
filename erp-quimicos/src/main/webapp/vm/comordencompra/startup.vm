@@ -12,7 +12,7 @@
 
         <link rel="stylesheet" href="../../css/modalbox/comordencompra/formaBuscapresentaciones.css" type="text/css" />
         <link rel="stylesheet" href="../../css/modalbox/comordencompra/formaBuscaproducto.css" type="text/css" />
-        <link rel="stylesheet" href="../../css/modalbox/comordencompra/formaCancelaEmision.css" type="text/css" />
+        <!--<link rel="stylesheet" href="../../css/modalbox/comordencompra/formaCancelaEmision.css" type="text/css" />-->
         
         <!--  js for this catalogo -->
         <script type="text/javascript" src="../../js/components/jquery-form/jquery-form.js"></script>

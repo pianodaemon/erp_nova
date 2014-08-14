@@ -262,7 +262,7 @@
 													<li class="topline"><a href="../cxprepantiguedadsaldos/startup.agnux">Antig&uuml;edad de Saldos</a></li>
 													<li class="topline"><a href="../cxprepsaldomes/startup.agnux">Saldo Mensual</a></li>
 													<li class="topline"><a href="../repprov/startup.agnux">Proveedores</a></li>
-													
+													<li class="topline"><a href="../cxprepiepspagado/startup.agnux">IEPS Pagado</a></li>
 													
 													<!--
 													<li class="topline"><a href="#">Saldo Mensual</a></li>
@@ -382,7 +382,6 @@
 													
 													<li class="topline"><a href="../invcontrolcostos/startup.agnux">Control de Costos</a></li>
 													<li class="topline"><a href="../invactualizaprecios/startup.agnux">Actualizar Precios</a></li>
-													
 													<li class="topline"><a href="../invcarga/startup.agnux">Carga de Inventario F&iacute;sico</a></li>
 													<!--
 													<li class="topline"><a href="#">Actualizar Precios</a></li>
