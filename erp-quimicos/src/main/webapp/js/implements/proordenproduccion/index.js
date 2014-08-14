@@ -2602,7 +2602,7 @@ $(function() {
             });
             
             $tmp_tr.find('#cantidad_elemento'+trCount).change(function() {
-				alert("hola");
+				//alert("hola");
                 $valor = isNaN(parseFloat($(this).val())) ? 0 : parseFloat($(this).val());
                 $this_tr_tpm = $(this).parent().parent();
                 $cantidad_this_tr = isNaN(parseFloat($this_tr_tpm.find('input[name=existencia]').val())) ? 0 : parseFloat($this_tr_tpm.find('input[name=existencia]').val());

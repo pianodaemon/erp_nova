@@ -59,6 +59,7 @@ $(function() {
 	
 	var $cadena_busqueda = "";
 	var $busqueda_factura = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_factura]');
+	var $busqueda_folio_pedido = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_folio_pedido]');
 	var $busqueda_cliente = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_cliente]');
 	var $busqueda_fecha_inicial = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_fecha_inicial]');
 	var $busqueda_fecha_final = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_fecha_final]');
@@ -88,6 +89,7 @@ $(function() {
 		var valor_retorno = "";
 		var signo_separador = "=";
 		valor_retorno += "factura" + signo_separador + $busqueda_factura.val() + "|";
+		valor_retorno += "folio_pedido" + signo_separador + $busqueda_folio_pedido.val() + "|";
 		valor_retorno += "cliente" + signo_separador + $busqueda_cliente.val() + "|";
 		valor_retorno += "fecha_inicial" + signo_separador + $busqueda_fecha_inicial.val() + "|";
 		valor_retorno += "fecha_final" + signo_separador + $busqueda_fecha_final.val() + "|";
@@ -131,6 +133,7 @@ $(function() {
 		$busqueda_fecha_final.val('');
 		$busqueda_codigo.val('');
 		$busqueda_producto.val('');
+		$busqueda_folio_pedido.val('');
 		
 		//Recargar select de agentes
 		$busqueda_select_agente.children().remove();
@@ -280,6 +283,7 @@ $(function() {
 	
 	//aplicar evento Keypress para que al pulsar enter ejecute la busqueda
 	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_factura, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_folio_pedido, $buscar);
 	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_cliente, $buscar);
 	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_codigo, $buscar);
 	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_producto, $buscar);

@@ -799,7 +799,7 @@ $(function() {
 						}
 					});
 					$select_moneda.append(moneda_hmtl);
-					
+					$('#forma-prefacturas-window').find('input[name=moneda_original]').val(id_moneda_remision);
 					
 					//carga select de metodos de pago
 					$select_metodo_pago.children().remove();
@@ -942,7 +942,7 @@ $(function() {
 						
 						trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="50">';
 							trr += '<input type="hidden" name="idIeps"     value="'+ prod['ieps_id'] +'" id="idIeps">';
-							trr += '<input type="text" name="tasaIeps" value="'+ tasaIeps +'" class="borde_oculto" id="tasaIeps" style="width:46px; text-align:right;" readOnly="true">';
+							trr += '<input type="text" name="tasaIeps" value="'+ prod['valor_ieps'] +'" class="borde_oculto" id="tasaIeps" style="width:46px; text-align:right;" readOnly="true">';
 						trr += '</td>';
 						
 						trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="62">';
@@ -2902,7 +2902,7 @@ $(function() {
 					}
 					
 					
-					if(entry['datosGrid'] != null){
+					if(parseInt(entry['datosGrid'].length) > 0){
 						$.each(entry['datosGrid'],function(entryIndex,prod){
 							var importePartida = 0;
 							var importeImpuesto = 0;
@@ -3039,7 +3039,8 @@ $(function() {
 							});
                             
                             
-                            if((parseInt(flujo_proceso)==2 || parseInt(flujo_proceso)==7 || parseInt(flujo_proceso)==8) && parseInt(entry['datosPrefactura'][0]['tipo_documento'])!=3 && prod['facturado']!='true'){
+                            //if((parseInt(flujo_proceso)==2 || parseInt(flujo_proceso)==7 || parseInt(flujo_proceso)==8) && parseInt(entry['datosPrefactura'][0]['tipo_documento'])!=3 && prod['facturado']!='true'){
+                            if((parseInt(flujo_proceso)==2 || parseInt(flujo_proceso)==7 || parseInt(flujo_proceso)==8) && prod['facturado']!='true'){
 								//al iniciar el campo tiene un  caracter en blanco, al obtener el foco se elimina el  espacio por comillas
 								$grid_productos.find('input.cant'+tr).focus(function(e){
 									if($(this).val().trim() == ''){
@@ -3176,17 +3177,19 @@ $(function() {
 								2=Remision
 								3=Factura de Remision
 								*/
+								/*
 								if(parseInt(entry['datosPrefactura'][0]['tipo_documento'])==3){
 									//Si es facturacion de Remision, establecemos el campo en solo lectura
 									$grid_productos.find('input.cant'+tr).attr("readonly", true);
 									$grid_productos.find('input.cant'+tr).css({'background' : '#F0F0F0'});
 								}else{
+								*/
 									if(prod['facturado']=='true'){
 										//Si la partida ya esta facturada en su totalidad, establecemos el campo en solo lectura
 										$grid_productos.find('input.cant'+tr).attr("readonly", true);
 										$grid_productos.find('input.cant'+tr).css({'background' : '#F0F0F0'});
 									}
-								}
+								//}
 							}else{
 								//Si el flujo es diferente de Facturacion, establecemos el campo en solo lectura
 								$grid_productos.find('input.cant'+tr).attr("readonly", true);

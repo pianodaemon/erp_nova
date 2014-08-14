@@ -49,6 +49,7 @@ $(function() {
 	
 	var $cadena_busqueda = "";
 	var $busqueda_folio = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_folio]');
+	var $busqueda_folio_pedido = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_folio_pedido]');
 	var $busqueda_cliente = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_cliente]');
 	var $busqueda_fecha_inicial = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_fecha_inicial]');
 	var $busqueda_fecha_final = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_fecha_final]');
@@ -78,6 +79,7 @@ $(function() {
 		var valor_retorno = "";
 		var signo_separador = "=";
 		valor_retorno += "folio" + signo_separador + $busqueda_folio.val() + "|";
+		valor_retorno += "folio_pedido" + signo_separador + $busqueda_folio_pedido.val() + "|";
 		valor_retorno += "cliente" + signo_separador + $busqueda_cliente.val() + "|";
 		valor_retorno += "fecha_inicial" + signo_separador + $busqueda_fecha_inicial.val() + "|";
 		valor_retorno += "fecha_final" + signo_separador + $busqueda_fecha_final.val()+ "|";
@@ -121,6 +123,7 @@ $(function() {
 		$busqueda_fecha_final.val('');
 		$busqueda_codigo.val('');
 		$busqueda_producto.val('');
+		$busqueda_folio_pedido.val('');
 		
 		//Recargar select de agentes
 		$busqueda_select_agente.children().remove();
@@ -175,6 +178,7 @@ $(function() {
 	
 	//aplicar evento Keypress para que al pulsar enter ejecute la busqueda
 	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_folio, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_folio_pedido, $buscar);
 	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_cliente, $buscar);
 	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_codigo, $buscar);
 	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_producto, $buscar);
@@ -379,6 +383,9 @@ $(function() {
 		var $empresa_immex = $('#forma-remisiones-window').find('input[name=empresa_immex]');
 		var $tasa_ret_immex = $('#forma-remisiones-window').find('input[name=tasa_ret_immex]');
 		
+		
+		
+		
 		var $grid_productos = $('#forma-remisiones-window').find('#grid_productos');
 		
 		//Suma de todos los importes
@@ -566,8 +573,8 @@ $(function() {
 				//$no_cuenta.hide();
 				//$digitos.attr('disabled','-1');
 				$etiqueta_digit.attr('disabled','-1');
-				$('#forma-remisiones-window').find('#tr_ieps').hide();
-				$('#forma-remisiones-window').find('#tr_retencion').hide();
+				//$('#forma-remisiones-window').find('#tr_ieps').hide();
+				//$('#forma-remisiones-window').find('#tr_retencion').hide();
 				
 				
 				var respuestaProcesada = function(data){
@@ -662,7 +669,39 @@ $(function() {
                     $empresa_immex.val(entry['datosRemision']['0']['empresa_immex']);
                     $tipo_cambio.val(entry['datosRemision']['0']['tipo_cambio']);
 					$no_cuenta.val(entry['datosRemision']['0']['no_cuenta']);
-                    
+
+
+					$subtotal.val(entry['datosRemision']['0']['subtotal']);
+					$impuesto.val(entry['datosRemision']['0']['impuesto']);
+					$total.val(entry['datosRemision']['0']['total']);
+					$campo_ieps.val(entry['datosRemision']['0']['monto_ieps']);
+					$campo_impuesto_retenido.val(entry['datosRemision']['0']['monto_retencion']);
+					
+					
+					
+					var valorHeight=510;
+					
+					//Ocultar campos si tienen valor menor o igual a cero
+					if(parseFloat($campo_ieps.val())<=0){
+						$('#forma-remisiones-window').find('#tr_ieps').hide();
+					}else{
+						$('#forma-remisiones-window').find('#tr_ieps').show();
+						valorHeight = parseFloat(valorHeight) + 15;
+					}
+					
+					if(parseFloat($campo_impuesto_retenido.val())<=0){
+						$('#forma-remisiones-window').find('#tr_retencion').hide();
+					}else{
+						$('#forma-remisiones-window').find('#tr_retencion').show();
+						valorHeight = parseFloat(valorHeight) + 15;
+					}
+					
+					$('#forma-remisiones-window').find('.remisiones_div_one').css({'height':valorHeight+'px'});
+					
+					
+					
+					
+					
                     if( entry['datosRemision']['0']['cancelado'] == 'true' ){
 						$cancelar_remision.hide();
 						$submit_actualizar.hide();
@@ -865,7 +904,12 @@ $(function() {
 						});
 					}
 					
-					$calcula_totales();//llamada a la funcion que calcula totales 
+					
+					
+					
+					
+					
+					//$calcula_totales();//llamada a la funcion que calcula totales 
 					
 					
 					//si es refacturacion, no se puede cambiar los datos del grid, solo el header de la factura
