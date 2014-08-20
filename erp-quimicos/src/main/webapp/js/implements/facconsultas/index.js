@@ -1157,7 +1157,7 @@ $(function() {
 					//si el estado del comprobante es 0, esta cancelado
 					if(entry['datosFactura']['0']['estado']=='CANCELADO'){
 						$reconstruir_pdf.hide();
-						$boton_descargarpdf.hide();
+						//$boton_descargarpdf.hide();
 						$boton_descargarxml.hide();
 						
 						$email_envio.attr('disabled','-1');
@@ -1174,6 +1174,30 @@ $(function() {
 						$check_xml.attr('checked', true);
 						$check_pdf.attr('checked', true);
 					}
+					
+					
+					
+					
+					//Descargar pdf de factura
+					$boton_descargarpdf.click(function(event){
+						var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getVerificaArchivoGenerado.json';
+						$arreglo = {'serie_folio':$serie_folio.val(),'ext':'pdf', 'id':$id_factura.val(), 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() }
+						$.post(input_json,$arreglo,function(entry2){
+							var descargar  = entry2['descargar'];
+							if(descargar == 'true'){
+								
+								var estado = entry['datosFactura']['0']['estado'];								
+								var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
+								var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/get_descargar_pdf_factura/'+$id_factura.val()+'/'+iu+'/out.json';
+								window.location.href=input_json;
+							}else{
+								//jAlert("La factura "+$serie_folio.val()+" aun no esta disponible para descarga, intente nuevamente en 10 segundos.", 'Atencion!');
+								jAlert("La factura "+$serie_folio.val()+" no esta disponible para descarga.", 'Atencion!');
+							}
+						});//termina llamada json
+					});
+					
+					
 				});//termina llamada json
                 
                 
@@ -1195,26 +1219,11 @@ $(function() {
 				});
                 
                 
-				//descargar pdf de factura
-				$boton_descargarpdf.click(function(event){
-					var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getVerificaArchivoGenerado.json';
-					$arreglo = {'serie_folio':$serie_folio.val(),'ext':'pdf', 'id':$id_factura.val(), 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() }
-					$.post(input_json,$arreglo,function(entry){
-						var descargar  = entry['descargar'];
-						if(descargar == 'true'){
-							var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
-							var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/get_descargar_pdf_factura/'+$id_factura.val()+'/'+iu+'/out.json';
-							window.location.href=input_json;
-						}else{
-							//jAlert("La factura "+$serie_folio.val()+" aun no esta disponible para descarga, intente nuevamente en 10 segundos.", 'Atencion!');
-							jAlert("La factura "+$serie_folio.val()+" no esta disponible para descarga.", 'Atencion!');
-						}
-					});//termina llamada json
-				});
+
                 
                 
                 
-				//descargar xml de factura
+				//Descargar xml de factura
 				$boton_descargarxml.click(function(event){
 					var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getVerificaArchivoGenerado.json';
 					$arreglo = {'serie_folio':$serie_folio.val(), 'ext':'xml', 'id':$id_factura.val(), 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() }

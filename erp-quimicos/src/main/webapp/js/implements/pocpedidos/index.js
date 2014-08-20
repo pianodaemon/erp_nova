@@ -4409,7 +4409,11 @@ $(function() {
 									//trr += '<span id="elimina">1</span>';
 									
 									trr += '<input type="hidden" name="idcot" id="idcot" value="'+ prod['id_cot'] +'">';
-									trr += '<input type="hidden" name="nocot" id="nocot" value="'+ $no_cotizacion.val() +'">';
+									if($no_cotizacion.val().trim()==''){
+										trr += '<input type="hidden" name="nocot" id="nocot" value=" ">';
+									}else{
+										trr += '<input type="hidden" name="nocot" id="nocot" value="'+ $no_cotizacion.val() +'">';
+									}
 									trr += '<input type="hidden" name="iddetcot" id="iddetcot" value="'+ prod['id_cot_det'] +'">';
 									
 							trr += '</td>';

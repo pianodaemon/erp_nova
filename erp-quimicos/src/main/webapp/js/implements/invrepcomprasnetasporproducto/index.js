@@ -50,6 +50,7 @@ $(function() {
 	$('#barra_buscador').hide();
 	
 	var $select_opciones = $('#lienzo_recalculable').find('table#busqueda tr td').find('select[name=opciones]');
+	var $no_prov = $('#lienzo_recalculable').find('table#busqueda tr td').find('input[name=no_prov]');
 	var $proveedor = $('#lienzo_recalculable').find('table#busqueda tr td').find('input[name=proveedor]');
 	var $producto = $('#lienzo_recalculable').find('table#busqueda tr td').find('input[name=producto]');
 	var $fecha_inicial = $('#lienzo_recalculable').find('table#busqueda tr td').find('input[name=fecha_inicial]');
@@ -233,22 +234,25 @@ $(function() {
     
 
 
+
+
+
 	//buscador de proveedores
-	$busca_proveedores = function(){
+	$busca_proveedores = function($no_proveedor, $proveedor){
 		$(this).modalPanel_Buscaproveedor();
 		var $dialogoc =  $('#forma-buscaproveedor-window');
 		$dialogoc.append($('div.buscador_proveedores').find('table.formaBusqueda_proveedores').clone());
-		$('#forma-buscaproveedor-window').css({ "margin-left": -200, 	"margin-top": -200  });
+		$('#forma-buscaproveedor-window').css({ "margin-left": -200, 	"margin-top": -150  });
 		
 		var $tabla_resultados = $('#forma-buscaproveedor-window').find('#tabla_resultado');
+		var $campo_no_proveedor = $('#forma-buscaproveedor-window').find('input[name=campo_no_proveedor]');
 		var $campo_rfc = $('#forma-buscaproveedor-window').find('input[name=campo_rfc]');
-		var $campo_email = $('#forma-buscaproveedor-window').find('input[name=campo_email]');
 		var $campo_nombre = $('#forma-buscaproveedor-window').find('input[name=campo_nombre]');
 		
 		var $buscar_plugin_proveedor = $('#forma-buscaproveedor-window').find('#busca_proveedor_modalbox');
 		var $cancelar_plugin_busca_proveedor = $('#forma-buscaproveedor-window').find('#cencela');
 			
-		$('#forma-entradamercancias-window').find('input[name=tipo_proveedor]').val('');
+		$('#forma-provfacturas-window').find('input[name=tipo_proveedor]').val('');
 			
 		//funcionalidad botones
 		$buscar_plugin_proveedor.mouseover(function(){
@@ -264,26 +268,36 @@ $(function() {
 		$cancelar_plugin_busca_proveedor.mouseout(function(){
 			$(this).removeClass("onmouseOverCancelar").addClass("onmouseOutCancelar");
 		});
-					
+	
+		$campo_no_proveedor.val($no_proveedor.val());
+		$campo_nombre.val($proveedor.val());
+		
+		$campo_nombre.focus();
+		
+		
 		//click buscar proveedor
 		$buscar_plugin_proveedor.click(function(event){
-			//event.preventDefault();
-			var restful_json_service = config.getUrlForGetAndPost() + '/getBuscaProveedores.json'
+			
+			var input_json = config.getUrlForGetAndPost() + '/getBuacadorProveedores.json'
+			
 			$arreglo = {    rfc:$campo_rfc.val(),
-							email:$campo_email.val(),
+							no_prov:$campo_no_proveedor.val(),
 							nombre:$campo_nombre.val(),
 							iu:config.getUi()
 						}
 			
 			var trr = '';
 			$tabla_resultados.children().remove();
-			$.post(restful_json_service,$arreglo,function(entry){
+			$.post(input_json,$arreglo,function(entry){
 				$.each(entry['Proveedores'],function(entryIndex,proveedor){
 					
 					trr = '<tr>';
 						trr += '<td width="120">';
 							trr += '<input type="hidden" id="id_prov" value="'+proveedor['id']+'">';
 							trr += '<input type="hidden" id="tipo_prov" value="'+proveedor['proveedortipo_id']+'">';
+							trr += '<input type="hidden" id="no_prov" value="'+proveedor['no_proveedor']+'">';
+							trr += '<input type="hidden" id="dias_cred_id" value="'+proveedor['dias_credito_id']+'">';
+							trr += '<input type="hidden" id="id_moneda" value="'+proveedor['moneda_id']+'">';
 							trr += '<span class="rfc">'+proveedor['rfc']+'</span>';
 						trr += '</td>';
 						trr += '<td width="250"><span id="razon_social">'+proveedor['razon_social']+'</span></td>';
@@ -308,27 +322,46 @@ $(function() {
 				
 				//seleccionar un producto del grid de resultados
 				$tabla_resultados.find('tr').click(function(){
+					
 					//asigna la razon social del proveedor al campo correspondiente
 					$proveedor.val($(this).find('#razon_social').html());
 					
 					//elimina la ventana de busqueda
 					var remove = function() { $(this).remove(); };
 					$('#forma-buscaproveedor-overlay').fadeOut(remove);
+					
+					$proveedor.focus();
 				});
 			});
 		});
+		
+		if ($campo_no_proveedor.val()!='' || $campo_nombre.val()!=''){
+			$buscar_plugin_proveedor.trigger('click');
+		}
+		
+		$(this).aplicarEventoKeypressEjecutaTrigger($campo_no_proveedor, $buscar_plugin_proveedor);
+		$(this).aplicarEventoKeypressEjecutaTrigger($campo_rfc, $buscar_plugin_proveedor);
+		$(this).aplicarEventoKeypressEjecutaTrigger($campo_nombre, $buscar_plugin_proveedor);
 		
 		$cancelar_plugin_busca_proveedor.click(function(event){
 			//event.preventDefault();
 			var remove = function() { $(this).remove(); };
 			$('#forma-buscaproveedor-overlay').fadeOut(remove);
+			
+			$proveedor.focus();
 		});
 	}//termina buscador de proveedores
+	
 
 
 
-	//buscador de productos
-	$busca_productos = function(sku_buscar){
+
+
+
+
+
+	//Buscador de productos
+	$busca_productos = function(nombre_producto){
 		//limpiar_campos_grids();
 		$(this).modalPanel_Buscaproducto();
 		var $dialogoc =  $('#forma-buscaproducto-window');
@@ -375,8 +408,7 @@ $(function() {
 			$select_tipo_producto.append(prod_tipos_html);
 		});
 		
-		
-		$campo_sku.val(sku_buscar);
+		$campo_descripcion.val(nombre_producto);
 		
 		//click buscar productos
 		$buscar_plugin_producto.click(function(event){
@@ -440,7 +472,7 @@ $(function() {
 		
 		
 		//si hay algo en el campo sku al cargar el buscador, ejecuta la busqueda
-		if($campo_sku.val() != ''){
+		if($campo_descripcion.val() != ''){
 			$buscar_plugin_producto.trigger('click');
 		}
 
@@ -452,19 +484,17 @@ $(function() {
 	}//termina buscador de productos
 	
 
-
-
 	
 	
    $buscar_proveedor.click(function(event){
         event.preventDefault();
-        $busca_proveedores();//llamada a la funcion que busca proveedores
+        $busca_proveedores($no_prov, $proveedor);//llamada a la funcion que busca proveedores
     });
     
     
     $buscar_producto.click(function(event){
         event.preventDefault();
-        $busca_productos();//llamada a la funcion que busca productos
+        $busca_productos($producto.val());//llamada a la funcion que busca productos
     });
 
 

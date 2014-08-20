@@ -2133,7 +2133,7 @@ $(function() {
        }
         
         
-        $alimenta_grid_formulaciones = function($tr_count, $id_formula, $sku, $descripcion, $version){
+        $alimenta_grid_formulaciones = function($tr_count, $id_formula, $sku, $descripcion, $version, proceso_id){
             var $formulas_proceso = $('#forma-proconfigproduccion-window').find('#formulas_porproceso');
             
             //$formulas_proceso.children().remove();
@@ -2171,12 +2171,22 @@ $(function() {
                     
                     var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/' + 'logicDeleteFormula.json';
                     $arreglo = {'id':llave,
+								'proceso_id':proceso_id,
                                 'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
                                 };
                     jConfirm('Realmente desea eliminar la formula seleccionada', 'Dialogo de confirmacion', function(r) {
                         if (r){
                             $.post(input_json,$arreglo,function(entry){
                                 if ( entry['success'] == '1' ){
+									
+									//Cerrar la ventana actual de configuracion
+									var remove = function() {$(this).remove();};
+									$('#forma-proconfigproduccion-overlay').fadeOut(remove);
+									
+									//Actualizar el grid para que desaparezca la configuracion eliminada
+									$get_datos_grid();
+									
+									//Mostrar mensaje de confirmacion de configuracion eliminada
                                     jAlert("La formula fue eliminada exitosamente", 'Atencion!');
                                 }
                                 else{
@@ -2774,7 +2784,7 @@ $(function() {
 					//llena el grid de las formulas
 					if(entry['getAllFormulas'] != null){
 						$.each(entry['getAllFormulas'],function(entryIndex,formula){
-							$alimenta_grid_formulaciones(0, formula['id'], formula['codigo'], formula['descripcion'], formula['version']);
+							$alimenta_grid_formulaciones(0, formula['id'], formula['codigo'], formula['descripcion'], formula['version'], $id_proceso.val());
 						});
 					}else{
 						//aqui ira el buscador de formulas

@@ -2525,7 +2525,8 @@ $(function() {
 							$inputCantReal.focus();
 						});
 				}else{
-					if (parseInt($inputCantReal.val()) > 0){
+					
+					if (parseFloat($inputCantReal.val()) >= 0.0001){
 						//Buscar cuantos puntos tiene inputCantReal
 						var coincidencias = $inputCantReal.val().match(/\./g);
 						var numPuntos = coincidencias ? coincidencias.length : 0;
@@ -2535,7 +2536,7 @@ $(function() {
 							});
 						}
 					}else{
-						jAlert('La Cantidad Real debe ser mayor a cero.', 'Atencion!', function(r) { 
+						jAlert('La Cantidad Real debe ser mayor o igual a 0.0001', 'Atencion!', function(r) { 
 							$inputCantReal.focus();
 						});
 					}
