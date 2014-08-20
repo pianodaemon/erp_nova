@@ -171,7 +171,7 @@ public class PocSpringDao implements PocInterfaceDao{
                 + "(CASE WHEN poc_pedidos.monto_descto>0 THEN true ELSE false END) AS pdescto, "
                 + "(CASE WHEN poc_pedidos.monto_descto>0 THEN (CASE WHEN poc_pedidos.motivo_descto IS NULL THEN '' ELSE poc_pedidos.motivo_descto END) ELSE '' END) AS mdescto, "
                 + "(CASE WHEN poc_pedidos.monto_descto IS NULL THEN 0 ELSE poc_pedidos.porcentaje_descto END) AS porcentaje_descto,"
-                + "poc_pedidos.folio_cot "
+                + "(CASE WHEN poc_pedidos.folio_cot IS NULL THEN ' ' ELSE (CASE WHEN poc_pedidos.folio_cot='' THEN ' ' ELSE poc_pedidos.folio_cot END) END) AS folio_cot "
         + "FROM poc_pedidos "
         + "LEFT JOIN erp_proceso ON erp_proceso.id = poc_pedidos.proceso_id "
         + "LEFT JOIN gral_mon ON gral_mon.id = poc_pedidos.moneda_id "
@@ -369,17 +369,7 @@ public class PocSpringDao implements PocInterfaceDao{
         + "LEFT JOIN (SELECT DISTINCT cxc_clie_id FROM cxc_clie_df WHERE borrado_logico=false) AS tbldf ON tbldf.cxc_clie_id=cxc_clie.id "
         + "WHERE poc_cot.folio=? AND erp_proceso.empresa_id=?";
         
-        /*
-        + "LEFT JOIN ("
-            + "SELECT sbtdir.id_df,sbtdir.cxc_clie_id, (CASE WHEN sbtdir.calle IS NULL THEN '' ELSE sbtdir.calle END) AS calle, (CASE WHEN sbtdir.numero_interior IS NULL THEN '' ELSE (CASE WHEN sbtdir.numero_interior IS NULL OR sbtdir.numero_interior='' THEN '' ELSE 'NO.INT.'||sbtdir.numero_interior END)  END) AS numero_interior, (CASE WHEN sbtdir.numero_exterior IS NULL THEN '' ELSE (CASE WHEN sbtdir.numero_exterior IS NULL OR sbtdir.numero_exterior='' THEN '' ELSE 'NO.EXT.'||sbtdir.numero_exterior END )  END) AS numero_exterior, (CASE WHEN sbtdir.colonia IS NULL THEN '' ELSE sbtdir.colonia END) AS colonia, (CASE WHEN gral_mun.id IS NULL OR gral_mun.id=0 THEN '' ELSE gral_mun.titulo END) AS municipio, (CASE WHEN gral_edo.id IS NULL OR gral_edo.id=0 THEN '' ELSE gral_edo.titulo END) AS estado, (CASE WHEN gral_pais.id IS NULL OR gral_pais.id=0 THEN '' ELSE gral_pais.titulo END) AS pais, (CASE WHEN sbtdir.cp IS NULL THEN '' ELSE sbtdir.cp END) AS cp "
-            + "FROM ( "
-                + "SELECT  'DEFAULT'::character varying AS tipo_dir, cxc_clie.id AS cxc_clie_id, 0::integer AS id_df, cxc_clie.calle, cxc_clie.numero AS numero_interior, cxc_clie.numero_exterior, cxc_clie.colonia, cxc_clie.cp AS cp, cxc_clie.pais_id AS gral_pais_id, cxc_clie.estado_id AS gral_edo_id, cxc_clie.municipio_id AS gral_mun_id FROM cxc_clie "
-                + "UNION "
-                + "SELECT 'DIRFISCAL'::character varying AS tipo_dir, cxc_clie_df.cxc_clie_id, cxc_clie_df.id AS id_df,  cxc_clie_df.calle, cxc_clie_df.numero_interior, cxc_clie_df.numero_exterior, cxc_clie_df.colonia, cxc_clie_df.cp AS cp, cxc_clie_df.gral_pais_id, cxc_clie_df.gral_edo_id, cxc_clie_df.gral_mun_id FROM cxc_clie_df WHERE cxc_clie_df.borrado_logico=false "
-            + ")AS sbtdir LEFT JOIN gral_pais ON gral_pais.id = sbtdir.gral_pais_id LEFT JOIN gral_edo ON gral_edo.id = sbtdir.gral_edo_id LEFT JOIN gral_mun ON gral_mun.id = sbtdir.gral_mun_id 	"
-        + ") AS sbtdf ON sbtdf.cxc_clie_id = poc_cot_clie.cxc_clie_id WHERE poc_cot.folio=? AND erp_proceso.empresa_id=?";
-        */
-        System.out.println("Obteniendo datos de la cotizacion: "+sql_query);
+        //System.out.println("Obteniendo datos de la cotizacion: "+sql_query);
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
             new Object[]{new String(folio_cotizacion), new Integer(id_empresa)}, new RowMapper() {
@@ -1701,7 +1691,7 @@ public class PocSpringDao implements PocInterfaceDao{
         +" AND cxc_agentes_aduanales.borrado_logico=false  "+where+" "
         + "ORDER BY id limit 100;";
         
-        System.out.println("BuscarAgenA: "+sql_query);
+        //System.out.println("BuscarAgenA: "+sql_query);
         ArrayList<HashMap<String, Object>> hm_dest = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_query,
             new Object[]{}, new RowMapper() {
@@ -1739,7 +1729,7 @@ public class PocSpringDao implements PocInterfaceDao{
         + "AND cxc_agentes_aduanales.folio='"+no_control.toUpperCase().trim()+"'"
         + "ORDER BY id limit 1;";
         
-        System.out.println("getDatosAgenA: "+sql_query);
+        //System.out.println("getDatosAgenA: "+sql_query);
         
         ArrayList<HashMap<String, Object>> hm_dest = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_query,

@@ -831,8 +831,6 @@ public class PocPedidosController {
             @RequestParam(value="motivo_descuento", required=true) String motivo_descuento,
             @RequestParam(value="valor_descto", required=true) String porcentaje_descto,
             
-            
-            
             @RequestParam(value="eliminado", required=false) String[] eliminado,
             @RequestParam(value="iddetalle", required=false) String[] iddetalle,
             @RequestParam(value="idproducto", required=false) String[] idproducto,
@@ -891,7 +889,7 @@ public class PocPedidosController {
             
             for(int i=0; i<eliminado.length; i++) { 
                 
-                if(!nocot[i].equals("") && !nocot[i].equals("0")){
+                if(!nocot[i].trim().equals("") && !nocot[i].equals("0")){
                     folio_cot=nocot[i];
                 }
                 

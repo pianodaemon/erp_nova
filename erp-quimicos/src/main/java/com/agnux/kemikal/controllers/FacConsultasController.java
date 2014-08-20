@@ -21,10 +21,13 @@ import com.agnux.kemikal.interfacedaos.GralInterfaceDao;
 import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
 import com.agnux.kemikal.reportes.pdfCfd_CfdiTimbrado;
 import com.agnux.kemikal.reportes.pdfCfd_CfdiTimbradoFormato2;
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfStamper;
+import java.io.*;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -638,7 +641,7 @@ public class FacConsultasController {
             @PathVariable("id_factura") Integer id_factura, 
             @PathVariable("iu") String id_user,
             HttpServletRequest request, HttpServletResponse response, Model model)
-            throws ServletException, IOException, URISyntaxException {
+            throws ServletException, IOException, URISyntaxException, DocumentException {
         
         HashMap<String, String> userDat = new HashMap<String, String>();
         String dirSalidas = "";
@@ -671,8 +674,9 @@ public class FacConsultasController {
         
         
         String fileout = dirSalidas + "/" + nombre_archivo +".pdf";
+
         
-        System.out.println("Recuperando archivo: " + fileout);
+        //System.out.println("Recuperando archivo: " + fileout);
         File file = new File(fileout);
         int size = (int) file.length(); // Tamaño del archivo
         BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));

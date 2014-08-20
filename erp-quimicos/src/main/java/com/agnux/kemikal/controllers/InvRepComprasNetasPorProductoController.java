@@ -110,8 +110,9 @@ public class InvRepComprasNetasPorProductoController {
     
     
     
+    
     //obtiene los proveedores para el buscador
-    @RequestMapping(method = RequestMethod.POST, value="/getBuscaProveedores.json")
+    @RequestMapping(method = RequestMethod.POST, value="/getBuacadorProveedores.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getBuscaProveedoresJson(
             @RequestParam(value="rfc", required=true) String rfc,
             @RequestParam(value="no_prov", required=true) String no_prov,

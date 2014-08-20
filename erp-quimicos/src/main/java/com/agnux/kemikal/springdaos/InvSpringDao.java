@@ -1913,6 +1913,8 @@ public class InvSpringDao implements InvInterfaceDao{
                 + "AND inv_prod.borrado_logico=false "+where+" "
                 + "ORDER BY inv_prod.descripcion;";
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        
+        //System.out.println("sql_to_query: "+sql_to_query);
 
         ArrayList<HashMap<String, String>> hm_datos_productos = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,

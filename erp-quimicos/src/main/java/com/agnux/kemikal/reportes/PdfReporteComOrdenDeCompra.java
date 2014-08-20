@@ -367,7 +367,8 @@ public class PdfReporteComOrdenDeCompra {
             celdatxt.setBorderWidthRight(1);
             table_texto.addCell(celdatxt);
             
-            celdatxt = new PdfPCell(new Paragraph("ANEXAR CERTIFICADOS DE CALIDAD Y HOJAS DE SEGURIDAD",fuentePie));
+            //celdatxt = new PdfPCell(new Paragraph("ANEXAR CERTIFICADOS DE CALIDAD Y HOJAS DE SEGURIDAD",fuentePie));
+            celdatxt = new PdfPCell(new Paragraph("ANEXAR CERTIFICADOS DE CALIDAD",fuentePie));
             celdatxt.setHorizontalAlignment(Element.ALIGN_LEFT);
             celdatxt.setVerticalAlignment(Element.ALIGN_CENTER);
             celdatxt.setBorder(0);
@@ -482,18 +483,16 @@ public class PdfReporteComOrdenDeCompra {
             
             
             
+             
+             
+             /*
+             
+             //Comentado porque Gerardo Ponce pidio que se eliminara este elemento de la OC
                                    //1 2 3 4 5 6
             float [] tam_tablapie = {2,2,2,4,2,5}; 
             PdfPTable tablapie = new PdfPTable(tam_tablapie);
             PdfPCell celdapie;
             
-            /*
-            //agregar la tabla texto a la celda
-            celdapie = new PdfPCell(table_texto);
-            celdapie.setHorizontalAlignment(Element.ALIGN_LEFT);
-            celdapie.setBorder(0);celdapie.setColspan(6);
-            tablapie.addCell(celdapie);
-             */
             
             //columna para colocar en el pie de la pagina 1
             celdapie = new PdfPCell(new Paragraph("TEL.",fuentePie));
@@ -571,11 +570,27 @@ public class PdfReporteComOrdenDeCompra {
             
             reporte.add(tablapie);
             
+            */
+            
+            
+            
             //esto es para los cuadro de abajo para finalizar el PDF
             
             PdfPTable tablapie2 = new PdfPTable(6);
             PdfPCell celdapie2;
             //tablapie2.setKeepTogether(false);
+            
+            //Fila vacia
+            celdapie2 = new PdfPCell(new Paragraph("",fuentePie));
+            celdapie2.setColspan(6);
+            celdapie2.setBorder(0);
+            tablapie2.addCell(celdapie2);
+            
+            //Fila vacia
+            celdapie2 = new PdfPCell(new Paragraph("",fuentePie));
+            celdapie2.setColspan(6);
+            celdapie2.setBorder(0);
+            tablapie2.addCell(celdapie2);
             
             //1
             celdapie2 = new PdfPCell(new Paragraph("SOLICITADO POR:                              NOMBRE Y FIRMA:                         FECHA",fuentePie));

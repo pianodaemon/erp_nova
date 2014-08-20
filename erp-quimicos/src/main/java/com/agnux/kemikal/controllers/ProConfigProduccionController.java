@@ -297,7 +297,8 @@ public class ProConfigProduccionController {
             //datosGrid = this.getInvDao().getEntradas_DatosGrid(id);
         }
         
-        Integer app_selected = 69;//para el biscador de formulas
+        //Para el buscador de formulas
+        Integer app_selected = 69;
         String descripcion = "%%";
         String sku = "%%";
         
@@ -1006,13 +1007,14 @@ public class ProConfigProduccionController {
     
     
     
-     //cambia el estatus del borrado logico
+    //cambia el estatus del borrado logico
     @RequestMapping(method = RequestMethod.POST, value="/logicDeleteFormula.json")
     public @ResponseBody HashMap<String, String> logicDeleteJson(
             @RequestParam(value="id", required=true) Integer id,
+            @RequestParam(value="proceso_id", required=true) String proceso_id,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
-            ) {
+        ) {
         
         HashMap<String, String> jsonretorno = new HashMap<String, String>();
         //decodificar id de usuario
@@ -1021,9 +1023,9 @@ public class ProConfigProduccionController {
         Integer app_selected = 69;
         String command_selected = "delete";
         String extra_data_array = "'sin datos'";
-        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id;
+        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id+"___"+proceso_id;
         
-        System.out.println("Ejecutando borrado logico formulas");
+        System.out.println("Ejecutando borrado logico formulas: "+data_string);
         jsonretorno.put("success",String.valueOf( this.getProDao().selectFunctionForApp_Produccion(data_string,extra_data_array)) );
         
         return jsonretorno;
