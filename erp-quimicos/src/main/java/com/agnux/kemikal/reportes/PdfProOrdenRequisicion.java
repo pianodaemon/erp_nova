@@ -266,7 +266,7 @@ public class PdfProOrdenRequisicion {
                     
                     HashMap<String,String> reg_element = prod_formula.get(k);
                     
-                    System.out.println(reg_element.get("cantidad").toString());
+                    //System.out.println(reg_element.get("cantidad").toString());
                     //Double cantidad = Double.parseDouble(calculaTotalComponenteFormula(reg_element.get("cantidad").toString(),String.valueOf(registro.get("cantidad")) ));
                     Double cantidad = Double.parseDouble(reg_element.get("cantidad").toString());
                     Double cantidad_adicional = Double.parseDouble(reg_element.get("cantidad_adicional").toString());

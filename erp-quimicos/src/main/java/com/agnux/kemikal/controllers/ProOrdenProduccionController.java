@@ -230,8 +230,8 @@ public class ProOrdenProduccionController {
             if(datosOrden.get(0).get("pro_proceso_flujo_id").equals("3")) System.err.println("Estatus 3: EN PRODUCCION");
             if(datosOrden.get(0).get("pro_proceso_flujo_id").equals("4")) System.err.println("Estatus 4: TERMINADA");
             if(datosOrden.get(0).get("pro_proceso_flujo_id").equals("5")) System.err.println("Estatus 5: CANCELADA");
-                
-
+            
+            
             if(datosOrden.get(0).get("pro_proceso_flujo_id").equals("3")){
                 datosOrdenDet = this.getProDao().getProOrden_EspecificacionesDetalle(id);
                 

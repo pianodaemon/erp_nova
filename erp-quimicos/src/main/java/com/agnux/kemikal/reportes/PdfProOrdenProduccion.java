@@ -134,7 +134,7 @@ public class PdfProOrdenProduccion {
                 
                 String version="";
                 boolean mostrar_observacion = false;
-                System.out.println("tipo_prod_id: "+registro.get("tipo_prod_id"));
+                //System.out.println("tipo_prod_id: "+registro.get("tipo_prod_id"));
                 
                 if(Integer.parseInt(String.valueOf(registro.get("tipo_prod_id")))==8){
                     //Solo para producto en desarrollo
@@ -142,7 +142,7 @@ public class PdfProOrdenProduccion {
                     mostrar_observacion=true;
                     mostrar_autorizacion="false";
                     
-                    System.out.println("mostrar_autorizacion: "+mostrar_autorizacion);
+                    //System.out.println("mostrar_autorizacion: "+mostrar_autorizacion);
                     
                 }
                 
@@ -685,7 +685,6 @@ public class PdfProOrdenProduccion {
                                 tablaXX.addCell(celdaXX);
                                 
                                 //fineza
-                                
                                 celdaXX = new PdfPCell(new Paragraph(res_tmp,smallFont));
                                 celdaXX.setBorderWidthBottom(0);
                                 celdaXX.setBorderWidthTop(0);
@@ -1160,7 +1159,6 @@ public class PdfProOrdenProduccion {
                                 tablaXX.addCell(celdaXX);
                                 
                                 //DUREZA
-                                System.out.println("DUREZA:  "+registrotmp.get("inst_dureza"));
                                 celdaXX = new PdfPCell(new Paragraph(res_tmp,smallFont));
                                 celdaXX.setBorderWidthBottom(0);
                                 celdaXX.setBorderWidthTop(0);
@@ -1169,7 +1167,6 @@ public class PdfProOrdenProduccion {
                                 tablaXX.addCell(celdaXX);
                                 
                                 //DUREZA
-                                System.out.println("DUREZA:  "+registrotmp.get("inst_dureza"));
                                 celdaXX = new PdfPCell(new Paragraph(StringHelper.isNullString(registrotmp.get("inst_dureza")),smallFont));
                                 celdaXX.setBorderWidthBottom(0);
                                 celdaXX.setBorderWidthTop(0);
@@ -1766,9 +1763,8 @@ public class PdfProOrdenProduccion {
                 float [] widths = new float[especificaciones_produccion.size()];// = {6,12,6};
                 //System.out.println("Entro addResultadosAnalisis:  widths");
                 for (int l=0;l<especificaciones_produccion.size();l++){
-                    System.out.println("widths: "+cantidad);
-                     widths[l] = (float) 1.0;
-                     
+                    //System.out.println("widths: "+cantidad);
+                    widths[l] = (float) 1.0;
                 }
                 //System.out.println("Entro volatiles_inicial:  "+cantidad);
                 table = new PdfPTable(widths);

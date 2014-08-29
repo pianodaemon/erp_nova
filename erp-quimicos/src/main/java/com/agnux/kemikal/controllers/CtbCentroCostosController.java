@@ -3,13 +3,13 @@
  * and open the template in the editor.
  */
 package com.agnux.kemikal.controllers;
+
 import com.agnux.cfd.v2.Base64Coder;
 import com.agnux.common.helpers.StringHelper;
 import com.agnux.common.obj.DataPost;
 import com.agnux.common.obj.ResourceProject;
 import com.agnux.common.obj.UserSessionData;
-import com.agnux.kemikal.interfacedaos.CxcInterfaceDao;
-import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
+import com.agnux.kemikal.interfacedaos.CtbInterfaceDao;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,33 +32,27 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 /**
+ *
  * @author Noe Martinez
  * gpmarsan@gmail.com
- * 02/04/2012
+ * 22/03/2012
  */
 @Controller
 @SessionAttributes({"user"})
-@RequestMapping("/agentes/")
-public class AgentesController {
+@RequestMapping("/centrocostos/")
+public class CtbCentroCostosController {
     ResourceProject resource = new ResourceProject();
     private static final Logger log  = Logger.getLogger(CtbCentroCostosController.class.getName());
     
-    
     @Autowired
-    @Qualifier("daoCxc")
-    private CxcInterfaceDao cxcDao;
+    @Qualifier("daoCtb")
+    private CtbInterfaceDao ctbDao;
     
-    public CxcInterfaceDao getCxcDao() {
-        return cxcDao;
+    public CtbInterfaceDao getCtbDao() {
+        return ctbDao;
     }
     
-    @Autowired
-    @Qualifier("daoHome")
-    private HomeInterfaceDao HomeDao;
     
-    public HomeInterfaceDao getHomeDao() {
-        return HomeDao;
-    }
     
     @RequestMapping(value="/startup.agnux")
     public ModelAndView startUp(HttpServletRequest request, HttpServletResponse response, 
@@ -69,11 +63,10 @@ public class AgentesController {
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
         
         infoConstruccionTabla.put("id", "Acciones:90");
-        infoConstruccionTabla.put("usuario", "Usuario:130");
-        infoConstruccionTabla.put("nombre", "Nombre:400");
-        infoConstruccionTabla.put("region", "Region:120");
+        infoConstruccionTabla.put("titulo", "Centro de costo:120");
+        infoConstruccionTabla.put("descripcion", "Descripcion:400");
         
-        ModelAndView x = new ModelAndView("agentes/startup", "title", "Cat&aacute;logo de Agentes de ventas");
+        ModelAndView x = new ModelAndView("centrocostos/startup", "title", "Centros de costos");
         
         x = x.addObject("layoutheader", resource.getLayoutheader());
         x = x.addObject("layoutmenu", resource.getLayoutmenu());
@@ -100,27 +93,8 @@ public class AgentesController {
     
     
     
-    //obtiene los grupos para el buscador
-    @RequestMapping(method = RequestMethod.POST, value="/getRegionesBuscador.json")
-    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getRegionesBuscadorJson(
-            Model model
-            ) {
-        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
-        ArrayList<HashMap<String, String>> regiones = new ArrayList<HashMap<String, String>>();
-        
-        regiones = this.getCxcDao().getAgente_Regiones();
-        
-        jsonretorno.put("Regiones", regiones);
-        
-        return jsonretorno;
-    }
-    
-    
-    
-    
-    
-    @RequestMapping(value="/getAllAgentes.json", method = RequestMethod.POST)
-    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getAllAgentesJson(
+    @RequestMapping(value="/getAllCentros.json", method = RequestMethod.POST)
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getAllCentrosJson(
            @RequestParam(value="orderby", required=true) String orderby,
            @RequestParam(value="desc", required=true) String desc,
            @RequestParam(value="items_por_pag", required=true) int items_por_pag,
@@ -130,25 +104,24 @@ public class AgentesController {
            @RequestParam(value="cadena_busqueda", required=true) String cadena_busqueda,
            @RequestParam(value="iu", required=true) String id_user_cod,
            Model modcel) {
-           
+        
         HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
         HashMap<String,String> has_busqueda = StringHelper.convert2hash(StringHelper.ascii2string(cadena_busqueda));
         
-        //aplicativo tipos de poliza
-        Integer app_selected = 19;
+        //aplicativo centro de costos
+        Integer app_selected = 15;
         
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
         
         //variables para el buscador
-        String nombre = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("nombre")))+"%";
-        String usuario = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("usuario")))+"%";
-        String region = StringHelper.isNullString(String.valueOf(has_busqueda.get("region")));
+        String titulo = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("titulo")))+"%";
+        String descripcion = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("descripcion")))+"%";
         
-        String data_string = app_selected+"___"+id_usuario+"___"+nombre+"___"+usuario+"___"+region;
+        String data_string = app_selected+"___"+id_usuario+"___"+titulo+"___"+descripcion;
         
         //obtiene total de registros en base de datos, con los parametros de busqueda
-        int total_items = this.getCxcDao().countAll(data_string);
+        int total_items = this.getCtbDao().countAll(data_string);
         
         //calcula el total de paginas
         int total_pags = resource.calculaTotalPag(total_items,items_por_pag);
@@ -159,7 +132,7 @@ public class AgentesController {
         int offset = resource.__get_inicio_offset(items_por_pag, pag_start);
         
         //obtiene los registros para el grid, de acuerdo a los parametros de busqueda
-        jsonretorno.put("Data", this.getCxcDao().getAgente_PaginaGrid(data_string, offset, items_por_pag, orderby, desc));
+        jsonretorno.put("Data", this.getCtbDao().getCentroCostos_PaginaGrid(data_string, offset, items_por_pag, orderby, desc));
         //obtiene el hash para los datos que necesita el datagrid
         jsonretorno.put("DataForGrid", dataforpos.formaHashForPos(dataforpos));
         
@@ -167,97 +140,60 @@ public class AgentesController {
     }
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    @RequestMapping(method = RequestMethod.POST, value="/getAgente.json")
-    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getAgenteJson(
+    @RequestMapping(method = RequestMethod.POST, value="/getCentroCosto.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getCentroCostoJson(
             @RequestParam(value="id", required=true) Integer id,
-            @RequestParam(value="iu", required=true) String id_user_cod,
             Model model
             ) {
         
-        log.log(Level.INFO, "Ejecutando getAgenteJson de {0}", AgentesController.class.getName());
+        log.log(Level.INFO, "Ejecutando getCentroCostoJson de {0}", CtbCentroCostosController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
-        HashMap<String, String> userDat = new HashMap<String, String>();
-        ArrayList<HashMap<String, String>> usuariosDisponibles = new ArrayList<HashMap<String, String>>();
-        ArrayList<HashMap<String, String>> datosAgente = new ArrayList<HashMap<String, String>>();
-        ArrayList<HashMap<String, String>> regiones = new ArrayList<HashMap<String, String>>();
-        
-        
-        //decodificar id de usuario
-        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
-        userDat = this.getHomeDao().getUserById(id_usuario);
-        
-        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
-        Integer usuario_agente = 0;
+        ArrayList<HashMap<String, String>> datosCC = new ArrayList<HashMap<String, String>>();
         
         if( id != 0  ){
-            datosAgente = this.getCxcDao().getAgente_Datos(id);
-            usuario_agente = Integer.parseInt(datosAgente.get(0).get("gral_usr_id"));
+            datosCC = this.getCtbDao().getCentroCosto_Datos(id);
         }
         
-        usuariosDisponibles=this.getCxcDao().getUsuarios(id_empresa, usuario_agente);
-        regiones = this.getCxcDao().getAgente_Regiones();
-        
-        jsonretorno.put("Agente", datosAgente);
-        jsonretorno.put("Usuarios", usuariosDisponibles);
-        jsonretorno.put("Regiones", regiones);
+        jsonretorno.put("Cc", datosCC);
         
         return jsonretorno;
     }
     
     
-    
-    
-    
-    
-    
-    
-    //crear y editar un Agente
+    //crear y editar 
     @RequestMapping(method = RequestMethod.POST, value="/edit.json")
     public @ResponseBody HashMap<String, String> editJson(
-            @RequestParam(value="identificador", required=true) Integer id,
-            @RequestParam(value="nombre", required=true) String nombre_agente,
-            @RequestParam(value="select_usuario", required=true) Integer usuario_agente,
-            @RequestParam(value="comision", required=true) String comision,
-            @RequestParam(value="select_region", required=true) Integer region,
+            @RequestParam(value="identificador", required=true) String id,
+            @RequestParam(value="centrocosto", required=true) String titulo,
+            @RequestParam(value="descripcion", required=true) String descripcion,
             Model model,@ModelAttribute("user") UserSessionData user
-            ) {
-        
+        ) {
+
         HashMap<String, String> jsonretorno = new HashMap<String, String>();
         HashMap<String, String> succes = new HashMap<String, String>();
-        Integer app_selected = 19;//catalogo de agentes
+        Integer app_selected = 15;
         String command_selected = "new";
         Integer id_usuario= user.getUserId();//variable para el id  del usuario
         String extra_data_array = "'sin datos'";
         String actualizo = "0";
-        
-        if( id==0 ){
+
+        if( id.equals("0") ){
             command_selected = "new";
         }else{
             command_selected = "edit";
         }
-        
-        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id+"___"+nombre_agente.toUpperCase()+"___"+usuario_agente+"___"+comision+"___"+region;
-        
-        succes = this.getCxcDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
-        
+
+        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id+"___"+titulo.toUpperCase()+"___"+descripcion.toUpperCase();
+
+        succes = this.getCtbDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
+
         log.log(Level.INFO, "despues de validacion {0}", String.valueOf(succes.get("success")));
         if( String.valueOf(succes.get("success")).equals("true") ){
-            actualizo = this.getCxcDao().selectFunctionForThisApp(data_string, extra_data_array);
+            actualizo = this.getCtbDao().selectFunctionForThisApp(data_string, extra_data_array);
         }
-        
+
         jsonretorno.put("success",String.valueOf(succes.get("success")));
-        
+
         log.log(Level.INFO, "Salida json {0}", String.valueOf(jsonretorno.get("success")));
         return jsonretorno;
     }
@@ -266,12 +202,28 @@ public class AgentesController {
     
     
     
-    
-    
-    
-    
-    
-    
+    //cambiar a borrado logico un registro
+    @RequestMapping(method = RequestMethod.POST, value="/logicDelete.json")
+    public @ResponseBody HashMap<String, String> logicDeleteJson(
+            @RequestParam(value="id", required=true) Integer id,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+            ) {
+        
+        HashMap<String, String> jsonretorno = new HashMap<String, String>();
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        
+        Integer app_selected = 15;
+        String command_selected = "delete";
+        String extra_data_array = "'sin datos'";
+        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id;
+        
+        System.out.println("Ejecutando borrado logico de Centro de costo");
+        jsonretorno.put("success",String.valueOf( this.getCtbDao().selectFunctionForThisApp(data_string,extra_data_array)) );
+        
+        return jsonretorno;
+    }
     
     
     
