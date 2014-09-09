@@ -581,7 +581,7 @@ public class CtbSpringDao implements CtbInterfaceDao{
     @Override
     public ArrayList<HashMap<String, Object>> getCtb_Sucursales(Integer idEmp) {
         
-        String sql_to_query = "SELECT id, titulo FROM gral_suc WHERE empresa_id=? AND borrado_logico=false;"; 
+        String sql_to_query = "SELECT distinct id, titulo FROM gral_suc WHERE empresa_id=? AND borrado_logico=false;"; 
         ArrayList<HashMap<String, Object>> hm_facturas = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{new Integer(idEmp)}, new RowMapper(){
@@ -1188,7 +1188,7 @@ public class CtbSpringDao implements CtbInterfaceDao{
         System.out.println("Ctb_DatosRepAuxCtas:: "+sql_to_query);
         ArrayList<HashMap<String, String>> hm_facturas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
-            new Object[]{new String(data_string)}, new RowMapper(){
+            new Object[]{data_string}, new RowMapper(){
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, String> row = new HashMap<String, String>();
@@ -1205,5 +1205,346 @@ public class CtbSpringDao implements CtbInterfaceDao{
         return hm_facturas;
     }
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    //METODOS PARA APLICATIVO DE POLIZAS CONTABLES
+    
+    @Override
+    public ArrayList<HashMap<String, Object>> getPolizasContables_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
+        String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
+        
+	String sql_to_query = ""
+                + "select  "
+                    + "ctb_pol.id,"
+                    + "ctb_pol.poliza, "
+                    + "ctb_pol.tipo, "
+                    + "ctb_pol.concepto, "
+                    + "to_char(fecha_cap,'dd-mm-yyyy') as fecha, "
+                    + "ctb_pol.moneda, "
+                    + "ctb_pol.debe, "
+                    + "ctb_pol.haber, "
+                    + "(CASE WHEN ctb_pol.status=1 THEN 'No afectada' WHEN ctb_pol.status=0 THEN 'Afectada' WHEN ctb_pol.status=0 THEN 'Cancelada' ELSE '' END) AS status  "
+                + "from ctb_pol "
+                +"JOIN ("+sql_busqueda+") AS sbt ON sbt.id = ctb_pol.id "
+                +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
+
+        //System.out.println("Busqueda GetPage: "+sql_to_query);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query, 
+            new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("poliza",rs.getString("poliza"));
+                    row.put("tipo",rs.getString("tipo"));
+                    row.put("concepto",rs.getString("concepto"));
+                    row.put("fecha",rs.getString("fecha"));
+                    row.put("moneda",rs.getString("moneda"));
+                    row.put("debe",StringHelper.roundDouble(rs.getString("debe"),2));
+                    row.put("haber",StringHelper.roundDouble(rs.getString("haber"),2));
+                    row.put("status",rs.getString("status"));
+                    return row;
+                }
+            }
+        );
+        return hm; 
+    }
+    
+    
+    
+    @Override
+    public ArrayList<HashMap<String, Object>> getPolizasContables_Datos(Integer id) {
+        String sql_query = ""
+                + "SELECT "
+                    + "id, "
+                    + "(CASE WHEN cta=0 THEN '' ELSE cta::character varying END) AS cta, "
+                    + "(CASE WHEN subcta=0 THEN '' ELSE subcta::character varying END) AS subcta, "
+                    + "(CASE WHEN ssubcta=0 THEN '' ELSE ssubcta::character varying END) AS ssubcta, "
+                    + "(CASE WHEN sssubcta=0 THEN '' ELSE sssubcta::character varying END) AS sssubcta, "
+                    + "(CASE WHEN ssssubcta=0 THEN '' ELSE ssssubcta::character varying END) AS ssssubcta, "
+                    + "cta_mayor, "
+                    + "clasifica, "
+                    + "detalle, "
+                    + "descripcion, "
+                    + "descripcion_ing, "
+                    + "descripcion_otr, "
+                    + "nivel_cta, "
+                    + "consolida, "
+                    + "estatus "
+                + "FROM ctb_cta "
+                + "WHERE id=?;";
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,  
+            new Object[]{new Integer(id)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("cta",rs.getString("cta"));
+                    row.put("subcta",rs.getString("subcta"));
+                    row.put("ssubcta",rs.getString("ssubcta"));
+                    row.put("sssubcta",rs.getString("sssubcta"));
+                    row.put("ssssubcta",rs.getString("ssssubcta"));
+                    row.put("cta_mayor",String.valueOf(rs.getInt("cta_mayor")));
+                    row.put("clasifica",String.valueOf(rs.getInt("clasifica")));
+                    row.put("detalle",String.valueOf(rs.getInt("detalle")));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("descripcion_ing",rs.getString("descripcion_ing"));
+                    row.put("descripcion_otr",rs.getString("descripcion_otr"));
+                    row.put("nivel_cta",String.valueOf(rs.getInt("nivel_cta")));
+                    row.put("estatus",String.valueOf(rs.getInt("estatus")));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    
+    @Override
+    public ArrayList<HashMap<String, Object>> getMonedas() {
+        String sql_to_query = "SELECT id, descripcion, descripcion_abr FROM  gral_mon WHERE borrado_logico=FALSE AND ventas=TRUE ORDER BY id ASC;";
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        ArrayList<HashMap<String, Object>> hm_monedas = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("descripcion_abr",rs.getString("descripcion_abr"));
+                    return row;
+                }
+            }
+        );
+        return hm_monedas;
+    }
+
+    @Override
+    public ArrayList<HashMap<String, Object>> getPolizasContables_TiposPolizas(Integer id_empresa) {
+        String sql_to_query = "select id, titulo from ctb_tpol where borrado_logico=false and empresa_id=?;";
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(id_empresa)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("titulo",rs.getString("titulo"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+
+    @Override
+    public ArrayList<HashMap<String, Object>> getPolizasContables_Conceptos(Integer id_empresa) {
+        String sql_to_query = "select id, titulo from ctb_con where borrado_logico=false and empresa_id=?;";
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(id_empresa)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("titulo",rs.getString("titulo"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    @Override
+    public ArrayList<HashMap<String, Object>> getPolizasContables_CentrosCostos(Integer id_empresa) {
+        String sql_to_query = "select id, titulo from ctb_cc where borrado_logico=false and empresa_id=?;";
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(id_empresa)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("titulo",rs.getString("titulo"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    @Override
+    public ArrayList<HashMap<String, Object>> getPolizasContables_CuentasMayor(Integer id_empresa) {
+        String sql_query = ""
+                + "SELECT "
+                    + "id, "
+                    + "ctb_may_clase_id AS cta_mayor, "
+                    + "clasificacion, "
+                    + "(CASE WHEN descripcion IS NULL OR descripcion='' THEN (CASE WHEN descripcion_ing IS NULL OR descripcion_ing='' THEN descripcion_ing ELSE descripcion_otr END) ELSE descripcion END) AS descripcion "
+                + "FROM ctb_may "
+                + "WHERE borrado_logico=false "
+                + "AND empresa_id=?;";
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{new Integer(id_empresa)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("cta_mayor",String.valueOf(rs.getInt("cta_mayor")));
+                    row.put("clasificacion",String.valueOf(rs.getInt("clasificacion")));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    
+    
+    //Metodo para el buscador de cuentas contables
+    @Override
+    public ArrayList<HashMap<String, String>> getPolizasContables_CuentasContables(Integer cta_mayor, Integer detalle, String clasifica, String cta, String scta, String sscta, String ssscta, String sssscta, String descripcion, Integer id_empresa) {
+
+        String where="";
+	if(cta_mayor != 0){
+            where+=" AND ctb_cta.cta_mayor="+cta_mayor+" ";
+	}
+	if(!clasifica.equals("")){
+            where+=" AND ctb_cta.clasifica="+clasifica+" ";
+	}
+
+	if(!cta.equals("")){
+            where+=" AND ctb_cta.cta="+cta+" ";
+	}
+
+	if(!scta.equals("")){
+            where+=" AND ctb_cta.subcta="+scta+" ";
+	}
+
+	if(!sscta.equals("")){
+            where+=" AND ctb_cta.ssubcta="+sscta+" ";
+	}
+
+	if(!ssscta.equals("")){
+            where+=" AND ctb_cta.sssubcta="+ssscta+" ";
+	}
+
+	if(!sssscta.equals("")){
+            where+=" AND ctb_cta.ssssubcta="+sssscta+" ";
+	}
+
+	if(!descripcion.equals("")){
+            where+=" AND ctb_cta.ssssubcta ilike '%"+descripcion+"%'";
+	}
+
+        String sql_query = ""
+                + "SELECT DISTINCT "
+                    + "ctb_cta.id, "
+                    + "ctb_cta.cta_mayor, "
+                    + "ctb_cta.clasifica, "
+                    + "ctb_cta.cta, "
+                    + "ctb_cta.subcta, "
+                    + "ctb_cta.ssubcta, "
+                    + "ctb_cta.sssubcta,"
+                    + "ctb_cta.ssssubcta, "
+                    + "(CASE 	WHEN nivel_cta=1 THEN rpad(ctb_cta.cta::character varying, 4, '0')   "
+                    + "WHEN ctb_cta.nivel_cta=2 THEN '&nbsp;&nbsp;&nbsp;'||rpad(ctb_cta.cta::character varying, 4, '0')||'-'||lpad(ctb_cta.subcta::character varying, 4, '0') "
+                    + "WHEN ctb_cta.nivel_cta=3 THEN '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'||rpad(ctb_cta.cta::character varying, 4, '0')||'-'||lpad(ctb_cta.subcta::character varying, 4, '0')||'-'||lpad(ctb_cta.ssubcta::character varying, 4, '0') "
+                    + "WHEN ctb_cta.nivel_cta=4 THEN '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'||rpad(ctb_cta.cta::character varying, 4, '0')||'-'||lpad(ctb_cta.subcta::character varying, 4, '0')||'-'||lpad(ctb_cta.ssubcta::character varying, 4, '0')||'-'||lpad(ctb_cta.sssubcta::character varying, 4, '0') "
+                    + "WHEN ctb_cta.nivel_cta=5 THEN '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'||rpad(ctb_cta.cta::character varying, 4, '0')||'-'||lpad(ctb_cta.subcta::character varying, 4, '0')||'-'||lpad(ctb_cta.ssubcta::character varying, 4, '0')||'-'||lpad(ctb_cta.sssubcta::character varying, 4, '0')||'-'||lpad(ctb_cta.ssssubcta::character varying, 4, '0') "
+                    + "ELSE '' "
+                    + "END ) AS cuenta, "
+                    + "(CASE WHEN ctb_cta.descripcion IS NULL OR ctb_cta.descripcion='' THEN  (CASE WHEN ctb_cta.descripcion_ing IS NULL OR ctb_cta.descripcion_ing='' THEN  ctb_cta.descripcion_otr ELSE ctb_cta.descripcion_ing END )  ELSE descripcion END ) AS descripcion, "
+                    + "(CASE WHEN ctb_cta.detalle=0 THEN 'NO' WHEN ctb_cta.detalle=1 THEN 'SI' ELSE '' END) AS detalle, "
+                    + "ctb_cta.nivel_cta "
+                + "FROM ctb_cta "
+                + "WHERE ctb_cta.borrado_logico=false  "
+                + "AND ctb_cta.gral_emp_id=? AND ctb_cta.detalle=? "+ where +" "
+                + "ORDER BY ctb_cta.id;";
+
+
+        //System.out.println("sql_query: "+sql_query);
+
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{new Integer(id_empresa), new Integer(detalle)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("m",String.valueOf(rs.getInt("cta_mayor")));
+                    row.put("c",String.valueOf(rs.getInt("clasifica")));
+                    row.put("cta",String.valueOf(rs.getInt("cta")));
+                    row.put("subcta",String.valueOf(rs.getInt("subcta")));
+                    row.put("ssubcta",String.valueOf(rs.getInt("ssubcta")));
+                    row.put("sssubcta",String.valueOf(rs.getInt("sssubcta")));
+                    row.put("ssssubcta",String.valueOf(rs.getInt("ssssubcta")));
+                    row.put("cuenta",rs.getString("cuenta"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("detalle",rs.getString("detalle"));
+                    row.put("nivel_cta",String.valueOf(rs.getInt("nivel_cta")));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+
+    //Calcular años a mostrar en Polizas contables
+    @Override
+    public ArrayList<HashMap<String, Object>>  getPolizasContables_Anios() {
+        ArrayList<HashMap<String, Object>> anios = new ArrayList<HashMap<String, Object>>();
+        
+        Calendar c1 = Calendar.getInstance();
+        Integer annio = c1.get(Calendar.YEAR);//obtiene el año actual
+        
+        for(int i=0; i<5; i++) {
+            HashMap<String, Object> row = new HashMap<String, Object>();
+            row.put("valor",(annio-i));
+            anios.add(i, row);
+        }
+        return anios;
+    }
+    
+    
+    
+    
+    //Verificar si el usuario es Administrador
+    @Override
+    public Integer getUserRolAdmin(Integer id_user) {
+        HashMap<String, Object> data = new HashMap<String, Object>();
+        Integer velor_retorno=0;
+        
+        //verificar si el usuario tiene  rol de ADMINISTTRADOR
+        //si exis es mayor que cero, el usuario si es ADMINISTRADOR
+        String sql_to_query = "SELECT count(gral_usr_id) AS exis_rol_admin FROM gral_usr_rol WHERE gral_usr_id="+id_user+" AND gral_rol_id=1;";
+        
+        Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_to_query);
+        
+        velor_retorno = Integer.valueOf(map.get("exis_rol_admin").toString());
+        
+        return velor_retorno;
+    }
     
 }

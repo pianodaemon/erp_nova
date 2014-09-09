@@ -443,7 +443,7 @@ public class InvCargaController {
                             existencia = verificarTipoDatoCelda(row.getCell(6), true);
 
                             existencia = StringHelper.removerComas(existencia);
-
+                            System.out.println("Data: "+id_empresa+"___"+id_prod+"___"+codigo+"___"+id_almacen+"___"+existencia);
                             if(!id_almacen.matches(patron_enteros)){
                                 success="false";
                                 msj = "Valor para NO_ALMACEN no valido. <br>Fila "+(i+1) +"  =>   no_prod: <b>"+id_prod+"</b>     codigo: <b>"+codigo+"</b>      no_almacen: <b>"+id_almacen+"</b>      existencia: <b>"+existencia+"</b>";
@@ -618,10 +618,9 @@ public class InvCargaController {
             if(decimal){
                 dato = StringHelper.roundDouble(celda.getNumericCellValue(), 4);
             }else{
-                dato = String.valueOf(celda.getNumericCellValue());
+                dato = String.valueOf((int)celda.getNumericCellValue());
             }
         }
-        
         return dato;
     }
     
