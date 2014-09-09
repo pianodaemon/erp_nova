@@ -510,6 +510,14 @@
 													<li><a href="../tipopolizas/startup.agnux">Tipos de P&oacute;liza</a></li>
 												</ul>
 											</li>
+											
+											<li>
+												<a href="#" class="sub">Procesos &raquo;</a>
+												<ul>
+													<li class="topline"><a href="../ctbpolizacontable/startup.agnux">P&oacute;lizas Contables</a></li>
+												</ul>
+											</li>
+											
 											<li>
 												<a href="#" class="sub">Reportes &raquo;</a>
 												<ul>
