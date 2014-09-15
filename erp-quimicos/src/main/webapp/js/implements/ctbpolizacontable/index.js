@@ -245,11 +245,16 @@ $(function() {
 		var input_json_cuentas = document.location.protocol + '//' + document.location.host + '/'+controller+'/getCuentasMayor.json';
 		$arreglo = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
 		$.post(input_json_cuentas,$arreglo,function(data){
-			
 			$busqueda_select_sucursal.children().remove();
 			var suc_hmtl = '';
 			$.each(data['Suc'],function(entryIndex,suc){
-				suc_hmtl += '<option value="' + suc['id'] + '"  >'+ suc['titulo'] + '</option>';
+				if(parseInt(suc['id'])==parseInt(data['Data']['suc'])){
+					suc_hmtl += '<option value="' + suc['id'] + '" selected="yes">'+ suc['titulo'] + '</option>';
+				}else{
+					if(data['Data']['versuc']=='true'){
+						suc_hmtl += '<option value="' + suc['id'] + '">'+ suc['titulo'] + '</option>';
+					}
+				}
 			});
 			$busqueda_select_sucursal.append(suc_hmtl);
 			
@@ -864,7 +869,7 @@ $(function() {
 		};
 		
 		$.post(input_json,$arreglo,function(entry){
-			//visualizar subcuentas de acuerdo al nivel definido para la empresa
+			//Visualizar subcuentas de acuerdo al nivel definido para la empresa
 			if(parseInt(entry['Extras'][0]['nivel_cta']) >=1 ){ $cuenta.show(); };
 			if(parseInt(entry['Extras'][0]['nivel_cta']) >=2 ){ $scuenta.show(); };
 			if(parseInt(entry['Extras'][0]['nivel_cta']) >=3 ){ $sscuenta.show(); };
@@ -1119,20 +1124,31 @@ $(function() {
 			$tabs_li_funxionalidad();
 			
 			var $identificador = $('#forma-ctbpolizacontable-window').find('input[name=identificador]');
+			var $select_sucursal = $('#forma-ctbpolizacontable-window').find('select[name=select_sucursal]');
+			var $select_mes = $('#forma-ctbpolizacontable-window').find('select[name=select_mes]');
+			var $select_anio = $('#forma-ctbpolizacontable-window').find('select[name=select_anio]');
+			
+			var $no_poliza = $('#forma-ctbpolizacontable-window').find('input[name=no_poliza]');
+			var $fecha = $('#forma-ctbpolizacontable-window').find('input[name=fecha]');
+			var $select_moneda = $('#forma-ctbpolizacontable-window').find('select[name=select_moneda]');
+			
+			var $select_tipo = $('#forma-ctbpolizacontable-window').find('select[name=select_tipo]');
+			var $select_concepto = $('#forma-ctbpolizacontable-window').find('select[name=select_concepto]');
+			
+			var $id_cta = $('#forma-ctbpolizacontable-window').find('input[name=id_cta]');
 			var $cuenta = $('#forma-ctbpolizacontable-window').find('input[name=cuenta]');
 			var $scuenta = $('#forma-ctbpolizacontable-window').find('input[name=scuenta]');
 			var $sscuenta = $('#forma-ctbpolizacontable-window').find('input[name=sscuenta]');
 			var $ssscuenta = $('#forma-ctbpolizacontable-window').find('input[name=ssscuenta]');
 			var $sssscuenta = $('#forma-ctbpolizacontable-window').find('input[name=sssscuenta]');
-			var $select_cuenta_mayor = $('#forma-ctbpolizacontable-window').find('select[name=select_cuenta_mayor]');
+			var $descripcion_cuenta = $('#forma-ctbpolizacontable-window').find('input[name=descripcion_cuenta]');
 			
-			var $descripcion = $('#forma-ctbpolizacontable-window').find('input[name=descripcion]');
-			var $chk_cta_detalle = $('#forma-ctbpolizacontable-window').find('input[name=chk_cta_detalle]');
-			var $select_estatus = $('#forma-ctbpolizacontable-window').find('select[name=select_estatus]');
+			var $select_centro_costo = $('#forma-ctbpolizacontable-window').find('select[name=select_centro_costo]');
+			var $debe = $('#forma-ctbpolizacontable-window').find('input[name=debe]');
+			var $haber = $('#forma-ctbpolizacontable-window').find('input[name=haber]');
 			
-			var $descripcion_es = $('#forma-ctbpolizacontable-window').find('input[name=descripcion_es]');
-			var $descripcion_in = $('#forma-ctbpolizacontable-window').find('input[name=descripcion_in]');
-			var $descripcion_otro = $('#forma-ctbpolizacontable-window').find('input[name=descripcion_otro]');
+			var $busca_cuenta_contble = $('#forma-ctbpolizacontable-window').find('#busca_cuenta_contble');
+			var $limpiar_cuenta_contable = $('#forma-ctbpolizacontable-window').find('#limpiar_cuenta_contable');
 			
 			var $cerrar_plugin = $('#forma-ctbpolizacontable-window').find('#close');
 			var $cancelar_plugin = $('#forma-ctbpolizacontable-window').find('#boton_cancelar');
@@ -1143,6 +1159,8 @@ $(function() {
 			$permitir_solo_numeros($sscuenta);
 			$permitir_solo_numeros($ssscuenta);
 			$permitir_solo_numeros($sssscuenta);
+			$permitir_solo_numeros($debe);
+			$permitir_solo_numeros($haber);
 			
 			$cuenta.hide();
 			$scuenta.hide();
@@ -1150,9 +1168,15 @@ $(function() {
 			$ssscuenta.hide();
 			$sssscuenta.hide();
 			
+			$no_poliza.attr("readonly", true);
+			$fecha.attr("readonly", true);
+			$no_poliza.css({'background' : '#F0F0F0'});
+			$descripcion_cuenta.css({'background' : '#F0F0F0'});
+			
+			
 			if(accion_mode == 'edit'){
                                 
-				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getCuentaContable.json';
+				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getPoliza.json';
 				$arreglo = {	'id':id_to_show,
 								'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
 							};
@@ -1188,6 +1212,155 @@ $(function() {
 				
 				//aqui se cargan los campos al editar
 				$.post(input_json,$arreglo,function(entry){
+					//Visualizar subcuentas de acuerdo al nivel definido para la empresa
+					if(parseInt(entry['Extras'][0]['nivel_cta']) >=1 ){ $cuenta.show(); };
+					if(parseInt(entry['Extras'][0]['nivel_cta']) >=2 ){ $scuenta.show(); };
+					if(parseInt(entry['Extras'][0]['nivel_cta']) >=3 ){ $sscuenta.show(); };
+					if(parseInt(entry['Extras'][0]['nivel_cta']) >=4 ){ $ssscuenta.show(); };
+					if(parseInt(entry['Extras'][0]['nivel_cta']) >=5 ){ $sssscuenta.show(); };
+					
+					var fecha_actual = entry['Extras'][0]['fecha_actual'];
+					
+					$identificador.attr({ 'value' : entry['Data'][0]['id'] });
+					$no_poliza.attr({ 'value' : entry['Data'][0]['no_poliza'] });
+					
+					$id_cta.attr({ 'value' : entry['Data'][0]['cta_id'] });
+					$cuenta.attr({ 'value' : entry['Data'][0]['cta'] });
+					$scuenta.attr({ 'value' : entry['Data'][0]['subcta'] });
+					$sscuenta.attr({ 'value' : entry['Data'][0]['ssubcta'] });
+					$ssscuenta.attr({ 'value' : entry['Data'][0]['sssubcta'] });
+					$sssscuenta.attr({ 'value' : entry['Data'][0]['ssssubcta'] });
+					$descripcion_cuenta.attr({ 'value' : entry['Data'][0]['descripcion'] });
+					
+					$debe.attr({ 'value' : entry['Data'][0]['debe'] });
+					$haber.attr({ 'value' : entry['Data'][0]['haber'] });
+					
+					//mostrarFecha();
+					
+					var valor = entry['Data'][0]['fecha'].split('-');
+					
+					//Cargar select con meses
+					var elemento_seleccionado = entry['Data'][0]['mes'];
+					var mostrar_opciones = 'false';
+					$carga_select_con_arreglo_fijo($select_mes, array_meses, elemento_seleccionado, mostrar_opciones);
+					
+					
+					
+					//Carga select de Años
+					$select_anio.children().remove();
+					var anio_html = '';
+					$.each(entry['Anios'],function(entryIndex,anio){
+						if(parseInt(anio['valor'])==parseInt(entry['Data'][0]['anio'])){
+							anio_html += '<option value="' + anio['valor'] + '"  >'+ anio['valor'] + '</option>';
+						}else{
+							//anio_html += '<option value="' + anio['valor'] + '"  >'+ anio['valor'] + '</option>';
+						}
+					});
+					$select_anio.append(anio_html);
+					
+					
+					
+					//Carga select de Sucursal
+					$select_sucursal.children().remove();
+					var suc_hmtl = '';
+					$.each(ArraySuc,function(entryIndex,suc){
+						if(parseInt(suc['id'])==parseInt(entry['Data'][0]['suc_id'])){
+							suc_hmtl += '<option value="' + suc['id'] + '">'+ suc['titulo'] + '</option>';
+						}else{
+							suc_hmtl += '<option value="' + suc['id'] + '">'+ suc['titulo'] + '</option>';
+						}
+					});
+					$select_sucursal.append(suc_hmtl);
+					
+					
+					//Carga la moneda por default MN
+					$select_moneda.children().remove();
+					var moneda_html = '';
+					$.each(entry['Monedas'],function(entryIndex,mon){
+						if(parseInt(mon['id'])==parseInt(entry['Data'][0]['mon_id'])){
+							moneda_html += '<option value="' + mon['id'] + '">'+ mon['descripcion_abr'] + '</option>';
+						}else{
+							moneda_html += '<option value="' + mon['id'] + '">'+ mon['descripcion_abr'] + '</option>';
+						}
+					});
+					$select_moneda.append(moneda_html);
+					
+					
+					//Carga select de Tipos de Poliza
+					var elemento_seleccionado = entry['Data'][0]['tpol_id'];
+					var texto_elemento_cero = '';
+					var index_elem = 'id';
+					var index_text_elem = 'titulo';
+					$carga_campos_select($select_tipo, ArrayTPol, elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem);
+					
+					//Cargar select de Conceptos Contables
+					elemento_seleccionado = entry['Data'][0]['con_id'];
+					texto_elemento_cero = '';
+					index_elem = 'id';
+					index_text_elem = 'titulo';
+					$carga_campos_select($select_concepto, ArrayCon, elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem);
+					
+					//Cargar select de Centro de Costos
+					elemento_seleccionado = entry['Data'][0]['cc_id'];
+					texto_elemento_cero = '[--Seleccionar--]';
+					index_elem = 'id';
+					index_text_elem = 'titulo';
+					$carga_campos_select($select_centro_costo, entry['CC'], elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem);
+					
+					
+					
+					//Busca Cuentas Contables
+					$busca_cuenta_contble.click(function(event){
+						event.preventDefault();
+						$busca_cuentas_contables(1, entry['Extras'][0]['nivel_cta'], CtaMay, $cuenta, $scuenta, $sscuenta, $ssscuenta, $sssscuenta);
+					});
+					
+					
+					
+					$fecha.val(fecha_actual);
+
+					$select_sucursal.focus();
+					
+					
+				
+					$fecha.click(function (s){
+						var a=$('div.datepicker');
+						a.css({'z-index':100});
+					});
+						
+					$fecha.DatePicker({
+						format:'Y-m-d',
+						date: fecha_actual,
+						current: fecha_actual,
+						starts: 1,
+						position: 'bottom',
+						locale: {
+							days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
+							daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
+							daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
+							months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
+							monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
+							weekMin: 'se'
+						},
+						onChange: function(formated, dates){
+							var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
+							$fecha.val(formated);
+							if (formated.match(patron) ){
+								var valida_fecha=mayor($fecha.val(),mostrarFecha());
+								
+								if (valida_fecha==true){
+									jAlert("Fecha no valida",'! Atencion');
+									$fecha.val(mostrarFecha());
+								}else{
+									$fecha.DatePickerHide();	
+								}
+							}
+						}
+					});
+						
+					
+					
+					/*
 					//visualizar subcuentas de acuerdo al nivel definido para la empresa
 					if(parseInt(entry['Extras'][0]['nivel_cta']) >=1 ){ $cuenta.show(); };
 					if(parseInt(entry['Extras'][0]['nivel_cta']) >=2 ){ $scuenta.show(); };
@@ -1235,15 +1408,87 @@ $(function() {
 					$select_estatus.append(estatus_hmtl);
 					
 					$cuenta.focus();
+					* */
 				},"json");//termina llamada json
 				
-				$descripcion.change(function(){
-					$descripcion_es.val($(this).val());
+		
+		
+
+				
+				
+				
+				$aplica_evento_focus_input_numerico($debe);
+				$aplica_evento_focus_input_numerico($haber);
+				
+				$debe.blur(function(){
+					$validar_numero_puntos($debe, "Debe");
+					if($(this).val().trim()==''){
+						$(this).val(0);
+					}
 				});
 				
-				$descripcion_es.change(function(){
-					$descripcion.val($(this).val());
+				$haber.blur(function(){
+					$validar_numero_puntos($haber, "Haber");
+					if($(this).val().trim()==''){
+						$(this).val(0);
+					}
 				});
+				
+				
+				$cuenta.keypress(function(e){
+					if (e.which == 8) {
+						$descripcion_cuenta.val('');
+						$id_cta.val('0');
+					}else{
+						if((parseInt($cuenta.val().length)+1)==4){
+							$scuenta.focus();
+						}
+					}
+				});
+				
+				$scuenta.keypress(function(e){
+					if (e.which == 8) {
+						$descripcion_cuenta.val('');
+						$id_cta.val('0');
+					}else{
+						if((parseInt($scuenta.val().length)+1)==4){
+							$sscuenta.focus();
+						}
+					}
+				});
+				
+				$sscuenta.keypress(function(e){
+					if (e.which == 8) {
+						$descripcion_cuenta.val('');
+						$id_cta.val('0');
+					}else{
+						if((parseInt($sscuenta.val().length)+1)==4){
+							$ssscuenta.focus();
+						}
+					}
+				});
+				
+				$ssscuenta.keypress(function(e){
+					if (e.which == 8) {
+						$descripcion_cuenta.val('');
+						$id_cta.val('0');
+					}else{
+						if((parseInt($ssscuenta.val().length)+1)==4){
+							$sssscuenta.focus();
+						}
+					}
+				});
+				
+				$sssscuenta.keypress(function(e){
+					if (e.which == 8) {
+						$descripcion_cuenta.val('');
+						$id_cta.val('0');
+					}
+				});
+				
+				
+		
+		
 		
 				//Ligamos el boton cancelar al evento click para eliminar la forma
 				$cancelar_plugin.bind('click',function(){

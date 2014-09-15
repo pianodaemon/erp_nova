@@ -729,6 +729,10 @@ $(function() {
 							var pres = entry['Presentaciones'][0]['presentacion'];
 							var num_dec = entry['Presentaciones'][0]['decimales'];
 							var prec_unitario=" ";
+							if(parseFloat(entry['Presentaciones'][0]['cu'])>0){
+								prec_unitario = entry['Presentaciones'][0]['cu'];
+							}
+							
 							var id_moneda=0;
 							
 							//llamada a la funcion que agrega el producto al grid
@@ -769,6 +773,7 @@ $(function() {
 										trr += '<span class="id_pres" style="display:none">'+pres['id_presentacion']+'</span>';
 										trr += '<span class="pres">'+pres['presentacion']+'</span>';
 										trr += '<span class="dec" style="display:none">'+pres['decimales']+'</span>';
+										trr += '<span class="cu" style="display:none">'+pres['cu']+'</span>';
 									trr += '</td>';
 								trr += '</tr>';
 								$tabla_resultados.append(trr);
@@ -799,8 +804,12 @@ $(function() {
 								var id_pres = $(this).find('span.id_pres').html();
 								var pres = $(this).find('span.pres').html();
 								var num_dec = $(this).find('span.dec').html();
-								
 								var prec_unitario=" ";
+								
+								if(parseFloat($(this).find('span.cu').html())>0){
+									prec_unitario = $(this).find('span.cu').html();
+								}
+								
 								var id_moneda=0;
 								
 								//llamada a la funcion que agrega el producto al grid
@@ -1243,7 +1252,7 @@ $(function() {
 		var $tipo_cambio = $('#forma-comordencompra-window').find('input[name=tipo_cambio]');
 		var $grupo = $('#forma-comordencompra-window').find('input[name=grupo]');
 		var $select_condiciones = $('#forma-comordencompra-window').find('select[name=select_condiciones]');
-		var consigandoA= $('#forma-comordencompra-window').find('input[name=consigandoA]');
+		var $consigandoA= $('#forma-comordencompra-window').find('textarea[name=consigandoA]');
 		var $select_via_embarque = $('#forma-comordencompra-window').find('select[name=via_envarque]');
 		var $fecha_entrega = $('#forma-comordencompra-window').find('input[name=fecha_entrega]');
 		var $check_anex_cert_hojas = $('#forma-comordencompra-window').find('input[name=check_anex_cert_hojas]');
@@ -1385,13 +1394,15 @@ $(function() {
 
 		//$.getJSON(json_string,function(entry){
 		$.post(input_json,$arreglo,function(entry){
-			$id_impuesto_orig.val(entry['iva']['0']['id_impuesto']);
-			$valorimpuesto_orig.val(entry['iva']['0']['valor_impuesto']);
+			$id_impuesto_orig.val(entry['iva'][0]['id_impuesto']);
+			$valorimpuesto_orig.val(entry['iva'][0]['valor_impuesto']);
 			
-			$id_impuesto.val(entry['iva']['0']['id_impuesto']);
-			$valor_impuesto.val(entry['iva']['0']['valor_impuesto']);
+			$id_impuesto.val(entry['iva'][0]['id_impuesto']);
+			$valor_impuesto.val(entry['iva'][0]['valor_impuesto']);
 			
-			$tipo_cambio.val(entry['Tc']['0']['tipo_cambio']);
+			$tipo_cambio.val(entry['Extra'][0]['tipo_cambio']);
+			
+			$consigandoA.text(entry['Extra'][0]['cosignado_a']);
 			
 			//carga select denominacion con todas las monedas
 			$select_moneda.children().remove();
@@ -1622,7 +1633,7 @@ $(function() {
 			
 			var $grupo = $('#forma-comordencompra-window').find('input[name=grupo]');
 			var $select_condiciones = $('#forma-comordencompra-window').find('select[name=select_condiciones]');
-			var consigandoA= $('#forma-comordencompra-window').find('input[name=consigandoA]');
+			var $consigandoA= $('#forma-comordencompra-window').find('textarea[name=consigandoA]');
 			var $select_via_embarque = $('#forma-comordencompra-window').find('select[name=via_envarque]');
 			var $observaciones = $('#forma-comordencompra-window').find('textarea[name=observaciones]');
 			
@@ -1796,7 +1807,7 @@ $(function() {
 					$tipo_prov.val(entry['datosOrdenCompra'][0]['prov_tipo_id']);
 					$observaciones.text(entry['datosOrdenCompra'][0]['observaciones']);
 					$grupo.val(entry['datosOrdenCompra'][0]['grupo']);
-					consigandoA.val(entry['datosOrdenCompra'][0]['consignado_a']);
+					$consigandoA.text(entry['datosOrdenCompra'][0]['consignado_a']);
 					$orden_compra.val(entry['datosOrdenCompra'][0]['orden_compra']);
 					$tipo_cambio.val(entry['datosOrdenCompra'][0]['tipo_cambio']);
 					$fecha_entrega.val(entry['datosOrdenCompra'][0]['fecha_entrega']);
