@@ -204,14 +204,16 @@ public class CompOrdenCompraController {
         ArrayList<HashMap<String, String>> datosGrid = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> valorIva = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> monedas = new ArrayList<HashMap<String, String>>();
-        ArrayList<HashMap<String, String>> tipoCambioActual = new ArrayList<HashMap<String, String>>();
-        HashMap<String, String> tc = new HashMap<String, String>();
+        ArrayList<HashMap<String, String>> arrayExtra = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> extra = new HashMap<String, String>();
         //ArrayList<HashMap<String, String>> vendedores = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> condiciones = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> via_envarque = new ArrayList<HashMap<String, String>>();
         //ArrayList<HashMap<String, String>> metodos_pago = new ArrayList<HashMap<String, String>>();
         
         HashMap<String, String> userDat = new HashMap<String, String>();
+        HashMap<String, String> dirEmp = new HashMap<String, String>();
+        String consignado_a="";
         
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
@@ -220,14 +222,23 @@ public class CompOrdenCompraController {
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
         
-        if( (id_orden_compra.equals("0"))==false  ){
+        if(!id_orden_compra.equals("0")){
             datosOrdenCompra = this.getComDao().getComOrdenCompra_Datos(Integer.parseInt(id_orden_compra));
             datosGrid = this.getComDao().getComOrdenCompra_DatosGrid(Integer.parseInt(id_orden_compra));
+        }else{
+            dirEmp =this.getGralDao().getEmisor_Datos(id_empresa);
+            
+            consignado_a = 
+                    dirEmp.get("emp_razon_social")+"\n"+
+                    dirEmp.get("emp_calle")+" #"+dirEmp.get("emp_no_exterior")+", "+dirEmp.get("emp_colonia")+",\n"+
+                    dirEmp.get("emp_municipio")+", "+dirEmp.get("emp_estado")+", "+dirEmp.get("emp_pais")+" C.P. "+dirEmp.get("emp_cp")+"\n"+
+                    "R.F.C. "+dirEmp.get("emp_rfc");
         }
         
         valorIva= this.getComDao().getValoriva(id_sucursal);
-        tc.put("tipo_cambio", StringHelper.roundDouble(this.getComDao().getTipoCambioActual(), 4)) ;
-        tipoCambioActual.add(0,tc);
+        extra.put("tipo_cambio", StringHelper.roundDouble(this.getComDao().getTipoCambioActual(), 4)) ;
+        extra.put("cosignado_a", consignado_a) ;
+        arrayExtra.add(0,extra);
         
         monedas = this.getComDao().getMonedas();
         //vendedores = this.getComDao().getAgentes(id_empresa, id_sucursal);
@@ -241,7 +252,7 @@ public class CompOrdenCompraController {
         jsonretorno.put("datosGrid", datosGrid);
         jsonretorno.put("iva", valorIva);
         jsonretorno.put("Monedas", monedas);
-        jsonretorno.put("Tc", tipoCambioActual);
+        jsonretorno.put("Extra", arrayExtra);
         //jsonretorno.put("Vendedores", vendedores);
         jsonretorno.put("Condiciones", condiciones);
         //jsonretorno.put("MetodosPago", metodos_pago);
@@ -500,13 +511,16 @@ public class CompOrdenCompraController {
             @PathVariable("iu") String id_user_cod,
             HttpServletRequest request, 
             HttpServletResponse response, 
-            Model model)throws ServletException, IOException, URISyntaxException, DocumentException, Exception {
+            Model model
+        )throws ServletException, IOException, URISyntaxException, DocumentException, Exception {
         
         HashMap<String, String> userDat = new HashMap<String, String>();
         HashMap<String, String> datosEncabezadoPie= new HashMap<String, String>();
         HashMap<String, String> datosOrdenCompra = new HashMap<String, String>();
         ArrayList<HashMap<String, String>> conceptosOrdenCompra = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> parametros = new HashMap<String, String>();
+        HashMap<String, String> datosEmp = new HashMap<String, String>();
+        
         System.out.println("Generando PDF de Orden Compra");
         
         Integer app_selected = 90; //aplicativo Orden de compra
@@ -518,52 +532,59 @@ public class CompOrdenCompraController {
         userDat = this.getHomeDao().getUserById(id_usuario);
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         
-        String razon_social_empresa = this.getGralDao().getRazonSocialEmpresaEmisora(id_empresa);
-        String rfc_empresa=this.getGralDao().getRfcEmpresaEmisora(id_empresa);
+        datosEmp =this.getGralDao().getEmisor_Datos(id_empresa);
+        
+        String razon_social_empresa = datosEmp.get("emp_razon_social");
+        String rfc_empresa = datosEmp.get("emp_rfc");
         Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        
         datosEncabezadoPie.put("nombre_empresa_emisora", razon_social_empresa);
         datosEncabezadoPie.put("titulo_reporte", this.getGralDao().getTituloReporte(id_empresa, app_selected));
         datosEncabezadoPie.put("codigo1", this.getGralDao().getCodigo1Iso(id_empresa, app_selected));
         datosEncabezadoPie.put("codigo2", this.getGralDao().getCodigo2Iso(id_empresa, app_selected));
         String titulo_reporte2 = this.getGralDao().getTituloReporte(id_empresa, app_selected);
         System.out.println(titulo_reporte2);
-        //obtener el directorio temporal
+        
+        //Obtener el directorio temporal
         String dir_tmp = this.getGralDao().getTmpDir();
         String ruta_imagen = this.getGralDao().getImagesDir()+rfc_empresa+"_logo.png";
         File file_dir_tmp = new File(dir_tmp);
         
         datosOrdenCompra = this.getComDao().getDatosPDFOrdenCompra(id_ordenCompra);
         conceptosOrdenCompra = this.getComDao().getconceptosOrdenCompra(id_ordenCompra);        
+                    
         String municipio = this.getGralDao().getMunicipioSucursalEmisora(id_sucursal);
-        String Estado = this.getGralDao().getEstadoSucursalEmisora(id_sucursal);        
-        String calle = this.getGralDao().getCalleDomicilioFiscalEmpresaEmisora(id_empresa);
-        String numero= this.getGralDao().getNoExteriorDomicilioFiscalEmpresaEmisora(id_empresa);
-        String colonia= this.getGralDao().getColoniaDomicilioFiscalEmpresaEmisora(id_empresa);
-        String pais= this.getGralDao().getPaisDomicilioFiscalEmpresaEmisora(id_empresa);
-        String cp= this.getGralDao().getCpDomicilioFiscalEmpresaEmisora(id_empresa);
-        String rfc=this.getGralDao().getRfcEmpresaEmisora(id_empresa);
+        String Estado = this.getGralDao().getEstadoSucursalEmisora(id_sucursal);
+        
+        //String calle = this.getGralDao().getCalleDomicilioFiscalEmpresaEmisora(id_empresa);
+        //String numero= this.getGralDao().getNoExteriorDomicilioFiscalEmpresaEmisora(id_empresa);
+        //String colonia= this.getGralDao().getColoniaDomicilioFiscalEmpresaEmisora(id_empresa);
+        //String pais= this.getGralDao().getPaisDomicilioFiscalEmpresaEmisora(id_empresa);
+        //String cp= this.getGralDao().getCpDomicilioFiscalEmpresaEmisora(id_empresa);
+        //String rfc=this.getGralDao().getRfcEmpresaEmisora(id_empresa);
         String municipio_sucursal = this.getGralDao().getMunicipioSucursalEmisora(id_sucursal);
         String estado_sucursal = this.getGralDao().getEstadoSucursalEmisora(id_sucursal);
-        String telefono_empresa = this.getGralDao().getTelefonoEmpresaEmisora(id_empresa);
-        //direccion de la empresa
-        String direccion_empresa = calle +" #"+ numero +" "+ colonia +"";
+        //String telefono_empresa = this.getGralDao().getTelefonoEmpresaEmisora(id_empresa);
+        
+        //Direccion de la empresa
+        String direccion_empresa = datosEmp.get("emp_calle") +" #"+ datosEmp.get("emp_no_exterior") +" "+ datosEmp.get("emp_colonia") +"";
         String mun_edo = municipio +", "+ Estado;
-        datosOrdenCompra.put("telefono_empresa", telefono_empresa); 
+        datosOrdenCompra.put("telefono_empresa", datosEmp.get("emp_tel")); 
         datosOrdenCompra.put("direccion_empresa", direccion_empresa);        
-        datosOrdenCompra.put("emisor_calle", calle);
-        datosOrdenCompra.put("emisor_numero", numero);
-        datosOrdenCompra.put("emisor_colonia", colonia);
+        datosOrdenCompra.put("emisor_calle", datosEmp.get("emp_calle"));
+        datosOrdenCompra.put("emisor_numero", datosEmp.get("emp_no_exterior"));
+        datosOrdenCompra.put("emisor_colonia", datosEmp.get("emp_colonia"));
         datosOrdenCompra.put("emisor_expedidoen_municipio", municipio);
         datosOrdenCompra.put("emisor_expedidoen_Estado", Estado);
-        datosOrdenCompra.put("emisor_pais", pais);
-        datosOrdenCompra.put("emisor_cp", cp);
-        datosOrdenCompra.put("emisor_rfc", rfc);
+        datosOrdenCompra.put("emisor_pais", datosEmp.get("emp_pais"));
+        datosOrdenCompra.put("emisor_cp", datosEmp.get("emp_cp"));
+        datosOrdenCompra.put("emisor_rfc", rfc_empresa);
         datosOrdenCompra.put("municipio_sucursal", municipio_sucursal);
         datosOrdenCompra.put("estado_sucursal", estado_sucursal);
         datosOrdenCompra.put("mun_edo", mun_edo);
         
         //genera nombre del archivo
-        String file_name = "ORDENCOM_"+ rfc +"_"+ datosOrdenCompra.get("folio") +".pdf";        
+        String file_name = "ORDENCOM_"+ rfc_empresa +"_"+ datosOrdenCompra.get("folio") +".pdf";        
         //ruta de archivo de salida
         String fileout = file_dir_tmp +"/"+  file_name;
         

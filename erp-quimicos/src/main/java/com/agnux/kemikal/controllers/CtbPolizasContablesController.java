@@ -167,7 +167,7 @@ public class CtbPolizasContablesController {
         HashMap<String, Object> data = new HashMap<String, Object>();
         
         
-        //decodificar id de usuario
+        //Decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
         userDat = this.getHomeDao().getUserById(id_usuario);
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
@@ -178,9 +178,9 @@ public class CtbPolizasContablesController {
         data.put("fecha_actual", TimeHelper.getFechaActualYMD());
         
         if(this.getCtbDao().getUserRolAdmin(id_usuario)>0){
-            data.put("ver_suc", true);
+            data.put("versuc", true);
         }else{
-            data.put("ver_suc", false);
+            data.put("versuc", false);
         }
         
         jsonretorno.put("CtaMay", this.getCtbDao().getPolizasContables_CuentasMayor(id_empresa));
@@ -319,29 +319,7 @@ public class CtbPolizasContablesController {
             command_selected = "edit";
         }
         
-        System.out.println(
-                "app_selected="+app_selected+"\n"+
-                "command_selected="+command_selected+"\n"+
-                "id_usuario="+id_usuario+"\n"+
-                "identificador="+identificador+"\n"+
-                "select_sucursal="+select_sucursal+"\n"+
-                "select_mes="+select_mes+"\n"+
-                "select_anio="+select_anio+"\n"+
-                "select_tipo="+select_tipo+"\n"+
-                "select_moneda="+select_moneda+"\n"+
-                "select_concepto="+select_concepto+"\n"+
-                "select_centro_costo="+select_centro_costo+"\n"+
-                "fecha="+fecha+"\n"+
-                "descripcion="+descripcion+"\n"+
-                "observacion="+observacion+"\n"+
-                "debe="+debe+"\n"+
-                "haber="+haber+"\n"+
-                "id_cta="+id_cta+"\n"+
-                "cuenta="+cuenta+"\n"+
-                "scuenta="+scuenta+"\n"+
-                "sscuenta="+sscuenta+"\n"+
-                "ssscuenta="+ssscuenta+"\n"+
-                "sssscuenta="+sssscuenta);
+        //System.out.println("app_selected="+app_selected+"\ncommand_selected="+command_selected+"\nid_usuario="+id_usuario+"\nidentificador="+identificador+"\nselect_sucursal="+select_sucursal+"\nselect_mes="+select_mes+"\nselect_anio="+select_anio+"\nselect_tipo="+select_tipo+"\nselect_moneda="+select_moneda+"\nselect_concepto="+select_concepto+"\nselect_centro_costo="+select_centro_costo+"\nfecha="+fecha+"\ndescripcion="+descripcion+"\nobservacion="+observacion+"\ndebe="+debe+"\nhaber="+haber+"\nid_cta="+id_cta+"\ncuenta="+cuenta+"\nscuenta="+scuenta+"\nsscuenta="+sscuenta+"\nssscuenta="+ssscuenta+"\nsssscuenta="+sssscuenta);
         
         String data_string = 
                 app_selected+"___"+

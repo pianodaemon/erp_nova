@@ -3029,7 +3029,7 @@ return subfamilias;
                                     +"FROM ("
                                             +"SELECT cxc_clie.razon_social, "
                                             +"EXTRACT(MONTH FROM fac_docs.momento_creacion) as mes, "
-                                            +"(CASE WHEN fac_docs.moneda_id=1 THEN fac_docs.subtotal ELSE (fac_docs.tipo_cambio*fac_docs.subtotal) END) as subtotal "
+                                            +"(CASE WHEN fac_docs.moneda_id=1 THEN fac_docs.subtotal ELSE (fac_docs.tipo_cambio * fac_docs.subtotal) END) as subtotal "
                                             +"FROM fac_docs "
                                             +"join cxc_clie on cxc_clie.id=fac_docs.cxc_clie_id "
                                             +"JOIN erp_proceso on erp_proceso.id=fac_docs.proceso_id "
@@ -3404,7 +3404,7 @@ return subfamilias;
                             +")as sbt2 "
                             +"GROUP BY descripcion ";
 
-        System.out.println("Generando Consulta Estadisticas:"+sql_to_query+"");
+        //System.out.println("Generando Consulta Estadisticas:"+sql_to_query+"");
 
         ArrayList<HashMap<String, String>> hm_facturas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,

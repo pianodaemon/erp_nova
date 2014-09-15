@@ -99,12 +99,14 @@ public class PdfReporteComOrdenDeCompraFormatoDos {
                             +"\n"+datosOrdenCompra.get("direccion_empresa").toUpperCase()
                             +"\n"+datosOrdenCompra.get("mun_edo").toUpperCase()
                             +"\n"+"R.F.C. "+datosOrdenCompra.get("emisor_rfc").toUpperCase();
-        
+        /*
         String consignado_a = datosOrdenCompra.get("empresa").toUpperCase()
                             +"\n"+datosOrdenCompra.get("direccion_empresa").toUpperCase()
                             +"\n"+datosOrdenCompra.get("mun_edo").toUpperCase()
                             +"\n"+"R.F.C. "+datosOrdenCompra.get("emisor_rfc").toUpperCase();
-                        
+       */
+        
+        String consignado_a = datosOrdenCompra.get("consignado_a").toUpperCase();
                                 
         boolean mostrarNumPag=false;
         if(conceptosOrdenCompra.size()>=13){
@@ -177,7 +179,7 @@ public class PdfReporteComOrdenDeCompraFormatoDos {
             tablaHead.addCell(celdaHead);
             
              //AQUI VA LA FECHA 
-            celdaHead = new PdfPCell(new Paragraph("FECHA",smallBoldFont));
+            celdaHead = new PdfPCell(new Paragraph("FECHA - DATE",smallBoldFont));
             celdaHead.setHorizontalAlignment(Element.ALIGN_CENTER);
             celdaHead.setBackgroundColor(BaseColor.BLACK);
             tablaHead.addCell(celdaHead);
@@ -188,7 +190,7 @@ public class PdfReporteComOrdenDeCompraFormatoDos {
             tablaHead.addCell(celdaHead);
             
             //AQUI VA LA FECHA 
-            celdaHead = new PdfPCell(new Paragraph("FECHA ENTREGA",smallBoldFont));
+            celdaHead = new PdfPCell(new Paragraph("FECHA REQUERIDA - REQUIRED DATE",smallBoldFont));
             celdaHead.setHorizontalAlignment(Element.ALIGN_CENTER);
             celdaHead.setBackgroundColor(BaseColor.BLACK);
             tablaHead.addCell(celdaHead);
@@ -500,7 +502,7 @@ public class PdfReporteComOrdenDeCompraFormatoDos {
             float [] tam_tablapie = {17}; 
             PdfPTable tablapie = new PdfPTable(tam_tablapie);
             PdfPCell celdapie;
-    
+            
             
             //Observaciones
            /* celdapie = new PdfPCell(new Paragraph("OBSERVACIONES",fuentenegrita));
@@ -516,26 +518,21 @@ public class PdfReporteComOrdenDeCompraFormatoDos {
             //cell = new PdfPCell(new Paragraph("CADENA ORIGINAL:",smallBoldFont));
             
             if (datosOrdenCompra.get("observaciones").isEmpty()){
-                
-                celdapie = new PdfPCell(new Paragraph("",smallBoldFont));
-                celdapie.setBorder(0);
-                tablapie.addCell(celdapie);
-          
                 celdapie = new PdfPCell(new Paragraph("",smallBoldFont));
                 celdapie.setBorder(0);
                 tablapie.addCell(celdapie);
                 
+                celdapie = new PdfPCell(new Paragraph("",smallBoldFont));
+                celdapie.setBorder(0);
+                tablapie.addCell(celdapie);
             }else{
-   
-                celdapie = new PdfPCell(new Paragraph("OBSERVACIONES",fuentenegrita));
+                celdapie = new PdfPCell(new Paragraph("OBSERVACIONES - REMARKS",fuentenegrita));
                 celdapie.setHorizontalAlignment(Element.ALIGN_LEFT);
                 celdapie.setBorder(0);tablapie.addCell(celdapie);
                 
-               
-                celdapie = new PdfPCell(new Paragraph(datosOrdenCompra.get("observaciones"),fuenteCont));
+                celdapie = new PdfPCell(new Paragraph(datosOrdenCompra.get("observaciones"),fuentePie));
                 celdapie.setHorizontalAlignment(Element.ALIGN_LEFT);
                 tablapie.addCell(celdapie);
-                
             }
             
             //6 FILA EN BLANCO PARA SEPARAR LAS TABLAS
@@ -545,6 +542,9 @@ public class PdfReporteComOrdenDeCompraFormatoDos {
             tablapie.addCell(celdapie); 
             
             reporte.add(tablapie);
+            
+            
+            
             
             //esto es para los cuadro de abajo para finalizar el PDF
             

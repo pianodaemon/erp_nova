@@ -8152,8 +8152,8 @@ public class InvSpringDao implements InvInterfaceDao{
         +"JOIN ("+sql_busqueda+") as subt on subt.id=sbt.id "
         +"ORDER BY "+orderBy+" "+asc+" LIMIT ? OFFSET ?";
         
-        System.out.println("Busqueda GetPage: "+sql_to_query);
-        System.out.println("data_string: "+data_string);
+        //System.out.println("Busqueda GetPage: "+sql_to_query);
+        //System.out.println("data_string: "+data_string);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
@@ -8261,7 +8261,7 @@ public class InvSpringDao implements InvInterfaceDao{
             + "ORDER BY sbt.descripcion;";
         }
         
-        System.out.println("costoProd: "+sql_to_query);
+        //System.out.println("costoProd: "+sql_to_query);
         
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -8377,7 +8377,7 @@ public class InvSpringDao implements InvInterfaceDao{
             + "ORDER BY sbt.descripcion;";
         }
 
-        System.out.println("datosProd: "+sql_to_query);
+        //System.out.println("datosProd: "+sql_to_query);
         
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,

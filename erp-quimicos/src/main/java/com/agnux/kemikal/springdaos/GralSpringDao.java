@@ -2506,7 +2506,7 @@ public class GralSpringDao implements GralInterfaceDao{
                 + "JOIN gral_edo ON gral_edo.id=gral_emp.estado_id "
                 + "JOIN gral_mun ON gral_mun.id=gral_emp.municipio_id "
                 + "WHERE gral_emp.id="+id_emp+";";
-        System.out.println("getDatosEmp: "+sql_query);
+        //System.out.println("getDatosEmp: "+sql_query);
         
         Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_query);
         mapDatos.put("emp_razon_social", String.valueOf(map.get("titulo")));

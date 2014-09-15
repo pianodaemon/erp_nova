@@ -235,7 +235,7 @@ public class CtbCuentasContablesController {
             @RequestParam(value="descripcion_in", required=true) String descripcion_in,
             @RequestParam(value="descripcion_otro", required=true) String descripcion_otro,
             Model model,@ModelAttribute("user") UserSessionData user
-            ) {
+        ) {
         
         HashMap<String, String> jsonretorno = new HashMap<String, String>();
         HashMap<String, String> succes = new HashMap<String, String>();

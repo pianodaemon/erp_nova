@@ -1265,24 +1265,38 @@ public class CtbSpringDao implements CtbInterfaceDao{
     @Override
     public ArrayList<HashMap<String, Object>> getPolizasContables_Datos(Integer id) {
         String sql_query = ""
-                + "SELECT "
-                    + "id, "
-                    + "(CASE WHEN cta=0 THEN '' ELSE cta::character varying END) AS cta, "
-                    + "(CASE WHEN subcta=0 THEN '' ELSE subcta::character varying END) AS subcta, "
-                    + "(CASE WHEN ssubcta=0 THEN '' ELSE ssubcta::character varying END) AS ssubcta, "
-                    + "(CASE WHEN sssubcta=0 THEN '' ELSE sssubcta::character varying END) AS sssubcta, "
-                    + "(CASE WHEN ssssubcta=0 THEN '' ELSE ssssubcta::character varying END) AS ssssubcta, "
-                    + "cta_mayor, "
-                    + "clasifica, "
-                    + "detalle, "
-                    + "descripcion, "
-                    + "descripcion_ing, "
-                    + "descripcion_otr, "
-                    + "nivel_cta, "
-                    + "consolida, "
-                    + "estatus "
-                + "FROM ctb_cta "
-                + "WHERE id=?;";
+        + "SELECT "
+            + "ctb_pol.id, "
+            + "ctb_pol.gral_suc_id as suc_id, "
+            + "ctb_pol.ano as anio, "
+            + "ctb_pol.mes, "
+            + "ctb_pol.poliza as no_poliza, "
+            + "ctb_pol.ctb_tpol_id as tpol_id, "
+            + "ctb_pol.tipo, "
+            + "ctb_pol.ctb_con_id as con_id, "
+            + "ctb_pol.concepto, "
+            + "ctb_pol.gral_mon_id as mon_id, "
+            + "ctb_pol.moneda, "
+            + "ctb_pol.ctb_cc_id as cc_id, "
+            + "ctb_pol.ctb_cta_id as cta_id, "
+            + "ctb_cta.descripcion, "
+            + "ctb_pol.debe, "
+            + "ctb_pol.haber, "
+            + "ctb_pol.status, "
+            + "ctb_pol.modulo_origen as mod_id, "
+            + "ctb_pol.gral_usr_id_cap as user_cap_id, "
+            + "to_char(ctb_pol.fecha_cap,'yyyy-mm-dd') AS fecha,"
+            + "(CASE WHEN ctb_cta.cta=0 THEN '' ELSE ctb_cta.cta::character varying END) AS cta, "
+            + "(CASE WHEN ctb_cta.subcta=0 THEN '' ELSE ctb_cta.subcta::character varying END) AS subcta, "
+            + "(CASE WHEN ctb_cta.ssubcta=0 THEN '' ELSE ctb_cta.ssubcta::character varying END) AS ssubcta, "
+            + "(CASE WHEN ctb_cta.sssubcta=0 THEN '' ELSE ctb_cta.sssubcta::character varying END) AS sssubcta, "
+            + "(CASE WHEN ctb_cta.ssssubcta=0 THEN '' ELSE ctb_cta.ssssubcta::character varying END) AS ssssubcta "
+        + "FROM ctb_pol  "
+        + "JOIN ctb_cta ON ctb_cta.id=ctb_pol.ctb_cta_id "
+        + "where ctb_pol.borrado_logico=false AND ctb_pol.id=?;";
+        
+        System.out.println();
+        
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_query,  
             new Object[]{new Integer(id)}, new RowMapper() {
@@ -1290,19 +1304,28 @@ public class CtbSpringDao implements CtbInterfaceDao{
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, Object> row = new HashMap<String, Object>();
                     row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("suc_id",String.valueOf(rs.getInt("suc_id")));
+                    row.put("anio",String.valueOf(rs.getInt("anio")));
+                    row.put("mes",String.valueOf(rs.getInt("mes")));
+                    row.put("no_poliza",String.valueOf(rs.getInt("no_poliza")));
+                    row.put("tpol_id",String.valueOf(rs.getInt("tpol_id")));
+                    row.put("con_id",String.valueOf(rs.getInt("con_id")));
+                    row.put("mon_id",String.valueOf(rs.getInt("mon_id")));
+                    row.put("cc_id",String.valueOf(rs.getInt("cc_id")));
+                    row.put("cta_id",String.valueOf(rs.getInt("cta_id")));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("debe",StringHelper.roundDouble(rs.getString("debe"),2));
+                    row.put("haber",StringHelper.roundDouble(rs.getString("haber"),2));
+                    row.put("status",String.valueOf(rs.getInt("status")));
+                    row.put("mod_id",String.valueOf(rs.getInt("mod_id")));
+                    row.put("user_cap_id",String.valueOf(rs.getInt("user_cap_id")));
+                    row.put("fecha",rs.getString("fecha"));
                     row.put("cta",rs.getString("cta"));
                     row.put("subcta",rs.getString("subcta"));
                     row.put("ssubcta",rs.getString("ssubcta"));
                     row.put("sssubcta",rs.getString("sssubcta"));
                     row.put("ssssubcta",rs.getString("ssssubcta"));
-                    row.put("cta_mayor",String.valueOf(rs.getInt("cta_mayor")));
-                    row.put("clasifica",String.valueOf(rs.getInt("clasifica")));
-                    row.put("detalle",String.valueOf(rs.getInt("detalle")));
-                    row.put("descripcion",rs.getString("descripcion"));
-                    row.put("descripcion_ing",rs.getString("descripcion_ing"));
-                    row.put("descripcion_otr",rs.getString("descripcion_otr"));
-                    row.put("nivel_cta",String.valueOf(rs.getInt("nivel_cta")));
-                    row.put("estatus",String.valueOf(rs.getInt("estatus")));
+                    
                     return row;
                 }
             }

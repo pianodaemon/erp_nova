@@ -454,28 +454,31 @@ public class ComSpringDao  implements ComInterfaceDao {
         );
         return hm_datos_productos;
     }
-
+    
     
     
     @Override
     public ArrayList<HashMap<String, String>> getPresentacionesProducto(String sku, Integer id_empresa) {
-	String sql_query = "SELECT "
-                                +"inv_prod.id,"
-                                +"inv_prod.sku,"
-                                +"inv_prod.descripcion AS titulo,"
-                                +"(CASE WHEN inv_prod_unidades.titulo IS NULL THEN '' ELSE inv_prod_unidades.titulo END) AS unidad,"
-                                +"(CASE WHEN inv_prod_presentaciones.id IS NULL THEN 0 ELSE inv_prod_presentaciones.id END) AS id_presentacion,"
-                                +"(CASE WHEN inv_prod_presentaciones.titulo IS NULL THEN '' ELSE inv_prod_presentaciones.titulo END) AS presentacion, "
-                                +"(CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS  decimales "
-                        +"FROM inv_prod "
-                        +"LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "
-                        +"LEFT JOIN inv_prod_pres_x_prod on inv_prod_pres_x_prod.producto_id = inv_prod.id "
-                        +"LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = inv_prod_pres_x_prod.presentacion_id "
-                        +"WHERE  empresa_id = "+id_empresa+" AND inv_prod.sku ILIKE '"+sku+"';";
+	String sql_query = ""
+        + "SELECT "
+                +"inv_prod.id,"
+                +"inv_prod.sku,"
+                +"inv_prod.descripcion AS titulo,"
+                +"(CASE WHEN inv_prod_unidades.titulo IS NULL THEN '' ELSE inv_prod_unidades.titulo END) AS unidad,"
+                +"(CASE WHEN inv_prod_presentaciones.id IS NULL THEN 0 ELSE inv_prod_presentaciones.id END) AS id_presentacion,"
+                +"(CASE WHEN inv_prod_presentaciones.titulo IS NULL THEN '' ELSE inv_prod_presentaciones.titulo END) AS presentacion, "
+                +"(CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS  decimales,"
+                +"(CASE WHEN inv_prod_cost_prom.id IS NULL THEN 0 ELSE (CASE WHEN EXTRACT(MONTH FROM now())=1 THEN inv_prod_cost_prom.costo_ultimo_1 WHEN EXTRACT(MONTH FROM now())=2 THEN inv_prod_cost_prom.costo_ultimo_2 WHEN EXTRACT(MONTH FROM now())=3 THEN inv_prod_cost_prom.costo_ultimo_3 WHEN EXTRACT(MONTH FROM now())=4 THEN inv_prod_cost_prom.costo_ultimo_4 WHEN EXTRACT(MONTH FROM now())=5 THEN inv_prod_cost_prom.costo_ultimo_5 WHEN EXTRACT(MONTH FROM now())=6 THEN inv_prod_cost_prom.costo_ultimo_6 WHEN EXTRACT(MONTH FROM now())=7 THEN inv_prod_cost_prom.costo_ultimo_7 WHEN EXTRACT(MONTH FROM now())=8 THEN inv_prod_cost_prom.costo_ultimo_8 WHEN EXTRACT(MONTH FROM now())=9 THEN inv_prod_cost_prom.costo_ultimo_9 WHEN EXTRACT(MONTH FROM now())=10 THEN inv_prod_cost_prom.costo_ultimo_10 WHEN EXTRACT(MONTH FROM now())=11 THEN inv_prod_cost_prom.costo_ultimo_11 WHEN EXTRACT(MONTH FROM now())=12 THEN inv_prod_cost_prom.costo_ultimo_12 ELSE 0 END) END) AS costo_ultimo "
+        +"FROM inv_prod "
+        +"LEFT JOIN inv_prod_cost_prom ON (inv_prod_cost_prom.inv_prod_id=inv_prod.id AND inv_prod_cost_prom.ano=EXTRACT(YEAR FROM now()))"
+        +"LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "
+        +"LEFT JOIN inv_prod_pres_x_prod on inv_prod_pres_x_prod.producto_id = inv_prod.id "
+        +"LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = inv_prod_pres_x_prod.presentacion_id "
+        +"WHERE empresa_id=? AND inv_prod.borrado_logico=false AND inv_prod.sku ILIKE '"+sku+"';";
         
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,  
-            new Object[]{}, new RowMapper() {
+            new Object[]{new Integer(id_empresa)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, String> row = new HashMap<String, String>();
@@ -486,13 +489,16 @@ public class ComSpringDao  implements ComInterfaceDao {
                     row.put("id_presentacion",String.valueOf(rs.getInt("id_presentacion")));
                     row.put("presentacion",rs.getString("presentacion"));
                     row.put("decimales",rs.getString("decimales"));
+                    row.put("cu",StringHelper.roundDouble(rs.getString("costo_ultimo"),2));
                     return row;
                 }
             }
         );
         return hm;
     }
-     @Override
+    
+    
+    @Override
     public ArrayList<HashMap<String, String>> getProductoTipos() {
 	String sql_query = "SELECT DISTINCT id ,titulo FROM inv_prod_tipos WHERE borrado_logico=false order by id;";
         ArrayList<HashMap<String, String>> hm_tp = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(

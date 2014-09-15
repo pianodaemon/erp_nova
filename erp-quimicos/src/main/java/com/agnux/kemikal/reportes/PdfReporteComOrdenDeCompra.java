@@ -82,6 +82,7 @@ public class PdfReporteComOrdenDeCompra {
         //datos para el encabezado
         datosOrdenCompra.put("empresa", datosEncabezadoPie.get("nombre_empresa_emisora"));
         datosOrdenCompra.put("titulo_reporte", datosEncabezadoPie.get("titulo_reporte"));
+        
         String empresa = datosOrdenCompra.get("empresa").toUpperCase()
                         +"\n"+datosOrdenCompra.get("direccion_empresa").toUpperCase()
                         +"\n"+datosOrdenCompra.get("mun_edo").toUpperCase()
@@ -98,12 +99,15 @@ public class PdfReporteComOrdenDeCompra {
                             +"\n"+datosOrdenCompra.get("direccion_empresa").toUpperCase()
                             +"\n"+datosOrdenCompra.get("mun_edo").toUpperCase()
                             +"\n"+"R.F.C. "+datosOrdenCompra.get("emisor_rfc").toUpperCase();
-        
+        /*
         String consignado_a = datosOrdenCompra.get("empresa").toUpperCase()
                             +"\n"+datosOrdenCompra.get("direccion_empresa").toUpperCase()
                             +"\n"+datosOrdenCompra.get("mun_edo").toUpperCase()
                             +"\n"+"R.F.C. "+datosOrdenCompra.get("emisor_rfc").toUpperCase();
-                        
+        */
+        
+        String consignado_a = datosOrdenCompra.get("consignado_a").toUpperCase();
+        
                                 
         boolean mostrarNumPag=false;
         if(conceptosOrdenCompra.size()>=13){
@@ -573,6 +577,38 @@ public class PdfReporteComOrdenDeCompra {
             */
             
             
+            float [] tam_tablapie = {17}; 
+            PdfPTable tablapie = new PdfPTable(tam_tablapie);
+            PdfPCell celdapie;
+             
+            if (datosOrdenCompra.get("observaciones").isEmpty()){
+                celdapie = new PdfPCell(new Paragraph("",smallBoldFont));
+                celdapie.setBorder(0);
+                tablapie.addCell(celdapie);
+                
+                celdapie = new PdfPCell(new Paragraph("",smallBoldFont));
+                celdapie.setBorder(0);
+                tablapie.addCell(celdapie);
+            }else{
+                celdapie = new PdfPCell(new Paragraph("OBSERVACIONES - REMARKS",fuentenegrita));
+                celdapie.setHorizontalAlignment(Element.ALIGN_LEFT);
+                celdapie.setBorder(0);tablapie.addCell(celdapie);
+                
+                celdapie = new PdfPCell(new Paragraph(datosOrdenCompra.get("observaciones"),fuentePie));
+                celdapie.setHorizontalAlignment(Element.ALIGN_LEFT);
+                tablapie.addCell(celdapie);
+            }
+            
+            //6 FILA EN BLANCO PARA SEPARAR LAS TABLAS
+            celdapie = new PdfPCell(new Paragraph("\n \n \n",fuenteCont));
+            celdapie.setBorder(0);
+            celdapie.setColspan(6);
+            tablapie.addCell(celdapie); 
+            
+            reporte.add(tablapie);
+            
+             
+             
             
             //esto es para los cuadro de abajo para finalizar el PDF
             
