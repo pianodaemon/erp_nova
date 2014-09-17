@@ -154,24 +154,22 @@ public class CtbCuentasContablesController {
     
     
     @RequestMapping(method = RequestMethod.POST, value="/getCuentasMayor.json")
-    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getCuentasMayorJson(
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getCuentasMayorJson(
             @RequestParam(value="iu", required=true) String id_user,
             Model model
-            ) {
+        ) {
         
         log.log(Level.INFO, "Ejecutando getCuentasMayorJson de {0}", CtbCuentasContablesController.class.getName());
-        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
-        ArrayList<HashMap<String, String>> cuentasMayor = new ArrayList<HashMap<String, String>>();
         
-        //decodificar id de usuario
+        //Decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
         userDat = this.getHomeDao().getUserById(id_usuario);
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         
-        cuentasMayor = this.getCtbDao().getCuentasContables_CuentasMayor(id_empresa);
-        
-        jsonretorno.put("CtaMay", cuentasMayor);
+        jsonretorno.put("CC", this.getCtbDao().getPolizasContables_CentrosCostos(id_empresa));
+        jsonretorno.put("CtaMay", this.getCtbDao().getCuentasContables_CuentasMayor(id_empresa));
         
         return jsonretorno;
     }
@@ -179,19 +177,18 @@ public class CtbCuentasContablesController {
     
     
     @RequestMapping(method = RequestMethod.POST, value="/getCuentaContable.json")
-    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getCuentaContableJson(
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getCuentaContableJson(
             @RequestParam(value="id", required=true) Integer id,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
             ) {
         
         log.log(Level.INFO, "Ejecutando getCuentaContableJson de {0}", CtbCuentasContablesController.class.getName());
-        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
-        ArrayList<HashMap<String, String>> datosCC = new ArrayList<HashMap<String, String>>();
+        HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
+        ArrayList<HashMap<String, Object>> datosCC = new ArrayList<HashMap<String, Object>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
-        ArrayList<HashMap<String, String>> cuentasMayor = new ArrayList<HashMap<String, String>>();
-        ArrayList<HashMap<String, String>> arrayExtra = new ArrayList<HashMap<String, String>>();
-        HashMap<String, String> extra = new HashMap<String, String>();
+        ArrayList<HashMap<String, Object>> arrayExtra = new ArrayList<HashMap<String, Object>>();
+        HashMap<String, Object> extra = new HashMap<String, Object>();
         
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
@@ -206,10 +203,9 @@ public class CtbCuentasContablesController {
             datosCC = this.getCtbDao().getCuentasContables_Datos(id);
         }
         
-        cuentasMayor = this.getCtbDao().getCuentasContables_CuentasMayor(id_empresa);
         
         jsonretorno.put("Cc", datosCC);
-        jsonretorno.put("CtaMay", cuentasMayor);
+        jsonretorno.put("CtaMay", this.getCtbDao().getCuentasContables_CuentasMayor(id_empresa));
         jsonretorno.put("Extras", arrayExtra);
         
         return jsonretorno;
@@ -228,6 +224,7 @@ public class CtbCuentasContablesController {
             @RequestParam(value="ssscuenta", required=true) String ssscuenta,
             @RequestParam(value="sssscuenta", required=true) String sssscuenta,
             @RequestParam(value="select_cuenta_mayor", required=true) String cuenta_mayor,
+            @RequestParam(value="select_centro_costo", required=true) String select_centro_costo,
             @RequestParam(value="descripcion", required=true) String descripcion,
             @RequestParam(value="select_estatus", required=true) String estatus,
             @RequestParam(value="chk_cta_detalle", required=false) String cta_detalle,
@@ -273,7 +270,8 @@ public class CtbCuentasContablesController {
                 cta_detalle+"___"+
                 descripcion_es.toUpperCase()+"___"+
                 descripcion_in.toUpperCase()+"___"+
-                descripcion_otro.toUpperCase();
+                descripcion_otro.toUpperCase()+"___"+
+                select_centro_costo;
         
         succes = this.getCtbDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
         

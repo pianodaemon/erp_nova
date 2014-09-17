@@ -37,8 +37,8 @@ public interface CtbInterfaceDao {
     
     //metodos para catalogo de cuentas contables 
     public ArrayList<HashMap<String, Object>> getCuentasContables_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
-    public ArrayList<HashMap<String, String>> getCuentasContables_Datos(Integer id);
-    public ArrayList<HashMap<String, String>> getCuentasContables_CuentasMayor(Integer id_empresa);
+    public ArrayList<HashMap<String, Object>> getCuentasContables_Datos(Integer id);
+    public ArrayList<HashMap<String, Object>> getCuentasContables_CuentasMayor(Integer id_empresa);
     
     //Medotdos para reporte de Auxiliar de Cuentas
     public ArrayList<HashMap<String, Object>> getCtbRepAuxCtas_Anios();

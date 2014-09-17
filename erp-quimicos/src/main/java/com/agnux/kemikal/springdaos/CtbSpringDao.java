@@ -408,7 +408,7 @@ public class CtbSpringDao implements CtbInterfaceDao{
     
     
     @Override
-    public ArrayList<HashMap<String, String>> getCuentasContables_Datos(Integer id) {
+    public ArrayList<HashMap<String, Object>> getCuentasContables_Datos(Integer id) {
         String sql_query = ""
                 + "SELECT "
                     + "id, "
@@ -425,15 +425,16 @@ public class CtbSpringDao implements CtbInterfaceDao{
                     + "descripcion_otr, "
                     + "nivel_cta, "
                     + "consolida, "
-                    + "estatus "
+                    + "estatus,"
+                    + "ctb_cc_id "
                 + "FROM ctb_cta "
                 + "WHERE id=?;";
-        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_query,  
             new Object[]{new Integer(id)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    HashMap<String, String> row = new HashMap<String, String>();
+                    HashMap<String, Object> row = new HashMap<String, Object>();
                     row.put("id",String.valueOf(rs.getInt("id")));
                     row.put("cta",rs.getString("cta"));
                     row.put("subcta",rs.getString("subcta"));
@@ -448,6 +449,7 @@ public class CtbSpringDao implements CtbInterfaceDao{
                     row.put("descripcion_otr",rs.getString("descripcion_otr"));
                     row.put("nivel_cta",String.valueOf(rs.getInt("nivel_cta")));
                     row.put("estatus",String.valueOf(rs.getInt("estatus")));
+                    row.put("cc_id",String.valueOf(rs.getInt("ctb_cc_id")));
                     return row;
                 }
             }
@@ -461,7 +463,7 @@ public class CtbSpringDao implements CtbInterfaceDao{
     
     
     @Override
-    public ArrayList<HashMap<String, String>> getCuentasContables_CuentasMayor(Integer id_empresa) {
+    public ArrayList<HashMap<String, Object>> getCuentasContables_CuentasMayor(Integer id_empresa) {
         String sql_query = ""
                 + "SELECT "
                     + "id, "
@@ -471,12 +473,12 @@ public class CtbSpringDao implements CtbInterfaceDao{
                 + "FROM ctb_may "
                 + "WHERE borrado_logico=false "
                 + "AND empresa_id=?;";
-        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_query,
             new Object[]{new Integer(id_empresa)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    HashMap<String, String> row = new HashMap<String, String>();
+                    HashMap<String, Object> row = new HashMap<String, Object>();
                     row.put("id",String.valueOf(rs.getInt("id")));
                     row.put("cta_mayor",String.valueOf(rs.getInt("cta_mayor")));
                     row.put("clasificacion",String.valueOf(rs.getInt("clasificacion")));
