@@ -14,7 +14,7 @@ $(function() {
 	var ArrayCon;
 	var array_meses = {1:"Enero", 2:"Febrero", 3:"Marzo", 4:"Abirl", 5:"Mayo", 6:"Junio", 7:"Julio", 8:"Agosto", 9:"Septiembre", 10:"Octubre", 11:"Noviembre", 12:"Diciembre"};
 	var array_status = {0:"[--- ---]", 1:"No afectana", 2:"Afectada", 3:"Cancelada"};
-
+	var parametros;
 	
 	
 	//------------------------------------------------------------------
@@ -245,13 +245,16 @@ $(function() {
 		var input_json_cuentas = document.location.protocol + '//' + document.location.host + '/'+controller+'/getCuentasMayor.json';
 		$arreglo = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
 		$.post(input_json_cuentas,$arreglo,function(data){
+			
+			
+			
 			$busqueda_select_sucursal.children().remove();
 			var suc_hmtl = '';
 			$.each(data['Suc'],function(entryIndex,suc){
 				if(parseInt(suc['id'])==parseInt(data['Data']['suc'])){
 					suc_hmtl += '<option value="' + suc['id'] + '" selected="yes">'+ suc['titulo'] + '</option>';
 				}else{
-					if(data['Data']['versuc']=='true'){
+					if(data['Data']['versuc']==true){
 						suc_hmtl += '<option value="' + suc['id'] + '">'+ suc['titulo'] + '</option>';
 					}
 				}
@@ -334,6 +337,7 @@ $(function() {
 			ArraySuc = data['Suc'];
 			ArrayTPol = data['TPol'];
 			ArrayCon = data['Con'];
+			parametros = data['Data'];
 			
 			$busqueda_select_sucursal.focus();
 		});
@@ -773,7 +777,7 @@ $(function() {
 		var $forma_selected = $('#' + form_to_show).clone();
 		$forma_selected.attr({ id : form_to_show + id_to_show });
 		
-		$('#forma-ctbpolizacontable-window').css({ "margin-left": -350, 	"margin-top": -200 });
+		$('#forma-ctbpolizacontable-window').css({ "margin-left": -470, 	"margin-top": -200 });
 		$forma_selected.prependTo('#forma-ctbpolizacontable-window');
 		$forma_selected.find('.panelcito_modal').attr({ id : 'panelcito_modal' + id_to_show , style:'display:table'});
 		$tabs_li_funxionalidad();
@@ -803,7 +807,7 @@ $(function() {
 		var $haber = $('#forma-ctbpolizacontable-window').find('input[name=haber]');
 		
 		var $busca_cuenta_contble = $('#forma-ctbpolizacontable-window').find('#busca_cuenta_contble');
-		var $limpiar_cuenta_contable = $('#forma-ctbpolizacontable-window').find('#limpiar_cuenta_contable');
+		var $agrega_cuenta_contble = $('#forma-ctbpolizacontable-window').find('#agrega_cuenta_contble');
 		
 		var $cerrar_plugin = $('#forma-ctbpolizacontable-window').find('#close');
 		var $cancelar_plugin = $('#forma-ctbpolizacontable-window').find('#boton_cancelar');
@@ -908,7 +912,13 @@ $(function() {
 			$select_sucursal.children().remove();
 			var suc_hmtl = '';
 			$.each(ArraySuc,function(entryIndex,suc){
-				suc_hmtl += '<option value="' + suc['id'] + '"  >'+ suc['titulo'] + '</option>';
+				if(parseInt(suc['id'])==parseInt(parametros['suc'])){
+					suc_hmtl += '<option value="' + suc['id'] + '" selected="yes">'+ suc['titulo'] + '</option>';
+				}else{
+					if(parametros['versuc']==true){
+						suc_hmtl += '<option value="' + suc['id'] + '">'+ suc['titulo'] + '</option>';
+					}
+				}
 			});
 			$select_sucursal.append(suc_hmtl);
 			
@@ -917,6 +927,7 @@ $(function() {
 			var moneda_html = '';
 			moneda_html += '<option value="1" selected="yes">M.N.</option>';
 			$select_moneda.append(moneda_html);
+			
 			
 			//Carga select de Tipos de Poliza
 			var elemento_seleccionado = 0;
@@ -945,6 +956,73 @@ $(function() {
 			$busca_cuenta_contble.click(function(event){
 				event.preventDefault();
 				$busca_cuentas_contables(1, entry['Extras'][0]['nivel_cta'], CtaMay, $cuenta, $scuenta, $sscuenta, $ssscuenta, $sssscuenta);
+			});
+			
+			
+			
+			
+			
+			
+			
+			//generar tr para agregar al grid
+			$agrega_tr = function(noTr, id_det, id_tmov, codigo, descripcion, unidad, cant_traspaso, readOnly, densidad, idPres, presentacion, cantPres, noDec, cantEquiv){
+				var trr = '';
+				trr = '<tr>';
+					trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="120">';
+						trr += '<input type="hidden" 	name="id_det" value="'+ id_det +'">';
+						trr += '<input type="text" 		name="codigo" value="'+ codigo +'" class="borde_oculto" readOnly="true" style="width:116px;">';
+					trr += '</td>';
+					trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="200">';
+						trr += '<select name="select_tmov" class="select_umedida'+ tr +'" style="width:86px;"></select>';
+					trr += '</td>';
+					trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="120">';
+						trr += '<input type="text" 		name="unidad" 	value="'+ unidad +'" class="borde_oculto" readOnly="true" style="width:116px;">';
+					trr += '</td>';
+					trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="120">';
+						trr += '<input type="text" 		name="unidad" 	value="'+ presentacion +'" class="borde_oculto" readOnly="true" style="width:116px;">';
+						trr += '<input type="text" 		name="lote_int" class="lote_int'+ noTr +'" value="" style="width:116px; display:none;">';
+					trr += '</td>';
+					
+					trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
+						trr += '<input type="text" 		name="cantidad" class="cantidad'+noTr+'"  value="'+$(this).agregar_comas(cant_traspaso)+'" '+readOnly+' style="width:86px; text-align:right; border-color:transparent; background:transparent;">';
+						trr += '<input type="text" 		name="cant_traspaso" value="'+cant_traspaso+'" class="cant_traspaso'+noTr+'"  style="width:86px; display:none;">';
+					trr += '</td>';
+					
+					trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
+						trr += '<input type="hidden" 	name="idPres" id="idPres" value="'+ idPres +'">';
+						trr += '<input type="hidden" 	name="cantEquiv" id="cantEquiv" value="'+ cantEquiv +'">';
+						trr += '<input type="text" 		name="cantPres" class="cantPres'+noTr+'"  value="'+$(this).agregar_comas(cantPres)+'" '+readOnly+' style="width:86px; text-align:right; border-color:transparent; background:transparent;">';
+					trr += '</td>';
+					
+					trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="15">';
+					trr += '</td>';
+					trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="15">';
+						trr += '<input type="hidden" 	name="eliminado" value="1">';//el 1 significa que el registro no ha sido eliminado
+						trr += '<input type="hidden" 	name="no_tr" value="'+ noTr +'">';
+					trr += '</td>';
+					//agregado por paco
+					trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="60">';
+							trr += '<input name="densidad_litro" value="'+densidad+'" type="hidden">';
+							trr += '<input name="cantidad_kilos" id="cantidad_kilos'+ noTr +'" value="0.00" class="borde_oculto" readonly="true" style="width:56px; text-align:right;" type="text">';
+					trr += '</td>';
+				trr += '</tr>';
+				
+				return trr;
+			}
+					
+			
+			
+			
+			
+			$agrega_cuenta_contble.click(function(event){
+				event.preventDefault();
+				
+				alert("Agregar");
+				
+				
+				
+				
+				//$buscador_presentaciones_producto($id_cliente,$nocliente.val(), $sku_producto.val(),$nombre_producto,$grid_productos,$select_moneda,$tipo_cambio, entry['Monedas']);
 			});
 			
 			
@@ -1106,7 +1184,7 @@ $(function() {
 					},"json");
 				}
 			});
-                    
+			
 		}else{
 			//aqui  entra para editar un registro
 			var form_to_show = 'formactbpolizacontable00';
@@ -1116,7 +1194,7 @@ $(function() {
 			$forma_selected.attr({ id : form_to_show + id_to_show });
 			
 			$(this).modalPanel_ctbpolizacontable();
-			$('#forma-ctbpolizacontable-window').css({ "margin-left": -350, 	"margin-top": -200 });
+			$('#forma-ctbpolizacontable-window').css({ "margin-left": -470, 	"margin-top": -200 });
 			
 			$forma_selected.prependTo('#forma-ctbpolizacontable-window');
 			$forma_selected.find('.panelcito_modal').attr({ id : 'panelcito_modal' + id_to_show , style:'display:table'});
@@ -1148,7 +1226,7 @@ $(function() {
 			var $haber = $('#forma-ctbpolizacontable-window').find('input[name=haber]');
 			
 			var $busca_cuenta_contble = $('#forma-ctbpolizacontable-window').find('#busca_cuenta_contble');
-			var $limpiar_cuenta_contable = $('#forma-ctbpolizacontable-window').find('#limpiar_cuenta_contable');
+			var $agrega_cuenta_contble = $('#forma-ctbpolizacontable-window').find('#agrega_cuenta_contble');
 			
 			var $cerrar_plugin = $('#forma-ctbpolizacontable-window').find('#close');
 			var $cancelar_plugin = $('#forma-ctbpolizacontable-window').find('#boton_cancelar');

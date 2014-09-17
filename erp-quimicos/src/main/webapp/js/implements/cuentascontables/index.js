@@ -6,6 +6,7 @@ $(function() {
 	    }
 	    return work.join(',');
 	};
+	var arrayCentroCostos;
 	
 	$('#header').find('#header1').find('span.emp').text($('#lienzo_recalculable').find('input[name=emp]').val());
 	$('#header').find('#header1').find('span.suc').text($('#lienzo_recalculable').find('input[name=suc]').val());
@@ -84,6 +85,9 @@ $(function() {
 				cta_html += '<option value="' + ctamay['id'] + '"  >( ' + ctamay['cta_mayor']+', '+ ctamay['clasificacion'] +' ) '+ ctamay['descripcion'] + '</option>';
 			});
 			$busqueda_select_cuenta_mayor.append(cta_html);
+			
+			//Cargar arreglo con la lista de centros de costo.
+			arrayCentroCostos=data['CC'];
 		});
 	}
 	
@@ -189,6 +193,53 @@ $(function() {
 	}
 	
 	
+	//Carga los campos select con los datos que recibe como parametro
+	$carga_campos_select = function($campo_select, $arreglo_elementos, elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem){
+		var select_html = '';
+		
+		if(texto_elemento_cero != ''){
+			select_html = '<option value="0">'+texto_elemento_cero+'</option>';
+		}
+		
+		$.each($arreglo_elementos,function(entryIndex,elemento){
+			if( parseInt(elemento[index_elem]) == parseInt(elemento_seleccionado) ){
+				select_html += '<option value="' + elemento[index_elem] + '" selected="yes">' + elemento[index_text_elem] + '</option>';
+			}else{
+				select_html += '<option value="' + elemento[index_elem] + '" >' + elemento[index_text_elem] + '</option>';
+			}
+		});
+		$campo_select.children().remove();
+		$campo_select.append(select_html);
+	}
+	
+	
+	//Carga el campo centro costo dependiendo de la clase de la cuenta de mayor
+	$carga_select_centro_costos = function($campo_select, arrayCentroCostos, clase, class_selected){
+		//Cargar select de Centro de Costos
+		var elemento_seleccionado = 0;
+		var texto_elemento_cero = '[--- ---]';
+		var index_elem = 'id';
+		var index_text_elem = 'titulo';
+		
+		//4=Ingresos
+		//5=Egresos
+		if(parseInt(clase)==4 || parseInt(clase)==5){
+			//Cargar select de Centro de Costos
+			elemento_seleccionado = class_selected;
+			texto_elemento_cero = '[--- ---]';
+			index_elem = 'id';
+			index_text_elem = 'titulo';
+			$carga_campos_select($campo_select, arrayCentroCostos, elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem);
+		}else{
+			//Vaciar select
+			$campo_select.children().remove();
+			var cc_hmtl = '';
+			cc_hmtl += '<option value="0" selected="yes">[--- ---]</option>';
+			$campo_select.append(cc_hmtl);
+		}
+	}
+			
+	
 	//nuevo 
 	$new_centro_costo.click(function(event){
 		event.preventDefault();
@@ -212,6 +263,8 @@ $(function() {
 		var $ssscuenta = $('#forma-cuentascontables-window').find('input[name=ssscuenta]');
 		var $sssscuenta = $('#forma-cuentascontables-window').find('input[name=sssscuenta]');
 		var $select_cuenta_mayor = $('#forma-cuentascontables-window').find('select[name=select_cuenta_mayor]');
+		
+		var $select_centro_costo = $('#forma-cuentascontables-window').find('select[name=select_centro_costo]');
 		
 		var $descripcion = $('#forma-cuentascontables-window').find('input[name=descripcion]');
 		var $chk_cta_detalle = $('#forma-cuentascontables-window').find('input[name=chk_cta_detalle]');
@@ -281,7 +334,7 @@ $(function() {
 			if(parseInt(entry['Extras'][0]['nivel_cta']) >=4 ){ $ssscuenta.show(); };
 			if(parseInt(entry['Extras'][0]['nivel_cta']) >=5 ){ $sssscuenta.show(); };
 			
-			//carga select de cuentas de Mayor
+			//Carga select de cuentas de Mayor
 			$select_cuenta_mayor.children().remove();
 			var ctamay_hmtl = '';
 			$.each(entry['CtaMay'],function(entryIndex,ctamay){
@@ -296,6 +349,18 @@ $(function() {
 			estatus_hmtl += '<option value="1" selected="yes">Activada</option>';
 			estatus_hmtl += '<option value="2">Desactivada</option>';
 			$select_estatus.append(estatus_hmtl);
+			
+			//Carga default al cargar la ventana
+			$carga_select_centro_costos($select_centro_costo, arrayCentroCostos, entry['CtaMay'][0]['cta_mayor'], 0);
+			
+			$select_cuenta_mayor.change(function(){
+				var valor = $(this).val();
+				$.each(entry['CtaMay'],function(entryIndex,ctamay){
+					if(parseInt(ctamay['id'])==parseInt(valor)){
+						$carga_select_centro_costos($select_centro_costo, arrayCentroCostos, ctamay['cta_mayor'], 0);
+					}
+				});
+			});
 			
 			
 			$cuenta.focus();
@@ -373,6 +438,8 @@ $(function() {
 			var $ssscuenta = $('#forma-cuentascontables-window').find('input[name=ssscuenta]');
 			var $sssscuenta = $('#forma-cuentascontables-window').find('input[name=sssscuenta]');
 			var $select_cuenta_mayor = $('#forma-cuentascontables-window').find('select[name=select_cuenta_mayor]');
+			
+			var $select_centro_costo = $('#forma-cuentascontables-window').find('select[name=select_centro_costo]');
 			
 			var $descripcion = $('#forma-cuentascontables-window').find('input[name=descripcion]');
 			var $chk_cta_detalle = $('#forma-cuentascontables-window').find('input[name=chk_cta_detalle]');
@@ -461,6 +528,12 @@ $(function() {
 					$.each(entry['CtaMay'],function(entryIndex,ctamay){
 						if(entry['Cc']['0']['cta_mayor']==ctamay['cta_mayor'] && entry['Cc']['0']['clasifica']==ctamay['clasificacion']){
 							ctamay_hmtl += '<option value="' + ctamay['id'] + '" selected="yes">( ' + ctamay['cta_mayor']+', '+ ctamay['clasificacion'] +' ) '+ ctamay['descripcion'] + '</option>';
+							
+							var class_selected =entry['Cc'][0]['cc_id'];
+							
+							//Carga default al cargar la ventana
+							$carga_select_centro_costos($select_centro_costo, arrayCentroCostos, ctamay['cta_mayor'], class_selected);
+							
 						}else{
 							ctamay_hmtl += '<option value="' + ctamay['id'] + '">( ' + ctamay['cta_mayor']+', '+ ctamay['clasificacion'] +' ) '+ ctamay['descripcion'] + '</option>';
 						}
@@ -481,6 +554,20 @@ $(function() {
 					//carga select de cuentas de Estatus
 					$select_estatus.children().remove();
 					$select_estatus.append(estatus_hmtl);
+					
+					
+					
+					$select_cuenta_mayor.change(function(){
+						var valor = $(this).val();
+						if(parseInt($select_centro_costo.val())<=0){
+							$.each(entry['CtaMay'],function(entryIndex,ctamay){
+								if(parseInt(ctamay['id'])==parseInt(valor)){
+									$carga_select_centro_costos($select_centro_costo, arrayCentroCostos, ctamay['cta_mayor'], 0);
+								}
+							});
+						}
+					});
+					
 					
 					$cuenta.focus();
 				},"json");//termina llamada json
