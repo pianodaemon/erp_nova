@@ -97,7 +97,7 @@ html ul.pestanas li.active, html ul.pestanas li.active a:hover{
 .ctbpolizacontable_div_one{
     /*background-image:url('Imagen/ven1.png');
     background-repeat:no-repeat;*/
-	width:700px;
+	width:945px;
     height:365px;
 	border-radius:10px;
 	background-color:#e9e9e9;
@@ -109,7 +109,7 @@ html ul.pestanas li.active, html ul.pestanas li.active a:hover{
 
 .ctbpolizacontable_div_two{
 	/*font-family:tahoma;*/
-    width:700px;
+    width:945px;
     height:28px;
     background-color:#454442;
 	margin-top:0;
@@ -152,10 +152,34 @@ html ul.pestanas li.active, html ul.pestanas li.active a:hover{
 	background:transparent;
 }
 
+
 .gral input{
 	height:15px;
 }
 
 .gral select{
 	height:17px;
+}
+
+table tr td.grid {
+	background: #fff;
+	border-right: 1px solid #ccc;
+	padding: 2px;
+	text-align: center;
+	vertical-align: top;
+}
+table tr td.grid1 {
+	background: #fff;
+	border-right: 1px solid #ccc;
+	padding: 2px;
+	text-align: left;
+	vertical-align: top;
+}
+
+table tr td.grid2 {
+	background: #fff;
+	border-right: 1px solid #ccc;
+	padding: 2px;
+	text-align: right;
+	vertical-align: top;
 }
