@@ -152,8 +152,10 @@
 												<td width="80">Descripci&oacute;n</td>
 												<td colspan="9" width="290"><input type="text"name="descripcion" style="width:290px;" maxlength="60"></td>
 												<td width="50"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_descripcion"></div></td>
-												<td width="70"></td>
-												<td width="60"></td>
+												<td width="70">Centro de Costo</td>
+												<td width="60">
+													<select name="select_centro_costo" style="width:60px;"></select>
+												</td>
 												<td width="25"></td>
 											</tr>
 											<tr>

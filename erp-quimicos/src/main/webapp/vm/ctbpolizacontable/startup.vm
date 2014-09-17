@@ -112,7 +112,7 @@
 					
                     <div id="div_two" title="" class="ctbpolizacontable_div_two">
                         <div class="columns on-2">
-                            <div class="fixed column" id="cierra" style="width:650px; padding-left:6px;"><strong>P&oacute;liza Contable</strong></div>
+                            <div class="fixed column" id="cierra" style="width:895px; padding-left:6px;"><strong>P&oacute;liza Contable</strong></div>
                             <div class="fixed column" style="width:20px; height:25px;">
                                 <div id="close" style="height:25px;background-image:url('../../img/modalbox/close.png'); background-color:; background-position:top; cursor:pointer; background-repeat:no-repeat;"></div>
                             </div>
@@ -134,7 +134,7 @@
 									
                                     <div id="tabx-1" class="contenidoPes" >
 										
-                                        <table border="0" style="margin:0; padding:0;">
+                                        <table border="1" style="margin:0; padding:0;">
 											<tr>
 												<td></td>
 											</tr>
@@ -213,7 +213,7 @@
 											
 											<tr>
 												<td valign="top" > 
-													<table border="0" class="gral">
+													<table border="1" class="gral">
 														<tr>
 															<td width="10"></td>
 															<td width="60">Cuenta&nbsp;</td>
@@ -229,7 +229,10 @@
 															<td><input name="ssscuenta" style="width:40px;" maxlength="4"></td>
 															<td width="5"></td>
 															<td><input name="sssscuenta" style="width:40px;" maxlength="4"></td>
-															<td width="50"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_cta"></div></td>
+															<td width="5"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_cta"></div></td>
+															<td width="5"></td>
+															<td width="60"><a href="#agrega_cuenta_contble" id="agrega_cuenta_contble">&nbsp;(Agregar)</a></td>
+															<td width="5"></td>
 															<td width="60"><a href="#busca_cuenta_contble" id="busca_cuenta_contble">&nbsp;(Buscar)</a></td>
 														</tr>
 													</table>
@@ -272,9 +275,11 @@
 															</td>
 															<td width="50"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_haber"></div></td>
 														</tr>
+														
 														<tr>
 															<td colspan="10" height="10"></td>
 														</tr>
+														
 														<tr>
 															<td width="10"></td>
 															<td width="83">Observaci&oacute;n</td>
@@ -287,6 +292,49 @@
 												</td>
 											</tr>
 											
+											<tr>
+												
+												<!--
+												
+												
+												700 - 635 => 65
+												
+												945 - 880 => 65
+												
+												-->
+												
+                                                    <td style="border-top: 1px solid #C1DAD7; border-bottom: 1px solid #C1DAD7; border-left: 1px solid #FFFFFF; border-right: 1px solid #FFFFFF;">
+														<table >
+															<thead>
+																<tr>
+																	<!--<td height="30"><a href="new_item" class="tooltip"><div class="onmouseOutNewItem" id="nItem"></div><span>Crear Nuevo Pedido</span></a></td>-->
+																	
+																	<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="30">&nbsp;#</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="120">&nbsp;Tipo Mov.</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="120">&nbsp;Cuenta</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="250">&nbsp;Descripci&oacute;n</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="150">&nbsp;Centro Costo</td>
+																	
+																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="90">&nbsp;Debe</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="120">&nbsp;Haber</td>
+																</tr>
+															</thead>
+														</table>
+														<div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width:900; height: 150px; border:1px solid #C1DAD7 !important;">	
+															<table>
+																<tbody style="background-color: #FFFFFF;" valign="top" id="grid_productos">
+																	
+																</tbody>
+															</table>
+														</div>
+                                                        
+                                                    </td>
+                                                    
+                                                    
+                                                    
+
+												
+											</tr>
 											
 										</table>
                                     </div>
@@ -298,11 +346,11 @@
                             </div>
 
 
-                            <div class="fixed column" id="botones" style="width:663px; background:; text-align:right; padding-left:; position:absolute;margin-top:4px;">
+                            <div class="fixed column" id="botones" style="width:908px; background:; text-align:right; padding-left:; position:absolute;margin-top:4px;">
 								<table border="0">
 									<tr><td colspan="4" height="7"></td></tr>
 									<tr>
-										<td width="563"></td>
+										<td width="808"></td>
 										<td>
 											<input type="image" src="../../img/modalbox/btn1.png" id="submit" style="width:77px; height:24px;"/>
 										</td>
