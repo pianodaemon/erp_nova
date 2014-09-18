@@ -1535,6 +1535,104 @@ public class CtbSpringDao implements CtbInterfaceDao{
         );
         return hm;
     }
+    
+    
+    
+    
+    
+    //Metodo para obtener los datos de una cuenta contable en especifico.
+    @Override
+    public ArrayList<HashMap<String, Object>> getDatosCuentaContable(Integer detalle, String cta, String scta, String sscta, String ssscta, String sssscta, Integer id_empresa, Integer id_sucursal) {
+
+        String where="";
+        
+        
+        
+	if(id_sucursal>0){
+            where+=" AND ctb_cta.gral_suc_id="+id_sucursal+" ";
+	}
+        
+	if(!cta.equals("")){
+            where+=" AND ctb_cta.cta="+cta.trim()+" ";
+	}
+
+	if(!scta.trim().equals("")){
+            where+=" AND ctb_cta.subcta="+scta.trim()+" ";
+	}
+
+	if(!sscta.trim().equals("")){
+            where+=" AND ctb_cta.ssubcta="+sscta.trim()+" ";
+	}
+
+	if(!ssscta.equals("")){
+            where+=" AND ctb_cta.sssubcta="+ssscta.trim()+" ";
+	}
+
+	if(!sssscta.equals("")){
+            where+=" AND ctb_cta.ssssubcta="+sssscta.trim()+" ";
+	}
+        
+        
+        
+        String sql_query = ""
+                + "SELECT DISTINCT "
+                    + "ctb_cta.id, "
+                    + "ctb_cta.cta_mayor, "
+                    + "ctb_cta.clasifica, "
+                    + "ctb_cta.cta, "
+                    + "ctb_cta.subcta, "
+                    + "ctb_cta.ssubcta, "
+                    + "ctb_cta.sssubcta,"
+                    + "ctb_cta.ssssubcta, "
+                    + "(CASE WHEN nivel_cta=1 THEN rpad(ctb_cta.cta::character varying, 4, '0')   "
+                    + "WHEN ctb_cta.nivel_cta=2 THEN '&nbsp;&nbsp;&nbsp;'||rpad(ctb_cta.cta::character varying, 4, '0')||'-'||lpad(ctb_cta.subcta::character varying, 4, '0') "
+                    + "WHEN ctb_cta.nivel_cta=3 THEN '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'||rpad(ctb_cta.cta::character varying, 4, '0')||'-'||lpad(ctb_cta.subcta::character varying, 4, '0')||'-'||lpad(ctb_cta.ssubcta::character varying, 4, '0') "
+                    + "WHEN ctb_cta.nivel_cta=4 THEN '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'||rpad(ctb_cta.cta::character varying, 4, '0')||'-'||lpad(ctb_cta.subcta::character varying, 4, '0')||'-'||lpad(ctb_cta.ssubcta::character varying, 4, '0')||'-'||lpad(ctb_cta.sssubcta::character varying, 4, '0') "
+                    + "WHEN ctb_cta.nivel_cta=5 THEN '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'||rpad(ctb_cta.cta::character varying, 4, '0')||'-'||lpad(ctb_cta.subcta::character varying, 4, '0')||'-'||lpad(ctb_cta.ssubcta::character varying, 4, '0')||'-'||lpad(ctb_cta.sssubcta::character varying, 4, '0')||'-'||lpad(ctb_cta.ssssubcta::character varying, 4, '0') "
+                    + "ELSE '' "
+                    + "END ) AS cuenta, "
+                    + "(CASE WHEN ctb_cta.descripcion IS NULL OR ctb_cta.descripcion='' THEN  (CASE WHEN ctb_cta.descripcion_ing IS NULL OR ctb_cta.descripcion_ing='' THEN  ctb_cta.descripcion_otr ELSE ctb_cta.descripcion_ing END )  ELSE descripcion END ) AS descripcion, "
+                    + "(CASE WHEN ctb_cta.detalle=0 THEN 'NO' WHEN ctb_cta.detalle=1 THEN 'SI' ELSE '' END) AS detalle, "
+                    + "ctb_cta.nivel_cta,"
+                    + "ctb_cta.ctb_cc_id "
+                + "FROM ctb_cta "
+                + "WHERE ctb_cta.borrado_logico=false  "
+                + "AND ctb_cta.gral_emp_id=? AND ctb_cta.detalle=? "+ where +" "
+                + "ORDER BY ctb_cta.id;";
+
+
+        //System.out.println("sql_query: "+sql_query);
+
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{new Integer(id_empresa), new Integer(detalle)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("m",String.valueOf(rs.getInt("cta_mayor")));
+                    row.put("c",String.valueOf(rs.getInt("clasifica")));
+                    row.put("cta",String.valueOf(rs.getInt("cta")));
+                    row.put("subcta",String.valueOf(rs.getInt("subcta")));
+                    row.put("ssubcta",String.valueOf(rs.getInt("ssubcta")));
+                    row.put("sssubcta",String.valueOf(rs.getInt("sssubcta")));
+                    row.put("ssssubcta",String.valueOf(rs.getInt("ssssubcta")));
+                    row.put("cuenta",rs.getString("cuenta"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("detalle",rs.getString("detalle"));
+                    row.put("nivel_cta",String.valueOf(rs.getInt("nivel_cta")));
+                    row.put("cc_id",String.valueOf(rs.getInt("ctb_cc_id")));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    
+    
+    
 
     //Calcular años a mostrar en Polizas contables
     @Override

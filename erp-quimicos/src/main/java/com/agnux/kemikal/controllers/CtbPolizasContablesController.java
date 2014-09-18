@@ -214,6 +214,7 @@ public class CtbPolizasContablesController {
         userDat = this.getHomeDao().getUserById(id_usuario);
         
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        
         //Esta variable indica si la empresa incluye modulo de Contabilidad
         extra.put("incluye_contab", userDat.get("incluye_contab"));
         extra.put("nivel_cta", userDat.get("nivel_cta"));
@@ -257,7 +258,7 @@ public class CtbPolizasContablesController {
             Model model
         ) {
         
-        log.log(Level.INFO, "Ejecutando getBuscadorCuentasContablesJson de {0}", ProductosController.class.getName());
+        log.log(Level.INFO, "Ejecutando getBuscadorCuentasContablesJson de {0}", CtbPolizasContablesController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
         ArrayList<HashMap<String, String>> cuentasContables = new ArrayList<HashMap<String, String>>();
@@ -272,6 +273,42 @@ public class CtbPolizasContablesController {
         cuentasContables = this.getCtbDao().getPolizasContables_CuentasContables(cta_mayor, detalle, clasifica, cta, scta, sscta, ssscta, sssscta, descripcion, id_empresa);
         
         jsonretorno.put("CtaContables", cuentasContables);
+        
+        return jsonretorno;
+    }
+    
+    
+    
+    
+    //metodo para el Buscador de Cuentas Contables
+    @RequestMapping(method = RequestMethod.POST, value="/getDataCta.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getDataCtaJson(
+            @RequestParam(value="detalle", required=true) Integer detalle,
+            @RequestParam(value="cta", required=false) String cta,
+            @RequestParam(value="scta", required=false) String scta,
+            @RequestParam(value="sscta", required=false) String sscta,
+            @RequestParam(value="ssscta", required=false) String ssscta,
+            @RequestParam(value="sssscta", required=false) String sssscta,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+        ) {
+        
+        log.log(Level.INFO, "Ejecutando getDataCtaJson de {0}", CtbPolizasContablesController.class.getName());
+        HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        
+        //Decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        
+        if(this.getCtbDao().getUserRolAdmin(id_usuario)>0){
+            //Sucursal cero cuando el usuario es administrador, esto para permitir la busque de la cuenta contable sin importar la sucursal
+            id_sucursal=0;
+        }
+        
+        jsonretorno.put("Cta", this.getCtbDao().getDatosCuentaContable(detalle, cta, scta, sscta, ssscta, sssscta, id_empresa, id_sucursal));
         
         return jsonretorno;
     }
