@@ -134,16 +134,16 @@ html ul.pestanas li.active, html ul.pestanas li.active a:hover{
 }
 
 
-#grid_productos td{
+#grid_cuentas td{
 	height:18px;
 	text-align:center;
 }
 
-#grid_productos input{
+#grid_cuentas input{
 	height:15px;
 }
 
-#grid_productos select{
+#grid_cuentas select{
 	height:17px;
 }
 
