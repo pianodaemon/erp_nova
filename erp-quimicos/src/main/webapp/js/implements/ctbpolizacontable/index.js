@@ -61,7 +61,13 @@ $(function() {
 		return Fecha;
 	}
 	//------------------------------------------------------------------
-
+	
+	
+	
+	var quitar_comas= function($valor){
+		$valor = $valor+'';
+		return $valor.split(',').join('');
+	}
 	
 	//Carga los campos select con los datos que recibe como parametro
 	$carga_select_con_arreglo_fijo = function($campo_select, arreglo_elementos, elemento_seleccionado, mostrar_opciones){
@@ -82,7 +88,7 @@ $(function() {
 	
 	
 	//Carga los campos select con los datos que recibe como parametro
-	$carga_campos_select = function($campo_select, $arreglo_elementos, elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem){
+	$carga_campos_select = function($campo_select, $arreglo_elementos, elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem, fijo){
 		var select_html = '';
 		
 		if(texto_elemento_cero != ''){
@@ -93,9 +99,12 @@ $(function() {
 			if( parseInt(elemento[index_elem]) == parseInt(elemento_seleccionado) ){
 				select_html += '<option value="' + elemento[index_elem] + '" selected="yes">' + elemento[index_text_elem] + '</option>';
 			}else{
-				select_html += '<option value="' + elemento[index_elem] + '" >' + elemento[index_text_elem] + '</option>';
+				if(!fijo){
+					select_html += '<option value="' + elemento[index_elem] + '" >' + elemento[index_text_elem] + '</option>';
+				}
 			}
 		});
+		
 		$campo_select.children().remove();
 		$campo_select.append(select_html);
 	}
@@ -131,13 +140,15 @@ $(function() {
 	
 	
 	$aplica_evento_focus_input_numerico = function($campo){
-		//Al iniciar el campo tiene un  caracter en blanco, al obtener el foco se elimina el  espacio por comillas
+		//Al iniciar el campo tiene un caracter en blanco o tiene comas, al obtener el foco se elimina el  espacio por espacio en blanco
 		$campo.focus(function(e){
-			$(this).val($(this).val().trim());
+			var valor=quitar_comas($(this).val().trim());
 			
-			if($(this).val() != ''){
-				if(parseFloat($(this).val())<=0){
+			if(valor != ''){
+				if(parseFloat(valor)<=0){
 					$(this).val('');
+				}else{
+					$(this).val(valor);
 				}
 			}
 		});
@@ -267,14 +278,16 @@ $(function() {
 			var texto_elemento_cero = '[-- --]';
 			var index_elem = 'id';
 			var index_text_elem = 'titulo';
-			$carga_campos_select($busqueda_select_tipo_poliza, data['TPol'], elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem);
+			var option_fijo = false;
+			$carga_campos_select($busqueda_select_tipo_poliza, data['TPol'], elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem, option_fijo);
 			
 			//Cargar select de Conceptos Contables
 			elemento_seleccionado = 0;
 			texto_elemento_cero = '[-- --]';
 			index_elem = 'id';
 			index_text_elem = 'titulo';
-			$carga_campos_select($busqueda_select_concepto, data['Con'], elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem);
+			option_fijo = false;
+			$carga_campos_select($busqueda_select_concepto, data['Con'], elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem, option_fijo);
 			
 			
 			
@@ -765,6 +778,62 @@ $(function() {
 
 
 
+
+	//Obtiene datos de una cuenta contable en especifico
+	$getDataCta = function($grid_cuentas, $cuenta, $scuenta, $sscuenta, $ssscuenta, $sssscuenta){
+		var detalle=0;
+		
+		detalle=1;
+		
+		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDataCta.json';
+		$arreglo = {	'detalle':detalle,
+						'cta':$cuenta.val(),
+						'scta':$scuenta.val(),
+						'sscta':$sscuenta.val(),
+						'ssscta':$ssscuenta.val(),
+						'sssscta':$sssscuenta.val(),
+						'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
+					}
+		
+		var trr = '';
+		$tabla_resultados.children().remove();
+		$.post(input_json,$arreglo,function(entry){
+			var notr=0;
+			$.each(entry['Cta'],function(entryIndex,cta){
+				//obtiene numero de trs
+				notr = $("tr", $tabla_resultados).size();
+				notr++;
+				
+				trr = '<tr class="tr'+notr+'">';
+					trr += '<td width="30">'+cuenta['m']+'</td>';
+					trr += '<td width="30">'+cuenta['c']+'</td>';
+					trr += '<td width="170">';
+						trr += '<input type="hidden" name="id_cta" value="'+cuenta['id']+'" >';
+						trr += '<input type="text" name="cta" value="'+cuenta['cuenta']+'" class="borde_oculto" style="width:166px; readOnly="true">';
+						trr += '<input type="hidden" name="campo_cta" value="'+cuenta['cta']+'" >';
+						trr += '<input type="hidden" name="campo_scta" value="'+cuenta['subcta']+'" >';
+						trr += '<input type="hidden" name="campo_sscta" value="'+cuenta['ssubcta']+'" >';
+						trr += '<input type="hidden" name="campo_ssscta" value="'+cuenta['sssubcta']+'" >';
+						trr += '<input type="hidden" name="campo_ssscta" value="'+cuenta['ssssubcta']+'" >';
+					trr += '</td>';
+					trr += '<td width="230"><input type="text" name="des" value="'+cuenta['descripcion']+'" class="borde_oculto" style="width:226px; readOnly="true"></td>';
+					trr += '<td width="70">'+cuenta['detalle']+'</td>';
+					trr += '<td width="50">'+cuenta['nivel_cta']+'</td>';
+				trr += '</tr>';
+				$tabla_resultados.append(trr);
+			});
+		});//termina llamada json
+		
+		
+	}//termina buscador de Cuentas Contables
+
+
+
+
+
+
+
+
 	
 	//nuevo 
 	$new.click(function(event){
@@ -808,6 +877,11 @@ $(function() {
 		
 		var $busca_cuenta_contble = $('#forma-ctbpolizacontable-window').find('#busca_cuenta_contble');
 		var $agrega_cuenta_contble = $('#forma-ctbpolizacontable-window').find('#agrega_cuenta_contble');
+		
+		//Grid de Cuentas contables
+		var $grid_cuentas = $('#forma-ctbpolizacontable-window').find('#grid_cuentas');
+		var $grid_warning = $('#forma-ctbpolizacontable-window').find('#grid_warning');
+		
 		
 		var $cerrar_plugin = $('#forma-ctbpolizacontable-window').find('#close');
 		var $cancelar_plugin = $('#forma-ctbpolizacontable-window').find('#boton_cancelar');
@@ -934,21 +1008,24 @@ $(function() {
 			var texto_elemento_cero = '';
 			var index_elem = 'id';
 			var index_text_elem = 'titulo';
-			$carga_campos_select($select_tipo, ArrayTPol, elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem);
+			var option_fijo = false;
+			$carga_campos_select($select_tipo, ArrayTPol, elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem, option_fijo);
 			
 			//Cargar select de Conceptos Contables
 			elemento_seleccionado = 0;
 			texto_elemento_cero = '';
 			index_elem = 'id';
 			index_text_elem = 'titulo';
-			$carga_campos_select($select_concepto, ArrayCon, elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem);
+			option_fijo = false;
+			$carga_campos_select($select_concepto, ArrayCon, elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem, option_fijo);
 			
 			//Cargar select de Centro de Costos
 			elemento_seleccionado = 0;
 			texto_elemento_cero = '[--Seleccionar--]';
 			index_elem = 'id';
 			index_text_elem = 'titulo';
-			$carga_campos_select($select_centro_costo, entry['CC'], elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem);
+			option_fijo = false;
+			$carga_campos_select($select_centro_costo, entry['CC'], elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem, option_fijo);
 			
 			
 			
@@ -965,49 +1042,61 @@ $(function() {
 			
 			
 			//generar tr para agregar al grid
-			$agrega_tr = function(noTr, id_det, id_tmov, codigo, descripcion, unidad, cant_traspaso, readOnly, densidad, idPres, presentacion, cantPres, noDec, cantEquiv){
+			$agrega_tr = function($grid_cuentas, id_det, id_tmov, cta, descripcion, id_cc, debe, haber, readOnly, arrayTmov, arrayCentroCostos){
+				var noTr = $("tr", $grid_cuentas).size();
+				noTr++;
+				
 				var trr = '';
 				trr = '<tr>';
-					trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="120">';
+					trr += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="30">';
 						trr += '<input type="hidden" 	name="id_det" value="'+ id_det +'">';
-						trr += '<input type="text" 		name="codigo" value="'+ codigo +'" class="borde_oculto" readOnly="true" style="width:116px;">';
-					trr += '</td>';
-					trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="200">';
-						trr += '<select name="select_tmov" class="select_umedida'+ tr +'" style="width:86px;"></select>';
-					trr += '</td>';
-					trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="120">';
-						trr += '<input type="text" 		name="unidad" 	value="'+ unidad +'" class="borde_oculto" readOnly="true" style="width:116px;">';
-					trr += '</td>';
-					trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="120">';
-						trr += '<input type="text" 		name="unidad" 	value="'+ presentacion +'" class="borde_oculto" readOnly="true" style="width:116px;">';
-						trr += '<input type="text" 		name="lote_int" class="lote_int'+ noTr +'" value="" style="width:116px; display:none;">';
-					trr += '</td>';
-					
-					trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
-						trr += '<input type="text" 		name="cantidad" class="cantidad'+noTr+'"  value="'+$(this).agregar_comas(cant_traspaso)+'" '+readOnly+' style="width:86px; text-align:right; border-color:transparent; background:transparent;">';
-						trr += '<input type="text" 		name="cant_traspaso" value="'+cant_traspaso+'" class="cant_traspaso'+noTr+'"  style="width:86px; display:none;">';
-					trr += '</td>';
-					
-					trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
-						trr += '<input type="hidden" 	name="idPres" id="idPres" value="'+ idPres +'">';
-						trr += '<input type="hidden" 	name="cantEquiv" id="cantEquiv" value="'+ cantEquiv +'">';
-						trr += '<input type="text" 		name="cantPres" class="cantPres'+noTr+'"  value="'+$(this).agregar_comas(cantPres)+'" '+readOnly+' style="width:86px; text-align:right; border-color:transparent; background:transparent;">';
-					trr += '</td>';
-					
-					trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="15">';
-					trr += '</td>';
-					trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="15">';
-						trr += '<input type="hidden" 	name="eliminado" value="1">';//el 1 significa que el registro no ha sido eliminado
+						trr += '<input type="hidden" 	name="delete" value="1">';//El 1 significa que el registro no ha sido eliminado
 						trr += '<input type="hidden" 	name="no_tr" value="'+ noTr +'">';
 					trr += '</td>';
-					//agregado por paco
-					trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="60">';
-							trr += '<input name="densidad_litro" value="'+densidad+'" type="hidden">';
-							trr += '<input name="cantidad_kilos" id="cantidad_kilos'+ noTr +'" value="0.00" class="borde_oculto" readonly="true" style="width:56px; text-align:right;" type="text">';
+					trr += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="120">';
+						trr += '<select name="select_tmov" id="select_tmov'+ noTr +'" style="width:116px;"></select>';
+					trr += '</td>';
+					trr += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="120">';
+						trr += '<input type="text" 		name="cta" 	  id="cta'+ noTr +'"value="'+ cta +'" class="borde_oculto" readOnly="true" style="width:116px;">';
+					trr += '</td>';
+					trr += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="250">';
+						trr += '<input type="text" 		name="descripcion_cta" 	value="'+ descripcion +'" class="borde_oculto" readOnly="true" style="width:246px;">';
+					trr += '</td>';
+					trr += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="150">';
+						trr += '<select name="select_cc" id="select_cc'+ noTr +'" style="width:146px;"></select>';
+					trr += '</td>';
+					trr += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="90">';
+						trr += '<input type="text" 		name="debe"   id="debe'+noTr+'"  value="'+$(this).agregar_comas(debe)+'" '+readOnly+' style="width:86px; text-align:right; border-color:transparent; background:transparent;">';
+					trr += '</td>';
+					trr += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="90">';
+						trr += '<input type="text" 		name="haber"  id="haber'+noTr+'"  value="'+$(this).agregar_comas(haber)+'" '+readOnly+' style="width:86px; text-align:right; border-color:transparent; background:transparent;">';
 					trr += '</td>';
 				trr += '</tr>';
 				
-				return trr;
+				$grid_cuentas.append(trr);
+				
+				
+				
+				
+				//Cargar select de Centro de Costos
+				var elemento_seleccionado = id_cc;
+				var texto_elemento_cero = '[--Seleccionar--]';
+				var index_elem = 'id';
+				var index_text_elem = 'titulo';
+				var option_fijo = true;
+				$carga_campos_select($grid_cuentas.find('#select_cc'+noTr), arrayCentroCostos, elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem, option_fijo);
+				
+				
+				
+				
+				//Permitir solo numeros y punto
+				$permitir_solo_numeros($grid_cuentas.find('#debe'+noTr));
+				$permitir_solo_numeros($grid_cuentas.find('#haber'+noTr));
+				
+				//Aplicar envento focus
+				$aplica_evento_focus_input_numerico($grid_cuentas.find('#debe'+noTr));
+				$aplica_evento_focus_input_numerico($grid_cuentas.find('#haber'+noTr));
+				
 			}
 					
 			
@@ -1017,12 +1106,29 @@ $(function() {
 			$agrega_cuenta_contble.click(function(event){
 				event.preventDefault();
 				
-				alert("Agregar");
 				
+				$getDataCta($grid_cuentas, $cuenta, $scuenta, $sscuenta, $ssscuenta, $sssscuenta);
 				
+
 				
+				if($cuenta.val().trim()!=''
+				$cuenta.val();
+				$scuenta.val();
+				$sscuenta.val();
+				$ssscuenta.val();
+				$sssscuenta.val();
 				
-				//$buscador_presentaciones_producto($id_cliente,$nocliente.val(), $sku_producto.val(),$nombre_producto,$grid_productos,$select_moneda,$tipo_cambio, entry['Monedas']);
+				var id_det=0;
+				var id_tmov=0;
+				var cta="";
+				var descripcion="";
+				var id_cc=0;
+				var debe=0;
+				var haber=0;
+				var readOnly='readOnly="true"';
+				
+				$agrega_tr($grid_cuentas, id_det, id_tmov, cta, descripcion, id_cc, debe, haber, readOnly, ArrayTPol, entry['CC']);
+				
 			});
 			
 			
@@ -1369,21 +1475,24 @@ $(function() {
 					var texto_elemento_cero = '';
 					var index_elem = 'id';
 					var index_text_elem = 'titulo';
-					$carga_campos_select($select_tipo, ArrayTPol, elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem);
+					var option_fijo = false;
+					$carga_campos_select($select_tipo, ArrayTPol, elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem, option_fijo);
 					
 					//Cargar select de Conceptos Contables
 					elemento_seleccionado = entry['Data'][0]['con_id'];
 					texto_elemento_cero = '';
 					index_elem = 'id';
 					index_text_elem = 'titulo';
-					$carga_campos_select($select_concepto, ArrayCon, elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem);
+					option_fijo = false
+					$carga_campos_select($select_concepto, ArrayCon, elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem, option_fijo);
 					
 					//Cargar select de Centro de Costos
 					elemento_seleccionado = entry['Data'][0]['cc_id'];
 					texto_elemento_cero = '[--Seleccionar--]';
 					index_elem = 'id';
 					index_text_elem = 'titulo';
-					$carga_campos_select($select_centro_costo, entry['CC'], elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem);
+					option_fijo = false
+					$carga_campos_select($select_centro_costo, entry['CC'], elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem,option_fijo);
 					
 					
 					
