@@ -135,7 +135,7 @@
 									
                                     <div id="tabx-1" class="contenidoPes" >
 										
-                                        <table border="1" style="margin:0; padding:0;">
+                                        <table border="0" style="margin:0; padding:0;">
 											<tr>
 												<td></td>
 											</tr>
@@ -214,12 +214,12 @@
 											
 											<tr>
 												<td valign="top" > 
-													<table border="1" class="gral">
+													<table border="0" class="gral">
 														<tr>
 															<td width="10"></td>
 															<td width="60">Cuenta&nbsp;</td>
 															<td>
-																<input type="hidden" name="id_cta" value="0">
+																<!--<input type="hidden" name="id_cta" value="0">-->
 																<input name="cuenta" style="width:40px;" maxlength="4">
 															</td>
 															<td width="5"></td>
@@ -258,6 +258,7 @@
 											<tr>
 												<td valign="top" > 
 													<table border="0" class="gral">
+														<!--
 														<tr>
 															<td width="10"></td>
 															<td width="83">Centro&nbsp;de&nbsp;Costo</td>
@@ -280,10 +281,10 @@
 														<tr>
 															<td colspan="10" height="10"></td>
 														</tr>
-														
+														-->
 														<tr>
 															<td width="10"></td>
-															<td width="83">Observaci&oacute;n</td>
+															<td width="60">Observaci&oacute;n</td>
 															<td width="500" colspan="8">
 																<textarea name="observacion" rows="2" cols="90" style="width:500px; resize:none;"></textarea>
 															</td>
@@ -302,9 +303,9 @@
 																
 																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="30">&nbsp;#</td>
 																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="120">&nbsp;Tipo Mov.</td>
-																<td class="grid" style="background-color: rgb(180, 180, 180);" width="120">&nbsp;Cuenta</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180);" width="150">&nbsp;Cuenta</td>
 																<td class="grid" style="background-color: rgb(180, 180, 180);" width="250">&nbsp;Descripci&oacute;n</td>
-																<td class="grid" style="background-color: rgb(180, 180, 180);" width="150">&nbsp;Centro Costo</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180);" width="120">&nbsp;Centro Costo</td>
 																
 																<td class="grid" style="background-color: rgb(180, 180, 180);" width="90">&nbsp;Debe</td>
 																<td class="grid" style="background-color: rgb(180, 180, 180);" width="120">&nbsp;Haber</td>
