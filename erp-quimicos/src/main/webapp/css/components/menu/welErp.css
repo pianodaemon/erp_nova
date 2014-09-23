@@ -237,3 +237,18 @@
     height:20px;
 }
 
+
+.onmouseOutEliminar {
+	background-image: url(../../../img/borrar.png);
+	background-repeat: no-repeat;
+    width:16px;
+    height:16px;
+}
+
+.onmouseOverEliminar {
+	background-image: url(../../../img/borrar1.png);
+	background-repeat: no-repeat;
+    width:16px;
+    height:16px;
+}
+
