@@ -15,6 +15,7 @@ $(function() {
 	var array_meses = {1:"Enero", 2:"Febrero", 3:"Marzo", 4:"Abirl", 5:"Mayo", 6:"Junio", 7:"Julio", 8:"Agosto", 9:"Septiembre", 10:"Octubre", 11:"Noviembre", 12:"Diciembre"};
 	var array_status = {0:"[--- ---]", 1:"No afectana", 2:"Afectada", 3:"Cancelada"};
 	var parametros;
+	var arrayTmov;
 	
 	
 	//------------------------------------------------------------------
@@ -95,6 +96,10 @@ $(function() {
 			select_html = '<option value="0">'+texto_elemento_cero+'</option>';
 		}
 		
+		if(parseInt(elemento_seleccionado)<=0 && texto_elemento_cero==''){
+			select_html = '<option value="0">[--- ---]</option>';
+		}
+		
 		$.each($arreglo_elementos,function(entryIndex,elemento){
 			if( parseInt(elemento[index_elem]) == parseInt(elemento_seleccionado) ){
 				select_html += '<option value="' + elemento[index_elem] + '" selected="yes">' + elemento[index_text_elem] + '</option>';
@@ -156,7 +161,30 @@ $(function() {
 	
 	
 	
-	
+	/*
+	Esta funcion es para manejar el comportamiento de los input de cuentas.
+	Al eliminar los datos de un campo, se regresa el cursor al campo anterior
+	Al teclear 4 digitos en un campo, se pasa el cursor al siguiente campo
+	*/
+	$aplica_evento_keypress_input_cta = function($campo_input, $campo_input_anterior, $campo_input_siguiente, $descripcion_cuenta, saltar_anterior, saltar_siguiente){
+		$campo_input.keypress(function(e){
+			if (e.which == 8) {
+				$descripcion_cuenta.val('');
+				if(saltar_anterior){
+					if((parseInt($campo_input.val().length)-1)<=0){
+						$campo_input_anterior.focus();
+					}
+				}
+			}else{
+				if(saltar_siguiente){
+					if((parseInt($campo_input.val().length)+1)>=4){
+						$campo_input_siguiente.focus();
+					}
+				}
+			}
+		});
+	}
+
 	
 	
 	
@@ -253,24 +281,29 @@ $(function() {
 		$carga_select_con_arreglo_fijo($busqueda_select_estatus, array_status, elemento_seleccionado, mostrar_opciones);
 
 		
-		var input_json_cuentas = document.location.protocol + '//' + document.location.host + '/'+controller+'/getCuentasMayor.json';
+		var input_json_cuentas = document.location.protocol + '//' + document.location.host + '/'+controller+'/getInicializar.json';
 		$arreglo = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
 		$.post(input_json_cuentas,$arreglo,function(data){
 			
-			
-			
 			$busqueda_select_sucursal.children().remove();
 			var suc_hmtl = '';
-			$.each(data['Suc'],function(entryIndex,suc){
-				if(parseInt(suc['id'])==parseInt(data['Data']['suc'])){
-					suc_hmtl += '<option value="' + suc['id'] + '" selected="yes">'+ suc['titulo'] + '</option>';
-				}else{
-					if(data['Data']['versuc']==true){
-						suc_hmtl += '<option value="' + suc['id'] + '">'+ suc['titulo'] + '</option>';
+			if(data['Data']['versuc']==true){
+				//Aqui carga todas las sucursales porque el usuario es un administrador
+				suc_hmtl = '<option value="0" selected="yes">[--- Todos ---]</option>';
+				$.each(data['Suc'],function(entryIndex,suc){
+					suc_hmtl += '<option value="' + suc['id'] + '">'+ suc['titulo'] + '</option>';
+				});
+			}else{
+				//Aqui solo debe cargar la sucursal del usuario logueado
+				$.each(data['Suc'],function(entryIndex,suc){
+					if(parseInt(suc['id'])==parseInt(data['Data']['suc'])){
+						suc_hmtl += '<option value="' + suc['id'] + '" selected="yes">'+ suc['titulo'] + '</option>';
 					}
-				}
-			});
+				});
+			}
 			$busqueda_select_sucursal.append(suc_hmtl);
+			
+			
 			
 			
 			//Carga select de Tipos de Poliza
@@ -351,6 +384,7 @@ $(function() {
 			ArrayTPol = data['TPol'];
 			ArrayCon = data['Con'];
 			parametros = data['Data'];
+			arrayTmov = data['Tmov'];
 			
 			$busqueda_select_sucursal.focus();
 		});
@@ -614,14 +648,14 @@ $(function() {
 		
 		//carga select de cuentas de Mayor
 		$select_cta_mayor.children().remove();
-		var ctamay_hmtl = '';
+		var ctamay_hmtl = '<option value="0_0">[---- ----]</option>';;
 		$.each(arrayCtasMayor,function(entryIndex,ctamay){
 			/*
 			if (parseInt(mayor_seleccionado) == parseInt( ctamay['id']) ){
 				ctamay_hmtl += '<option value="' + ctamay['id'] + '">'+ ctamay['titulo'] + '</option>';
 			}
 			*/
-			ctamay_hmtl += '<option value="' + ctamay['id'] + '">'+ ctamay['descripcion'] + '</option>';
+			ctamay_hmtl += '<option value="'+ ctamay['cta_mayor'] +'_'+ ctamay['clasificacion'] +'">'+ ctamay['descripcion'] + '</option>';
 		});
 		$select_cta_mayor.append(ctamay_hmtl);
 		
@@ -694,7 +728,7 @@ $(function() {
 					var desc = $(this).find('input[name=des]').val();
 					
 					if(parseInt(tipo)==1 ){
-						$('#forma-ctbpolizacontable-window').find('input[name=id_cta]').val(id_cta);
+						//$('#forma-ctbpolizacontable-window').find('input[name=id_cta]').val(id_cta);
 						$('#forma-ctbpolizacontable-window').find('input[name=cuenta]').val(cta);
 						$('#forma-ctbpolizacontable-window').find('input[name=scuenta]').val(scta);
 						$('#forma-ctbpolizacontable-window').find('input[name=sscuenta]').val(sscta);
@@ -718,6 +752,8 @@ $(function() {
 			});//termina llamada json
 		});
 		
+		
+		
 		$campo_clasif.keypress(function(e){
 			if(e.which == 13){
 				$boton_busca.trigger('click');
@@ -725,105 +761,229 @@ $(function() {
 			}
 		});
 		
-		$campo_cuenta.keypress(function(e){
-			if(e.which == 13){
-				$boton_busca.trigger('click');
-				return false;
-			}
-		});
+		//Aplica funcionalidad para saltar al del campo actual al siguiente y al campo anterior
+		$aplica_evento_keypress_input_cta($campo_cuenta, $campo_cuenta, $campo_scuenta, $campo_descripcion, false, true);
+		$aplica_evento_keypress_input_cta($campo_scuenta, $campo_cuenta, $campo_sscuenta, $campo_descripcion, true, true);
+		$aplica_evento_keypress_input_cta($campo_sscuenta, $campo_scuenta, $campo_ssscuenta, $campo_descripcion, true, true);
+		$aplica_evento_keypress_input_cta($campo_ssscuenta, $campo_sscuenta, $campo_sssscuenta, $campo_descripcion, true, true);
+		$aplica_evento_keypress_input_cta($campo_sssscuenta, $campo_ssscuenta, $campo_sssscuenta, $campo_descripcion, true, false);
 		
-		$campo_scuenta.keypress(function(e){
-			if(e.which == 13){
-				$boton_busca.trigger('click');
-				return false;
-			}
-		});
+		//Aplicar evento keypress para que al momento de pulsar enter se ejecute la busqueda
+		$(this).aplicarEventoKeypressEjecutaTrigger($select_cta_mayor, $boton_busca);
+		$(this).aplicarEventoKeypressEjecutaTrigger($campo_clasif, $boton_busca);
+		$(this).aplicarEventoKeypressEjecutaTrigger($campo_cuenta, $boton_busca);
+		$(this).aplicarEventoKeypressEjecutaTrigger($campo_scuenta, $boton_busca);
+		$(this).aplicarEventoKeypressEjecutaTrigger($campo_sscuenta, $boton_busca);
+		$(this).aplicarEventoKeypressEjecutaTrigger($campo_ssscuenta, $boton_busca);
+		$(this).aplicarEventoKeypressEjecutaTrigger($campo_sssscuenta, $boton_busca);
+		$(this).aplicarEventoKeypressEjecutaTrigger($campo_descripcion, $boton_busca);
 		
-		$campo_sscuenta.keypress(function(e){
-			if(e.which == 13){
-				$boton_busca.trigger('click');
-				return false;
-			}
-		});
-		
-		$campo_ssscuenta.keypress(function(e){
-			if(e.which == 13){
-				$boton_busca.trigger('click');
-				return false;
-			}
-		});
-		
-		$campo_sssscuenta.keypress(function(e){
-			if(e.which == 13){
-				$boton_busca.trigger('click');
-				return false;
-			}
-		});
-		
-		$campo_descripcion.keypress(function(e){
-			if(e.which == 13){
-				$boton_busca.trigger('click');
-				return false;
-			}
-		});
 		
 		$boton_cencela.click(function(event){
 			//event.preventDefault();
 			var remove = function() {$(this).remove();};
 			$('#forma-buscactacontable-overlay').fadeOut(remove);
 		});
+		
+		$select_cta_mayor.focus();
+		
 	}//termina buscador de Cuentas Contables
 
 
 
 
 
+	//generar tr para agregar al grid
+	$agrega_tr = function($grid_cuentas, id_det, id_tmov, id_cta, cta, descripcion, id_cc, debe, haber, readOnly, arrayTmov, arrayCentroCostos){
+		var noTr = $("tr", $grid_cuentas).size();
+		noTr++;
+		
+		
+		var encontrado = 0;
+		
+		//Busca si la cuenta ya se encuentra en el grid
+		$grid_cuentas.find('tr').each(function (index){
+			if(parseInt($(this).find('input[name=id_cta]').val()) == parseInt(id_cta)){
+				//La cuenta ya se encuentra en el grid
+				encontrado=1;
+			}
+		});
+		
+		
+		if(parseInt(encontrado)<=0){
+			var trr = '';
+			trr = '<tr>';
+				trr += '<td class="grid" style="font-size:11px; border:1px solid #C1DAD7;" width="30">';
+					trr += '<a href="#del'+ noTr +'"><div id="eliminar'+ noTr +'" class="onmouseOutEliminar" style="width:25px; background-position:center;"/></a>';
+					trr += '<input type="hidden" 	name="id_det" value="'+ id_det +'">';
+					trr += '<input type="hidden" 	name="delete" value="1">';//El 1 significa que el registro no ha sido eliminado
+					trr += '<input type="hidden" 	name="no_tr" value="'+ noTr +'">';
+				trr += '</td>';
+				trr += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="120">';
+					trr += '<select name="select_tmov" id="select_tmov'+ noTr +'" style="width:116px;"></select>';
+				trr += '</td>';
+				trr += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="150">';
+					trr += '<input type="hidden" 	name="id_cta" value="'+ id_cta +'">';
+					trr += '<input type="text" 		name="cta" 	  id="cta'+ noTr +'"value="'+ cta +'" class="borde_oculto" readOnly="true" style="width:146px;">';
+				trr += '</td>';
+				trr += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="250">';
+					trr += '<input type="text" 		name="descripcion_cta" 	value="'+ descripcion +'" class="borde_oculto" readOnly="true" style="width:246px;">';
+				trr += '</td>';
+				trr += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="120">';
+					trr += '<select name="select_cc" id="select_cc'+ noTr +'" style="width:116px;"></select>';
+				trr += '</td>';
+				trr += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="90">';
+					trr += '<input type="text" 		name="debe"   id="debe'+noTr+'"  value="'+$(this).agregar_comas(parseFloat(debe).toFixed(2))+'" '+readOnly+' style="width:86px; text-align:right;">';
+				trr += '</td>';
+				trr += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="90">';
+					trr += '<input type="text" 		name="haber"  id="haber'+noTr+'"  value="'+$(this).agregar_comas(parseFloat(haber).toFixed(2))+'" '+readOnly+' style="width:86px; text-align:right;">';
+				trr += '</td>';
+			trr += '</tr>';
+			
+			$grid_cuentas.append(trr);
+			
+			
+			
+			//Cargar select de Tipos de Movimiento
+			var elemento_seleccionado = id_tmov;
+			var texto_elemento_cero = '';
+			var index_elem = 'id';
+			var index_text_elem = 'titulo';
+			var option_fijo = false;
+			if(parseInt(arrayTmov.length)<=0){
+				texto_elemento_cero = '[--- ---]';
+			}
+			$carga_campos_select($grid_cuentas.find('#select_tmov'+noTr), arrayTmov, elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem, option_fijo);
+			
+			
+			//Cargar select de Centro de Costos
+			elemento_seleccionado = id_cc;
+			texto_elemento_cero = '';
+			index_elem = 'id';
+			index_text_elem = 'titulo';
+			option_fijo = true;
+			$carga_campos_select($grid_cuentas.find('#select_cc'+noTr), arrayCentroCostos, elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem, option_fijo);
+			
+			
+			//Permitir solo numeros y punto
+			$permitir_solo_numeros($grid_cuentas.find('#debe'+noTr));
+			$permitir_solo_numeros($grid_cuentas.find('#haber'+noTr));
+			
+			//Aplicar envento focus
+			$aplica_evento_focus_input_numerico($grid_cuentas.find('#debe'+noTr));
+			$aplica_evento_focus_input_numerico($grid_cuentas.find('#haber'+noTr));
+			
+			
+			$grid_cuentas.find('#debe'+noTr).blur(function(){
+				$validar_numero_puntos($grid_cuentas.find('#debe'+noTr), "Debe");
+				if($(this).val().trim()==''){
+					$(this).val(0);
+				}
+				$(this).val(parseFloat($(this).val()).toFixed(2));
+			});
+			
+			$grid_cuentas.find('#haber'+noTr).blur(function(){
+				$validar_numero_puntos($grid_cuentas.find('#haber'+noTr), "Haber");
+				if($(this).val().trim()==''){
+					$(this).val(0);
+				}
+				$(this).val(parseFloat($(this).val()).toFixed(2));
+			});
+			
+			
+			/*
+			trr += '<a href="#del"><div id="eliminar'+ noTr +'" class="onmouseOutEliminar" style="width:25px; background-position:center;"/></a>';
+			trr += '<input type="hidden" 	name="id_det" value="'+ id_det +'">';
+			trr += '<input type="hidden" 	name="delete" value="1">';//El 1 significa que el registro no ha sido eliminado
+			trr += '<input type="hidden" 	name="no_tr" value="'+ noTr +'">';
+			*/
+			
+			//elimina un producto del grid
+			$grid_cuentas.find('a[href=#del'+ noTr +']').bind('click',function(event){
+				
+				//event.preventDefault();
+				if(parseInt($(this).parent().find('input[name=delete]').val()) != 0){
+					//Obtener el id_det
+					var id_det = $(this).parent().find('input[name=id_det]').val();
+					
+					//Asigna espacios en blanco a todos los input de la fila eliminada
+					$(this).parent().parent().find('input').val(' ');
+					
+					//Asigna un 0 al input eliminado como bandera para saber que esta eliminado
+					$(this).parent().find('input[name=delete]').val(0);
+					
+					//Regresar el valor al campo id_det
+					$(this).parent().find('input[name=id_det]').val(id_det);
+					
+					//oculta la fila eliminada
+					$(this).parent().parent().hide();
+				}
+			});
+			
+			
+			
+			
+			$grid_cuentas.find('#eliminar'+ noTr).mouseover(function(){
+				$(this).removeClass("onmouseOutEliminar").addClass("onmouseOverEliminar");
+			});
+			$grid_cuentas.find('#eliminar'+ noTr).mouseout(function(){
+				$(this).removeClass("onmouseOverEliminar").addClass("onmouseOutEliminar");
+			});
+		
+		}else{
+			jAlert('La cuenta: '+cta+' ya se encuentra en el listado, ingrese otro diferente.', 'Atencion!', function(r) { 
+				$('#forma-ctbpolizacontable-window').find('input[name=cuenta]').focus();
+			});
+		}
+	}
+	
+	
+			
+
 
 	//Obtiene datos de una cuenta contable en especifico
-	$getDataCta = function($grid_cuentas, $cuenta, $scuenta, $sscuenta, $ssscuenta, $sssscuenta){
+	$getDataCta = function($grid_cuentas, $cuenta, $scuenta, $sscuenta, $ssscuenta, $sssscuenta, arrayCentroCostos){
 		var detalle=0;
 		
 		detalle=1;
 		
-		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDataCta.json';
-		$arreglo = {	'detalle':detalle,
-						'cta':$cuenta.val(),
-						'scta':$scuenta.val(),
-						'sscta':$sscuenta.val(),
-						'ssscta':$ssscuenta.val(),
-						'sssscta':$sssscuenta.val(),
-						'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
-					}
-		
-		var trr = '';
-		$tabla_resultados.children().remove();
-		$.post(input_json,$arreglo,function(entry){
-			var notr=0;
-			$.each(entry['Cta'],function(entryIndex,cta){
-				//obtiene numero de trs
-				notr = $("tr", $tabla_resultados).size();
-				notr++;
+		if($cuenta.val().trim()!='' || $scuenta.val().trim()!='' || $sscuenta.val().trim()!='' || $ssscuenta.val().trim()!='' || $sssscuenta.val().trim()!=''){
+			var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDataCta.json';
+			$arreglo = {	'detalle':detalle,
+							'cta':$cuenta.val(),
+							'scta':$scuenta.val(),
+							'sscta':$sscuenta.val(),
+							'ssscta':$ssscuenta.val(),
+							'sssscta':$sssscuenta.val(),
+							'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
+						}
+			
+			$.post(input_json,$arreglo,function(entry){
 				
-				trr = '<tr class="tr'+notr+'">';
-					trr += '<td width="30">'+cuenta['m']+'</td>';
-					trr += '<td width="30">'+cuenta['c']+'</td>';
-					trr += '<td width="170">';
-						trr += '<input type="hidden" name="id_cta" value="'+cuenta['id']+'" >';
-						trr += '<input type="text" name="cta" value="'+cuenta['cuenta']+'" class="borde_oculto" style="width:166px; readOnly="true">';
-						trr += '<input type="hidden" name="campo_cta" value="'+cuenta['cta']+'" >';
-						trr += '<input type="hidden" name="campo_scta" value="'+cuenta['subcta']+'" >';
-						trr += '<input type="hidden" name="campo_sscta" value="'+cuenta['ssubcta']+'" >';
-						trr += '<input type="hidden" name="campo_ssscta" value="'+cuenta['sssubcta']+'" >';
-						trr += '<input type="hidden" name="campo_ssscta" value="'+cuenta['ssssubcta']+'" >';
-					trr += '</td>';
-					trr += '<td width="230"><input type="text" name="des" value="'+cuenta['descripcion']+'" class="borde_oculto" style="width:226px; readOnly="true"></td>';
-					trr += '<td width="70">'+cuenta['detalle']+'</td>';
-					trr += '<td width="50">'+cuenta['nivel_cta']+'</td>';
-				trr += '</tr>';
-				$tabla_resultados.append(trr);
+				if(parseInt(entry['Cta'].length)>0){
+					var id_det=0;
+					var id_tmov=0;
+					var id_cta=entry['Cta'][0]['id'];
+					var cta=entry['Cta'][0]['cuenta'].trim();
+					var descripcion=entry['Cta'][0]['descripcion'];
+					var id_cc=entry['Cta'][0]['cc_id'];
+					var debe=0;
+					var haber=0;
+					//var readOnly='readOnly="true"';
+					var readOnly='';
+					
+					$agrega_tr($grid_cuentas, id_det, id_tmov, id_cta, cta, descripcion, id_cc, debe, haber, readOnly, arrayTmov, arrayCentroCostos);
+				}else{
+					jAlert('La cuenta ingresada no es valida.', 'Atencion!', function(r) {
+						$cuenta.focus();
+					});
+				}
+			});//termina llamada json
+		}else{
+			jAlert('Es necesario ingresar una cuenta', 'Atencion!', function(r) {
+				$cuenta.focus();
 			});
-		});//termina llamada json
-		
+		}
 		
 	}//termina buscador de Cuentas Contables
 
@@ -846,7 +1006,7 @@ $(function() {
 		var $forma_selected = $('#' + form_to_show).clone();
 		$forma_selected.attr({ id : form_to_show + id_to_show });
 		
-		$('#forma-ctbpolizacontable-window').css({ "margin-left": -470, 	"margin-top": -200 });
+		$('#forma-ctbpolizacontable-window').css({ "margin-left": -470, 	"margin-top": -235 });
 		$forma_selected.prependTo('#forma-ctbpolizacontable-window');
 		$forma_selected.find('.panelcito_modal').attr({ id : 'panelcito_modal' + id_to_show , style:'display:table'});
 		$tabs_li_funxionalidad();
@@ -863,18 +1023,18 @@ $(function() {
 		var $select_tipo = $('#forma-ctbpolizacontable-window').find('select[name=select_tipo]');
 		var $select_concepto = $('#forma-ctbpolizacontable-window').find('select[name=select_concepto]');
 		
-		var $id_cta = $('#forma-ctbpolizacontable-window').find('input[name=id_cta]');
+		//var $id_cta = $('#forma-ctbpolizacontable-window').find('input[name=id_cta]');
 		var $cuenta = $('#forma-ctbpolizacontable-window').find('input[name=cuenta]');
 		var $scuenta = $('#forma-ctbpolizacontable-window').find('input[name=scuenta]');
 		var $sscuenta = $('#forma-ctbpolizacontable-window').find('input[name=sscuenta]');
 		var $ssscuenta = $('#forma-ctbpolizacontable-window').find('input[name=ssscuenta]');
 		var $sssscuenta = $('#forma-ctbpolizacontable-window').find('input[name=sssscuenta]');
 		var $descripcion_cuenta = $('#forma-ctbpolizacontable-window').find('input[name=descripcion_cuenta]');
-		
+		/*
 		var $select_centro_costo = $('#forma-ctbpolizacontable-window').find('select[name=select_centro_costo]');
 		var $debe = $('#forma-ctbpolizacontable-window').find('input[name=debe]');
 		var $haber = $('#forma-ctbpolizacontable-window').find('input[name=haber]');
-		
+		*/
 		var $busca_cuenta_contble = $('#forma-ctbpolizacontable-window').find('#busca_cuenta_contble');
 		var $agrega_cuenta_contble = $('#forma-ctbpolizacontable-window').find('#agrega_cuenta_contble');
 		
@@ -892,14 +1052,17 @@ $(function() {
 		$permitir_solo_numeros($sscuenta);
 		$permitir_solo_numeros($ssscuenta);
 		$permitir_solo_numeros($sssscuenta);
-		$permitir_solo_numeros($debe);
-		$permitir_solo_numeros($haber);
+		//$permitir_solo_numeros($debe);
+		//$permitir_solo_numeros($haber);
 		
 		$cuenta.hide();
 		$scuenta.hide();
 		$sscuenta.hide();
 		$ssscuenta.hide();
 		$sssscuenta.hide();
+		
+		
+		
 		
 
 		$no_poliza.attr("readonly", true);
@@ -909,8 +1072,12 @@ $(function() {
 		
 		$identificador.attr({ 'value' : 0 });
 		
-		$debe.val(0);
-		$haber.val(0);
+		//quitar enter a todos los campos input
+		$('#forma-ctbpolizacontable-window').find('input').keypress(function(e){
+			if(e.which==13 ) {
+				return false;
+			}
+		});
        
 		var respuestaProcesada = function(data){
 			if ( data['success'] == "true" ){
@@ -1019,6 +1186,7 @@ $(function() {
 			option_fijo = false;
 			$carga_campos_select($select_concepto, ArrayCon, elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem, option_fijo);
 			
+			/*
 			//Cargar select de Centro de Costos
 			elemento_seleccionado = 0;
 			texto_elemento_cero = '[--Seleccionar--]';
@@ -1026,7 +1194,7 @@ $(function() {
 			index_text_elem = 'titulo';
 			option_fijo = false;
 			$carga_campos_select($select_centro_costo, entry['CC'], elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem, option_fijo);
-			
+			*/
 			
 			
 			//Busca Cuentas Contables
@@ -1036,99 +1204,10 @@ $(function() {
 			});
 			
 			
-			
-			
-			
-			
-			
-			//generar tr para agregar al grid
-			$agrega_tr = function($grid_cuentas, id_det, id_tmov, cta, descripcion, id_cc, debe, haber, readOnly, arrayTmov, arrayCentroCostos){
-				var noTr = $("tr", $grid_cuentas).size();
-				noTr++;
-				
-				var trr = '';
-				trr = '<tr>';
-					trr += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="30">';
-						trr += '<input type="hidden" 	name="id_det" value="'+ id_det +'">';
-						trr += '<input type="hidden" 	name="delete" value="1">';//El 1 significa que el registro no ha sido eliminado
-						trr += '<input type="hidden" 	name="no_tr" value="'+ noTr +'">';
-					trr += '</td>';
-					trr += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="120">';
-						trr += '<select name="select_tmov" id="select_tmov'+ noTr +'" style="width:116px;"></select>';
-					trr += '</td>';
-					trr += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="120">';
-						trr += '<input type="text" 		name="cta" 	  id="cta'+ noTr +'"value="'+ cta +'" class="borde_oculto" readOnly="true" style="width:116px;">';
-					trr += '</td>';
-					trr += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="250">';
-						trr += '<input type="text" 		name="descripcion_cta" 	value="'+ descripcion +'" class="borde_oculto" readOnly="true" style="width:246px;">';
-					trr += '</td>';
-					trr += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="150">';
-						trr += '<select name="select_cc" id="select_cc'+ noTr +'" style="width:146px;"></select>';
-					trr += '</td>';
-					trr += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="90">';
-						trr += '<input type="text" 		name="debe"   id="debe'+noTr+'"  value="'+$(this).agregar_comas(debe)+'" '+readOnly+' style="width:86px; text-align:right; border-color:transparent; background:transparent;">';
-					trr += '</td>';
-					trr += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="90">';
-						trr += '<input type="text" 		name="haber"  id="haber'+noTr+'"  value="'+$(this).agregar_comas(haber)+'" '+readOnly+' style="width:86px; text-align:right; border-color:transparent; background:transparent;">';
-					trr += '</td>';
-				trr += '</tr>';
-				
-				$grid_cuentas.append(trr);
-				
-				
-				
-				
-				//Cargar select de Centro de Costos
-				var elemento_seleccionado = id_cc;
-				var texto_elemento_cero = '[--Seleccionar--]';
-				var index_elem = 'id';
-				var index_text_elem = 'titulo';
-				var option_fijo = true;
-				$carga_campos_select($grid_cuentas.find('#select_cc'+noTr), arrayCentroCostos, elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem, option_fijo);
-				
-				
-				
-				
-				//Permitir solo numeros y punto
-				$permitir_solo_numeros($grid_cuentas.find('#debe'+noTr));
-				$permitir_solo_numeros($grid_cuentas.find('#haber'+noTr));
-				
-				//Aplicar envento focus
-				$aplica_evento_focus_input_numerico($grid_cuentas.find('#debe'+noTr));
-				$aplica_evento_focus_input_numerico($grid_cuentas.find('#haber'+noTr));
-				
-			}
-					
-			
-			
-			
-			
 			$agrega_cuenta_contble.click(function(event){
 				event.preventDefault();
 				
-				
-				$getDataCta($grid_cuentas, $cuenta, $scuenta, $sscuenta, $ssscuenta, $sssscuenta);
-				
-
-				
-				if($cuenta.val().trim()!=''
-				$cuenta.val();
-				$scuenta.val();
-				$sscuenta.val();
-				$ssscuenta.val();
-				$sssscuenta.val();
-				
-				var id_det=0;
-				var id_tmov=0;
-				var cta="";
-				var descripcion="";
-				var id_cc=0;
-				var debe=0;
-				var haber=0;
-				var readOnly='readOnly="true"';
-				
-				$agrega_tr($grid_cuentas, id_det, id_tmov, cta, descripcion, id_cc, debe, haber, readOnly, ArrayTPol, entry['CC']);
-				
+				$getDataCta($grid_cuentas, $cuenta, $scuenta, $sscuenta, $ssscuenta, $sssscuenta, entry['CC']);
 			});
 			
 			
@@ -1139,7 +1218,12 @@ $(function() {
 		},"json");//termina llamada json
 		
 		
-		
+		//Aplica evento para agregar al grid al pulsar enter en cuelquira de los campos de la cuenta
+		$(this).aplicarEventoKeypressEjecutaTrigger($cuenta, $agrega_cuenta_contble);
+		$(this).aplicarEventoKeypressEjecutaTrigger($scuenta, $agrega_cuenta_contble);
+		$(this).aplicarEventoKeypressEjecutaTrigger($sscuenta, $agrega_cuenta_contble);
+		$(this).aplicarEventoKeypressEjecutaTrigger($ssscuenta, $agrega_cuenta_contble);
+		$(this).aplicarEventoKeypressEjecutaTrigger($sssscuenta, $agrega_cuenta_contble);
 		
 
 		
@@ -1178,78 +1262,32 @@ $(function() {
 			}
 		});
 		
+
+		//Aplica funcionalidad para saltar al del campo actual al siguiente y al campo anterior
+		$aplica_evento_keypress_input_cta($cuenta, $cuenta, $scuenta, $descripcion_cuenta, false, true);
+		$aplica_evento_keypress_input_cta($scuenta, $cuenta, $sscuenta, $descripcion_cuenta, true, true);
+		$aplica_evento_keypress_input_cta($sscuenta, $scuenta, $ssscuenta, $descripcion_cuenta, true, true);
+		$aplica_evento_keypress_input_cta($ssscuenta, $sscuenta, $sssscuenta, $descripcion_cuenta, true, true);
+		$aplica_evento_keypress_input_cta($sssscuenta, $ssscuenta, $sssscuenta, $descripcion_cuenta, true, false);
 		
 		
-		$aplica_evento_focus_input_numerico($debe);
-		$aplica_evento_focus_input_numerico($haber);
-		
-		$debe.blur(function(){
-			$validar_numero_puntos($debe, "Debe");
-			if($(this).val().trim()==''){
-				$(this).val(0);
-			}
-		});
-		
-		$haber.blur(function(){
-			$validar_numero_puntos($haber, "Haber");
-			if($(this).val().trim()==''){
-				$(this).val(0);
-			}
-		});
-		
-		
-		$cuenta.keypress(function(e){
-			if (e.which == 8) {
-				$descripcion_cuenta.val('');
-				$id_cta.val('0');
-			}else{
-				if((parseInt($cuenta.val().length)+1)==4){
-					$scuenta.focus();
+		$submit_actualizar.bind('click',function(){
+			
+			var encontrado=0;
+			//Busca si hay algun registro en el grid
+			$grid_cuentas.find('tr').each(function (index){
+				if(parseInt($(this).find('input[name=delete]').val())>0){
+					encontrado++;
 				}
-			}
-		});
-		
-		$scuenta.keypress(function(e){
-			if (e.which == 8) {
-				$descripcion_cuenta.val('');
-				$id_cta.val('0');
+			});
+			
+			if(parseInt(encontrado) > 0){
+				return true;
 			}else{
-				if((parseInt($scuenta.val().length)+1)==4){
-					$sscuenta.focus();
-				}
+				jAlert('No hay datos para actualizar', 'Atencion!', function(r) { $cuenta.focus(); });
+				return false;
 			}
 		});
-		
-		$sscuenta.keypress(function(e){
-			if (e.which == 8) {
-				$descripcion_cuenta.val('');
-				$id_cta.val('0');
-			}else{
-				if((parseInt($sscuenta.val().length)+1)==4){
-					$ssscuenta.focus();
-				}
-			}
-		});
-		
-		$ssscuenta.keypress(function(e){
-			if (e.which == 8) {
-				$descripcion_cuenta.val('');
-				$id_cta.val('0');
-			}else{
-				if((parseInt($ssscuenta.val().length)+1)==4){
-					$sssscuenta.focus();
-				}
-			}
-		});
-		
-		$sssscuenta.keypress(function(e){
-			if (e.which == 8) {
-				$descripcion_cuenta.val('');
-				$id_cta.val('0');
-			}
-		});
-		
-		
 		
 		
 		$cerrar_plugin.bind('click',function(){
@@ -1300,7 +1338,7 @@ $(function() {
 			$forma_selected.attr({ id : form_to_show + id_to_show });
 			
 			$(this).modalPanel_ctbpolizacontable();
-			$('#forma-ctbpolizacontable-window').css({ "margin-left": -470, 	"margin-top": -200 });
+			$('#forma-ctbpolizacontable-window').css({ "margin-left": -470, 	"margin-top": -235 });
 			
 			$forma_selected.prependTo('#forma-ctbpolizacontable-window');
 			$forma_selected.find('.panelcito_modal').attr({ id : 'panelcito_modal' + id_to_show , style:'display:table'});
@@ -1327,9 +1365,6 @@ $(function() {
 			var $sssscuenta = $('#forma-ctbpolizacontable-window').find('input[name=sssscuenta]');
 			var $descripcion_cuenta = $('#forma-ctbpolizacontable-window').find('input[name=descripcion_cuenta]');
 			
-			var $select_centro_costo = $('#forma-ctbpolizacontable-window').find('select[name=select_centro_costo]');
-			var $debe = $('#forma-ctbpolizacontable-window').find('input[name=debe]');
-			var $haber = $('#forma-ctbpolizacontable-window').find('input[name=haber]');
 			
 			var $busca_cuenta_contble = $('#forma-ctbpolizacontable-window').find('#busca_cuenta_contble');
 			var $agrega_cuenta_contble = $('#forma-ctbpolizacontable-window').find('#agrega_cuenta_contble');
@@ -1343,8 +1378,6 @@ $(function() {
 			$permitir_solo_numeros($sscuenta);
 			$permitir_solo_numeros($ssscuenta);
 			$permitir_solo_numeros($sssscuenta);
-			$permitir_solo_numeros($debe);
-			$permitir_solo_numeros($haber);
 			
 			$cuenta.hide();
 			$scuenta.hide();
@@ -1357,6 +1390,12 @@ $(function() {
 			$no_poliza.css({'background' : '#F0F0F0'});
 			$descripcion_cuenta.css({'background' : '#F0F0F0'});
 			
+			//quitar enter a todos los campos input
+			$('#forma-ctbpolizacontable-window').find('input').keypress(function(e){
+				if(e.which==13 ) {
+					return false;
+				}
+			});
 			
 			if(accion_mode == 'edit'){
                                 
@@ -1408,7 +1447,7 @@ $(function() {
 					$identificador.attr({ 'value' : entry['Data'][0]['id'] });
 					$no_poliza.attr({ 'value' : entry['Data'][0]['no_poliza'] });
 					
-					$id_cta.attr({ 'value' : entry['Data'][0]['cta_id'] });
+					//$id_cta.attr({ 'value' : entry['Data'][0]['cta_id'] });
 					$cuenta.attr({ 'value' : entry['Data'][0]['cta'] });
 					$scuenta.attr({ 'value' : entry['Data'][0]['subcta'] });
 					$sscuenta.attr({ 'value' : entry['Data'][0]['ssubcta'] });
@@ -1416,8 +1455,8 @@ $(function() {
 					$sssscuenta.attr({ 'value' : entry['Data'][0]['ssssubcta'] });
 					$descripcion_cuenta.attr({ 'value' : entry['Data'][0]['descripcion'] });
 					
-					$debe.attr({ 'value' : entry['Data'][0]['debe'] });
-					$haber.attr({ 'value' : entry['Data'][0]['haber'] });
+					//$debe.attr({ 'value' : entry['Data'][0]['debe'] });
+					//$haber.attr({ 'value' : entry['Data'][0]['haber'] });
 					
 					//mostrarFecha();
 					
@@ -1485,14 +1524,6 @@ $(function() {
 					index_text_elem = 'titulo';
 					option_fijo = false
 					$carga_campos_select($select_concepto, ArrayCon, elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem, option_fijo);
-					
-					//Cargar select de Centro de Costos
-					elemento_seleccionado = entry['Data'][0]['cc_id'];
-					texto_elemento_cero = '[--Seleccionar--]';
-					index_elem = 'id';
-					index_text_elem = 'titulo';
-					option_fijo = false
-					$carga_campos_select($select_centro_costo, entry['CC'], elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem,option_fijo);
 					
 					
 					
@@ -1603,7 +1634,7 @@ $(function() {
 
 				
 				
-				
+				/*
 				$aplica_evento_focus_input_numerico($debe);
 				$aplica_evento_focus_input_numerico($haber);
 				
@@ -1620,12 +1651,12 @@ $(function() {
 						$(this).val(0);
 					}
 				});
+				*/
 				
 				
 				$cuenta.keypress(function(e){
 					if (e.which == 8) {
 						$descripcion_cuenta.val('');
-						$id_cta.val('0');
 					}else{
 						if((parseInt($cuenta.val().length)+1)==4){
 							$scuenta.focus();
@@ -1636,7 +1667,6 @@ $(function() {
 				$scuenta.keypress(function(e){
 					if (e.which == 8) {
 						$descripcion_cuenta.val('');
-						$id_cta.val('0');
 					}else{
 						if((parseInt($scuenta.val().length)+1)==4){
 							$sscuenta.focus();
@@ -1647,7 +1677,6 @@ $(function() {
 				$sscuenta.keypress(function(e){
 					if (e.which == 8) {
 						$descripcion_cuenta.val('');
-						$id_cta.val('0');
 					}else{
 						if((parseInt($sscuenta.val().length)+1)==4){
 							$ssscuenta.focus();
@@ -1658,7 +1687,6 @@ $(function() {
 				$ssscuenta.keypress(function(e){
 					if (e.which == 8) {
 						$descripcion_cuenta.val('');
-						$id_cta.val('0');
 					}else{
 						if((parseInt($ssscuenta.val().length)+1)==4){
 							$sssscuenta.focus();
@@ -1669,13 +1697,9 @@ $(function() {
 				$sssscuenta.keypress(function(e){
 					if (e.which == 8) {
 						$descripcion_cuenta.val('');
-						$id_cta.val('0');
 					}
 				});
 				
-				
-		
-		
 		
 				//Ligamos el boton cancelar al evento click para eliminar la forma
 				$cancelar_plugin.bind('click',function(){
@@ -1693,6 +1717,8 @@ $(function() {
 			}
 		}
 	}
+    
+    
     
     $get_datos_grid = function(){
         var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAllPolizas.json';

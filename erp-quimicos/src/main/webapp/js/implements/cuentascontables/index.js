@@ -7,6 +7,8 @@ $(function() {
 	    return work.join(',');
 	};
 	var arrayCentroCostos;
+	var ArraySuc;
+	var Param;
 	
 	$('#header').find('#header1').find('span.emp').text($('#lienzo_recalculable').find('input[name=emp]').val());
 	$('#header').find('#header1').find('span.suc').text($('#lienzo_recalculable').find('input[name=suc]').val());
@@ -47,6 +49,7 @@ $(function() {
 	var $cadena_busqueda = "";
 	var $busqueda_select_cuenta_mayor = $('#barra_buscador').find('.tabla_buscador').find('select[name=busqueda_select_cuenta_mayor]');
 	var $busqueda_descripcion = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_descripcion]');
+	var $busqueda_select_sucursal = $('#barra_buscador').find('.tabla_buscador').find('select[name=busqueda_select_sucursal]');
 	
 	var $buscar = $('#barra_buscador').find('.tabla_buscador').find('input[value$=Buscar]');
 	var $limpiar = $('#barra_buscador').find('.tabla_buscador').find('input[value$=Limpiar]');
@@ -58,6 +61,7 @@ $(function() {
 		var signo_separador = "=";
 		valor_retorno += "cta_mayor" + signo_separador + $busqueda_select_cuenta_mayor.val() + "|";
 		valor_retorno += "descripcion" + signo_separador + $busqueda_descripcion.val() + "|";
+		valor_retorno += "sucursal" + signo_separador + $busqueda_select_sucursal.val() + "|";
 		valor_retorno += "iu" + signo_separador + $('#lienzo_recalculable').find('input[name=iu]').val() + "|";
 		return valor_retorno;
 	};
@@ -76,7 +80,7 @@ $(function() {
 	
 	
 	$ubtener_cuentas_mayor = function(){
-		var input_json_cuentas = document.location.protocol + '//' + document.location.host + '/'+controller+'/getCuentasMayor.json';
+		var input_json_cuentas = document.location.protocol + '//' + document.location.host + '/'+controller+'/getInicializar.json';
 		$arreglo = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
 		$.post(input_json_cuentas,$arreglo,function(data){
 			$busqueda_select_cuenta_mayor.children().remove();
@@ -86,8 +90,30 @@ $(function() {
 			});
 			$busqueda_select_cuenta_mayor.append(cta_html);
 			
+			
+			$busqueda_select_sucursal.children().remove();
+			var suc_hmtl = '';
+			if(data['Data']['versuc']==true){
+				//Aqui carga todas las sucursales porque el usuario es un administrador
+				suc_hmtl = '<option value="0" selected="yes">[--- Todos ---]</option>';
+				$.each(data['Suc'],function(entryIndex,suc){
+					suc_hmtl += '<option value="' + suc['id'] + '">'+ suc['titulo'] + '</option>';
+				});
+			}else{
+				//Aqui solo debe cargar la sucursal del usuario logueado
+				$.each(data['Suc'],function(entryIndex,suc){
+					if(parseInt(suc['id'])==parseInt(data['Data']['suc'])){
+						suc_hmtl += '<option value="' + suc['id'] + '" selected="yes">'+ suc['titulo'] + '</option>';
+					}
+				});
+			}
+			$busqueda_select_sucursal.append(suc_hmtl);
+			
+			
 			//Cargar arreglo con la lista de centros de costo.
 			arrayCentroCostos=data['CC'];
+			ArraySuc = data['Suc'];
+			Param = data['Data'];
 		});
 	}
 	
@@ -265,6 +291,7 @@ $(function() {
 		var $select_cuenta_mayor = $('#forma-cuentascontables-window').find('select[name=select_cuenta_mayor]');
 		
 		var $select_centro_costo = $('#forma-cuentascontables-window').find('select[name=select_centro_costo]');
+		var $select_sucursal = $('#forma-cuentascontables-window').find('select[name=select_sucursal]');
 		
 		var $descripcion = $('#forma-cuentascontables-window').find('input[name=descripcion]');
 		var $chk_cta_detalle = $('#forma-cuentascontables-window').find('input[name=chk_cta_detalle]');
@@ -333,6 +360,22 @@ $(function() {
 			if(parseInt(entry['Extras'][0]['nivel_cta']) >=3 ){ $sscuenta.show(); };
 			if(parseInt(entry['Extras'][0]['nivel_cta']) >=4 ){ $ssscuenta.show(); };
 			if(parseInt(entry['Extras'][0]['nivel_cta']) >=5 ){ $sssscuenta.show(); };
+			
+			
+			$select_sucursal.children().remove();
+			var suc_hmtl = '';
+			$.each(ArraySuc,function(entryIndex,suc){
+				if(parseInt(suc['id'])==parseInt(Param['suc'])){
+					suc_hmtl += '<option value="' + suc['id'] + '" selected="yes">'+ suc['titulo'] + '</option>';
+				}else{
+					if(Param['versuc']==true){
+						suc_hmtl += '<option value="' + suc['id'] + '" selected="yes">'+ suc['titulo'] + '</option>';
+					}
+				}
+			});
+			$select_sucursal.append(suc_hmtl);
+			
+			
 			
 			//Carga select de cuentas de Mayor
 			$select_cuenta_mayor.children().remove();
@@ -440,6 +483,7 @@ $(function() {
 			var $select_cuenta_mayor = $('#forma-cuentascontables-window').find('select[name=select_cuenta_mayor]');
 			
 			var $select_centro_costo = $('#forma-cuentascontables-window').find('select[name=select_centro_costo]');
+			var $select_sucursal = $('#forma-cuentascontables-window').find('select[name=select_sucursal]');
 			
 			var $descripcion = $('#forma-cuentascontables-window').find('input[name=descripcion]');
 			var $chk_cta_detalle = $('#forma-cuentascontables-window').find('input[name=chk_cta_detalle]');
@@ -510,17 +554,32 @@ $(function() {
 					if(parseInt(entry['Extras'][0]['nivel_cta']) >=4 ){ $ssscuenta.show(); };
 					if(parseInt(entry['Extras'][0]['nivel_cta']) >=5 ){ $sssscuenta.show(); };
 					
-					$identificador.attr({ 'value' : entry['Cc']['0']['id'] });
-					$cuenta.attr({ 'value' : entry['Cc']['0']['cta'] });
-					$scuenta.attr({ 'value' : entry['Cc']['0']['subcta'] });
-					$sscuenta.attr({ 'value' : entry['Cc']['0']['ssubcta'] });
-					$ssscuenta.attr({ 'value' : entry['Cc']['0']['sssubcta'] });
-					$sssscuenta.attr({ 'value' : entry['Cc']['0']['ssssubcta'] });
+					$identificador.attr({ 'value' : entry['Cc'][0]['id'] });
+					$cuenta.attr({ 'value' : entry['Cc'][0]['cta'] });
+					$scuenta.attr({ 'value' : entry['Cc'][0]['subcta'] });
+					$sscuenta.attr({ 'value' : entry['Cc'][0]['ssubcta'] });
+					$ssscuenta.attr({ 'value' : entry['Cc'][0]['sssubcta'] });
+					$sssscuenta.attr({ 'value' : entry['Cc'][0]['ssssubcta'] });
 					
-					$descripcion.attr({ 'value' : entry['Cc']['0']['descripcion'] });
-					$descripcion_es.attr({ 'value' : entry['Cc']['0']['descripcion'] });
-					$descripcion_in.attr({ 'value' : entry['Cc']['0']['descripcion_ing'] });
-					$descripcion_otro.attr({ 'value' : entry['Cc']['0']['descripcion_otr'] });
+					$descripcion.attr({ 'value' : entry['Cc'][0]['descripcion'] });
+					$descripcion_es.attr({ 'value' : entry['Cc'][0]['descripcion'] });
+					$descripcion_in.attr({ 'value' : entry['Cc'][0]['descripcion_ing'] });
+					$descripcion_otro.attr({ 'value' : entry['Cc'][0]['descripcion_otr'] });
+					
+					
+					$select_sucursal.children().remove();
+					var suc_hmtl = '';
+					$.each(ArraySuc,function(entryIndex,suc){
+						if(parseInt(suc['id'])==parseInt(entry['Cc'][0]['suc_id'])){
+							suc_hmtl += '<option value="' + suc['id'] + '" selected="yes">'+ suc['titulo'] + '</option>';
+						}else{
+							if(Param['versuc']==true){
+								suc_hmtl += '<option value="' + suc['id'] + '" selected="yes">'+ suc['titulo'] + '</option>';
+							}
+						}
+					});
+					$select_sucursal.append(suc_hmtl);
+					
 					
 					//carga select de cuentas de Mayor
 					$select_cuenta_mayor.children().remove();
@@ -540,7 +599,7 @@ $(function() {
 					});
 					$select_cuenta_mayor.append(ctamay_hmtl);
 					
-					$chk_cta_detalle.attr('checked',  (entry['Cc']['0']['detalle'] == '1')? true:false );
+					$chk_cta_detalle.attr('checked',  (entry['Cc'][0]['detalle'] == '1')? true:false );
 					
 					var estatus_hmtl = '';
 					if(entry['Cc']['0']['estatus']=='1'){
@@ -591,8 +650,6 @@ $(function() {
 					$('#forma-cuentascontables-overlay').fadeOut(remove);
 					$buscar.trigger('click');
 				});
-                                
-				
 			}
 		}
 	}
