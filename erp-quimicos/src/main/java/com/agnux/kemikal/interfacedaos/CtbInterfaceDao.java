@@ -95,11 +95,12 @@ public interface CtbInterfaceDao {
     public ArrayList<HashMap<String, Object>> getMonedas();
     public ArrayList<HashMap<String, Object>> getPolizasContables_TiposPolizas(Integer id_empresa);
     public ArrayList<HashMap<String, Object>> getPolizasContables_Conceptos(Integer id_empresa);
-    public ArrayList<HashMap<String, Object>> getPolizasContables_CentrosCostos(Integer id_empresa);
+    public ArrayList<HashMap<String, Object>> getPolizasContables_CentrosCostos(Integer id_empresa, Integer id_sucursal);
     public ArrayList<HashMap<String, Object>> getPolizasContables_CuentasMayor(Integer id_empresa);
-    public ArrayList<HashMap<String, String>> getPolizasContables_CuentasContables(Integer cta_mayor, Integer detalle, String clasifica, String cta, String scta, String sscta, String ssscta, String sssscta, String descripcion, Integer id_empresa);
+    public ArrayList<HashMap<String, String>> getPolizasContables_CuentasContables(Integer clase_cta_mayor, Integer clasificacion, Integer detalle, String clasifica, String cta, String scta, String sscta, String ssscta, String sssscta, String descripcion, Integer id_empresa);
     public ArrayList<HashMap<String, Object>> getPolizasContables_Anios();
     public Integer getUserRolAdmin(Integer id_user);
+    public ArrayList<HashMap<String, Object>> getPolizasContables_TiposDeMovimiento(Integer id_empresa);
     
     public ArrayList<HashMap<String, Object>> getDatosCuentaContable(Integer detalle, String cta, String scta, String sscta, String ssscta, String sssscta, Integer id_empresa, Integer id_sucursal);
     

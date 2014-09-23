@@ -20,17 +20,12 @@ import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 
 /**
@@ -118,18 +113,30 @@ public class CtbCuentasContablesController {
            
         HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
         HashMap<String,String> has_busqueda = StringHelper.convert2hash(StringHelper.ascii2string(cadena_busqueda));
+        HashMap<String, String> userDat = new HashMap<String, String>();
         
-        //aplicativo Catalogo de Cuentas Contables
+        //Aplicativo Catalogo de Cuentas Contables
         Integer app_selected = 106;
         
-        //decodificar id de usuario
+        //Decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        //Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
         
-        //variables para el buscador
+        //Variables para el buscador
         String cta_mayor = StringHelper.isNullString(String.valueOf(has_busqueda.get("cta_mayor")));
         String descripcion = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("descripcion")))+"%";
+        String sucursal = StringHelper.isNullString(String.valueOf(has_busqueda.get("sucursal")));
         
-        String data_string = app_selected+"___"+id_usuario+"___"+cta_mayor+"___"+descripcion;
+        if(this.getCtbDao().getUserRolAdmin(id_usuario)<=0){
+            // Si el usuario no es administrador y la sucursal es cero, se asigna la sucursal del usuario.
+            if(Integer.valueOf(sucursal)<=0){
+                sucursal = String.valueOf(id_sucursal);
+            }
+        }
+        
+        String data_string = app_selected+"___"+id_usuario+"___"+cta_mayor+"___"+descripcion+"___"+sucursal;
         
         //obtiene total de registros en base de datos, con los parametros de busqueda
         int total_items = this.getCtbDao().countAll(data_string);
@@ -153,23 +160,38 @@ public class CtbCuentasContablesController {
     
     
     
-    @RequestMapping(method = RequestMethod.POST, value="/getCuentasMayor.json")
-    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getCuentasMayorJson(
+    @RequestMapping(method = RequestMethod.POST, value="/getInicializar.json")
+    public @ResponseBody HashMap<String,Object> getCuentasMayorJson(
             @RequestParam(value="iu", required=true) String id_user,
             Model model
         ) {
         
         log.log(Level.INFO, "Ejecutando getCuentasMayorJson de {0}", CtbCuentasContablesController.class.getName());
-        HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
+        HashMap<String,Object> jsonretorno = new HashMap<String,Object>();
         HashMap<String, String> userDat = new HashMap<String, String>();
+        HashMap<String, Object> data = new HashMap<String, Object>();
         
         //Decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
         userDat = this.getHomeDao().getUserById(id_usuario);
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        Integer idSucUser=id_sucursal;
         
-        jsonretorno.put("CC", this.getCtbDao().getPolizasContables_CentrosCostos(id_empresa));
+        data.put("suc", id_sucursal);
+        
+        if(this.getCtbDao().getUserRolAdmin(id_usuario)>0){
+            data.put("versuc", true);
+            //Aqui se le asigna cero al id sucursal para hacer que la busqueda de Centros de Costos(CC) sea en todas las sucursales.
+            idSucUser=0;
+        }else{
+            data.put("versuc", false);
+        }
+        
+        jsonretorno.put("Suc", this.getCtbDao().getCtb_Sucursales(id_empresa));
+        jsonretorno.put("CC", this.getCtbDao().getPolizasContables_CentrosCostos(id_empresa, idSucUser));
         jsonretorno.put("CtaMay", this.getCtbDao().getCuentasContables_CuentasMayor(id_empresa));
+        jsonretorno.put("Data", data);
         
         return jsonretorno;
     }
@@ -203,7 +225,6 @@ public class CtbCuentasContablesController {
             datosCC = this.getCtbDao().getCuentasContables_Datos(id);
         }
         
-        
         jsonretorno.put("Cc", datosCC);
         jsonretorno.put("CtaMay", this.getCtbDao().getCuentasContables_CuentasMayor(id_empresa));
         jsonretorno.put("Extras", arrayExtra);
@@ -231,6 +252,7 @@ public class CtbCuentasContablesController {
             @RequestParam(value="descripcion_es", required=true) String descripcion_es,
             @RequestParam(value="descripcion_in", required=true) String descripcion_in,
             @RequestParam(value="descripcion_otro", required=true) String descripcion_otro,
+            @RequestParam(value="select_sucursal", required=false) String select_sucursal,
             Model model,@ModelAttribute("user") UserSessionData user
         ) {
         
@@ -254,6 +276,7 @@ public class CtbCuentasContablesController {
             cta_detalle = "1";
         }
         
+        select_sucursal = StringHelper.verificarSelect(select_sucursal);
         
         String data_string = 
                 app_selected+"___"+
@@ -271,7 +294,8 @@ public class CtbCuentasContablesController {
                 descripcion_es.toUpperCase()+"___"+
                 descripcion_in.toUpperCase()+"___"+
                 descripcion_otro.toUpperCase()+"___"+
-                select_centro_costo;
+                select_centro_costo+"___"+
+                select_sucursal;
         
         succes = this.getCtbDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
         

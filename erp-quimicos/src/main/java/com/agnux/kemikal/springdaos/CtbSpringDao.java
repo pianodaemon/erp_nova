@@ -92,10 +92,6 @@ public class CtbSpringDao implements CtbInterfaceDao{
     
     
     
-    
-    
-    
-    
     @Override
     public ArrayList<HashMap<String, Object>> getCentroCostos_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
@@ -426,7 +422,8 @@ public class CtbSpringDao implements CtbInterfaceDao{
                     + "nivel_cta, "
                     + "consolida, "
                     + "estatus,"
-                    + "ctb_cc_id "
+                    + "ctb_cc_id,"
+                    + "gral_suc_id  "
                 + "FROM ctb_cta "
                 + "WHERE id=?;";
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
@@ -450,6 +447,7 @@ public class CtbSpringDao implements CtbInterfaceDao{
                     row.put("nivel_cta",String.valueOf(rs.getInt("nivel_cta")));
                     row.put("estatus",String.valueOf(rs.getInt("estatus")));
                     row.put("cc_id",String.valueOf(rs.getInt("ctb_cc_id")));
+                    row.put("suc_id",String.valueOf(rs.getInt("gral_suc_id")));
                     return row;
                 }
             }
@@ -1232,8 +1230,8 @@ public class CtbSpringDao implements CtbInterfaceDao{
                     + "ctb_pol.concepto, "
                     + "to_char(fecha_cap,'dd-mm-yyyy') as fecha, "
                     + "ctb_pol.moneda, "
-                    + "ctb_pol.debe, "
-                    + "ctb_pol.haber, "
+                    //+ "ctb_pol.debe, "
+                    //+ "ctb_pol.haber, "
                     + "(CASE WHEN ctb_pol.status=1 THEN 'No afectada' WHEN ctb_pol.status=0 THEN 'Afectada' WHEN ctb_pol.status=0 THEN 'Cancelada' ELSE '' END) AS status  "
                 + "from ctb_pol "
                 +"JOIN ("+sql_busqueda+") AS sbt ON sbt.id = ctb_pol.id "
@@ -1242,7 +1240,7 @@ public class CtbSpringDao implements CtbInterfaceDao{
         //System.out.println("Busqueda GetPage: "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query, 
-            new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+            new Object[]{data_string, new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, Object> row = new HashMap<String, Object>();
@@ -1252,8 +1250,8 @@ public class CtbSpringDao implements CtbInterfaceDao{
                     row.put("concepto",rs.getString("concepto"));
                     row.put("fecha",rs.getString("fecha"));
                     row.put("moneda",rs.getString("moneda"));
-                    row.put("debe",StringHelper.roundDouble(rs.getString("debe"),2));
-                    row.put("haber",StringHelper.roundDouble(rs.getString("haber"),2));
+                    row.put("debe",StringHelper.roundDouble("0",2));
+                    row.put("haber",StringHelper.roundDouble("0",2));
                     row.put("status",rs.getString("status"));
                     return row;
                 }
@@ -1279,25 +1277,25 @@ public class CtbSpringDao implements CtbInterfaceDao{
             + "ctb_pol.concepto, "
             + "ctb_pol.gral_mon_id as mon_id, "
             + "ctb_pol.moneda, "
-            + "ctb_pol.ctb_cc_id as cc_id, "
-            + "ctb_pol.ctb_cta_id as cta_id, "
-            + "ctb_cta.descripcion, "
-            + "ctb_pol.debe, "
-            + "ctb_pol.haber, "
+            //+ "ctb_pol.ctb_cc_id as cc_id, "
+            //+ "ctb_pol.ctb_cta_id as cta_id, "
+            //+ "ctb_cta.descripcion, "
+            //+ "ctb_pol.debe, "
+            //+ "ctb_pol.haber, "
             + "ctb_pol.status, "
             + "ctb_pol.modulo_origen as mod_id, "
             + "ctb_pol.gral_usr_id_cap as user_cap_id, "
-            + "to_char(ctb_pol.fecha_cap,'yyyy-mm-dd') AS fecha,"
-            + "(CASE WHEN ctb_cta.cta=0 THEN '' ELSE ctb_cta.cta::character varying END) AS cta, "
-            + "(CASE WHEN ctb_cta.subcta=0 THEN '' ELSE ctb_cta.subcta::character varying END) AS subcta, "
-            + "(CASE WHEN ctb_cta.ssubcta=0 THEN '' ELSE ctb_cta.ssubcta::character varying END) AS ssubcta, "
-            + "(CASE WHEN ctb_cta.sssubcta=0 THEN '' ELSE ctb_cta.sssubcta::character varying END) AS sssubcta, "
-            + "(CASE WHEN ctb_cta.ssssubcta=0 THEN '' ELSE ctb_cta.ssssubcta::character varying END) AS ssssubcta "
+            + "to_char(ctb_pol.fecha_cap,'yyyy-mm-dd') AS fecha "
+            //+ "(CASE WHEN ctb_cta.cta=0 THEN '' ELSE ctb_cta.cta::character varying END) AS cta, "
+            //+ "(CASE WHEN ctb_cta.subcta=0 THEN '' ELSE ctb_cta.subcta::character varying END) AS subcta, "
+            //+ "(CASE WHEN ctb_cta.ssubcta=0 THEN '' ELSE ctb_cta.ssubcta::character varying END) AS ssubcta, "
+            //+ "(CASE WHEN ctb_cta.sssubcta=0 THEN '' ELSE ctb_cta.sssubcta::character varying END) AS sssubcta, "
+            //+ "(CASE WHEN ctb_cta.ssssubcta=0 THEN '' ELSE ctb_cta.ssssubcta::character varying END) AS ssssubcta "
         + "FROM ctb_pol  "
-        + "JOIN ctb_cta ON ctb_cta.id=ctb_pol.ctb_cta_id "
+        //+ "JOIN ctb_cta ON ctb_cta.id=ctb_pol.ctb_cta_id "
         + "where ctb_pol.borrado_logico=false AND ctb_pol.id=?;";
         
-        System.out.println();
+        System.out.println(sql_query);
         
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_query,  
@@ -1313,20 +1311,20 @@ public class CtbSpringDao implements CtbInterfaceDao{
                     row.put("tpol_id",String.valueOf(rs.getInt("tpol_id")));
                     row.put("con_id",String.valueOf(rs.getInt("con_id")));
                     row.put("mon_id",String.valueOf(rs.getInt("mon_id")));
-                    row.put("cc_id",String.valueOf(rs.getInt("cc_id")));
-                    row.put("cta_id",String.valueOf(rs.getInt("cta_id")));
-                    row.put("descripcion",rs.getString("descripcion"));
-                    row.put("debe",StringHelper.roundDouble(rs.getString("debe"),2));
-                    row.put("haber",StringHelper.roundDouble(rs.getString("haber"),2));
+                    //row.put("cc_id",String.valueOf(rs.getInt("cc_id")));
+                    //row.put("cta_id",String.valueOf(rs.getInt("cta_id")));
+                    //row.put("descripcion",rs.getString("descripcion"));
+                    //row.put("debe",StringHelper.roundDouble(rs.getString("debe"),2));
+                    //row.put("haber",StringHelper.roundDouble(rs.getString("haber"),2));
                     row.put("status",String.valueOf(rs.getInt("status")));
                     row.put("mod_id",String.valueOf(rs.getInt("mod_id")));
                     row.put("user_cap_id",String.valueOf(rs.getInt("user_cap_id")));
                     row.put("fecha",rs.getString("fecha"));
-                    row.put("cta",rs.getString("cta"));
-                    row.put("subcta",rs.getString("subcta"));
-                    row.put("ssubcta",rs.getString("ssubcta"));
-                    row.put("sssubcta",rs.getString("sssubcta"));
-                    row.put("ssssubcta",rs.getString("ssssubcta"));
+                    //row.put("cta",rs.getString("cta"));
+                    //row.put("subcta",rs.getString("subcta"));
+                    //row.put("ssubcta",rs.getString("ssubcta"));
+                    //row.put("sssubcta",rs.getString("sssubcta"));
+                    //row.put("ssssubcta",rs.getString("ssssubcta"));
                     
                     return row;
                 }
@@ -1396,9 +1394,19 @@ public class CtbSpringDao implements CtbInterfaceDao{
     }
     
     
+    //Obtener la lista de centros de costo
     @Override
-    public ArrayList<HashMap<String, Object>> getPolizasContables_CentrosCostos(Integer id_empresa) {
-        String sql_to_query = "select id, titulo from ctb_cc where borrado_logico=false and empresa_id=?;";
+    public ArrayList<HashMap<String, Object>> getPolizasContables_CentrosCostos(Integer id_empresa, Integer id_sucursal) {
+        String sql_to_query = "";
+        
+        if(id_sucursal<=0){
+            //Busca en todas la empresa
+            sql_to_query = "select id, titulo from ctb_cc where borrado_logico=false and empresa_id=?;";
+        }else{
+            //Busca solo de la sucursal
+            sql_to_query = "select id, titulo from ctb_cc where borrado_logico=false and empresa_id=? and gral_suc_id="+id_sucursal+";";
+        }
+        
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -1416,6 +1424,8 @@ public class CtbSpringDao implements CtbInterfaceDao{
     }
     
     
+    
+    
     @Override
     public ArrayList<HashMap<String, Object>> getPolizasContables_CuentasMayor(Integer id_empresa) {
         String sql_query = ""
@@ -1423,7 +1433,7 @@ public class CtbSpringDao implements CtbInterfaceDao{
                     + "id, "
                     + "ctb_may_clase_id AS cta_mayor, "
                     + "clasificacion, "
-                    + "(CASE WHEN descripcion IS NULL OR descripcion='' THEN (CASE WHEN descripcion_ing IS NULL OR descripcion_ing='' THEN descripcion_ing ELSE descripcion_otr END) ELSE descripcion END) AS descripcion "
+                    + "'('||ctb_may_clase_id||','||clasificacion||') '||(CASE WHEN descripcion IS NULL OR descripcion='' THEN (CASE WHEN descripcion_ing IS NULL OR descripcion_ing='' THEN descripcion_ing ELSE descripcion_otr END) ELSE descripcion END) AS descripcion "
                 + "FROM ctb_may "
                 + "WHERE borrado_logico=false "
                 + "AND empresa_id=?;";
@@ -1447,18 +1457,49 @@ public class CtbSpringDao implements CtbInterfaceDao{
     
     
     
+    @Override
+    public ArrayList<HashMap<String, Object>> getPolizasContables_TiposDeMovimiento(Integer id_empresa) {
+        
+        String sql_query = "SELECT id, titulo FROM ctb_tmov WHERE borrado_logico=false AND gral_emp_id=?;";
+        
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{new Integer(id_empresa)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("titulo",String.valueOf(rs.getString("titulo")));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    
+    
+    
+    
     //Metodo para el buscador de cuentas contables
     @Override
-    public ArrayList<HashMap<String, String>> getPolizasContables_CuentasContables(Integer cta_mayor, Integer detalle, String clasifica, String cta, String scta, String sscta, String ssscta, String sssscta, String descripcion, Integer id_empresa) {
-
+    public ArrayList<HashMap<String, String>> getPolizasContables_CuentasContables(Integer clase_cta_mayor, Integer clasificacion, Integer detalle, String clasifica, String cta, String scta, String sscta, String ssscta, String sssscta, String descripcion, Integer id_empresa) {
+        
         String where="";
-	if(cta_mayor != 0){
-            where+=" AND ctb_cta.cta_mayor="+cta_mayor+" ";
+        
+	if(clase_cta_mayor != 0){
+            where+=" AND ctb_cta.cta_mayor="+clase_cta_mayor+" ";
 	}
+        
+	if(clasificacion != 0){
+            where+=" AND ctb_cta.clasifica="+clasificacion+" ";
+	}
+        
 	if(!clasifica.equals("")){
             where+=" AND ctb_cta.clasifica="+clasifica+" ";
 	}
-
+        
 	if(!cta.equals("")){
             where+=" AND ctb_cta.cta="+cta+" ";
 	}
@@ -1478,11 +1519,11 @@ public class CtbSpringDao implements CtbInterfaceDao{
 	if(!sssscta.equals("")){
             where+=" AND ctb_cta.ssssubcta="+sssscta+" ";
 	}
-
+        
 	if(!descripcion.equals("")){
             where+=" AND ctb_cta.ssssubcta ilike '%"+descripcion+"%'";
 	}
-
+        
         String sql_query = ""
                 + "SELECT DISTINCT "
                     + "ctb_cta.id, "
@@ -1502,7 +1543,8 @@ public class CtbSpringDao implements CtbInterfaceDao{
                     + "END ) AS cuenta, "
                     + "(CASE WHEN ctb_cta.descripcion IS NULL OR ctb_cta.descripcion='' THEN  (CASE WHEN ctb_cta.descripcion_ing IS NULL OR ctb_cta.descripcion_ing='' THEN  ctb_cta.descripcion_otr ELSE ctb_cta.descripcion_ing END )  ELSE descripcion END ) AS descripcion, "
                     + "(CASE WHEN ctb_cta.detalle=0 THEN 'NO' WHEN ctb_cta.detalle=1 THEN 'SI' ELSE '' END) AS detalle, "
-                    + "ctb_cta.nivel_cta "
+                    + "ctb_cta.nivel_cta, "
+                    + "ctb_cta.ctb_cc_id "
                 + "FROM ctb_cta "
                 + "WHERE ctb_cta.borrado_logico=false  "
                 + "AND ctb_cta.gral_emp_id=? AND ctb_cta.detalle=? "+ where +" "
@@ -1529,6 +1571,7 @@ public class CtbSpringDao implements CtbInterfaceDao{
                     row.put("descripcion",rs.getString("descripcion"));
                     row.put("detalle",rs.getString("detalle"));
                     row.put("nivel_cta",String.valueOf(rs.getInt("nivel_cta")));
+                    row.put("cc_id",String.valueOf(rs.getInt("ctb_cc_id")));
                     return row;
                 }
             }
@@ -1543,31 +1586,29 @@ public class CtbSpringDao implements CtbInterfaceDao{
     //Metodo para obtener los datos de una cuenta contable en especifico.
     @Override
     public ArrayList<HashMap<String, Object>> getDatosCuentaContable(Integer detalle, String cta, String scta, String sscta, String ssscta, String sssscta, Integer id_empresa, Integer id_sucursal) {
-
+        
         String where="";
-        
-        
         
 	if(id_sucursal>0){
             where+=" AND ctb_cta.gral_suc_id="+id_sucursal+" ";
 	}
-        
+        /*
 	if(!cta.equals("")){
             where+=" AND ctb_cta.cta="+cta.trim()+" ";
 	}
-
+        */
 	if(!scta.trim().equals("")){
             where+=" AND ctb_cta.subcta="+scta.trim()+" ";
 	}
-
+        
 	if(!sscta.trim().equals("")){
             where+=" AND ctb_cta.ssubcta="+sscta.trim()+" ";
 	}
-
+        
 	if(!ssscta.equals("")){
             where+=" AND ctb_cta.sssubcta="+ssscta.trim()+" ";
 	}
-
+        
 	if(!sssscta.equals("")){
             where+=" AND ctb_cta.ssssubcta="+sssscta.trim()+" ";
 	}
@@ -1575,32 +1616,32 @@ public class CtbSpringDao implements CtbInterfaceDao{
         
         
         String sql_query = ""
-                + "SELECT DISTINCT "
-                    + "ctb_cta.id, "
-                    + "ctb_cta.cta_mayor, "
-                    + "ctb_cta.clasifica, "
-                    + "ctb_cta.cta, "
-                    + "ctb_cta.subcta, "
-                    + "ctb_cta.ssubcta, "
-                    + "ctb_cta.sssubcta,"
-                    + "ctb_cta.ssssubcta, "
-                    + "(CASE WHEN nivel_cta=1 THEN rpad(ctb_cta.cta::character varying, 4, '0')   "
-                    + "WHEN ctb_cta.nivel_cta=2 THEN '&nbsp;&nbsp;&nbsp;'||rpad(ctb_cta.cta::character varying, 4, '0')||'-'||lpad(ctb_cta.subcta::character varying, 4, '0') "
-                    + "WHEN ctb_cta.nivel_cta=3 THEN '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'||rpad(ctb_cta.cta::character varying, 4, '0')||'-'||lpad(ctb_cta.subcta::character varying, 4, '0')||'-'||lpad(ctb_cta.ssubcta::character varying, 4, '0') "
-                    + "WHEN ctb_cta.nivel_cta=4 THEN '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'||rpad(ctb_cta.cta::character varying, 4, '0')||'-'||lpad(ctb_cta.subcta::character varying, 4, '0')||'-'||lpad(ctb_cta.ssubcta::character varying, 4, '0')||'-'||lpad(ctb_cta.sssubcta::character varying, 4, '0') "
-                    + "WHEN ctb_cta.nivel_cta=5 THEN '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'||rpad(ctb_cta.cta::character varying, 4, '0')||'-'||lpad(ctb_cta.subcta::character varying, 4, '0')||'-'||lpad(ctb_cta.ssubcta::character varying, 4, '0')||'-'||lpad(ctb_cta.sssubcta::character varying, 4, '0')||'-'||lpad(ctb_cta.ssssubcta::character varying, 4, '0') "
-                    + "ELSE '' "
-                    + "END ) AS cuenta, "
-                    + "(CASE WHEN ctb_cta.descripcion IS NULL OR ctb_cta.descripcion='' THEN  (CASE WHEN ctb_cta.descripcion_ing IS NULL OR ctb_cta.descripcion_ing='' THEN  ctb_cta.descripcion_otr ELSE ctb_cta.descripcion_ing END )  ELSE descripcion END ) AS descripcion, "
-                    + "(CASE WHEN ctb_cta.detalle=0 THEN 'NO' WHEN ctb_cta.detalle=1 THEN 'SI' ELSE '' END) AS detalle, "
-                    + "ctb_cta.nivel_cta,"
-                    + "ctb_cta.ctb_cc_id "
-                + "FROM ctb_cta "
-                + "WHERE ctb_cta.borrado_logico=false  "
-                + "AND ctb_cta.gral_emp_id=? AND ctb_cta.detalle=? "+ where +" "
-                + "ORDER BY ctb_cta.id;";
-
-
+        + "SELECT DISTINCT "
+            + "ctb_cta.id, "
+            + "ctb_cta.cta_mayor, "
+            + "ctb_cta.clasifica, "
+            + "ctb_cta.cta, "
+            + "ctb_cta.subcta, "
+            + "ctb_cta.ssubcta, "
+            + "ctb_cta.sssubcta,"
+            + "ctb_cta.ssssubcta, "
+            + "(CASE WHEN nivel_cta=1 THEN rpad(ctb_cta.cta::character varying, 4, '0')   "
+            + "WHEN ctb_cta.nivel_cta=2 THEN rpad(ctb_cta.cta::character varying, 4, '0')||'-'||lpad(ctb_cta.subcta::character varying, 4, '0') "
+            + "WHEN ctb_cta.nivel_cta=3 THEN rpad(ctb_cta.cta::character varying, 4, '0')||'-'||lpad(ctb_cta.subcta::character varying, 4, '0')||'-'||lpad(ctb_cta.ssubcta::character varying, 4, '0') "
+            + "WHEN ctb_cta.nivel_cta=4 THEN rpad(ctb_cta.cta::character varying, 4, '0')||'-'||lpad(ctb_cta.subcta::character varying, 4, '0')||'-'||lpad(ctb_cta.ssubcta::character varying, 4, '0')||'-'||lpad(ctb_cta.sssubcta::character varying, 4, '0') "
+            + "WHEN ctb_cta.nivel_cta=5 THEN rpad(ctb_cta.cta::character varying, 4, '0')||'-'||lpad(ctb_cta.subcta::character varying, 4, '0')||'-'||lpad(ctb_cta.ssubcta::character varying, 4, '0')||'-'||lpad(ctb_cta.sssubcta::character varying, 4, '0')||'-'||lpad(ctb_cta.ssssubcta::character varying, 4, '0') "
+            + "ELSE '' "
+            + "END ) AS cuenta, "
+            + "(CASE WHEN ctb_cta.descripcion IS NULL OR ctb_cta.descripcion='' THEN  (CASE WHEN ctb_cta.descripcion_ing IS NULL OR ctb_cta.descripcion_ing='' THEN  ctb_cta.descripcion_otr ELSE ctb_cta.descripcion_ing END )  ELSE descripcion END ) AS descripcion, "
+            + "(CASE WHEN ctb_cta.detalle=0 THEN 'NO' WHEN ctb_cta.detalle=1 THEN 'SI' ELSE '' END) AS detalle, "
+            + "ctb_cta.nivel_cta,"
+            + "ctb_cta.ctb_cc_id "
+        + "FROM ctb_cta "
+        + "WHERE ctb_cta.borrado_logico=false "
+        + "AND ctb_cta.gral_emp_id=? AND ctb_cta.detalle=? AND ctb_cta.cta="+cta.trim()+" "+ where +" "
+        + "ORDER BY ctb_cta.id;";
+        
+        
         //System.out.println("sql_query: "+sql_query);
 
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
