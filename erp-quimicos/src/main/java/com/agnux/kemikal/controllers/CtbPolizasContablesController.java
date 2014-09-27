@@ -330,7 +330,7 @@ public class CtbPolizasContablesController {
 	
 	
     
-    //crear y editar
+    //Crear y editar
     @RequestMapping(method = RequestMethod.POST, value="/edit.json")
     public @ResponseBody HashMap<String, String> editJson(
             @RequestParam(value="identificador", required=true) String identificador,
@@ -341,14 +341,9 @@ public class CtbPolizasContablesController {
             @RequestParam(value="select_moneda", required=true) String select_moneda,
             @RequestParam(value="select_concepto", required=true) String select_concepto,
             @RequestParam(value="fecha", required=true) String fecha,
-            @RequestParam(value="descripcion_cuenta", required=true) String descripcion,
             @RequestParam(value="observacion", required=true) String observacion,
-            @RequestParam(value="cuenta", required=true) String cuenta,
-            @RequestParam(value="scuenta", required=true) String scuenta,
-            @RequestParam(value="sscuenta", required=true) String sscuenta,
-            @RequestParam(value="ssscuenta", required=true) String ssscuenta,
-            @RequestParam(value="sssscuenta", required=true) String sssscuenta,
             
+            @RequestParam(value="cta", required=true) String[] cuenta,
             @RequestParam(value="delete", required=false) String[] eliminado,
             @RequestParam(value="id_det", required=false) String[] id_det,
             @RequestParam(value="select_tmov", required=false) String[] select_tmov,
@@ -374,12 +369,12 @@ public class CtbPolizasContablesController {
         
         String arreglo[];
         arreglo = new String[eliminado.length];
-
+        
         for(int i=0; i<eliminado.length; i++) {
-            arreglo[i]= "'"+eliminado[i] +"___" + id_det[i] +"___" + select_tmov[i] +"___" + id_cta[i] +"___" + select_cc[i] +"___" + debe[i] +"___" + haber[i] + "___"+no_tr[i] +"'";
+            arreglo[i]= "'"+eliminado[i] +"___" + id_det[i] +"___" + select_tmov[i] +"___" + id_cta[i] +"___" + select_cc[i] +"___" + debe[i] +"___" + haber[i] + "___"+cuenta[i]+"___"+no_tr[i] +"'";
             //System.out.println(arreglo[i]);
         }
-
+        
         //Serializar el arreglo
         extra_data_array = StringUtils.join(arreglo, ",");
         
@@ -404,7 +399,6 @@ public class CtbPolizasContablesController {
                 select_moneda+"___"+
                 select_concepto+"___"+
                 fecha+"___"+
-                descripcion+"___"+
                 observacion;
         
         succes = this.getCtbDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
