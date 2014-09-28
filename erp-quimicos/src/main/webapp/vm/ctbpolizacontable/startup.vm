@@ -109,7 +109,8 @@
         <!--clase la quite por causar problemas      tabulador -->
                 <div id="div_one" class="panelcito_modal ctbpolizacontable_div_one"  style="display:none;" title="">
                 
-                <input type="hidden" name="identificador">
+					<input type="hidden" name="identificador">
+					<input type="hidden" name="accion" value="">
 					
                     <div id="div_two" title="" class="ctbpolizacontable_div_two">
                         <div class="columns on-2">
@@ -258,39 +259,30 @@
 											<tr>
 												<td valign="top" > 
 													<table border="0" class="gral">
-														<!--
 														<tr>
-															<td width="10"></td>
-															<td width="83">Centro&nbsp;de&nbsp;Costo</td>
-															<td width="90">
-																<select name="select_centro_costo" style="width:134px;"></select>
-															</td>
-															<td width="50"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_centrocosto"></div></td>
-															<td width="40">Debe</td>
-															<td width="90">
-																<input type="text"name="debe" style="width:90px;" maxlength="10">
-															</td>
-															<td width="50"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_debe"></div></td>
-															<td width="40">Haber</td>
-															<td width="90">
-																<input type="text"name="haber" style="width:90px;" maxlength="10">
-															</td>
-															<td width="50"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_haber"></div></td>
-														</tr>
-														
-														<tr>
-															<td colspan="10" height="10"></td>
-														</tr>
-														-->
-														<tr>
-															<td width="10"></td>
-															<td width="60">Observaci&oacute;n</td>
-															<td width="500" colspan="8">
+															<td width="10">&nbsp;</td>
+															<td width="60" rowspan="2">Observaci&oacute;n</td>
+															<td width="500" colspan="8" rowspan="2">
 																<textarea name="observacion" rows="2" cols="90" style="width:500px; resize:none;"></textarea>
+															</td>
+															<td width="50"></td>
+															<td width="100">&nbsp;</td>
+														</tr>
+														<tr>
+															<td width="10">&nbsp;</td>
+															<!--<td width="60">Observaci&oacute;n</td>-->
+															<!--<td width="500" colspan="8"></td>-->
+															<td width="50"></td>
+															<td width="100">
+																<input type="button" id="btn_contabilizar" value="Contabilizar" style="width:100px; font-weight:bold;">
+																<input type="button" id="btn_cancelar" value="Cancelar" style="width:100px; font-weight:bold;">
 															</td>
 														</tr>
 														
 													</table>
+													
+													
+													
 												</td>
 											</tr>
 											
