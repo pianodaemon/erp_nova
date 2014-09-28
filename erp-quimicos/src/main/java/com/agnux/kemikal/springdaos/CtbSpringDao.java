@@ -1232,7 +1232,7 @@ public class CtbSpringDao implements CtbInterfaceDao{
                     + "ctb_pol.moneda, "
                     //+ "ctb_pol.debe, "
                     //+ "ctb_pol.haber, "
-                    + "(CASE WHEN ctb_pol.status=1 THEN 'No afectada' WHEN ctb_pol.status=0 THEN 'Afectada' WHEN ctb_pol.status=0 THEN 'Cancelada' ELSE '' END) AS status  "
+                    + "(CASE WHEN ctb_pol.status=1 THEN 'No afectada' WHEN ctb_pol.status=2 THEN 'Afectada' WHEN ctb_pol.status=3 THEN 'Cancelada' ELSE '' END) AS status  "
                 + "from ctb_pol "
                 +"JOIN ("+sql_busqueda+") AS sbt ON sbt.id = ctb_pol.id "
                 +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
@@ -1277,22 +1277,12 @@ public class CtbSpringDao implements CtbInterfaceDao{
             + "ctb_pol.concepto, "
             + "ctb_pol.gral_mon_id as mon_id, "
             + "ctb_pol.moneda, "
-            //+ "ctb_pol.ctb_cc_id as cc_id, "
-            //+ "ctb_pol.ctb_cta_id as cta_id, "
-            //+ "ctb_cta.descripcion, "
-            //+ "ctb_pol.debe, "
-            //+ "ctb_pol.haber, "
             + "ctb_pol.status, "
             + "ctb_pol.modulo_origen as mod_id, "
             + "ctb_pol.gral_usr_id_cap as user_cap_id, "
-            + "to_char(ctb_pol.fecha_cap,'yyyy-mm-dd') AS fecha "
-            //+ "(CASE WHEN ctb_cta.cta=0 THEN '' ELSE ctb_cta.cta::character varying END) AS cta, "
-            //+ "(CASE WHEN ctb_cta.subcta=0 THEN '' ELSE ctb_cta.subcta::character varying END) AS subcta, "
-            //+ "(CASE WHEN ctb_cta.ssubcta=0 THEN '' ELSE ctb_cta.ssubcta::character varying END) AS ssubcta, "
-            //+ "(CASE WHEN ctb_cta.sssubcta=0 THEN '' ELSE ctb_cta.sssubcta::character varying END) AS sssubcta, "
-            //+ "(CASE WHEN ctb_cta.ssssubcta=0 THEN '' ELSE ctb_cta.ssssubcta::character varying END) AS ssssubcta "
+            + "to_char(ctb_pol.fecha_cap,'yyyy-mm-dd') AS fecha,"
+            + "ctb_pol.observacion "
         + "FROM ctb_pol  "
-        //+ "JOIN ctb_cta ON ctb_cta.id=ctb_pol.ctb_cta_id "
         + "where ctb_pol.borrado_logico=false AND ctb_pol.id=?;";
         
         System.out.println(sql_query);
@@ -1307,31 +1297,65 @@ public class CtbSpringDao implements CtbInterfaceDao{
                     row.put("suc_id",String.valueOf(rs.getInt("suc_id")));
                     row.put("anio",String.valueOf(rs.getInt("anio")));
                     row.put("mes",String.valueOf(rs.getInt("mes")));
-                    row.put("no_poliza",String.valueOf(rs.getInt("no_poliza")));
+                    row.put("no_poliza",String.valueOf(rs.getString("no_poliza")));
                     row.put("tpol_id",String.valueOf(rs.getInt("tpol_id")));
                     row.put("con_id",String.valueOf(rs.getInt("con_id")));
                     row.put("mon_id",String.valueOf(rs.getInt("mon_id")));
-                    //row.put("cc_id",String.valueOf(rs.getInt("cc_id")));
-                    //row.put("cta_id",String.valueOf(rs.getInt("cta_id")));
-                    //row.put("descripcion",rs.getString("descripcion"));
-                    //row.put("debe",StringHelper.roundDouble(rs.getString("debe"),2));
-                    //row.put("haber",StringHelper.roundDouble(rs.getString("haber"),2));
                     row.put("status",String.valueOf(rs.getInt("status")));
                     row.put("mod_id",String.valueOf(rs.getInt("mod_id")));
                     row.put("user_cap_id",String.valueOf(rs.getInt("user_cap_id")));
                     row.put("fecha",rs.getString("fecha"));
-                    //row.put("cta",rs.getString("cta"));
-                    //row.put("subcta",rs.getString("subcta"));
-                    //row.put("ssubcta",rs.getString("ssubcta"));
-                    //row.put("sssubcta",rs.getString("sssubcta"));
-                    //row.put("ssssubcta",rs.getString("ssssubcta"));
-                    
+                    row.put("observacion",rs.getString("observacion"));
                     return row;
                 }
             }
         );
         return hm;
     }
+    
+    
+    
+    
+    
+    @Override
+    public ArrayList<HashMap<String, Object>> getPolizasContables_DatosGrid(Integer poliza_id) {
+        String sql_query = ""
+        + "select "
+            + "ctb_pol_mov.id as id_det,"
+            + "ctb_pol_mov.ctb_tmov_id as tmov_id,"
+            + "ctb_pol_mov.ctb_cc_id as cc_id,"
+            + "ctb_pol_mov.ctb_cta_id as cta_id,"
+            + "ctb_pol_mov.cta,"
+            + "ctb_cta.descripcion,"
+            + "(case when ctb_pol_mov.tipo=1 then ctb_pol_mov.cantidad else 0 end) as debe,"
+            + "(case when ctb_pol_mov.tipo=2 then ctb_pol_mov.cantidad else 0 end) as haber "
+        + "from ctb_pol_mov "
+        + "join ctb_cta on ctb_cta.id=ctb_pol_mov.ctb_cta_id "
+        + "where ctb_pol_mov.ctb_pol_id=?;";
+        
+        System.out.println(sql_query);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,  
+            new Object[]{new Integer(poliza_id)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id_det",String.valueOf(rs.getInt("id_det")));
+                    row.put("tmov_id",String.valueOf(rs.getInt("tmov_id")));
+                    row.put("cc_id",String.valueOf(rs.getInt("cc_id")));
+                    row.put("cta_id",String.valueOf(rs.getInt("cta_id")));
+                    row.put("cta",String.valueOf(rs.getString("cta")));
+                    row.put("descripcion",String.valueOf(rs.getString("descripcion")));
+                    row.put("debe",StringHelper.roundDouble(rs.getString("debe"),2));
+                    row.put("haber",StringHelper.roundDouble(rs.getString("haber"),2));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
     
     
     

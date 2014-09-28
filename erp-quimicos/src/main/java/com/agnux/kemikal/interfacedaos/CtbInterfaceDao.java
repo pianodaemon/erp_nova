@@ -92,6 +92,7 @@ public interface CtbInterfaceDao {
     //Metodos para Aplicativo de Polizas Contables
     public ArrayList<HashMap<String, Object>> getPolizasContables_PaginaGrid(String data_string, int offset, int pageSize, String orderBy , String asc);
     public ArrayList<HashMap<String, Object>> getPolizasContables_Datos(Integer id);
+    public ArrayList<HashMap<String, Object>> getPolizasContables_DatosGrid(Integer poliza_id);
     public ArrayList<HashMap<String, Object>> getMonedas();
     public ArrayList<HashMap<String, Object>> getPolizasContables_TiposPolizas(Integer id_empresa);
     public ArrayList<HashMap<String, Object>> getPolizasContables_Conceptos(Integer id_empresa);

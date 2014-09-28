@@ -217,6 +217,7 @@ public class CtbPolizasContablesController {
         log.log(Level.INFO, "Ejecutando getPolizaJson de {0}", CtbPolizasContablesController.class.getName());
         HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
         ArrayList<HashMap<String, Object>> datosPoliza = new ArrayList<HashMap<String, Object>>();
+        ArrayList<HashMap<String, Object>> datosGrid = new ArrayList<HashMap<String, Object>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
         ArrayList<HashMap<String, Object>> sucursales = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> arrayExtra = new ArrayList<HashMap<String, Object>>();
@@ -243,13 +244,14 @@ public class CtbPolizasContablesController {
         
         if( id != 0  ){
             datosPoliza = this.getCtbDao().getPolizasContables_Datos(id);
+            datosGrid = this.getCtbDao().getPolizasContables_DatosGrid(id);
         }
         
         jsonretorno.put("Monedas", this.getCtbDao().getMonedas());
         jsonretorno.put("CC", this.getCtbDao().getPolizasContables_CentrosCostos(id_empresa, idSucUser));
         jsonretorno.put("Anios", this.getCtbDao().getPolizasContables_Anios());
-        
         jsonretorno.put("Data", datosPoliza);
+        jsonretorno.put("Grid", datosGrid);
         jsonretorno.put("Extras", arrayExtra);
         
         return jsonretorno;
@@ -330,7 +332,7 @@ public class CtbPolizasContablesController {
 	
 	
     
-    //Crear y editar
+    //rear y editar
     @RequestMapping(method = RequestMethod.POST, value="/edit.json")
     public @ResponseBody HashMap<String, String> editJson(
             @RequestParam(value="identificador", required=true) String identificador,
@@ -342,6 +344,7 @@ public class CtbPolizasContablesController {
             @RequestParam(value="select_concepto", required=true) String select_concepto,
             @RequestParam(value="fecha", required=true) String fecha,
             @RequestParam(value="observacion", required=true) String observacion,
+            @RequestParam(value="accion", required=true) String accion,
             
             @RequestParam(value="cta", required=true) String[] cuenta,
             @RequestParam(value="delete", required=false) String[] eliminado,
@@ -371,6 +374,8 @@ public class CtbPolizasContablesController {
         arreglo = new String[eliminado.length];
         
         for(int i=0; i<eliminado.length; i++) {
+            debe[i] = StringHelper.removerComas(debe[i]);
+            haber[i] = StringHelper.removerComas(haber[i]);
             arreglo[i]= "'"+eliminado[i] +"___" + id_det[i] +"___" + select_tmov[i] +"___" + id_cta[i] +"___" + select_cc[i] +"___" + debe[i] +"___" + haber[i] + "___"+cuenta[i]+"___"+no_tr[i] +"'";
             //System.out.println(arreglo[i]);
         }
@@ -378,12 +383,14 @@ public class CtbPolizasContablesController {
         //Serializar el arreglo
         extra_data_array = StringUtils.join(arreglo, ",");
         
-        
+        /*
         if( identificador.equals("0") ){
             command_selected = "new";
         }else{
             command_selected = "edit";
         }
+        */
+        command_selected = accion;
         
         //System.out.println("app_selected="+app_selected+"\ncommand_selected="+command_selected+"\nid_usuario="+id_usuario+"\nidentificador="+identificador+"\nselect_sucursal="+select_sucursal+"\nselect_mes="+select_mes+"\nselect_anio="+select_anio+"\nselect_tipo="+select_tipo+"\nselect_moneda="+select_moneda+"\nselect_concepto="+select_concepto+"\nselect_centro_costo="+select_centro_costo+"\nfecha="+fecha+"\ndescripcion="+descripcion+"\nobservacion="+observacion+"\ndebe="+debe+"\nhaber="+haber+"\nid_cta="+id_cta+"\ncuenta="+cuenta+"\nscuenta="+scuenta+"\nsscuenta="+sscuenta+"\nssscuenta="+ssscuenta+"\nsssscuenta="+sssscuenta);
         
