@@ -125,7 +125,7 @@
 											<tr>
 												<td width="5"></td>
 												<td width="85">Tipo&nbsp;de&nbsp;p&oacute;liza</td>
-												<td width="150"><INPUT TYPE="text" name="tipo" style="width:150px;"></td>
+												<td width="150"><INPUT TYPE="text" name="tipo" style="width:150px;" title="Tipo de Poliza(Numerico)"></td>
 												<td width="250"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_tipo"></div></td>
 												<td width="25"></td>
 												<td></td>
@@ -136,7 +136,7 @@
 											<tr>
 												<td width="5"></td>
 												<td width="85">Descripci&oacute;n</td>
-												<td colspan="2"><INPUT TYPE="text" name="descripcion" style="width:400px;"></td>
+												<td colspan="2"><INPUT TYPE="text" name="descripcion" style="width:400px;" title="Nombre o titulo del tipo de poliza"></td>
 												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_descripcion"></div></td>
 												<td></td>
 											</tr>
