@@ -183,6 +183,17 @@ $(function() {
 	}
 	
 	
+	$aplicar_evento_keypress = function( $campo_input ){
+		//validar campo cantidad recibida, solo acepte numeros y punto
+		$campo_input.keypress(function(e){
+			// Permitir  numeros, borrar, suprimir, TAB, puntos, comas
+			if(e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
+				return true;
+			}else {
+				return false;
+			}
+		});
+	}
 	
 	
 	
@@ -211,6 +222,7 @@ $(function() {
 		var $cancelar_plugin = $('#forma-tipopolizas-window').find('#boton_cancelar');
 		var $submit_actualizar = $('#forma-tipopolizas-window').find('#submit');
 		
+		$aplicar_evento_keypress($tipo);
 		$campo_id.attr({ 'value' : 0 });
        
 		var respuestaProcesada = function(data){
@@ -325,7 +337,7 @@ $(function() {
 			var $submit_actualizar = $('#forma-tipopolizas-window').find('#submit');
 			
 			
-		
+			$aplicar_evento_keypress($tipo);
 			if(accion_mode == 'edit'){
                                 
 				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getTipoPoliza.json';
