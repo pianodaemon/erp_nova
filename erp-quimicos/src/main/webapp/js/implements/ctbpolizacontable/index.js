@@ -1019,7 +1019,7 @@ $(function() {
 		var $forma_selected = $('#' + form_to_show).clone();
 		$forma_selected.attr({ id : form_to_show + id_to_show });
 		
-		$('#forma-ctbpolizacontable-window').css({ "margin-left": -470, 	"margin-top": -235 });
+		$('#forma-ctbpolizacontable-window').css({ "margin-left": -470, 	"margin-top": -255 });
 		$forma_selected.prependTo('#forma-ctbpolizacontable-window');
 		$forma_selected.find('.panelcito_modal').attr({ id : 'panelcito_modal' + id_to_show , style:'display:table'});
 		$tabs_li_funxionalidad();
@@ -1109,6 +1109,14 @@ $(function() {
 			}else{
 				// Desaparece todas las interrogaciones si es que existen
 				$('#forma-ctbpolizacontable-window').find('div.interrogacion').css({'display':'none'});
+				$('#forma-ctbpolizacontable-window').find('.ctbpolizacontable_div_one').css({'height':'620px'});
+				
+				$grid_cuentas.find('select').css({'background' : '#ffffff'});
+				$grid_cuentas.find('input').css({'background' : '#ffffff'});
+				
+				$('#forma-ctbpolizacontable-window').find('#div_warning_grid').css({'display':'none'});
+				$('#forma-ctbpolizacontable-window').find('#div_warning_grid').find('#grid_warning').children().remove();
+				
 				
 				var valor = data['success'].split('___');
 				//muestra las interrogaciones
@@ -1120,8 +1128,30 @@ $(function() {
 						.parent()
 						.css({'display':'block'})
 						.easyTooltip({	tooltipId: "easyTooltip2",content: tmp.split(':')[1] });
+						
+						
+						if((tmp.split(':')[0].substring(0, 11) == 'select_tmov') || (tmp.split(':')[0].substring(0, 3) == 'cta') || (tmp.split(':')[0].substring(0, 4) == 'debe') || (tmp.split(':')[0].substring(0, 4) == 'haber')){
+							var campo = tmp.split(':')[0];
+							
+							$('#forma-ctbpolizacontable-window').find('#div_warning_grid').css({'display':'block'});
+							var $campo = $grid_cuentas.find('#'+campo).css({'background' : '#d41000'});
+							
+							var cta = $campo.parent().parent().find('input[name=cta]').val();
+							var descripcion_cta = $campo.parent().parent().find('input[name=descripcion_cta]').val();
+							
+							var tr_warning = '<tr>';
+									tr_warning += '<td width="20"><div><IMG SRC="../../img/icono_advertencia.png" ALIGN="top" rel="warning_sku"></td>';
+									tr_warning += '<td width="150"><INPUT TYPE="text" value="' + cta + '" class="borde_oculto" readOnly="true" style="width:150px; color:red"></td>';
+									tr_warning += '<td width="250"><INPUT TYPE="text" value="' + descripcion_cta + '" class="borde_oculto" readOnly="true" style="width:250px; color:red"></td>';
+									tr_warning += '<td width="380"><INPUT TYPE="text" value="'+  tmp.split(':')[1] +'" class="borde_oculto" readOnly="true" style="width:350px; color:red"></td>';
+							tr_warning += '</tr>';
+							
+							$('#forma-ctbpolizacontable-window').find('#div_warning_grid').find('#grid_warning').append(tr_warning);
+						}
 					}
 				}
+				$('#forma-ctbpolizacontable-window').find('#div_warning_grid').find('#grid_warning').find('tr:odd').find('td').css({ 'background-color' : '#FFFFFF'});
+				$('#forma-ctbpolizacontable-window').find('#div_warning_grid').find('#grid_warning').find('tr:even').find('td').css({ 'background-color' : '#e7e8ea'});
 			}
 		}
 		var options = { dataType :  'json', success : respuestaProcesada };
@@ -1358,7 +1388,7 @@ $(function() {
 			$forma_selected.attr({ id : form_to_show + id_to_show });
 			
 			$(this).modalPanel_ctbpolizacontable();
-			$('#forma-ctbpolizacontable-window').css({ "margin-left": -470, 	"margin-top": -235 });
+			$('#forma-ctbpolizacontable-window').css({ "margin-left": -470, 	"margin-top": -255 });
 			
 			$forma_selected.prependTo('#forma-ctbpolizacontable-window');
 			$forma_selected.find('.panelcito_modal').attr({ id : 'panelcito_modal' + id_to_show , style:'display:table'});
@@ -1450,6 +1480,15 @@ $(function() {
 					else{
 						// Desaparece todas las interrogaciones si es que existen
 						$('#forma-ctbpolizacontable-window').find('div.interrogacion').css({'display':'none'});
+						$('#forma-ctbpolizacontable-window').find('.ctbpolizacontable_div_one').css({'height':'620px'});
+						
+						$grid_cuentas.find('#select_tmov').css({'background' : '#ffffff'});
+						$grid_cuentas.find('#cta').css({'background' : '#ffffff'});
+						$grid_cuentas.find('#debe').css({'background' : '#ffffff'});
+						$grid_cuentas.find('#haber').css({'background' : '#ffffff'});
+						
+						$('#forma-ctbpolizacontable-window').find('#div_warning_grid').css({'display':'none'});
+						$('#forma-ctbpolizacontable-window').find('#div_warning_grid').find('#grid_warning').children().remove();
 						
 						var valor = data['success'].split('___');
 						//muestra las interrogaciones
@@ -1461,8 +1500,29 @@ $(function() {
 								.parent()
 								.css({'display':'block'})
 								.easyTooltip({	tooltipId: "easyTooltip2",content: tmp.split(':')[1] });
+								
+								if((tmp.split(':')[0].substring(0, 11) == 'select_tmov') || (tmp.split(':')[0].substring(0, 3) == 'cta') || (tmp.split(':')[0].substring(0, 4) == 'debe') || (tmp.split(':')[0].substring(0, 4) == 'haber')){
+									var campo = tmp.split(':')[0];
+									
+									$('#forma-ctbpolizacontable-window').find('#div_warning_grid').css({'display':'block'});
+									var $campo = $grid_cuentas.find('#'+campo).css({'background' : '#d41000'});
+									
+									var cta = $campo.parent().parent().find('input[name=cta]').val();
+									var descripcion_cta = $campo.parent().parent().find('input[name=descripcion_cta]').val();
+									
+									var tr_warning = '<tr>';
+											tr_warning += '<td width="20"><div><IMG SRC="../../img/icono_advertencia.png" ALIGN="top" rel="warning_sku"></td>';
+											tr_warning += '<td width="150"><INPUT TYPE="text" value="' + cta + '" class="borde_oculto" readOnly="true" style="width:150px; color:red"></td>';
+											tr_warning += '<td width="250"><INPUT TYPE="text" value="' + descripcion_cta + '" class="borde_oculto" readOnly="true" style="width:250px; color:red"></td>';
+											tr_warning += '<td width="380"><INPUT TYPE="text" value="'+  tmp.split(':')[1] +'" class="borde_oculto" readOnly="true" style="width:350px; color:red"></td>';
+									tr_warning += '</tr>';
+									
+									$('#forma-ctbpolizacontable-window').find('#div_warning_grid').find('#grid_warning').append(tr_warning);
+								}
 							}
 						}
+						$('#forma-ctbpolizacontable-window').find('#div_warning_grid').find('#grid_warning').find('tr:odd').find('td').css({ 'background-color' : '#FFFFFF'});
+						$('#forma-ctbpolizacontable-window').find('#div_warning_grid').find('#grid_warning').find('tr:even').find('td').css({ 'background-color' : '#e7e8ea'});
 					}
 				}
 				
