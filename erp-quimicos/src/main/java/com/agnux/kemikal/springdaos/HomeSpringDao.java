@@ -45,6 +45,7 @@ public class HomeSpringDao  implements HomeInterfaceDao  {
                 +"gral_emp.nivel_cta, "
                 +"gral_emp.transportista, "
                 +"gral_emp.nomina,"
+                + "gral_emp.incluye_log,"
                 +"gral_usr_suc.gral_suc_id AS sucursal_id, "
                 +"gral_suc.titulo AS sucursal,"
                 +"gral_usr.gral_empleados_id "
@@ -76,6 +77,7 @@ public class HomeSpringDao  implements HomeInterfaceDao  {
                     row.put("sucursal",String.valueOf(rs.getString("sucursal")));
                     row.put("empleado_id",String.valueOf(rs.getInt("gral_empleados_id")));
                     row.put("incluye_nomina",String.valueOf(rs.getBoolean("nomina")));
+                    row.put("incluye_log",String.valueOf(rs.getBoolean("incluye_log")));
                     return row;
                 }
             }
@@ -105,6 +107,7 @@ public class HomeSpringDao  implements HomeInterfaceDao  {
                     + "gral_emp.nivel_cta, "
                     + "gral_emp.transportista, "
                     + "gral_emp.nomina,"
+                    + "gral_emp.incluye_log,"
                     + "gral_usr_suc.gral_suc_id AS sucursal_id, "
                     + "gral_suc.titulo AS sucursal, "
                     +"gral_usr.gral_empleados_id "
@@ -136,6 +139,7 @@ public class HomeSpringDao  implements HomeInterfaceDao  {
                     row.put("sucursal",String.valueOf(rs.getString("sucursal")));
                     row.put("empleado_id",String.valueOf(rs.getInt("gral_empleados_id")));
                     row.put("incluye_nomina",String.valueOf(rs.getBoolean("nomina")));
+                    row.put("incluye_log",String.valueOf(rs.getBoolean("incluye_log")));
                     return row;
                 }
             }
