@@ -207,7 +207,7 @@ public class ClientsDestController {
     
     
     
-    //obtiene el las Estados de un Pais
+    //Obtiene el las Estados de un Pais
     @RequestMapping(method = RequestMethod.POST, value="/getEstados.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getEstadosJson(
             @RequestParam(value="id_pais", required=true) String id_pais,
@@ -224,6 +224,7 @@ public class ClientsDestController {
     @RequestMapping(method = RequestMethod.POST, value="/edit.json")
     public @ResponseBody HashMap<String, String> editJson(
         @RequestParam(value="identificador", required=true) String identificador,
+        @RequestParam(value="folio_ext", required=true) String folio_ext,
         @RequestParam(value="destinatario", required=true) String destinatario,
         @RequestParam(value="rfc", required=true) String rfc,
         @RequestParam(value="calle", required=true) String calle,
@@ -285,7 +286,8 @@ public class ClientsDestController {
         +"___"+tel1
         +"___"+ext1
         +"___"+tel2
-        +"___"+email;
+        +"___"+email
+        +"___"+folio_ext;
         
         //System.out.println("data_string: "+data_string);
         
