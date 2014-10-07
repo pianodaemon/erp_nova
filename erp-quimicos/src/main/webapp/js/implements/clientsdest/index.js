@@ -193,6 +193,7 @@ $(function() {
 		var $select_tipo = $('#forma-clientsdest-window').find('select[name=select_tipo]');
 		var $destinatario = $('#forma-clientsdest-window').find('input[name=destinatario]');
 		var $folio = $('#forma-clientsdest-window').find('input[name=folio]');
+		var $folio_ext = $('#forma-clientsdest-window').find('input[name=folio_ext]');
 		var $rfc = $('#forma-clientsdest-window').find('input[name=rfc]');
 		var $calle = $('#forma-clientsdest-window').find('input[name=calle]');
 		var $numero_int = $('#forma-clientsdest-window').find('input[name=numero_int]');
@@ -325,7 +326,7 @@ $(function() {
 			$buscar.trigger('click');
 		});
 		
-		$destinatario.focus();
+		$folio_ext.focus();
 	});
 	
 	
@@ -374,6 +375,7 @@ $(function() {
 			var $select_tipo = $('#forma-clientsdest-window').find('select[name=select_tipo]');
 			var $destinatario = $('#forma-clientsdest-window').find('input[name=destinatario]');
 			var $folio = $('#forma-clientsdest-window').find('input[name=folio]');
+			var $folio_ext = $('#forma-clientsdest-window').find('input[name=folio_ext]');
 			var $rfc = $('#forma-clientsdest-window').find('input[name=rfc]');
 			var $calle = $('#forma-clientsdest-window').find('input[name=calle]');
 			var $numero_int = $('#forma-clientsdest-window').find('input[name=numero_int]');
@@ -437,19 +439,20 @@ $(function() {
 				
 				//aqui se cargan los campos al editar
 				$.post(input_json,$arreglo,function(entry){
-					$identificador.attr({'value' : entry['Datos']['0']['identificador']});
-					$destinatario.attr({'value' : entry['Datos']['0']['destinatario']});
-					$folio.attr({'value' : entry['Datos']['0']['folio']});
-					$rfc.attr({'value' : entry['Datos']['0']['rfc']});
-					$calle.attr({'value' : entry['Datos']['0']['calle']});
-					$numero_int.attr({'value' : entry['Datos']['0']['no_int']});
-					$numero_ext.attr({'value' : entry['Datos']['0']['no_ext']});
-					$colonia.attr({'value' : entry['Datos']['0']['colonia']});
-					$cp.attr({'value' : entry['Datos']['0']['cp']});
-					$email.attr({'value' : entry['Datos']['0']['email']});
-					$tel1.attr({'value' : entry['Datos']['0']['telefono1']});
-					$ext1.attr({'value' : entry['Datos']['0']['extension']});
-					$tel2.attr({'value' : entry['Datos']['0']['telefono2']});
+					$identificador.attr({'value' : entry['Datos'][0]['identificador']});
+					$destinatario.attr({'value' : entry['Datos'][0]['destinatario']});
+					$folio.attr({'value' : entry['Datos'][0]['folio']});
+					$folio_ext.attr({'value' : entry['Datos'][0]['f_ext']});
+					$rfc.attr({'value' : entry['Datos'][0]['rfc']});
+					$calle.attr({'value' : entry['Datos'][0]['calle']});
+					$numero_int.attr({'value' : entry['Datos'][0]['no_int']});
+					$numero_ext.attr({'value' : entry['Datos'][0]['no_ext']});
+					$colonia.attr({'value' : entry['Datos'][0]['colonia']});
+					$cp.attr({'value' : entry['Datos'][0]['cp']});
+					$email.attr({'value' : entry['Datos'][0]['email']});
+					$tel1.attr({'value' : entry['Datos'][0]['telefono1']});
+					$ext1.attr({'value' : entry['Datos'][0]['extension']});
+					$tel2.attr({'value' : entry['Datos'][0]['telefono2']});
 					
 					var tipo_hmtl='';
 					if(parseInt(entry['Datos'][0]['tipo'])==0){
@@ -554,7 +557,7 @@ $(function() {
 					$buscar.trigger('click');
 				});
 				
-				$destinatario.focus();
+				$folio_ext.focus();
 			}
 		}
 	}
