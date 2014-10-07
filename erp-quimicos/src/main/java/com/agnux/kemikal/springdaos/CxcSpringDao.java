@@ -11,7 +11,10 @@ import com.agnux.common.helpers.StringHelper;
 import com.agnux.kemikal.interfacedaos.CxcInterfaceDao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -4254,7 +4257,7 @@ return subfamilias;
     @Override
     public ArrayList<HashMap<String, Object>> getClientsDest_Datos(Integer id) {
         String sql_query = ""
-                + "SELECT id,folio,rfc,razon_social AS destinatario,tipo,calle,no_int,no_ext,colonia,gral_mun_id,gral_edo_id,gral_pais_id,cp,(CASE WHEN tel1 IS NULL THEN '' ELSE tel1 END) AS tel1,(CASE WHEN tel2 IS NULL THEN '' ELSE tel2 END) AS tel2,ext,email "
+                + "SELECT id,folio, folio_ext,rfc,razon_social AS destinatario,tipo,calle,no_int,no_ext,colonia,gral_mun_id,gral_edo_id,gral_pais_id,cp,(CASE WHEN tel1 IS NULL THEN '' ELSE tel1 END) AS tel1,(CASE WHEN tel2 IS NULL THEN '' ELSE tel2 END) AS tel2,ext,email "
                 + "FROM cxc_destinatarios "
                 + "WHERE id=?";
 
@@ -4269,6 +4272,7 @@ return subfamilias;
                     HashMap<String, Object> row = new HashMap<String, Object>();
                     row.put("identificador",rs.getInt("id"));
                     row.put("folio",rs.getString("folio"));
+                    row.put("f_ext",rs.getString("folio_ext"));
                     row.put("rfc",rs.getString("rfc"));
                     row.put("destinatario",rs.getString("destinatario"));
                     row.put("tipo",rs.getInt("tipo"));
