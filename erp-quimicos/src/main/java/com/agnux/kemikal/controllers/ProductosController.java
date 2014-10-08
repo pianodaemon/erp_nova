@@ -169,25 +169,29 @@ public class ProductosController {
     
     
     //obtiene lineas de producto y datos para el buscador
-    @RequestMapping(method = RequestMethod.POST, value="/getProductoTipos.json")
-    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getDataLineasJson(
+    @RequestMapping(method = RequestMethod.POST, value="/getInit.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getInitJson(
             @RequestParam(value="iu", required=true) String id_user_cod,
             Model model
         ) {
         
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
-        ArrayList<HashMap<String, String>> arrayTiposProducto = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> arrayExtra = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> extra = new HashMap<String, String>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
         
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         
-        arrayTiposProducto=this.getInvDao().getProducto_Tipos();
         extra = this.getInvDao().getUserRolAgenteVenta(id_usuario);
         arrayExtra.add(0,extra);
         
-        jsonretorno.put("prodTipos", arrayTiposProducto);
+        jsonretorno.put("prodTipos", this.getInvDao().getProducto_Tipos());
+        jsonretorno.put("Lineas", this.getInvDao().getProducto_Lineas(id_empresa));
+        jsonretorno.put("Marcas", this.getInvDao().getProducto_Marcas(id_empresa));
+        
         jsonretorno.put("Extra", arrayExtra);
         return jsonretorno;
     }
@@ -291,17 +295,17 @@ public class ProductosController {
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
         ArrayList<HashMap<String, String>> producto = new ArrayList<HashMap<String, String>>();
-        ArrayList<HashMap<String, String>> lineas = new ArrayList<HashMap<String, String>>();
+        //ArrayList<HashMap<String, String>> lineas = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> secciones = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> grupos = new ArrayList<HashMap<String, String>>();
-        ArrayList<HashMap<String, String>> marcas = new ArrayList<HashMap<String, String>>();
+        //ArrayList<HashMap<String, String>> marcas = new ArrayList<HashMap<String, String>>();
         //ArrayList<HashMap<String, String>> familias = new ArrayList<HashMap<String, String>>();
         //ArrayList<HashMap<String, String>> subfamilias = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> clasif_stock = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> clases = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> impuestos = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> ieps = new ArrayList<HashMap<String, String>>();
-        ArrayList<HashMap<String, String>> tiposProducto = new ArrayList<HashMap<String, String>>();
+        //ArrayList<HashMap<String, String>> tiposProducto = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> unidades = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> ingredientes = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> presentaciones = new ArrayList<HashMap<String, String>>();
@@ -318,8 +322,13 @@ public class ProductosController {
         
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         Integer id_suc=0;
-        extra.put("mod_produccion", userDat.get("incluye_produccion"));//esta variable indica si la empresa incluye modulo de produccion
-        extra.put("incluye_contab", userDat.get("incluye_contab"));//esta variable indica si la empresa incluye modulo de Contabilidad
+        //Esta variable indica si la empresa incluye modulo de produccion
+        extra.put("mod_produccion", userDat.get("incluye_produccion"));
+        //Esta variable indica si la empresa incluye modulo de Contabilidad
+        extra.put("incluye_contab", userDat.get("incluye_contab"));
+        //Esta variable indica si la empresa incluye modulo de Logistica
+        extra.put("ilog", userDat.get("incluye_log"));
+        //Variable que indica el nivel de la cuenta para contabilidad
         extra.put("nivel_cta", userDat.get("nivel_cta"));
         arrayExtra.add(0,extra);
         
@@ -334,26 +343,26 @@ public class ProductosController {
             }
         }
         
-        lineas = this.getInvDao().getProducto_Lineas(id_empresa);
+        //lineas = this.getInvDao().getProducto_Lineas(id_empresa);
         secciones = this.getInvDao().getInvProdLineas_Secciones(id_empresa);
         grupos = this.getInvDao().getProducto_Grupos(id_empresa);
-        marcas = this.getInvDao().getProducto_Marcas(id_empresa);
+        //marcas = this.getInvDao().getProducto_Marcas(id_empresa);
         //familias = this.getInvDao().getInvProdSubFamilias_Familias(id_empresa);
         //subfamilias = this.getInvDao().getProducto_Subfamilias(id_empresa);
         clasif_stock = this.getInvDao().getProducto_ClasificacionStock(id_empresa);
         clases = this.getInvDao().getProducto_Clases(id_empresa);
         impuestos = this.getInvDao().getEntradas_Impuestos();
         ieps = this.getInvDao().getIeps(id_empresa, id_suc);
-        tiposProducto = this.getInvDao().getProducto_Tipos();
+        //tiposProducto = this.getInvDao().getProducto_Tipos();
         unidades = this.getInvDao().getProducto_Unidades();
         presentaciones = this.getInvDao().getProducto_Presentaciones(id_del_producto);
         cuentasMayor = this.getInvDao().getProducto_CuentasMayor(id_empresa);
         
         jsonretorno.put("Producto",producto);
-        jsonretorno.put("Lineas", lineas);
+        //jsonretorno.put("Lineas", lineas);
         jsonretorno.put("Secciones", secciones);
         jsonretorno.put("Grupos", grupos);
-        jsonretorno.put("Marcas", marcas);
+        //jsonretorno.put("Marcas", marcas);
         //jsonretorno.put("Familias", familias);
         //jsonretorno.put("Subfamilias", subfamilias);
         jsonretorno.put("ClasifStock", clasif_stock);
@@ -361,7 +370,7 @@ public class ProductosController {
         jsonretorno.put("Impuestos", impuestos);
         jsonretorno.put("Ieps", ieps);
         jsonretorno.put("Unidades",unidades);
-        jsonretorno.put("ProdTipos", tiposProducto);
+        //jsonretorno.put("ProdTipos", tiposProducto);
         jsonretorno.put("Ingredientes", ingredientes);
         jsonretorno.put("Presentaciones", presentaciones);
         jsonretorno.put("PresOn", presentaciones_seleccionadas);
@@ -471,6 +480,33 @@ public class ProductosController {
     
     
     
+    //Buscador de clientes
+    @RequestMapping(method = RequestMethod.POST, value="/getBuscadorClientes.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getBuscadorClientesJson(
+            @RequestParam(value="cadena", required=true) String cadena,
+            @RequestParam(value="filtro", required=true) Integer filtro,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+        ) {
+        
+        HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        
+        
+        jsonretorno.put("Clientes", this.getInvDao().getBuscadorClientes(cadena,filtro,id_empresa, id_sucursal));
+        
+        return jsonretorno;
+    }
+    
+    
     
     //metodo para el Buscador de Cuentas Contables
     @RequestMapping(method = RequestMethod.POST, value="/getBuscadorCuentasContables.json")
@@ -557,6 +593,7 @@ public class ProductosController {
             @RequestParam(value="edito_pdf", required=true) String edito_pdf,
             @RequestParam(value="edito_imagen", required=true) String edito_imagen,
             @RequestParam(value="check_flete", required=false) String check_flete,
+            @RequestParam(value="no_clie", required=true) String no_clie,
             Model model,@ModelAttribute("user") UserSessionData user
         ) {
             
@@ -686,7 +723,8 @@ public class ProductosController {
                     descripcion_corta+"___"+//40
                     descripcion_larga+"___"+//41
                     select_pres_default+"___"+//42
-                    check_flete;
+                    check_flete+"___"+//43
+                    no_clie;//44
             
             succes = this.getInvDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
             
