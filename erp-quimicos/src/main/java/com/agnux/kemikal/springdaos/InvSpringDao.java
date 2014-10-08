@@ -627,7 +627,8 @@ public class InvSpringDao implements InvInterfaceDao{
                         + "inv_prod.archivo_img, "
                         + "inv_prod.archivo_pdf,"
                         + "inv_prod.inv_prod_presentacion_id AS presentacion_id, "
-                        + "inv_prod.flete "
+                        + "inv_prod.flete,"
+                        + "inv_prod.no_clie "
                 + "FROM inv_prod  "
                 + "LEFT JOIN cxp_prov ON cxp_prov.id=inv_prod.cxp_prov_id "
                 + "WHERE inv_prod.id=?";
@@ -677,6 +678,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("archivo_pdf",rs.getString("archivo_pdf"));
                     row.put("presentacion_id",String.valueOf(rs.getInt("presentacion_id")));
                     row.put("flete",String.valueOf(rs.getBoolean("flete")));
+                    row.put("no_clie",rs.getString("no_clie"));
                     return row;
                 }
             }
@@ -8633,7 +8635,7 @@ public class InvSpringDao implements InvInterfaceDao{
                                     +" AND cxc_clie.borrado_logico=false  "+where+" "
                             +") AS sbt "
                             +"LEFT JOIN gral_mon on gral_mon.id = sbt.moneda_id ORDER BY sbt.id;";
-        System.out.println("BuscarCliente: "+sql_query);
+        //System.out.println("BuscarCliente: "+sql_query);
         ArrayList<HashMap<String, Object>> hm_cli = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_query,
             new Object[]{}, new RowMapper() {
@@ -8692,7 +8694,7 @@ public class InvSpringDao implements InvInterfaceDao{
                 +") AS sbt "
                 +"LEFT JOIN gral_mon on gral_mon.id = sbt.moneda_id ORDER BY sbt.id LIMIT 1;";
 
-        System.out.println("getDatosCliente: "+sql_query);
+        //System.out.println("getDatosCliente: "+sql_query);
 
         ArrayList<HashMap<String, Object>> hm_cli = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_query,
