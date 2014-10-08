@@ -8,6 +8,8 @@ $(function() {
 	};
 	
 	var arrayTProd;
+	var arrayLineas;
+	var arrayMarcas;
 	var rolVendedor=0;
 	
 	$('#header').find('#header1').find('span.emp').text($('#lienzo_recalculable').find('input[name=emp]').val());
@@ -59,7 +61,7 @@ $(function() {
 		$get_datos_grid();
 	});
 	
-	var input_json_lineas = document.location.protocol + '//' + document.location.host + '/'+controller+'/getProductoTipos.json';
+	var input_json_lineas = document.location.protocol + '//' + document.location.host + '/'+controller+'/getInit.json';
 	$arreglo = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
 	$.post(input_json_lineas,$arreglo,function(data){
 		//Llena el select tipos de productos en el buscador
@@ -70,7 +72,9 @@ $(function() {
 		});
 		$select_tipo_productos_busqueda.append(prod_tipos_html);
 		
-		arrayTProd=data['prodTipos'];
+		arrayTProd = data['prodTipos'];
+		arrayLineas = data['Lineas'];
+		arrayMarcas = data['Marcas'];
 		
 		rolVendedor=data['Extra'][0]['rol_agente_venta'];
 		
@@ -850,6 +854,139 @@ $(function() {
 	
 	
 	
+	
+	
+	//buscador de clientes
+	$busca_clientes = function($nocliente, id_user ){
+		//limpiar_campos_grids();
+		$(this).modalPanel_Buscacliente();
+		var $dialogoc =  $('#forma-buscacliente-window');
+		//var $dialogoc.prependTo('#forma-buscaproduct-window');
+		$dialogoc.append($('div.buscador_clientes').find('table.formaBusqueda_clientes').clone());
+		$('#forma-buscacliente-window').css({"margin-left": -200, 	"margin-top": -190});
+		
+		var $tabla_resultados = $('#forma-buscacliente-window').find('#tabla_resultado');
+		var $busca_cliente_modalbox = $('#forma-buscacliente-window').find('#busca_cliente_modalbox');
+		var $cancelar_plugin_busca_cliente = $('#forma-buscacliente-window').find('#cencela');
+		
+		var $cadena_buscar = $('#forma-buscacliente-window').find('input[name=cadena_buscar]');
+		var $select_filtro_por = $('#forma-buscacliente-window').find('select[name=filtropor]');
+		
+		//Funcionalidad botones
+		$busca_cliente_modalbox.mouseover(function(){
+			$(this).removeClass("onmouseOutBuscar").addClass("onmouseOverBuscar");
+		});
+		
+		$busca_cliente_modalbox.mouseout(function(){
+			$(this).removeClass("onmouseOverBuscar").addClass("onmouseOutBuscar");
+		});
+		
+		$cancelar_plugin_busca_cliente.mouseover(function(){
+			$(this).removeClass("onmouseOutCancelar").addClass("onmouseOverCancelar");
+		});
+		$cancelar_plugin_busca_cliente.mouseout(function(){
+			$(this).removeClass("onmouseOverCancelar").addClass("onmouseOutCancelar");
+		});
+		
+		var html = '';
+		$select_filtro_por.children().remove();
+		html='<option value="0">[-- Opcion busqueda --]</option>';
+		
+		if($nocliente.val().trim() != ''){
+			//asignamos el numero de control al campo de busqueda
+			$cadena_buscar.val($nocliente.val());
+			html+='<option value="1" selected="yes">No. de control</option>';
+		}else{
+			html+='<option value="1">No. de control</option>';
+		}
+		html+='<option value="2">RFC</option>';
+		html+='<option value="3">Razon social</option>';
+		//html+='<option value="4">CURP</option>';
+		html+='<option value="5">Alias</option>';
+		$select_filtro_por.append(html);
+		
+		
+		$cadena_buscar.focus();
+		
+		//click buscar clientes
+		$busca_cliente_modalbox.click(function(event){
+			//event.preventDefault();
+			var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getBuscadorClientes.json';
+			$arreglo = {	'cadena':$cadena_buscar.val(),
+							'filtro':$select_filtro_por.val(),
+							'iu':id_user 
+                        }
+			
+			var trr = '';
+			$tabla_resultados.children().remove();
+			$.post(input_json,$arreglo,function(entry){
+				$.each(entry['Clientes'],function(entryIndex,cliente){
+					trr = '<tr>';
+						trr += '<td width="80">';
+							trr += '<input type="hidden" id="idclient" value="'+cliente['id']+'">';
+							trr += '<span class="no_control">'+cliente['numero_control']+'</span>';
+						trr += '</td>';
+						trr += '<td width="145"><span class="rfc">'+cliente['rfc']+'</span></td>';
+						trr += '<td width="375"><span class="razon">'+cliente['razon_social']+'</span></td>';
+					trr += '</tr>';
+					
+					$tabla_resultados.append(trr);
+				});
+				
+				//$tabla_resultados.find('tr').focus();
+				
+				$tabla_resultados.find('tr:odd').find('td').css({'background-color' : '#e7e8ea'});
+				$tabla_resultados.find('tr:even').find('td').css({'background-color' : '#FFFFFF'});
+				
+				$('tr:odd' , $tabla_resultados).hover(function () {
+					$(this).find('td').css({background : '#FBD850'});
+				}, function() {
+					$(this).find('td').css({'background-color':'#e7e8ea'});
+				});
+				$('tr:even' , $tabla_resultados).hover(function () {
+					$(this).find('td').css({'background-color':'#FBD850'});
+				}, function() {
+					$(this).find('td').css({'background-color':'#FFFFFF'});
+				});
+				
+				
+				//seleccionar un producto del grid de resultados
+				$tabla_resultados.find('tr').click(function(){
+					
+					$nocliente.val($(this).find('span.no_control').html());
+					
+					//elimina la ventana de busqueda
+					var remove = function() {$(this).remove();};
+					$('#forma-buscacliente-overlay').fadeOut(remove);
+					
+					//Asignar el enfoque al campo Numero de Control
+					$nocliente.focus();
+				});
+			});
+		});//termina llamada json
+		
+		
+		//si hay algo en el campo cadena_buscar al cargar el buscador, ejecuta la busqueda
+		if($cadena_buscar.val() != ''){
+			$busca_cliente_modalbox.trigger('click');
+		}
+		
+		$(this).aplicarEventoKeypressEjecutaTrigger($cadena_buscar, $busca_cliente_modalbox);
+		$(this).aplicarEventoKeypressEjecutaTrigger($select_filtro_por, $busca_cliente_modalbox);
+		
+		$cancelar_plugin_busca_cliente.click(function(event){
+			//event.preventDefault();
+			var remove = function() {$(this).remove();};
+			$('#forma-buscacliente-overlay').fadeOut(remove);
+			$nocliente.focus();
+		});
+	}//termina buscador de clientes
+
+	
+	
+	
+	
+	
 	$new_producto.click(function(event){
 		event.preventDefault();
 		var id_to_show = 0;
@@ -879,13 +1016,19 @@ $(function() {
 		var $codigo = $('#forma-product-window').find('input[name=codigo]');
 		var $descripcion = $('#forma-product-window').find('input[name=descripcion]');
 		var $codigo_barras = $('#forma-product-window').find('input[name=codigo_barras]');
-		var $proveedor = $('#forma-product-window').find('input[name=proveedor]');
-		var $id_proveedor = $('#forma-product-window').find('input[name=id_proveedor]');
 		var $tiempos_de_entrega = $('#forma-product-window').find('input[name=tentrega]');
 		var $densidad = $('#forma-product-window').find('input[name=densidad]');
 		var $valor_maximo = $('#forma-product-window').find('input[name=valor_maximo]');
 		var $valor_minimo = $('#forma-product-window').find('input[name=valor_minimo]');
 		var $punto_reorden = $('#forma-product-window').find('input[name=punto_reorden]');
+		
+		
+		var $td_etiqueta_prov_clie = $('#forma-product-window').find('#td_etiqueta_prov_clie');
+		var $busca_clie_prov = $('#forma-product-window').find('#busca_clie_prov');
+		var $proveedor = $('#forma-product-window').find('input[name=proveedor]');
+		var $id_proveedor = $('#forma-product-window').find('input[name=id_proveedor]');
+		var $no_clie = $('#forma-product-window').find('input[name=no_clie]');
+		
 		
 		var $select_estatus = $('#forma-product-window').find('select[name=select_estatus]');
 		var $select_seccion = $('#forma-product-window').find('select[name=select_seccion]');
@@ -1031,6 +1174,10 @@ $(function() {
 		$vent_ssscuenta.hide();
 		$vent_sssscuenta.hide();
 		
+		$busca_clie_prov.hide();
+		$proveedor.hide();
+		$no_clie.hide();
+		
 		/*Codigo para subir la imagen*/
 		var input_json_upload = document.location.protocol + '//' + document.location.host + '/'+controller+'/fileUpload.json';
 		var button_img = $('#forma-product-window').find('#upload_button_img'), interval;
@@ -1113,7 +1260,17 @@ $(function() {
 		$forma_selected.ajaxForm(options);
 		
 		$.post(input_json,$arreglo,function(entry){
-			$incluye_produccion.val(entry['Extras']['0']['mod_produccion']);
+			$incluye_produccion.val(entry['Extras'][0]['mod_produccion']);
+			
+			if(entry['Extras'][0]['ilog']=='true'){
+				$td_etiqueta_prov_clie.html('No. Cliente');
+				$no_clie.show();
+				$busca_clie_prov.show();
+			}else{
+				$td_etiqueta_prov_clie.html('Proveedor');
+				$proveedor.show();
+			}
+				
 			
 			if( entry['Extras'][0]['incluye_contab']=='false' ){
 				$pestana_contabilidad.parent().hide();
@@ -1199,7 +1356,7 @@ $(function() {
 			//Alimentando select de lineas
 			$select_linea.children().remove();
 			var lineas_hmtl = '<option value="0">[--Seleccionar Linea--]</option>';
-			$.each(entry['Lineas'],function(entryIndex,lin){
+			$.each(arrayLineas,function(entryIndex,lin){
 				lineas_hmtl += '<option value="' + lin['id'] + '"  >' + lin['titulo'] + '</option>';
 			});
 			$select_linea.append(lineas_hmtl);
@@ -1207,7 +1364,7 @@ $(function() {
 			//Alimentando select de marcas
 			$select_marca.children().remove();
 			var marcas_hmtl = '<option value="0">[--Seleccionar Marca--]</option>';
-			$.each(entry['Marcas'],function(entryIndex,mar){
+			$.each(arrayMarcas,function(entryIndex,mar){
 				marcas_hmtl += '<option value="' + mar['id'] + '"  >' + mar['titulo'] + '</option>';
 			});
 			$select_marca.append(marcas_hmtl);
@@ -1228,11 +1385,11 @@ $(function() {
 				grupo_hmtl += '<option value="' + lin['id'] + '"  >' + lin['titulo'] + '</option>';
 			});
 			$select_grupo.append(grupo_hmtl);
-			
+			//ProdTipos
 			//carga select de tipos de producto
 			$select_prod_tipo.children().remove();
 			var prodtipos_hmtl = '<option value="0" selected="yes">[--Seleccionar Tipo--]</option>';
-			$.each(entry['ProdTipos'],function(entryIndex,lin){
+			$.each(arrayTProd,function(entryIndex,lin){
 				prodtipos_hmtl += '<option value="' + lin['id'] + '"  >' + lin['titulo'] + '</option>';
 			});
 			$select_prod_tipo.append(prodtipos_hmtl);
@@ -1340,7 +1497,7 @@ $(function() {
 					//Recargar select tipo de producto
 					$select_prod_tipo.children().remove();
 					var prodtipo_hmtl = '<option value="0" >[--Seleccionar Tipo--]</option>';
-					$.each(entry['ProdTipos'],function(entryIndex,tip){
+					$.each(arrayTProd,function(entryIndex,tip){
 						if(parseInt(tip['id'])==parseInt(tipo_anterior)){
 							prodtipo_hmtl += '<option value="' + tip['id'] + '" selected="yes">' + tip['titulo'] + '</option>';
 						}else{
@@ -1481,6 +1638,13 @@ $(function() {
 			
 		});//termina llamada json
 		
+		
+		
+		//Buscador de clientes
+		$busca_clie_prov.click(function(event){
+			event.preventDefault();
+			$busca_clientes($no_clie, $('#lienzo_recalculable').find('input[name=iu]').val() );
+		});
 		
 		
 				
@@ -1827,14 +1991,18 @@ $(function() {
 				var $codigo = $('#forma-product-window').find('input[name=codigo]');
 				var $descripcion = $('#forma-product-window').find('input[name=descripcion]');
 				var $codigo_barras = $('#forma-product-window').find('input[name=codigo_barras]');
-				var $proveedor = $('#forma-product-window').find('input[name=proveedor]');
-				var $id_proveedor = $('#forma-product-window').find('input[name=id_proveedor]');
 				var $tiempos_de_entrega = $('#forma-product-window').find('input[name=tentrega]');
 				var $densidad = $('#forma-product-window').find('input[name=densidad]');
 				var $valor_maximo = $('#forma-product-window').find('input[name=valor_maximo]');
 				var $valor_minimo = $('#forma-product-window').find('input[name=valor_minimo]');
 				var $punto_reorden = $('#forma-product-window').find('input[name=punto_reorden]');
 				
+				var $td_etiqueta_prov_clie = $('#forma-product-window').find('#td_etiqueta_prov_clie');
+				var $busca_clie_prov = $('#forma-product-window').find('#busca_clie_prov');
+				var $proveedor = $('#forma-product-window').find('input[name=proveedor]');
+				var $id_proveedor = $('#forma-product-window').find('input[name=id_proveedor]');
+				var $no_clie = $('#forma-product-window').find('input[name=no_clie]');
+		
 				var $select_estatus = $('#forma-product-window').find('select[name=select_estatus]');
 				var $select_seccion = $('#forma-product-window').find('select[name=select_seccion]');
 				var $select_grupo = $('#forma-product-window').find('select[name=select_grupo]');
@@ -1978,6 +2146,10 @@ $(function() {
 				$vent_ssscuenta.hide();
 				$vent_sssscuenta.hide();
 				
+				$busca_clie_prov.hide();
+				$proveedor.hide();
+				$no_clie.hide();
+				
 				/*Codigo para subir la imagen*/
 				var input_json_upload = document.location.protocol + '//' + document.location.host + '/'+controller+'/fileUpload.json';
 				var button_img = $('#forma-product-window').find('#upload_button_img'), interval;
@@ -2062,6 +2234,16 @@ $(function() {
 				//aqui se cargan los campos al editar
 				$.post(input_json,$arreglo,function(entry){
 					$incluye_produccion.val(entry['Extras']['0']['mod_produccion']);
+					
+					if(entry['Extras'][0]['ilog']=='true'){
+						$td_etiqueta_prov_clie.html('No. Cliente');
+						$no_clie.show();
+						$busca_clie_prov.show();
+					}else{
+						$td_etiqueta_prov_clie.html('Proveedor');
+						$proveedor.show();
+					}
+					
 					if( entry['Extras'][0]['incluye_contab']=='false' ){
 						$pestana_contabilidad.parent().hide();
 					}else{
@@ -2162,6 +2344,7 @@ $(function() {
 					$valor_maximo.attr({'value' : entry['Producto'][0]['valor_maximo']});
 					$valor_minimo.attr({'value' : entry['Producto'][0]['valor_minimo']});
 					$punto_reorden.attr({'value' : entry['Producto'][0]['punto_reorden']});
+					$no_clie.attr({'value' : entry['Producto'][0]['no_clie']});
 					
 					$check_noserie.attr('checked', (entry['Producto'][0]['requiere_numero_serie'] == 'true')? true:false );
 					$check_nom.attr('checked', (entry['Producto'][0]['requiere_nom'] == 'true')? true:false );
@@ -2236,7 +2419,7 @@ $(function() {
 					//Alimentando select de lineas
 					$select_linea.children().remove();
 					var lineas_hmtl = '<option value="0">[--Seleccionar Linea--]</option>';
-					$.each(entry['Lineas'],function(entryIndex,lin){
+					$.each(arrayLineas,function(entryIndex,lin){
 						if(parseInt(entry['Producto'][0]['inv_prod_linea_id'])==parseInt(lin['id'])){
 							lineas_hmtl += '<option value="' + lin['id'] + '" selected="yes">' + lin['titulo'] + '</option>';
 						}else{
@@ -2249,7 +2432,7 @@ $(function() {
 					//Alimentando select de marcas
 					$select_marca.children().remove();
 					var marcas_hmtl = '<option value="0">[--Seleccionar Marca--]</option>';
-					$.each(entry['Marcas'],function(entryIndex,mar){
+					$.each(arrayMarcas,function(entryIndex,mar){
 						if(parseInt(entry['Producto'][0]['inv_mar_id'])==parseInt(mar['id'])){
 							marcas_hmtl += '<option value="' + mar['id'] + '" selected="yes">' + mar['titulo'] + '</option>';
 						}else{
@@ -2304,7 +2487,7 @@ $(function() {
 					$select_prod_tipo.children().remove();
 					//var prodtipos_hmtl = '<option value="0">[--Seleccionar Tipo--]</option>';
 					var prodtipos_hmtl = '';
-					$.each(entry['ProdTipos'],function(entryIndex,pt){
+					$.each(arrayTProd,function(entryIndex,pt){
 						if(parseInt(entry['Producto'][0]['tipo_de_producto_id'])==parseInt(pt['id'])){
 							prodtipos_hmtl += '<option value="' + pt['id'] + '" selected="yes">' + pt['titulo'] + '</option>';
 							
@@ -2333,8 +2516,6 @@ $(function() {
 							//prodtipos_hmtl += '<option value="' + pt['id'] + '"  >' + pt['titulo'] + '</option>';
 						}
 					});
-					
-					
 					$select_prod_tipo.append(prodtipos_hmtl);
 					
                                         
@@ -2667,6 +2848,11 @@ $(function() {
 				
 				
 				
+				//Buscador de clientes
+				$busca_clie_prov.click(function(event){
+					event.preventDefault();
+					$busca_clientes($no_clie, $('#lienzo_recalculable').find('input[name=iu]').val() );
+				});
 
                                 
                                 
