@@ -407,6 +407,10 @@
 													<li><a href="../gralfichatecnica/startup.agnux">Ficha Tecnica</a></li>
 												</ul>
 											</li>
+											
+											<li>
+												<a href="../invpar/startup.agnux">Configuraci&oacute;n</a>
+											</li>
 
 											<li>
 												<a href="#" class="sub">Reportes &raquo;</a>
