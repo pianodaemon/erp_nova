@@ -8635,7 +8635,7 @@ public class InvSpringDao implements InvInterfaceDao{
                                     +" AND cxc_clie.borrado_logico=false  "+where+" "
                             +") AS sbt "
                             +"LEFT JOIN gral_mon on gral_mon.id = sbt.moneda_id ORDER BY sbt.id;";
-        //System.out.println("BuscarCliente: "+sql_query);
+        System.out.println("BuscarCliente: "+sql_query);
         ArrayList<HashMap<String, Object>> hm_cli = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_query,
             new Object[]{}, new RowMapper() {
@@ -8694,7 +8694,7 @@ public class InvSpringDao implements InvInterfaceDao{
                 +") AS sbt "
                 +"LEFT JOIN gral_mon on gral_mon.id = sbt.moneda_id ORDER BY sbt.id LIMIT 1;";
 
-        //System.out.println("getDatosCliente: "+sql_query);
+        System.out.println("getDatosCliente: "+sql_query);
 
         ArrayList<HashMap<String, Object>> hm_cli = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_query,
@@ -8760,9 +8760,18 @@ public class InvSpringDao implements InvInterfaceDao{
         int rowCountClieId=0;
         int rowCountProdId=0;
         String insertSql = "";
-        boolean cargar_registro=true;
+        boolean cargar_registro=false;
         
         String param[] = data_string.split("___");
+        
+        
+        if(param[8].trim().equals("")){
+            retorno.put("destinatario", "false___El Cliente Destinatario no tiene numero de cotrol. Revise el archivo.");
+            cargar_registro=false;
+        }else{
+            retorno.put("destinatario", "true___ .");
+            cargar_registro=true;
+        }
         /*
         rowCountClieId = this.getJdbcTemplate().queryForInt("select count(id) from cxc_destinatarios where upper(trim(folio_ext))='"+param[8]+"' and borrado_logico=false and gral_emp_id="+param[0]+";");
         if(rowCountClieId<=0){
@@ -8782,13 +8791,20 @@ public class InvSpringDao implements InvInterfaceDao{
         }
         */
         
+        if(param[11].trim().equals("")){
+            retorno.put("producto", "false___El producto no tiene c&oacute;digo. Revise el archivo.");
+            cargar_registro=false;
+        }else{
+            retorno.put("producto", "true___ .");
+            cargar_registro=true;
+        }
+        
         /*
         rowCountProdId = this.getJdbcTemplate().queryForInt("select count(id) from inv_prod where upper(trim(sku))='"+param[11]+"' and borrado_logico=false and empresa_id="+param[0]+";");
         if(rowCountProdId<=0){
             insertSql = "";
             
             this.getJdbcTemplate().update(msj);
-            
             
             retorno.put("producto", "false___Se agrego este producto al catalogo. ");
         }else{
@@ -8811,8 +8827,8 @@ public class InvSpringDao implements InvInterfaceDao{
                 insertSql = "";
                 
                 //Cargar en la tabla INV_EXI_TMP
-                insertSql = "INSERT INTO inv_carga_doc_tmp(emp_id,suc_id,user_id,alm_id,no_carga,no_pedido,pos,fecha_entrega, cliente_id, no_cliente,nombre_cliente,poblacion_cliente,codigo_prod,descripcion_prod,cantidad,unidad,peso,volumen,no_entrega,puesto_exp,fecha_carga,estatus) "
-                        + "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,true);";
+                insertSql = "INSERT INTO inv_carga_doc_tmp(emp_id,suc_id,user_id,alm_id,no_carga,no_pedido,pos,fecha_entrega, cliente_id, no_dest,nombre_dest,poblacion_dest,codigo_prod,descripcion_prod,cantidad,unidad,peso,volumen,no_entrega,puesto_exp,fecha_carga,estatus) "
+                        + "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,true);";
                 //System.out.println("insertSql: "+insertSql);
                 
                 // define query arguments
@@ -8836,6 +8852,28 @@ public class InvSpringDao implements InvInterfaceDao{
         
         retorno.put("cargado", msj);
         return retorno;
+    }
+    
+    
+    //Verifica que el documento con  las cargas no ha sido dado de alta anteriormente
+    @Override
+    public int getVerificarDocumento(Integer id_emp, Integer id_clie, String no_carga) {
+        int rowCount = this.getJdbcTemplate().queryForInt("select count(log_doc_carga.id) from log_doc join log_doc_carga on (log_doc_carga.log_doc_id=log_doc.id and log_doc_carga.no_carga='"+no_carga+"') where log_doc.gral_emp_id="+id_emp+" and log_doc.cxc_clie_id="+id_clie+";");
+        
+        return rowCount;
+    }
+    
+    //LLamada al procedimiento que carga las tablas relacionadas al documento y actualiza inventario
+    @Override
+    public String getUpdateDocInvExi(Integer usuario_id, Integer empresa_id, Integer sucursal_id, Integer id_cliente) {
+        String sql_to_query = "select * from inv_carga_documentos("+usuario_id+","+empresa_id+","+sucursal_id+","+id_cliente+");";
+        
+        String valor_retorno="";
+        Map<String, Object> update = this.getJdbcTemplate().queryForMap(sql_to_query);
+        
+        valor_retorno = update.get("inv_carga_documentos").toString();
+        
+        return valor_retorno;
     }
     
     
