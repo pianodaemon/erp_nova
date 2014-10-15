@@ -355,4 +355,8 @@ public interface InvInterfaceDao {
     public ArrayList<HashMap<String, Object>> getDatosClienteByNoCliente(String no_control, Integer id_empresa, Integer id_sucursal);
     public int getDeleteFromInvCargaDocTmp(Integer id_emp, Integer suc);
     public HashMap<String, String> getInsertInvCargaDocTmp(String data_string);
+    public String getUpdateDocInvExi(Integer usuario_id, Integer empresa_id, Integer sucursal_id, Integer id_cliente);
+    public int getVerificarDocumento(Integer id_emp, Integer id_clie, String no_carga);
+    
+    
 }
