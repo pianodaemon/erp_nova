@@ -876,8 +876,8 @@ $(function() {
 							var cantidad = 0;
 							var importe = 0;
 							var idmonpartida=0;
-							var idImpto = entry['id_impto'];
-							var valorImpto = entry['valor_impto'];
+							var idImpto = entry['Presentaciones'][0]['id_impto'];
+							var valorImpto = entry['Presentaciones'][0]['valor_impto'];
 							
 							if($('#forma-cotizacions-window').find('input[name=tc]').val()!='' && $('#forma-cotizacions-window').find('input[name=tc]').val()!=' '){
 								if(exislp=='1'){
@@ -1142,8 +1142,6 @@ $(function() {
 			importeImpuesto = parseFloat(importeMonCotizacion) * parseFloat(valorImp);
 			importeImpuesto = parseFloat(importeImpuesto).toFixed(4);
 		}
-			
-					
 		
 		var encontrado = 0;
 		//busca el sku y la presentacion en el grid
@@ -1697,6 +1695,7 @@ $(function() {
 				
 				//aqui se suma el importe en la moneda global de la cotizacion
 				sumaSubTotal = parseFloat(sumaSubTotal) + parseFloat( quitar_comas( $(this).find('#impMonCot').val() ) );
+				
 				if($(this).find('#totimp').val() != ''){
 					sumaImpuesto =  parseFloat(sumaImpuesto) + parseFloat($(this).find('#totimp').val());
 				}

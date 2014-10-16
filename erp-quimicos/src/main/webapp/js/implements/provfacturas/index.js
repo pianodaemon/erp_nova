@@ -1127,18 +1127,26 @@ $(function() {
 		var $tasa_fletes = $('#forma-provfacturas-window').find('input[name=tasafletes]');
 		var $campo_subtotal = $('#forma-provfacturas-window').find('input[name=subtotal]');
 		var $campo_ieps = $('#forma-provfacturas-window').find('input[name=total_ieps]');
+		var $campo_ret_isr = $('#forma-provfacturas-window').find('input[name=total_ret_isr]');
 		//var $campo_descuento = $('#forma-provfacturas-window').find('input[name=descuento]');
 		var $campo_impuesto = $('#forma-provfacturas-window').find('input[name=totimpuesto]');
 		var $retencion = $('#forma-provfacturas-window').find('input[name=retencion]');
 		var $campo_total = $('#forma-provfacturas-window').find('input[name=total]');
+		
+		var $tr_ieps = $('#forma-provfacturas-window').find('#tr_ieps');
+		var $tr_isr = $('#forma-provfacturas-window').find('#tr_isr');
+		var $tr_ret_iva = $('#forma-provfacturas-window').find('#tr_ret_iva');
+		
 		var sumaImporte = 0;
 		//var sumaDescuento = 0;
 		var sumaImpuesto = 0;
 		var sumaTotal = 0;
 		var impuesto = 0.00;
 		var partida=0;
-		var retencionfletes=0;
+		var retencionIva=0;
 		var sumaImporteIeps=0;
+		var importeIsr=0;
+		var tasaIva=0;
 		
 		var $grid_productos = $('#forma-provfacturas-window').find('#grid_productos');
 		$grid_productos.find('tr').each(function (index){
@@ -1165,34 +1173,70 @@ $(function() {
 			}
 		});
 		
+		//2=Factura de Proveedor de Servicios u Honorarios
+		//4=Facturas de Fletes
+		
 		if(parseInt($select_tipo_factura.val()) != 4 ){
 			$.each(tiposIva,function(entryIndex,tipos){
 				if(parseInt(tipos['id'])==1){
 					//calcula iva del flete
 					$monto_iva_flete.val( parseFloat($campo_flete.val()) * parseFloat(tipos['iva_1'])  );
+					tasaIva=tipos['iva_1'];
 				}
 			});
-			//calcula la retencion de fletes, para eso convierto la tasa de retencion 4% en su valor 0.04 dividiendola entre 100
-			retencionfletes = parseFloat($campo_flete.val()) * parseFloat(parseFloat($tasa_fletes.val())/100);
+			//Calcula la retencion de fletes, para eso convierto la tasa de retencion 4% en su valor 0.04 dividiendola entre 100
+			retencionIva = parseFloat($campo_flete.val()) * parseFloat(parseFloat($tasa_fletes.val())/100);
 		}else{
-			//calcula la retencion de fletes, para eso convierto la tasa de retencion 4% en su valor 0.04 dividiendola entre 100
-			retencionfletes = parseFloat(sumaImporte) * parseFloat(parseFloat($tasa_fletes.val())/100);
+			//Calcula la retencion de fletes, para eso convierto la tasa de retencion 4% en su valor 0.04 dividiendola entre 100
+			retencionIva = parseFloat(sumaImporte) * parseFloat(parseFloat($tasa_fletes.val())/100);
 			$monto_iva_flete.val(0);
 		}
+		
 		
 		sumaImpuesto = parseFloat(sumaImpuesto) + parseFloat($monto_iva_flete.val());
 		
 		sumaImporte = parseFloat(sumaImporte) + parseFloat($campo_flete.val());
 		
+		
+		//2=Factura de Proveedor de Servicios u Honorarios
+		if(parseInt($select_tipo_factura.val())==2){
+			//Calcular la Retencion del IVA
+			retencionIva = ((parseFloat(sumaImpuesto) / 3) * 2);
+			$monto_iva_flete.val(0);
+			
+			//Calcular el ISR
+			importeIsr = parseFloat(sumaImporte) * 0.10;
+		}
+		
+		
 		//se resta la retencion de fletes
 		//calcula el total
-		sumaTotal = parseFloat(sumaImporte) + parseFloat(sumaImporteIeps) + parseFloat(sumaImpuesto) - parseFloat(retencionfletes);
+		sumaTotal = parseFloat(sumaImporte) + parseFloat(sumaImporteIeps) + parseFloat(sumaImpuesto) - parseFloat(retencionIva) - parseFloat(importeIsr);
+		
+		if(parseFloat(sumaImporteIeps)>0){
+			$tr_ieps.show();
+		}else{
+			$tr_ieps.hide();
+		}
+		
+		if(parseFloat(importeIsr)>0){
+			$tr_isr.show();
+		}else{
+			$tr_isr.hide();
+		}
+		
+		if(parseFloat(retencionIva)>0){
+			$tr_ret_iva.show();
+		}else{
+			$tr_ret_iva.hide();
+		}
 		
 		$campo_flete.val(parseFloat($campo_flete.val()).toFixed(2));
 		$campo_subtotal.val($(this).agregar_comas( parseFloat(sumaImporte).toFixed(2)));
 		$campo_ieps.val($(this).agregar_comas( parseFloat(sumaImporteIeps).toFixed(2)));
+		$campo_ret_isr.val($(this).agregar_comas( parseFloat(importeIsr).toFixed(2)));
 		$campo_impuesto.val($(this).agregar_comas( parseFloat(sumaImpuesto).toFixed(2)));
-		$retencion.val(parseFloat(retencionfletes).toFixed(2));
+		$retencion.val(parseFloat(retencionIva).toFixed(2));
 		$campo_total.val($(this).agregar_comas( parseFloat(sumaTotal).toFixed(2)));
 	}//termina calculo de impuestos
 	
@@ -1262,9 +1306,16 @@ $(function() {
 		var $campo_flete = $('#forma-provfacturas-window').find('input[name=flete]');
 		var $monto_iva_flete = $('#forma-provfacturas-window').find('input[name=iva_flete]');
 		var $campo_subtotal = $('#forma-provfacturas-window').find('input[name=subtotal]');
+		var $campo_ieps = $('#forma-provfacturas-window').find('input[name=total_ieps]');
+		var $campo_ret_isr = $('#forma-provfacturas-window').find('input[name=total_ret_isr]');
 		var $campo_descuento = $('#forma-provfacturas-window').find('input[name=descuento]');
 		var $campo_impuesto = $('#forma-provfacturas-window').find('input[name=totimpuesto]');
 		var $campo_total = $('#forma-provfacturas-window').find('input[name=total]');
+		
+		var $tr_ieps = $('#forma-provfacturas-window').find('#tr_ieps');
+		var $tr_isr = $('#forma-provfacturas-window').find('#tr_isr');
+		
+		
 		
 		var $busca_remision = $('#forma-provfacturas-window').find('a[href*=busca_remision]');
 		var $agregar_concepto = $('#forma-provfacturas-window').find('a[href*=agregar_concepto]');
@@ -1283,7 +1334,8 @@ $(function() {
 		$agregar_concepto.hide();
 		$buscar_proveedor.hide();
 		//$campo_factura.css({'background' : '#ffffff'});
-		
+		$tr_ieps.hide();
+		$tr_isr.hide();
 		
 		
 		var respuestaProcesada = function(data){
@@ -1446,39 +1498,62 @@ $(function() {
 		},"json");//termina llamada json
 		
 		
+		/*
+		var $grid_productos = $('#forma-provfacturas-window').find('#grid_productos');
+		//campos de totales
+		var $campo_flete = $('#forma-provfacturas-window').find('input[name=flete]');
+		var $monto_iva_flete = $('#forma-provfacturas-window').find('input[name=iva_flete]');
+		var $campo_subtotal = $('#forma-provfacturas-window').find('input[name=subtotal]');
+		var $campo_ieps = $('#forma-provfacturas-window').find('input[name=total_ieps]');
+		var $campo_ret_isr = $('#forma-provfacturas-window').find('input[name=total_ret_isr]');
+		var $campo_descuento = $('#forma-provfacturas-window').find('input[name=descuento]');
+		var $campo_impuesto = $('#forma-provfacturas-window').find('input[name=totimpuesto]');
+		var $campo_total = $('#forma-provfacturas-window').find('input[name=total]');
 		
+		var $tr_ieps = $('#forma-provfacturas-window').find('#tr_ieps');
+		var $tr_isr = $('#forma-provfacturas-window').find('#tr_isr');
+		*/
 		
 		$select_tipo_factura.change(function(){
 			var opcion = $(this).val();
 			
-			if(opcion=='1'){
+			//Factura de Compra(con Remisi&oacute;n previamente capturada)
+			if(parseInt(opcion)==1){
 				$busca_remision.show();
-				//$div_contenedor_grid.show();
 				$buscar_proveedor.hide();
 				$agregar_concepto.hide();
 				$campo_flete.attr("readonly", false);
 			}
-			if(opcion=='2'){
+			
+			//Factura de Proveedor de Servicios u Honorarios
+			if(parseInt(opcion)==2){
 				$buscar_proveedor.show();
 				$agregar_concepto.show();
 				$busca_remision.hide();
 				$campo_flete.attr("readonly", false);
-				//$div_contenedor_grid.hide();
+				$tr_isr.show();
+			}else{
+				$tr_isr.hide();
+				$campo_ret_isr.val(0);
 			}
-			if(opcion=='3'){
+			
+			//Facturas Varias(de Otros insumos)
+			if(parseInt(opcion)==3){
 				$buscar_proveedor.show();
 				$agregar_concepto.show();
 				$busca_remision.hide();
 				$campo_flete.attr("readonly", false);
-				//$div_contenedor_grid.hide();
 			}
-			if(opcion=='4'){
+			
+			//Facturas de Fletes
+			if(parseInt(opcion)==4){
 				$buscar_proveedor.show();
 				$agregar_concepto.show();
 				$busca_remision.hide();
 				$campo_flete.attr("readonly", true);
-				//$div_contenedor_grid.hide();
 			}
+			
+			$calcula_totales();
 		});
 		
 		

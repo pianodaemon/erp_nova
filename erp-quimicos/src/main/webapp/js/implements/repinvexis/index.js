@@ -41,6 +41,7 @@ $(function() {
 	var $select_tipo_costo = $('#lienzo_recalculable').find('select[name=select_tipo_costo]');
 	var $codigo_producto = $('#lienzo_recalculable').find('input[name=codigo]');
 	var $descripcion = $('#lienzo_recalculable').find('input[name=descripcion]');
+	var $select_tipo_prod = $('#lienzo_recalculable').find('select[name=select_tipo_prod]');
 	var $genera_reporte_exis = $('#lienzo_recalculable').find('#genera_reporte_exis');
 	var $buscar = $('#lienzo_recalculable').find('#boton_buscador');
 
@@ -94,7 +95,7 @@ $(function() {
 		}
 		
 		var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
-		var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/getReporteExistencias/'+$select_opciones.val()+'/'+id_almacen+'/'+codigo_producto+'/'+descripcion+'/'+$select_tipo_costo.val()+'/'+ iu +'/out.json';
+		var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/getReporteExistencias/'+$select_opciones.val()+'/'+id_almacen+'/'+codigo_producto+'/'+descripcion+'/'+$select_tipo_costo.val()+'/'+ $select_tipo_prod.val() +'/'+ iu +'/out.json';
 		if(parseInt($select_almacen.val()) > 0){
 			window.location.href=input_json;
 		}else{
@@ -116,6 +117,14 @@ $(function() {
 			almacen_hmtl += '<option value="' + alm['id'] + '"  >' + alm['titulo'] + '</option>';
 		});
 		$select_almacen.append(almacen_hmtl);
+		
+		$select_tipo_prod.children().remove();
+		var tprod_hmtl = '<option value="0" selected="yes">[--Seleccionar --]</option>';
+		$.each(entry['TiposProd'],function(entryIndex,tp){
+			tprod_hmtl += '<option value="' + tp['id'] + '"  >' + tp['titulo'] + '</option>';
+		});
+		$select_tipo_prod.append(tprod_hmtl);
+		
 	});//termina llamada json
 	
 	/*
@@ -139,6 +148,7 @@ $(function() {
 					'codigo':$codigo_producto.val(), 
 					'descripcion':$descripcion.val(),
 					'tipo_costo':$select_tipo_costo.val(),
+					'tipo_prod':$select_tipo_prod.val(),
 					'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
 					};
 		

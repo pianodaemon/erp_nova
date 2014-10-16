@@ -718,57 +718,57 @@ $(function() {
 			if(accion_mode == 'edit'){
                                 
 				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/get_datos_preorden.json';
-                                $arreglo = {'id_preorden':id_to_show,
-                                                'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
-                                                };
-                                                
-                                var $command_selected = $('#forma-propreordenproduccion-window').find('input[name=command_selected]');       
-                                var $id_preorden = $('#forma-propreordenproduccion-window').find('input[name=id_preorden]');
-                                var $select_tipoorden = $('#forma-propreordenproduccion-window').find('select[name=tipoorden]');
-                                var $observaciones = $('#forma-propreordenproduccion-window').find('text[name=observaciones]');
+					$arreglo = {'id_preorden':id_to_show,
+									'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
+									};
+									
+					var $command_selected = $('#forma-propreordenproduccion-window').find('input[name=command_selected]');       
+					var $id_preorden = $('#forma-propreordenproduccion-window').find('input[name=id_preorden]');
+					var $select_tipoorden = $('#forma-propreordenproduccion-window').find('select[name=tipoorden]');
+					var $observaciones = $('#forma-propreordenproduccion-window').find('textarea[name=observaciones]');
 
-                                //campos para productos
-                                var $folio_pedido = $('#forma-propreordenproduccion-window').find('input[name=folio_pedido]');
-                                var $id_pedido = $('#forma-propreordenproduccion-window').find('input[name=id_pedido_parent]');
-                                var $num_cliente = $('#forma-proconfigproduccion-window').find('input[name=num_cliente]');
-                                var $rsocialcliente = $('#forma-propreordenproduccion-window').find('input[name=rsocialcliente]');
-                                
+					//campos para productos
+					var $folio_pedido = $('#forma-propreordenproduccion-window').find('input[name=folio_pedido]');
+					var $id_pedido = $('#forma-propreordenproduccion-window').find('input[name=id_pedido_parent]');
+					var $num_cliente = $('#forma-proconfigproduccion-window').find('input[name=num_cliente]');
+					var $rsocialcliente = $('#forma-propreordenproduccion-window').find('input[name=rsocialcliente]');
+					
 
-                                //grids detalle pedido
-                                var $productos_porpedido = $('#forma-propreordenproduccion-window').find('#productos_porpedido');
-                                var $tabla_productos_preorden = $('#forma-propreordenproduccion-window').find('#grid_productos_seleccionados');
+					//grids detalle pedido
+					var $productos_porpedido = $('#forma-propreordenproduccion-window').find('#productos_porpedido');
+					var $tabla_productos_preorden = $('#forma-propreordenproduccion-window').find('#grid_productos_seleccionados');
 
-                                //href
-                                var $busca_pedido = $('#forma-propreordenproduccion-window').find('a[href*=busca_pedido]');
+					//href
+					var $busca_pedido = $('#forma-propreordenproduccion-window').find('a[href*=busca_pedido]');
 
-                                //tipos de preorden
-                                var $preorden_tipo_pedido = $('#forma-propreordenproduccion-window').find('.tipo_pedido');
-                                var $preorden_tipo_laboratorio = $('#forma-propreordenproduccion-window').find('.tipo_laboratorio');
-                                
-                                
-                                //href para buscar producto
-                                var $buscar_producto = $('#forma-propreordenproduccion-window').find('a[href*=busca_producto]');
-                                //href para agregar producto al grid
-                                
-                                var $cancelar_proceso = $('#forma-propreordenproduccion-window').find('#cancela_entrada');
-                                
-                                var $cerrar_plugin = $('#forma-propreordenproduccion-window').find('#close');
-                                var $cancelar_plugin = $('#forma-propreordenproduccion-window').find('#boton_cancelar');
-                                var $submit_actualizar = $('#forma-propreordenproduccion-window').find('#submit');
-                                var $confirmar_orden = $('#forma-propreordenproduccion-window').find('#confirmar_orden');
-                                var $cancelar_orden = $('#forma-propreordenproduccion-window').find('#cancelar_orden');
-                                var $descargar_pdf = $('#forma-propreordenproduccion-window').find('#descargar_pdf');
-				//$sku.attr("readonly", true);
-				//$titulo.attr("readonly", true);
-				//$descripcion.attr("readonly", true);
-                                
-				$confirmar_orden.hide();
-                                $buscar_producto.hide();
-                                $cancelar_orden.hide();
-                                $descargar_pdf.hide();
-                                $id_preorden.val(id_to_show);
-                                
-                                $command_selected.val("edit");
+					//tipos de preorden
+					var $preorden_tipo_pedido = $('#forma-propreordenproduccion-window').find('.tipo_pedido');
+					var $preorden_tipo_laboratorio = $('#forma-propreordenproduccion-window').find('.tipo_laboratorio');
+					
+					
+					//href para buscar producto
+					var $buscar_producto = $('#forma-propreordenproduccion-window').find('a[href*=busca_producto]');
+					//href para agregar producto al grid
+					
+					var $cancelar_proceso = $('#forma-propreordenproduccion-window').find('#cancela_entrada');
+					
+					var $cerrar_plugin = $('#forma-propreordenproduccion-window').find('#close');
+					var $cancelar_plugin = $('#forma-propreordenproduccion-window').find('#boton_cancelar');
+					var $submit_actualizar = $('#forma-propreordenproduccion-window').find('#submit');
+					var $confirmar_orden = $('#forma-propreordenproduccion-window').find('#confirmar_orden');
+					var $cancelar_orden = $('#forma-propreordenproduccion-window').find('#cancelar_orden');
+					var $descargar_pdf = $('#forma-propreordenproduccion-window').find('#descargar_pdf');
+					//$sku.attr("readonly", true);
+					//$titulo.attr("readonly", true);
+					//$descripcion.attr("readonly", true);
+									
+					$confirmar_orden.hide();
+							$buscar_producto.hide();
+							$cancelar_orden.hide();
+							$descargar_pdf.hide();
+							$id_preorden.val(id_to_show);
+							
+							$command_selected.val("edit");
 					var respuestaProcesada = function(data){
                                     //1 para cunado se guandaron los cambios o fuardo uno nuevo y 2 par acuendo sel e dio click en cerrar o la X
 					if ( data['success'] == "1" || data['success']=="2"){
@@ -867,82 +867,84 @@ $(function() {
 				//aqui se cargan los campos al editar
 				$.post(input_json,$arreglo,function(entry){
                                     
-                                    $id_preorden.attr({'value': entry['Preorden']['0']['id']});
-                                    $observaciones.val( entry['Preorden']['0']['observaciones']);
-                                    
-                                    $select_tipoorden.attr({'value': entry['Preorden']['0']['descripcion']});
-                                    
-                                    $select_tipoorden.children().remove();
-                                    var orden_tipos_html = '';
-                                    $.each(entry['ordenTipos'],function(entryIndex,pt){
-                                        pt['titulo']=pt['titulo'].toUpperCase();
-                                        if( pt['titulo'] != "STOCK"){
-                                            if(entry['Preorden']['0']['pro_orden_tipos_id'] == pt['id']){
-                                                orden_tipos_html += '<option value="' + pt['id'] + '" selected="yes" >' + pt['titulo'] + '</option>';
-                                            }
-                                        }
-                                    });
-                                    $select_tipoorden.append(orden_tipos_html);
-                                    
-                                    
-                                    tipo_preorden = $select_tipoorden.val();
-                                    if(entry['Preorden']['0']['confirmado'] == "false"){
-                                       if(entry['PreordenDet'] != null){
-                                            $.each(entry['PreordenDet'],function(entryIndex,prod){
-                                                                        //gral_imp_id --impuersto
-                                                                        //id_reg,presentacion_id,inv_prod_id,gral_imp_id,codigo,presentacion,descripcion,cantidad, id_pedido
-                                                                        
-                                                //$agrega_producto_preorden(prod['id'],prod['inv_prod_presentaciones_id'],prod['inv_prod_id'],"0",prod['sku'],prod['presentacion'],prod['descripcion'],prod['cantidad'], prod['poc_pedidos_id'], 'false');
-                                                $agrega_producto_preorden(prod['id'],prod['inv_prod_presentaciones_id'],prod['inv_prod_id'],"0",prod['sku'],prod['presentacion'],prod['descripcion'],prod['cantidad'], prod['poc_pedidos_id'], "false", prod['unidad'], prod['unidad_id']);
-                                            });
-                                        }
-                                        
-                                        //buscar pedido
-                                        $busca_pedido.click(function(event){
-                                            event.preventDefault();
-                                            $busca_pedidos(1);
-                                        });
-                                        
-                                        $confirmar_orden.show();
-                                        $cancelar_orden.show();
-                                        $preorden_tipo_pedido.show();
-                                        $preorden_tipo_laboratorio.hide();
-                                        $descargar_pdf.hide();
-                                        $('#forma-propreordenproduccion-window').find('.propreordenproduccion_div_one').css({'height':'535px'});
-                                        
-                                    }else{
-                                        if(entry['PreordenDet'] != null){
-                                            $.each(entry['PreordenDet'],function(entryIndex,prod){
-                                                                        //gral_imp_id --impuersto
-                                                                        //id_reg,presentacion_id,inv_prod_id,gral_imp_id,codigo,presentacion,descripcion,cantidad, id_pedido
-                                                $agrega_producto_preorden(prod['id'],prod['inv_prod_presentaciones_id'],prod['inv_prod_id'],"0",prod['sku'],prod['presentacion'],prod['descripcion'],prod['cantidad'], prod['poc_pedidos_id'], "true",prod['unidad'], prod['unidad_id'] );
-                                            });
-                                        }
-                                        $confirmar_orden.hide();
-                                        $preorden_tipo_pedido.hide();
-                                        $cancelar_orden.hide();
-                                        $preorden_tipo_laboratorio.hide();
-                                        $descargar_pdf.show();
-                                        $('#forma-propreordenproduccion-window').find('.propreordenproduccion_div_one').css({'height':'370px'});
-                                    }
+						$id_preorden.attr({'value': entry['Preorden']['0']['id']});
+						$observaciones.text( entry['Preorden']['0']['observaciones']);
+						
+						$select_tipoorden.attr({'value': entry['Preorden']['0']['descripcion']});
+						
+						$select_tipoorden.children().remove();
+						var orden_tipos_html = '';
+						$.each(entry['ordenTipos'],function(entryIndex,pt){
+							pt['titulo']=pt['titulo'].toUpperCase();
+							if( pt['titulo'] != "STOCK"){
+								if(entry['Preorden']['0']['pro_orden_tipos_id'] == pt['id']){
+									orden_tipos_html += '<option value="' + pt['id'] + '" selected="yes" >' + pt['titulo'] + '</option>';
+								}
+							}
+						});
+						$select_tipoorden.append(orden_tipos_html);
+						
+						
+						tipo_preorden = $select_tipoorden.val();
+						if(entry['Preorden']['0']['confirmado'] == "false"){
+						   if(entry['PreordenDet'] != null){
+								$.each(entry['PreordenDet'],function(entryIndex,prod){
+															//gral_imp_id --impuersto
+															//id_reg,presentacion_id,inv_prod_id,gral_imp_id,codigo,presentacion,descripcion,cantidad, id_pedido
+															
+									//$agrega_producto_preorden(prod['id'],prod['inv_prod_presentaciones_id'],prod['inv_prod_id'],"0",prod['sku'],prod['presentacion'],prod['descripcion'],prod['cantidad'], prod['poc_pedidos_id'], 'false');
+									$agrega_producto_preorden(prod['id'],prod['inv_prod_presentaciones_id'],prod['inv_prod_id'],"0",prod['sku'],prod['presentacion'],prod['descripcion'],prod['cantidad'], prod['poc_pedidos_id'], "false", prod['unidad'], prod['unidad_id']);
+								});
+							}
+							
+							//buscar pedido
+							$busca_pedido.click(function(event){
+								event.preventDefault();
+								$busca_pedidos(1);
+							});
+							
+							$confirmar_orden.show();
+							$cancelar_orden.show();
+							$preorden_tipo_pedido.show();
+							$preorden_tipo_laboratorio.hide();
+							$descargar_pdf.hide();
+							$('#forma-propreordenproduccion-window').find('.propreordenproduccion_div_one').css({'height':'535px'});
+							
+						}else{
+							if(entry['PreordenDet'] != null){
+								$.each(entry['PreordenDet'],function(entryIndex,prod){
+															//gral_imp_id --impuersto
+															//id_reg,presentacion_id,inv_prod_id,gral_imp_id,codigo,presentacion,descripcion,cantidad, id_pedido
+									$agrega_producto_preorden(prod['id'],prod['inv_prod_presentaciones_id'],prod['inv_prod_id'],"0",prod['sku'],prod['presentacion'],prod['descripcion'],prod['cantidad'], prod['poc_pedidos_id'], "true",prod['unidad'], prod['unidad_id'] );
+								});
+							}
+							$confirmar_orden.hide();
+							$preorden_tipo_pedido.hide();
+							$cancelar_orden.hide();
+							$preorden_tipo_laboratorio.hide();
+							$descargar_pdf.show();
+							$('#forma-propreordenproduccion-window').find('.propreordenproduccion_div_one').css({'height':'370px'});
+						}
                                     
 				},"json");//termina llamada json
 				
+				
+				
 				$submit_actualizar.bind('click',function(){
-                                    $command_selected.val("edit");
-                                    
-                                    var trCount = $("tr", $tabla_productos_preorden).size();
-                                    if(trCount > 0){
-                                        jConfirm('Desea guardar los cambios ?', 'Dialogo de Confirmacion', function(r) {
-                                            // If they confirmed, manually trigger a form submission
-                                            if (r) $submit_actualizar.parents("FORM").submit();
-                                        });
-                                    }else{
-                                        jAlert("Es necesario agregar productos.", 'Atencion!');
-                                    }
-                                    // Always return false here since we don't know what jConfirm is going to do
-                                    return false;
-                                });
+					$command_selected.val("edit");
+					
+					var trCount = $("tr", $tabla_productos_preorden).size();
+					if(trCount > 0){
+						jConfirm('Desea guardar los cambios ?', 'Dialogo de Confirmacion', function(r) {
+							// If they confirmed, manually trigger a form submission
+							if (r) $submit_actualizar.parents("FORM").submit();
+						});
+					}else{
+						jAlert("Es necesario agregar productos.", 'Atencion!');
+					}
+					// Always return false here since we don't know what jConfirm is going to do
+					return false;
+				});
                                 
                                 $confirmar_orden.bind('click',function(){
                                     $command_selected.val("confirm");
