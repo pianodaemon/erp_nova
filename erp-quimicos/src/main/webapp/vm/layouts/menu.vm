@@ -236,7 +236,7 @@
 													<!--
 													<li class="topline"><a href="#">Captura de Movimiento</a></li>
 													-->
-
+													<li class="topline"><a href="../provfacturas/startup.agnux">Facturas de Proveedores</a></li>
 													<li class="topline"><a href="../proveedorespagos/startup.agnux">Pagos</a></li>
 													<li class="topline"><a href="../provnotascredito/startup.agnux">Nota de Cr&eacute;dito</a></li>
 													<li>
@@ -273,6 +273,9 @@
 											</li>
 										</ul>
 									</li>
+									
+									
+									
 									<li class="accessible">
 										<a href="http://jdsharp.us" class="accessible">Compras &raquo;</a>
 										<ul>
@@ -288,7 +291,7 @@
 													
 													<li class="topline"><a href="../entradamercancias/startup.agnux">Facturas de Compras</a></li>
 													<li class="topline"><a href="../comfacdevolucion/startup.agnux">Devoluci&oacute;n</a></li>
-													<li class="topline"><a href="../provfacturas/startup.agnux">Facturas de Proveedores</a></li>
+													
 													<li class="topline"><a href="../invcapturacostos/startup.agnux">Costo de Reposici&oacute;n</a></li>
 													<!--
 													<li class="topline"><a href="#">Cancelaci&oacute;n</a></li>
@@ -310,9 +313,6 @@
 											</li>
 										</ul>
 									</li>
-
-
-
 
 
 
@@ -695,11 +695,7 @@
 
 										</ul>
 									</li>
-
-
-
-
-
+									
 
 								</ul>
 								<!--

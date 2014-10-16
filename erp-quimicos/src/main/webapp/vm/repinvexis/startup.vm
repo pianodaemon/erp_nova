@@ -33,7 +33,7 @@
 					<div >
 						<table border="0" style="display:block">
 							<tr class="rep_inv_exis">
-								<td colspan="15" height="8"></td>
+								<td colspan="17" height="8"></td>
 							</tr>
 							<tr class="rep_inv_exis">
 								<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
@@ -41,12 +41,15 @@
 								<td width="20"></td>
 								<td width="130">Tipo de Costo</td>
 								<td width="20"></td>
-								<td width="200">Almacen</td>
+								<td width="180">Almacen</td>
 								<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 								<td width="90">C&oacute;digo&nbsp;producto</td>
 								<td width="20">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-								<td width="200">Descripci&oacute;n</td>
+								<td width="180">Descripci&oacute;n</td>
 								<td width="20">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+								<td width="130">Tipo de Producto</td>
+								<td width="20">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+								
 								<td width="50"></td>
 								<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 								<td width="50"></td>
@@ -58,33 +61,36 @@
 								<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 								<td width="130"><select name="opciones" style="width:130px;" title="Filtros para el reporte de Existencias en Inventario"></select></td>
 								<td width="20"></td>
-								<td width="130">
-									<select name="select_tipo_costo" style="width:130px;"></select>
+								<td width="120">
+									<select name="select_tipo_costo" style="width:120px;"></select>
 								</td>
 								<td width="20"></td>
-								<td width="200">
-									<select name="select_almacen" style="width:200px;">
+								<td width="180">
+									<select name="select_almacen" style="width:180px;">
 										<option value="0" selected="yes">[--Seleccionar Almacen--]</option>
 									</select>
 								</td>
 								<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 								<td width="90"><INPUT TYPE="text" name="codigo" style="width:90px;"></td>
 								<td width="20">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-								<td width="200"><INPUT TYPE="text" name="descripcion" style="width:200px;"></td>
+								<td width="180"><INPUT TYPE="text" name="descripcion" style="width:180px;"></td>
 								<td width="20">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-								<td width="50"><INPUT TYPE="button" id="boton_buscador" value="Buscar"></td>
+								<td width="120"><select name="select_tipo_prod" style="width:120px;" title="Filtro por Tipo de Producto"></select></td>
+								<td width="20">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+								
+								<td width="50"><INPUT TYPE="button" id="boton_buscador" value="Buscar" style="width:50px;"></td>
 								<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-								<td width="50"><INPUT TYPE="button" id="genera_reporte_exis" value="Generar PDF"></td>
+								<td width="50"><INPUT TYPE="button" id="genera_reporte_exis" value="PDF" style="width:50px;"></td>
 								<td width="20">&nbsp;&nbsp;</td>
 							</tr>
 							<tr class="rep_inv_exis">
-								<td colspan="15"  height="8"></td>
+								<td colspan="17"  height="8"></td>
 							</tr>
 							<tr>
-								<td colspan="15">&nbsp;&nbsp;</td>
+								<td colspan="17">&nbsp;&nbsp;</td>
 							</tr>
 							<tr>
-								<td colspan="15">
+								<td colspan="17">
 										<div id="table_exis">
 										
 										</div>
@@ -96,94 +102,6 @@
             </tr>
         </table>
 		
-        
-        
-		
-        
-        
-		
-        
-        
-        <!--form for centros de costo -->
-        <!--
-        <form id="formaCentrocostos00" action="edit.json" method="POST" >
-        
-                <div id="div_one" class="panelcito_modal centrocostos_div_one"  style="display:none;" title="">
-                
-                <input type="hidden" name="identificador">
-					
-                    <div id="div_two" title="" class="centrocostos_div_two">
-                        <div class="columns on-2">
-                            <div class="fixed column" id="cierra" style="width:530px; padding-left:6px;"><strong>Centros de Costos</strong></div>
-                            <div class="fixed column" style="width:20px; height:25px;">
-                                <div id="close" style="height:25px;background-image:url('../../img/modalbox/close.png'); background-color:; background-position:top; cursor:pointer; background-repeat:no-repeat;"></div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    
-                    <div id="div_three" title="" class="centrocostos_div_three">
-                        <div class="columns" >
-                            <div class=" fixed column">
-                                <ul class="pestanas">
-                                    <li><a href="#tabx-1"><strong>Centro de costos</strong></a></li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="columns" style="background:#731F6C;">
-                            <div class="container" style="background:white;">
-                                <div class="fixed column" class="content_x" >
-									
-                                    <div id="tabx-1" class="contenidoPes" >
-                                        <table border="0">
-											<tr>
-												<td width="5"></td>
-												<td width="85">Centro&nbsp;de&nbsp;Costo</td>
-												<td width="200"><INPUT TYPE="text" name="centrocosto" style="width:200px;"></td>
-												<td width="200"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_centrocosto"></div></td>
-												<td width="25"></td>
-												<td></td>
-											</tr>
-											<tr>
-												<td width="6">&nbsp;</td>
-											</tr>
-											<tr>
-												<td width="5"></td>
-												<td width="85">Descripci&oacute;n</td>
-												<td colspan="2"><INPUT TYPE="text" name="descripcion" style="width:400px;"></td>
-												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_descripcion"></div></td>
-												<td></td>
-											</tr>
-                                        </table>
-                                    </div>
-									
-                                </div>
-                            </div>
-
-
-                            <div class="fixed column" id="botones" style="width:559px; background:; text-align:right; padding-left:; position:absolute;margin-top:4px;">
-								<table border="0">
-									<tr><td colspan="4" height="7"></td></tr>
-									<tr>
-										<td width="559"></td>
-										<td>
-											<input type="image" src="../../img/modalbox/btn1.png" id="submit" style="width:77px; height:24px;"/>
-										</td>
-										<td width="30"></td>
-										<td><div id="boton_cancelar" style="width:77px; height:24px; float:right; cursor:pointer; background-image:url('../../img/modalbox/btn2.png'); background-repeat:no-repeat;"></div></td>
-									</tr>
-								</table>
-                                
-                            </div>
-                            
-                            
-                            
-                        </div>
-                    </div>
-                </div>
-        </form>
--->
-        
         
         
         #include("${layoutfooter}")
