@@ -337,7 +337,7 @@ public class ProPreOrdenProduccionController {
         }
         */
         
-        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id+"___"+tipoorden+"___"+observaciones;
+        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id+"___"+tipoorden+"___"+observaciones.toUpperCase();
         
         succes = this.getProDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
         

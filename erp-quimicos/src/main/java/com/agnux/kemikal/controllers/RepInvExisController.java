@@ -5,6 +5,7 @@
 package com.agnux.kemikal.controllers;
 
 import com.agnux.cfd.v2.Base64Coder;
+import com.agnux.common.helpers.FileHelper;
 import com.agnux.common.helpers.TimeHelper;
 import com.agnux.common.obj.ResourceProject;
 import com.agnux.common.obj.UserSessionData;
@@ -122,11 +123,10 @@ public class RepInvExisController {
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getAlmacenesJson(
             @RequestParam(value="iu", required=true) String id_user,
             Model model
-            ) {
+        ) {
         
         log.log(Level.INFO, "Ejecutando getAlmacenesJson de {0}", RepInvExisController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
-        ArrayList<HashMap<String, String>> Almacenes = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
         
         //decodificar id de usuario
@@ -135,9 +135,8 @@ public class RepInvExisController {
         
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         
-        Almacenes = this.getInvDao().getAlmacenes2(id_empresa);
-        
-        jsonretorno.put("Almacenes", Almacenes);
+        jsonretorno.put("Almacenes", this.getInvDao().getAlmacenes2(id_empresa));
+        jsonretorno.put("TiposProd", this.getInvDao().getProducto_TiposInventariable());
         
         return jsonretorno;
     }
@@ -158,6 +157,7 @@ public class RepInvExisController {
             @RequestParam("codigo") String codigo_producto,
             @RequestParam("descripcion") String descripcion,
             @RequestParam("tipo_costo") Integer tipo_costo,
+            @RequestParam("tipo_prod") Integer tipo_prod,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
             ) {
@@ -183,7 +183,7 @@ public class RepInvExisController {
         
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         
-        String data_string = app_selected+"___"+id_usuario+"___"+command_selected+"___"+almacen+"___"+codigo+"___"+desc+"___"+tipo_reporte+"___"+tipo_costo;
+        String data_string = app_selected+"___"+id_usuario+"___"+command_selected+"___"+almacen+"___"+codigo+"___"+desc+"___"+tipo_reporte+"___"+tipo_costo+"___"+tipo_prod;
         //existencias = this.getInvDao().getDatos_ReporteExistencias(id_usuario, almacen, codigo, desc, tipo);
         existencias = this.getInvDao().selectFunctionForInvReporte(app_selected,data_string);
         
@@ -201,18 +201,19 @@ public class RepInvExisController {
     
     
    //Genera pdf de Reporte de Existencias en Inventario
-    @RequestMapping(value = "/getReporteExistencias/{tipo}/{almacen}/{codigo}/{descripcion}/{tipo_costo}/{iu}/out.json", method = RequestMethod.GET ) 
+    @RequestMapping(value = "/getReporteExistencias/{tipo}/{almacen}/{codigo}/{descripcion}/{tipo_costo}/{tipo_prod}/{iu}/out.json", method = RequestMethod.GET ) 
     public ModelAndView getReporteExistenciasJson(
                 @PathVariable("tipo") Integer tipo_reporte,
                 @PathVariable("almacen") Integer almacen,
                 @PathVariable("codigo") String codigo_producto,
                 @PathVariable("descripcion") String descripcion,
                 @PathVariable("tipo_costo") Integer tipo_costo,
+                @PathVariable("tipo_prod") Integer tipo_prod,
                 @PathVariable("iu") String id_user,
                 HttpServletRequest request, 
                 HttpServletResponse response, 
                 Model model)
-            throws ServletException, IOException, URISyntaxException, DocumentException {
+            throws ServletException, IOException, URISyntaxException, DocumentException, Exception {
         
         ArrayList<HashMap<String, String>> lista_existencias = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
@@ -260,7 +261,7 @@ public class RepInvExisController {
         //ruta de archivo de salida
         String fileout = file_dir_tmp +"/"+  file_name;
         
-        String data_string = app_selected+"___"+id_usuario+"___"+command_selected+"___"+almacen+"___"+codigo+"___"+desc+"___"+tipo_reporte+"___"+tipo_costo;
+        String data_string = app_selected+"___"+id_usuario+"___"+command_selected+"___"+almacen+"___"+codigo+"___"+desc+"___"+tipo_reporte+"___"+tipo_costo+"___"+tipo_prod;
         
         //obtiene las facturas del periodo indicado
         lista_existencias = this.getInvDao().selectFunctionForInvReporte(app_selected,data_string);
@@ -285,7 +286,7 @@ public class RepInvExisController {
         response.setHeader("Content-Disposition","attachment; filename=\"" + file.getName() +"\"");
         FileCopyUtils.copy(bis, response.getOutputStream());  	
         response.flushBuffer();
-        
+        FileHelper.delete(fileout);
         return null;
     } 
 
