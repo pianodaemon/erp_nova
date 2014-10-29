@@ -26,9 +26,11 @@ public interface ComInterfaceDao {
     public HashMap<String, String> getCom_Parametros(Integer id_emp, Integer id_suc);
     
     
-    public ArrayList<HashMap<String, String>> getComOrdenCompra_DatosGrid(Integer id_pedido);
     public ArrayList<HashMap<String, Object>> getComOrdenCompra_PaginaGrid(String data_string,int offset, int pageSize, String orderBy , String asc);
     public ArrayList<HashMap<String, String>> getComOrdenCompra_Datos(Integer id_orden_compra);
+    public ArrayList<HashMap<String, String>> getComOrdenCompra_DatosGrid(Integer id_pedido);
+    public ArrayList<HashMap<String, String>> getComOrdenCompra_DatosRequisicion(String folio_req, Integer id_empresa);
+    public ArrayList<HashMap<String, String>> getComOrdenCompra_DetallesRequisicion(Integer id_requisicion);
     public ArrayList<HashMap<String, String>> getCondicionesDePago();
     public ArrayList<HashMap<String, String>> getProductoTipos();
     public ArrayList<HashMap<String, String>> getBuscadorProductos(String sku, String tipo, String descripcion, Integer id_empresa);
@@ -61,6 +63,9 @@ public interface ComInterfaceDao {
     public ArrayList<HashMap<String, Object>> getCom_requisicion_PaginaGrid(String data_string,int offset, int pageSize, String orderBy , String asc);
     public ArrayList<HashMap<String, String>> getCom_requisicion_Datos(Integer id_requisicion);
     public ArrayList<HashMap<String, String>> getCom_requisicion_DatosGrid(Integer id_requisicion);
+    public ArrayList<HashMap<String, Object>> getEmpleados(Integer id_empresa);
+    public ArrayList<HashMap<String, Object>> getDepartamentos(Integer id_empresa);
+    
     
     // Metodos   requisiciones a orden de compra.
     public ArrayList<HashMap<String, Object>> getCom_oc_req_PaginaGrid(String data_string,int offset, int pageSize, String orderBy , String asc);
