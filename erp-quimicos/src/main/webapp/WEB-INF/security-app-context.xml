@@ -261,7 +261,6 @@ xmlns:beans="http://www.springframework.org/schema/beans"
         <intercept-url pattern="/controllers/comcompraautorizacion/startup.agnux" access="ROLE_ADMIN,ROLE_AUTORIZACION_ORDEN_COMPRA" /><!--Craedo por Luis Garcia-->
         <intercept-url pattern="/controllers/invetiquetas/startup.agnux" access="ROLE_ADMIN,ROLE_IMPRESION_ETIQUETAS" />
         <intercept-url pattern="/controllers/graltipocambio/startup.agnux" access="ROLE_ADMIN,ROLE_ACTUALIZADOR_TIPO_CAMBIO" />
-        
         <intercept-url pattern="/controllers/cotpoliticasdepago/startup.agnux" access="ROLE_ADMIN,ROLE_COT_POLITICAS_PAGO" /><!--Vale-->
         
         
