@@ -728,15 +728,18 @@ $(function() {
 							var id_pres = entry['Presentaciones'][0]['id_presentacion'];
 							var pres = entry['Presentaciones'][0]['presentacion'];
 							var num_dec = entry['Presentaciones'][0]['decimales'];
+							var cant_partida=0;
 							var prec_unitario=" ";
 							if(parseFloat(entry['Presentaciones'][0]['cu'])>0){
 								prec_unitario = entry['Presentaciones'][0]['cu'];
 							}
-							
 							var id_moneda=0;
+							var id_req=0;
+							var iddet_req=0;
+							var folio_req=" ";
 							
 							//llamada a la funcion que agrega el producto al grid
-							$agrega_producto_grid($grid_productos,id_prod,sku,titulo,unidad,id_pres,pres,prec_unitario,$select_moneda,id_moneda,$tipo_cambio,num_dec);
+							$agrega_producto_grid($grid_productos,id_prod,sku,titulo,unidad,id_pres,pres,cant_partida, prec_unitario,$select_moneda,id_moneda,$tipo_cambio,num_dec, id_req, iddet_req, folio_req);
 							
 							$('#forma-comordencompra-window').find('input[name=sku_producto]').val('');
 							$('#forma-comordencompra-window').find('input[name=nombre_producto]').val('');
@@ -804,6 +807,7 @@ $(function() {
 								var id_pres = $(this).find('span.id_pres').html();
 								var pres = $(this).find('span.pres').html();
 								var num_dec = $(this).find('span.dec').html();
+								var cant_partida=0;
 								var prec_unitario=" ";
 								
 								if(parseFloat($(this).find('span.cu').html())>0){
@@ -811,9 +815,12 @@ $(function() {
 								}
 								
 								var id_moneda=0;
+								var id_req=0;
+								var iddet_req=0;
+								var folio_req=" ";
 								
 								//llamada a la funcion que agrega el producto al grid
-								$agrega_producto_grid($grid_productos,id_prod,sku,titulo,unidad,id_pres,pres,prec_unitario,$select_moneda,id_moneda,$tipo_cambio,num_dec);
+								$agrega_producto_grid($grid_productos,id_prod,sku,titulo,unidad,id_pres,pres,cant_partida, prec_unitario,$select_moneda,id_moneda,$tipo_cambio,num_dec, id_req, iddet_req, folio_req);
 								
 								$nombre_producto.val(titulo);//muestra el titulo del producto en el campo nombre del producto de la ventana de cotizaciones
 								
@@ -917,9 +924,8 @@ $(function() {
 
 
 
-
-	//agregar producto al grid
-	$agrega_producto_grid = function($grid_productos,id_prod,sku,titulo,unidad,id_pres,pres,prec_unitario,$select_moneda, id_moneda, $tipo_cambio,num_dec){
+	//Agregar producto al grid
+	$agrega_producto_grid = function($grid_productos,id_prod,sku,titulo,unidad,id_pres,pres, cant_partida, prec_unitario,$select_moneda, id_moneda, $tipo_cambio,num_dec, id_req, iddet_req, folio_req, tipo_oc){
 		var $tipo_prov = $('#forma-comordencompra-window').find('input[name=tipo_prov]');
 		var $id_impuesto = $('#forma-comordencompra-window').find('input[name=id_impuesto]');
 		var $valor_impuesto = $('#forma-comordencompra-window').find('input[name=valorimpuesto]');
@@ -927,7 +933,7 @@ $(function() {
 		if( $valor_impuesto.val()== null || $valor_impuesto.val()== ''){
 			$valor_impuesto.val(0);
 		}
-
+		
 		if(parseInt($tipo_prov.val())==2){
 			//Si es proveedor extranjero se aplica tasa cero
 			$id_impuesto.val(2);
@@ -941,15 +947,14 @@ $(function() {
 				encontrado=1;//el producto ya esta en el grid
 			}
 		});
-
-
+		
 		if(parseInt(encontrado)!=1){//si el producto no esta en el grid entra aqui
 			//ocultamos el boton facturar para permitir Guardar los cambios  antes de facturar
 			$('#forma-comordencompra-window').find('#facturar').hide();
 			//obtiene numero de trs
 			var tr = $("tr", $grid_productos).size();
 			tr++;
-
+			
 			var trr = '';
 			trr = '<tr>';
 				trr += '<td class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;" width="60">';
@@ -957,68 +962,81 @@ $(function() {
 					trr += '<input type="hidden" 	name="eliminado" id="elim" value="1">';//el 1 significa que el registro no ha sido eliminado
 					trr += '<input type="hidden" 	name="iddetalle" id="idd" value="0">';//este es el id del registro que ocupa el producto en la tabla pocpedidos_detalles
 					trr += '<a href="cancela_partida" id="cancela_partida'+ tr +'">Cancelar</a>';
+					//Id de la requisicion cuando la orden de compra es generada a partir de la requisicion
+					trr += '<input type="hidden" 	name="idreq" id="idreq"  class="idreq'+ tr +'" value="'+ id_req +'">';
+					trr += '<input type="hidden" 	name="iddetreq" id="iddetreq" class="iddetreq'+ tr +'" value="'+ iddet_req +'">';
+					trr += '<input type="hidden" 	name="noreq" id="noreq" class="noreq'+ tr +'" value="'+ folio_req +'">';
 				trr += '</td>';
 				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="114">';
 					trr += '<input type="hidden" 	name="idproducto" id="idprod" value="'+ id_prod +'">';
-					trr += '<INPUT TYPE="text" 		name="sku'+ tr +'" value="'+ sku +'" id="skuprod" class="borde_oculto" readOnly="true" style="width:110px;">';
+					trr += '<input TYPE="text" 		name="sku'+ tr +'" value="'+ sku +'" id="skuprod" class="borde_oculto" readOnly="true" style="width:110px;">';
 				trr += '</td>';
 				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="202">';
-					trr += '<INPUT TYPE="text" 		name="nombre'+ tr +'" 	value="'+ titulo +'" id="nom" class="borde_oculto" readOnly="true" style="width:198px;">';
+					trr += '<input TYPE="text" 		name="nombre'+ tr +'" 	value="'+ titulo +'" id="nom" class="borde_oculto" readOnly="true" style="width:198px;">';
 				trr += '</td>';
 				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
-					trr += '<INPUT TYPE="text" 	name="unidad'+ tr +'" 	value="'+ unidad +'" id="uni" class="borde_oculto" readOnly="true" style="width:86px;">';
+					trr += '<input TYPE="text" 	name="unidad'+ tr +'" 	value="'+ unidad +'" id="uni" class="borde_oculto" readOnly="true" style="width:86px;">';
 				trr += '</td>';
 				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="100">';
-					trr += '<INPUT type="hidden"    name="id_presentacion"      value="'+  id_pres +'" id="idpres">';
-					trr += '<INPUT type="hidden"    name="numero_decimales"     value="'+  num_dec +'" id="numdec">';
-					trr += '<INPUT TYPE="text" 	name="presentacion'+ tr +'" value="'+  pres +'" id="pres" class="borde_oculto" readOnly="true" style="width:96px;">';
-				trr += '</td>';
-				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
-					trr += '<INPUT TYPE="text" 	name="cantidad" value=" " id="cant" class="cant'+ tr +'" style="width:76px;">';
+					trr += '<input type="hidden"    name="id_presentacion"      value="'+  id_pres +'" id="idpres">';
+					trr += '<input type="hidden"    name="numero_decimales"     value="'+  num_dec +'" id="numdec">';
+					trr += '<input TYPE="text" 	name="presentacion'+ tr +'" value="'+  pres +'" id="pres" class="borde_oculto" readOnly="true" style="width:96px;">';
 				trr += '</td>';
 				
 				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
-					trr += '<INPUT TYPE="text" 	name="cant_rec" value="0.00" id="cant_rec" class="borde_oculto" style="width:76px; text-align:right;" readOnly="true">';
+					trr += '<input TYPE="text" 	name="cantidad" id="cant" value="'+ cant_partida +'" class="cant'+ tr +'" style="width:76px;">';
 				trr += '</td>';
 				
 				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
-					trr += '<INPUT TYPE="text" 	name="cant_pen" value="0.00" id="cant_pen" class="borde_oculto" style="width:76px; text-align:right;" readOnly="true">';
+					trr += '<input TYPE="text" 	name="cant_rec" value="0.00" id="cant_rec" class="borde_oculto" style="width:76px; text-align:right;" readOnly="true">';
+				trr += '</td>';
+				
+				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
+					trr += '<input TYPE="text" 	name="cant_pen" value="0.00" id="cant_pen" class="borde_oculto" style="width:76px; text-align:right;" readOnly="true">';
 				trr += '</td>';
 				
 							
 				trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
-					trr += '<INPUT TYPE="text" 	name="costo" 	value="'+ prec_unitario +'" id="cost" style="width:76px; text-align:right;">';
+					trr += '<input TYPE="text" 	name="costo" 	value="'+ prec_unitario +'" id="cost" class="cost'+ tr +'" style="width:76px; text-align:right;">';
 				trr += '</td>';
 				trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
-					trr += '<INPUT TYPE="text"      name="importe'+ tr +'" 	 value="" id="import" class="borde_oculto"  style="width:86px; text-align:right;" readOnly="true">';
-					trr += '<INPUT type="hidden"    name="id_imp_prod"    	 value="'+  $id_impuesto.val()    +'" id="idimppord">';
-					trr += '<INPUT type="hidden"    name="valor_imp"     	 value="'+  $valor_impuesto.val() +'" id="ivalorimp">';
+					trr += '<input TYPE="text"      name="importe'+ tr +'" 	 value="" id="import" class="borde_oculto"  style="width:86px; text-align:right;" readOnly="true">';
+					trr += '<input type="hidden"    name="id_imp_prod"    	 value="'+  $id_impuesto.val()    +'" id="idimppord">';
+					trr += '<input type="hidden"    name="valor_imp"     	 value="'+  $valor_impuesto.val() +'" id="ivalorimp">';
 					trr += '<input type="hidden" 	name="totimpuesto'+ tr +'"        id="totimp" value="0">';
 				trr += '</td>';
 				trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
-					trr += '<INPUT TYPE="text" 	name="estatus'+ tr +'" 	value=" " 	id="estatus" class="borde_oculto" style="width:76px; text-align:left;" readOnly="true">';
+					trr += '<input TYPE="text" 	name="estatus'+ tr +'" 	value=" " 	id="estatus" class="borde_oculto" style="width:76px; text-align:left;" readOnly="true">';
 				trr += '</td>';
 				
 			trr += '</tr>';
 
 			$grid_productos.append(trr);
-
-			//al iniciar el campo tiene un  caracter en blanco, al obtener el foco se cambia el  espacio por comillas
-			$grid_productos.find('#cant').focus(function(e){
-				if($(this).val() == ' '){
+			
+			
+			if(parseInt(tipo_oc)==1){
+				//Tipo de OC generada a partir de una requisicion
+				$grid_productos.find('#delete'+ tr).hide();
+			}
+			
+			
+			//Al iniciar el campo tiene un  caracter en blanco, al obtener el foco se cambia el  espacio por comillas
+			$grid_productos.find('.cant'+ tr).focus(function(e){
+				if($(this).val().trim() != ''){
+					if(parseFloat($(this).val())<=0){
 						$(this).val('');
+					}
 				}
 			});
-
+			
 			//recalcula importe al perder enfoque el campo cantidad
-			$grid_productos.find('#cant').blur(function(){
-
-				if ($(this).val() == ''){
-					$(this).val(' ');
+			$grid_productos.find('.cant'+ tr).blur(function(){
+				if($(this).val().trim() == ''){
+					$(this).val(parseFloat(0).toFixed(2));
 				}
-
-				if( ($(this).val() != ' ') && ($(this).parent().parent().find('#cost').val() != ' ') )
-				{	//calcula el importe
+				
+				if( ($(this).val().trim() != '') && ($(this).parent().parent().find('#cost').val().trim() != '') ){	
+					//calcula el importe
 					$(this).parent().parent().find('#import').val(parseFloat($(this).val()) * parseFloat($(this).parent().parent().find('#cost').val()));
 					//redondea el importe en dos decimales
 					//$(this).parent().parent().find('#import').val( Math.round(parseFloat($(this).parent().parent().find('#import').val())*100)/100 );
@@ -1031,9 +1049,7 @@ $(function() {
 					$(this).parent().parent().find('#import').val('');
 					$(this).parent().parent().find('#totimp').val('');
 				}
-
-
-
+				
 				var numero_decimales = $(this).parent().parent().find('#numdec').val();
 				var patron = /^-?[0-9]+([,\.][0-9]{0,0})?$/;
 				if(parseInt(numero_decimales)==1){
@@ -1068,33 +1084,26 @@ $(function() {
 			});
 
 			//al iniciar el campo tiene un  caracter en blanco, al obtener el foco se elimina el  espacio por comillas
-			$grid_productos.find('#cost').focus(function(e){
-
+			$grid_productos.find('.cost'+ tr).focus(function(e){
 				if($(this).val() == ' '){
 					$(this).val('');
 				}
 			});
 
 			//recalcula importe al perder enfoque el campo costo
-			$grid_productos.find('#cost').blur(function(){
-
-
+			$grid_productos.find('.cost'+ tr).blur(function(){
 				if ($(this).val() == ''){
 					$(this).val(' ');
 				}
-
-				if( ($(this).val() != ' ') && ($(this).parent().parent().find('#cant').val() != ' ') )
-				{	//calcula el importe
-
+				
+				if( ($(this).val().trim() != '') && ($(this).parent().parent().find('#cant').val().trim() != '') ){	
+					//calcula el importe
 					$(this).parent().parent().find('#import').val( parseFloat($(this).val()) * parseFloat( $(this).parent().parent().find('#cant').val()) );
 					//redondea el importe en dos decimales
-					//$(this).parent().parent().find('#import').val(Math.round(parseFloat($(this).parent().parent().find('#import').val())*100)/100);
 					$(this).parent().parent().find('#import').val( parseFloat($(this).parent().parent().find('#import').val()).toFixed(4));
 
 					//calcula el impuesto para este producto multiplicando el importe por el valor del iva
-
 					$(this).parent().parent().find('#totimp').val( parseFloat($(this).parent().parent().find('#import').val()) * parseFloat(  $(this).parent().parent().find('#ivalorimp').val()  ));
-
 				}else{
 					$(this).parent().parent().find('#import').val('');
 					$(this).parent().parent().find('#totimp').val('');
@@ -1102,52 +1111,10 @@ $(function() {
 
 				$calcula_totales();//llamada a la funcion que calcula totales
 			});
-
-
-
-			/*
-			//validar campo costo, solo acepte numeros y punto
-			$grid_productos.find('#cost').keypress(function(e){
-				// Permitir  numeros, borrar, suprimir, TAB, puntos, comas
-				if (e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
-					return true;
-				}else {
-					return false;
-				}
-			});
-
-			//validar campo cantidad, solo acepte numeros y punto
-			$grid_productos.find('#cant').keypress(function(e){
-				// Permitir  numeros, borrar, suprimir, TAB, puntos, comas
-				if (e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
-					return true;
-				}else {
-					return false;
-				}
-			});
-			*/
-			
-			/*
-			//elimina un producto del grid
-			$grid_productos.find('#delete'+ tr).bind('click',function(event){
-				event.preventDefault();
-				if(parseInt($(this).parent().find('#elim').val()) != 0){
-					//asigna espacios en blanco a todos los input de la fila eliminada
-					$(this).parent().parent().find('input').val(' ');
-
-					//asigna un 0 al input eliminado como bandera para saber que esta eliminado
-					$(this).parent().find('#elim').val(0);//cambiar valor del campo a 0 para indicar que se ha elimnado
-
-					//oculta la fila eliminada
-					$(this).parent().parent().hide();
-					$calcula_totales();//llamada a la funcion que calcula totales
-				}
-			});
-			*/
 			
 			//validar campo costo, solo acepte numeros y punto
-			$permitir_solo_numeros( $grid_productos.find('#cost') );
-			$permitir_solo_numeros( $grid_productos.find('#cant') );
+			$permitir_solo_numeros( $grid_productos.find('.cost'+ tr) );
+			$permitir_solo_numeros( $grid_productos.find('.cant'+ tr) );
 
 			//elimina un producto del grid
 			$grid_productos.find('#delete'+ tr).bind('click',function(event){
@@ -1167,37 +1134,14 @@ $(function() {
 				}
 			});
 			
-			
 			$grid_productos.find('#cancela_partida'+ tr).hide();
 			$grid_productos.find('.cant'+ tr).focus();
-			
 		}else{
 			jAlert('El producto: '+sku+' con presentacion: '+pres+' ya se encuentra en el listado, seleccione otro diferente.', 'Atencion!', function(r) { 
 				$('#forma-comordencompra-window').find('input[name=sku_producto]').focus();
 			});
 		}
-
 	}//termina agregar producto al grid
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1256,6 +1200,8 @@ $(function() {
 		var $select_via_embarque = $('#forma-comordencompra-window').find('select[name=via_envarque]');
 		var $fecha_entrega = $('#forma-comordencompra-window').find('input[name=fecha_entrega]');
 		var $check_anex_cert_hojas = $('#forma-comordencompra-window').find('input[name=check_anex_cert_hojas]');
+		var $folio_requisicion = $('#forma-comordencompra-window').find('input[name=folio_requisicion]');
+		var $tipo_oc = $('#forma-comordencompra-window').find('input[name=tipo_oc]');
 		
 		var $sku_producto = $('#forma-comordencompra-window').find('input[name=sku_producto]');
 		var $nombre_producto = $('#forma-comordencompra-window').find('input[name=nombre_producto]');
@@ -1263,9 +1209,7 @@ $(function() {
 		var $busca_sku = $('#forma-comordencompra-window').find('a[href*=busca_sku]');
 		//href para agregar producto al grid
 		var $agregar_producto = $('#forma-comordencompra-window').find('a[href*=agregar_producto]');
-		/*
-		var $orden_compra = $('#forma-comordencompra-window').find('input[name=orden_compra]');
-		*/
+		
 		var $id_impuesto = $('#forma-comordencompra-window').find('input[name=id_impuesto]');
 		var $valor_impuesto = $('#forma-comordencompra-window').find('input[name=valorimpuesto]');
 		
@@ -1366,15 +1310,15 @@ $(function() {
 									//$grid_productos.find('select[name=' + tmp.split(':')[0] + ']').css({'background' : '#d41000'});
 
 									var tr_warning = '<tr>';
-										tr_warning += '<td width="20"><div><IMG SRC="../img/icono_advertencia.png" ALIGN="top" rel="warning_sku"></td>';
+										tr_warning += '<td width="20"><div><IMG SRC="../../img/icono_advertencia.png" align="top" rel="warning_sku"></td>';
 										tr_warning += '<td width="120">';
-										tr_warning += '<INPUT TYPE="text" value="'+$grid_productos.find('input[name=sku' + i + ']').val()+'" class="borde_oculto" readOnly="true" style="width:116px; color:red">';
+										tr_warning += '<input TYPE="text" value="'+$grid_productos.find('input[name=sku' + i + ']').val()+'" class="borde_oculto" readOnly="true" style="width:116px; color:red">';
 										tr_warning += '</td>';
 										tr_warning += '<td width="200">';
-										tr_warning += '<INPUT TYPE="text" value="'+$grid_productos.find('input[name=nombre' + i + ']').val()+'" class="borde_oculto" readOnly="true" style="width:196px; color:red">';
+										tr_warning += '<input TYPE="text" value="'+$grid_productos.find('input[name=nombre' + i + ']').val()+'" class="borde_oculto" readOnly="true" style="width:196px; color:red">';
 										tr_warning += '</td>';
 										tr_warning += '<td width="235">';
-										tr_warning += '<INPUT TYPE="text" value="'+ tmp.split(':')[1] +'" class="borde_oculto" readOnly="true" style="width:230px; color:red">';
+										tr_warning += '<input TYPE="text" value="'+ tmp.split(':')[1] +'" class="borde_oculto" readOnly="true" style="width:230px; color:red">';
 										tr_warning += '</td>';
 									tr_warning += '</tr>';
 									$grid_warning.append(tr_warning);
@@ -1442,7 +1386,6 @@ $(function() {
 					$arreglo2 = {'no_proveedor':$no_proveedor.val(),  'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
 					
 					$.post(input_json2,$arreglo2,function(entry2){
-						
 						if(parseInt(entry2['Proveedor'].length) > 0 ){
 							var id_proveedor = entry2['Proveedor'][0]['id'];
 							var no_proveedor = entry2['Proveedor'][0]['numero_proveedor'];
@@ -1458,7 +1401,6 @@ $(function() {
 							
 							//llamada a la función que agrega datos del proveedor seleccionado
 							$agregarDatosProveedorSeleccionado(entry['Monedas'], entry['Condiciones'],entry['via_embarque'], rfc_proveedor, razon_soc_proveedor, dir_proveedor, id_proveedor, tipo_proveedor, id_moneda, id_dias_credito, id_tipo_embarque, no_proveedor, idImptoProv, valorImptoProv);
-							
 						}else{
 							$id_proveedor.val('');
 							$no_proveedor.val('');
@@ -1477,6 +1419,87 @@ $(function() {
 				}
 			});
 		},"json");//termina llamada json
+		
+		
+		
+		
+		
+		
+		
+		//Busca datos de la Requisicion al presionar Enter estando en el campo Folio Requisicion
+		$folio_requisicion.keypress(function(e){
+			if(e.which == 13){
+				var encontrado = 0;
+				var primer_oc=0;
+				
+				$grid_productos.find('tr').each(function (index){
+					if(($(this).find('#noreq').val()== $folio_requisicion.val()) && (parseInt($(this).find('#eliminado').val())!=0)){
+						encontrado++;//el producto ya esta en el grid
+					}
+				});
+				
+				if(parseInt(encontrado)<=0){
+					$grid_productos.children().remove();
+					
+					var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDatosRequisicion.json';
+					$arreglo2 = {	'folio_req':$folio_requisicion.val(),
+									'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
+								};
+					
+					$.post(input_json2,$arreglo2,function(entry){
+						
+						if(parseInt(entry['DatosReq'].length) > 0 ){
+							$fecha_entrega.val(entry['DatosReq'][0]['fecha_compromiso']);
+							$observaciones.val(entry['DatosReq'][0]['observaciones']);
+							
+							if(parseInt(entry['DetallesReq'].length)>0){
+								$.each(entry['DetallesReq'],function(entryIndex,Grid){
+									
+									var trCount = $("tr", $grid_productos).size();
+									trCount++;
+									
+									//Si solo hay una presentacion se agrega de manera automatica sin mostrar la ventana
+									var id_prod = Grid['inv_prod_id'];
+									var sku = Grid['codigo'];
+									var titulo = Grid['titulo'];
+									var unidad = Grid['unidad'];
+									var id_pres = Grid['id_presentacion'];
+									var pres = Grid['presentacion'];
+									var num_dec = Grid['decimales'];
+									var cant_partida = Grid['cantidad'];
+									var prec_unitario=" ";
+									var id_moneda=0;
+									var id_req= entry['DatosReq'][0]['id'];
+									var iddet_req = Grid['id_detalle'];
+									var folio_req = entry['DatosReq'][0]['folio'];
+									//OC generada desde una requisicion
+									var tipo_oc = 1;
+									
+									//Llamada a la funcion que agrega el producto al grid
+									$agrega_producto_grid($grid_productos,id_prod,sku,titulo,unidad,id_pres,pres,cant_partida, prec_unitario,$select_moneda,id_moneda,$tipo_cambio,num_dec, id_req, iddet_req, folio_req, tipo_oc);
+									
+									$tipo_oc.val(tipo_oc);
+								});
+							}
+							
+							
+						}else{
+							jAlert('La Requisicion '+$folio_requisicion.val()+' no esta existe o no est&aacute; disponible.\nVerifique es estado de la requisicion.', 'Atencion!', function(r) { 
+								$folio_requisicion.focus();
+							});
+						}
+					});//termina llamada json
+					
+				}else{
+					jAlert('Los datos de la Requisicion '+$folio_requisicion.val()+' ya se encuentra en el listado, seleccione otro diferente.', 'Atencion!', function(r) { 
+						$folio_requisicion.focus();
+					});
+				}
+			}
+		});
+		
+		
+		
 		
 		
 		$fecha_entrega.click(function (s){
@@ -1542,6 +1565,8 @@ $(function() {
 		//desencadena clic del href Agregar producto al pulsar enter en el campo sku del producto
 		$(this).aplicarEventoKeypressEjecutaTrigger($sku_producto, $agregar_producto);
 		$(this).aplicarEventoKeypressEjecutaTrigger($nombre_producto, $busca_sku);
+		
+		
 		
 		$submit_actualizar.bind('click',function(){
 			var trCount = $("tr", $grid_productos).size();
@@ -1644,6 +1669,8 @@ $(function() {
 			var $valor_impuesto = $('#forma-comordencompra-window').find('input[name=valorimpuesto]');
 			var $fecha_entrega = $('#forma-comordencompra-window').find('input[name=fecha_entrega]');
 			var $check_anex_cert_hojas = $('#forma-comordencompra-window').find('input[name=check_anex_cert_hojas]');
+			var $folio_requisicion = $('#forma-comordencompra-window').find('input[name=folio_requisicion]');
+			var $tipo_oc = $('#forma-comordencompra-window').find('input[name=tipo_oc]');
 			
 			//buscar producto
 			var $busca_sku = $('#forma-comordencompra-window').find('a[href*=busca_sku]');
@@ -1672,7 +1699,7 @@ $(function() {
 			//ocultar boton descargar y facturar. Despues de facturar debe mostrarse
 			//$boton_descargarpdf.hide();
 			//$boton_cancelarfactura.hide();
-
+			
 			$empresa_immex.val('false');
 			$tasa_ret_immex.val('0');
 			$busca_proveedor.hide();
@@ -1767,15 +1794,15 @@ $(function() {
 											}
 											
 											var tr_warning = '<tr>';
-												tr_warning += '<td width="20"><div><IMG SRC="../../img/icono_advertencia.png" ALIGN="top" rel="warning_sku"></td>';
+												tr_warning += '<td width="20"><div><IMG SRC="../../img/icono_advertencia.png" align="top" rel="warning_sku"></td>';
 												tr_warning += '<td width="120">';
-												tr_warning += '<INPUT TYPE="text" value="'+$grid_productos.find('input[name=sku' + i + ']').val()+'" class="borde_oculto" readOnly="true" style="width:116px; color:red">';
+												tr_warning += '<input TYPE="text" value="'+$grid_productos.find('input[name=sku' + i + ']').val()+'" class="borde_oculto" readOnly="true" style="width:116px; color:red">';
 												tr_warning += '</td>';
 												tr_warning += '<td width="200">';
-												tr_warning += '<INPUT TYPE="text" value="'+$grid_productos.find('input[name=nombre' + i + ']').val()+'" class="borde_oculto" readOnly="true" style="width:196px; color:red">';
+												tr_warning += '<input TYPE="text" value="'+$grid_productos.find('input[name=nombre' + i + ']').val()+'" class="borde_oculto" readOnly="true" style="width:196px; color:red">';
 												tr_warning += '</td>';
 												tr_warning += '<td width="235">';
-												tr_warning += '<INPUT TYPE="text" value="'+ tmp.split(':')[1] +'" class="borde_oculto" readOnly="true" style="width:230px; color:red">';
+												tr_warning += '<input TYPE="text" value="'+ tmp.split(':')[1] +'" class="borde_oculto" readOnly="true" style="width:230px; color:red">';
 												tr_warning += '</td>';
 											tr_warning += '</tr>';
 											$grid_warning.append(tr_warning);
@@ -1812,6 +1839,7 @@ $(function() {
 					$tipo_cambio.val(entry['datosOrdenCompra'][0]['tipo_cambio']);
 					$fecha_entrega.val(entry['datosOrdenCompra'][0]['fecha_entrega']);
 					$check_anex_cert_hojas.attr('checked',  (entry['datosOrdenCompra'][0]['anexar_doc'] == 'true')? true:false );
+					$tipo_oc.val(entry['datosOrdenCompra'][0]['tipo_oc']);
 					
 					//carga select denominacion con todas las monedas
 					$select_moneda.children().remove();
@@ -1858,14 +1886,33 @@ $(function() {
 						}
 					});
 					$select_via_embarque.append(via_embarque_html);
-
-					if(entry['datosGrid'] != null){
+					
+					if(entry['datosGrid'].length > 0){
+						var primer_folio_req=0;
+						var folio_requision="";
+						
 						$.each(entry['datosGrid'],function(entryIndex,prod){
-
-							//obtiene numero de trs
+							
+							if(parseInt(entry['datosOrdenCompra'][0]['tipo_oc'])==1){
+								$folio_requisicion.attr('readonly',true);
+								$folio_requisicion.css({'background':'#F0F0F0'});
+								if(prod['folio_req']!=''){
+									if(folio_requision != prod['folio_req']){
+										if(parseInt(primer_folio_req)==0){
+											folio_requision = prod['folio_req'];
+										}else{
+											folio_requision += ','+prod['folio_req'];
+										}
+										$folio_requisicion.val(folio_requision);
+										primer_folio_req++;
+									}
+								}
+							}
+							
+							//Obtiene numero de trs
 							var tr = $("tr", $grid_productos).size();
 							tr++;
-
+							
 							var trr = '';
 							trr = '<tr>';
 							trr += '<td class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;" width="60">';
@@ -1875,55 +1922,63 @@ $(function() {
 									//Este es el id del registro que ocupa el producto en la tabla pocpedidos_detalles
 									trr += '<input type="hidden" name="iddetalle" id="idd" value="'+ prod['id_detalle'] +'">';
 									trr += '<a href="cancela_partida" id="cancela_partida'+ tr +'">Cancelar</a>';
+									
+									//Id de la requisicion cuando la orden de compra es generada a partir de la requisicion
+									trr += '<input type="hidden" 	name="idreq" id="idreq"  class="idreq'+ tr +'" value="'+ prod['id_req'] +'">';
+									trr += '<input type="hidden" 	name="iddetreq" id="iddetreq" class="iddetreq'+ tr +'" value="'+ prod['iddet_req'] +'">';
+									trr += '<input type="hidden" 	name="noreq" id="noreq" class="noreq'+ tr +'" value="'+ prod['folio_req'] +'">';
 							trr += '</td>';
 							trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="114">';
 									trr += '<input type="hidden" name="idproducto" id="idprod" value="'+ prod['inv_prod_id'] +'">';
-									trr += '<INPUT TYPE="text" name="sku'+ tr +'" value="'+ prod['codigo'] +'" id="skuprod" class="borde_oculto" readOnly="true" style="width:110px;">';
+									trr += '<input TYPE="text" name="sku'+ tr +'" value="'+ prod['codigo'] +'" id="skuprod" class="borde_oculto" readOnly="true" style="width:110px;">';
 							trr += '</td>';
 							trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="202">';
-								trr += '<INPUT TYPE="text" 	name="nombre'+ tr +'" 	value="'+ prod['titulo'] +'" 	id="nom" class="borde_oculto" readOnly="true" style="width:198px;">';
+								trr += '<input TYPE="text" 	name="nombre'+ tr +'" 	value="'+ prod['titulo'] +'" 	id="nom" class="borde_oculto" readOnly="true" style="width:198px;">';
 							trr += '</td>';
 							trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
-								trr += '<INPUT TYPE="text" 	name="unidad'+ tr +'" 	value="'+ prod['unidad'] +'" 	id="uni" class="borde_oculto" readOnly="true" style="width:86px;">';
+								trr += '<input TYPE="text" 	name="unidad'+ tr +'" 	value="'+ prod['unidad'] +'" 	id="uni" class="borde_oculto" readOnly="true" style="width:86px;">';
 							trr += '</td>';
 							trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="100">';
-									trr += '<INPUT type="hidden" 	name="id_presentacion"  value="'+  prod['id_presentacion'] +'" 	id="idpres">';
-									trr += '<INPUT TYPE="text" 		name="presentacion'+ tr +'" 	value="'+  prod['presentacion'] +'" id="pres" class="borde_oculto" readOnly="true" style="width:96px;">';
+									trr += '<input type="hidden" 	name="id_presentacion"  value="'+  prod['id_presentacion'] +'" 	id="idpres">';
+									trr += '<input TYPE="text" 		name="presentacion'+ tr +'" 	value="'+  prod['presentacion'] +'" id="pres" class="borde_oculto" readOnly="true" style="width:96px;">';
 							trr += '</td>';
 							trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
-								trr += '<INPUT TYPE="text" 	name="cantidad" value="'+  prod['cantidad'] +'" id="cant" style="width:76px;">';
-							trr += '</td>';
-							
-							
-							
-							trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
-								trr += '<INPUT TYPE="text" 	name="cant_rec" value="'+  prod['cant_rec'] +'" id="cant_rec" class="borde_oculto" style="width:76px; text-align:right;" readOnly="true">';
+								trr += '<input TYPE="text" 	name="cantidad" value="'+  prod['cantidad'] +'" id="cant" style="width:76px;">';
 							trr += '</td>';
 							
 							trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
-								trr += '<INPUT TYPE="text" 	name="cant_pen" value="'+  prod['cant_pen'] +'" id="cant_pen" class="borde_oculto" style="width:76px; text-align:right;" readOnly="true">';
+								trr += '<input TYPE="text" 	name="cant_rec" value="'+  prod['cant_rec'] +'" id="cant_rec" class="borde_oculto" style="width:76px; text-align:right;" readOnly="true">';
 							trr += '</td>';
 							
+							trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
+								trr += '<input TYPE="text" 	name="cant_pen" value="'+  prod['cant_pen'] +'" id="cant_pen" class="borde_oculto" style="width:76px; text-align:right;" readOnly="true">';
+							trr += '</td>';
 							
 							trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
-								trr += '<INPUT TYPE="text" 	name="costo" 	value="'+  prod['precio_unitario'] +'" 	id="cost" style="width:76px; text-align:right;">';
-								trr += '<INPUT type="hidden" value="'+  prod['precio_unitario'] +'" id="costor">';
+								trr += '<input TYPE="text" 	name="costo" 	value="'+  prod['precio_unitario'] +'" 	id="cost" style="width:76px; text-align:right;">';
+								trr += '<input type="hidden" value="'+  prod['precio_unitario'] +'" id="costor">';
 							trr += '</td>';
 							trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
-								trr += '<INPUT TYPE="text" 	name="importe'+ tr +'" 	value="'+  prod['importe'] +'" 	id="import" class="borde_oculto" readOnly="true" style="width:86px; text-align:right;">';
+								trr += '<input TYPE="text" 	name="importe'+ tr +'" 	value="'+  prod['importe'] +'" 	id="import" class="borde_oculto" readOnly="true" style="width:86px; text-align:right;">';
 
-								trr += '<INPUT type="hidden"    name="id_imp_prod"  value="'+  prod['gral_imp_id'] +'" 		id="idimppord">';
-								trr += '<INPUT type="hidden"    name="valor_imp" 	value="'+  prod['valor_imp'] +'" 	id="ivalorimp">';
+								trr += '<input type="hidden"    name="id_imp_prod"  value="'+  prod['gral_imp_id'] +'" 		id="idimppord">';
+								trr += '<input type="hidden"    name="valor_imp" 	value="'+  prod['valor_imp'] +'" 	id="ivalorimp">';
 								
 								trr += '<input type="hidden" name="totimpuesto'+ tr +'" id="totimp" value="'+parseFloat(prod['importe']) * parseFloat( prod['valor_imp'] )+'">';
 							trr += '</td>';
 							
 							trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
-								trr += '<INPUT TYPE="text" 	name="estatus'+ tr +'" 	value="'+  prod['pstatus'] +'" 	id="estatus" class="borde_oculto" readOnly="true" style="width:76px; text-align:left;">';
+								trr += '<input TYPE="text" 	name="estatus'+ tr +'" 	value="'+  prod['pstatus'] +'" 	id="estatus" class="borde_oculto" readOnly="true" style="width:76px; text-align:left;">';
 							trr += '</td>';
 							
 							trr += '</tr>';
 							$grid_productos.append(trr);
+							
+							
+							if(parseInt(entry['datosOrdenCompra'][0]['tipo_oc'])==1){
+								//Tipo de OC generada a partir de una requisicion
+								$grid_productos.find('#delete'+ tr).hide();
+							}
 							
 							//al iniciar el campo tiene un  caracter en blanco, al obtener el foco se elimina el  espacio por comillas
 							$grid_productos.find('#cant').focus(function(e){
@@ -2094,7 +2149,7 @@ $(function() {
 						
 						//0=Orden Generada
 						if(entry['datosOrdenCompra'][0]['status']==0){
-							$grid_productos.find('a[href*=elimina_producto]').show();
+							//$grid_productos.find('a[href*=elimina_producto]').show();
 							$('#forma-comordencompra-window').find('a[href*=busca_sku]').show();
 							$('#forma-comordencompra-window').find('a[href*=agregar_producto]').show();
 							$('#forma-comordencompra-window').find('#submit').show();

@@ -1,4 +1,7 @@
 $(function() {
+	
+	var DataObject;
+	
 	String.prototype.toCharCode = function(){
 	    var str = this.split(''), len = str.length, work = new Array(len);
 	    for (var i = 0; i < len; ++i){
@@ -6,6 +9,88 @@ $(function() {
 	    }
 	    return work.join(',');
 	};
+	
+	
+	//----------------------------------------------------------------
+	//valida la fecha seleccionada
+	function mayor(fecha, fecha2){
+		var xMes=fecha.substring(5, 7);
+		var xDia=fecha.substring(8, 10);
+		var xAnio=fecha.substring(0,4);
+		var yMes=fecha2.substring(5, 7);
+		var yDia=fecha2.substring(8, 10);
+		var yAnio=fecha2.substring(0,4);
+		
+		if (xAnio > yAnio){
+			return(true);
+		}else{
+			if (xAnio == yAnio){
+				if (xMes > yMes){
+					return(true);
+				}
+				if (xMes == yMes){
+					if (xDia > yDia){
+						return(true);
+					}else{
+						return(false);
+					}
+				}else{
+					return(false);
+				}
+			}else{
+				return(false);
+			}
+		}
+	}
+	//muestra la fecha actual
+	var mostrarFecha = function mostrarFecha(){
+		var ahora = new Date();
+		var anoActual = ahora.getFullYear();
+		var mesActual = ahora.getMonth();
+		mesActual = mesActual+1;
+		mesActual = (mesActual <= 9)?"0" + mesActual : mesActual;
+		var diaActual = ahora.getDate();
+		diaActual = (diaActual <= 9)?"0" + diaActual : diaActual;
+		var Fecha = anoActual + "-" + mesActual + "-" + diaActual;		
+		return Fecha;
+	}
+	
+	
+	//Carga los campos select con los datos que recibe como parametro
+	$carga_campos_select = function($campo_select, $arreglo_elementos, elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem, fijo){
+		var select_html = '';
+		
+		if(texto_elemento_cero != ''){
+			select_html = '<option value="0">'+texto_elemento_cero+'</option>';
+		}
+		
+		if(parseInt(elemento_seleccionado)<=0 && texto_elemento_cero==''){
+			select_html = '<option value="0">[--- ---]</option>';
+		}
+		
+		$.each($arreglo_elementos,function(entryIndex,elemento){
+			if( parseInt(elemento[index_elem]) == parseInt(elemento_seleccionado) ){
+				select_html += '<option value="' + elemento[index_elem] + '" selected="yes">' + elemento[index_text_elem] + '</option>';
+			}else{
+				if(!fijo){
+					select_html += '<option value="' + elemento[index_elem] + '" >' + elemento[index_text_elem] + '</option>';
+				}
+			}
+		});
+		
+		$campo_select.children().remove();
+		$campo_select.append(select_html);
+	}
+	
+	
+	
+	//Aplicar solo lectura
+	$aplica_read_only_input_text = function($campo){
+		$campo.attr("readonly", true);
+		$campo.css({'background' : '#f0f0f0'});
+	}
+	
+	
 	
 	$('#header').find('#header1').find('span.emp').text($('#lienzo_recalculable').find('input[name=emp]').val());
 	$('#header').find('#header1').find('span.suc').text($('#lienzo_recalculable').find('input[name=suc]').val());
@@ -15,9 +100,9 @@ $(function() {
 	var $contextpath = $('#lienzo_recalculable').find('input[name=contextpath]');
 	var controller = $contextpath.val()+"/controllers/com_requisicion";
     
-        //Barra para las acciones
-        $('#barra_acciones').append($('#lienzo_recalculable').find('.table_acciones'));
-        $('#barra_acciones').find('.table_acciones').css({'display':'block'});
+	//Barra para las acciones
+	$('#barra_acciones').append($('#lienzo_recalculable').find('.table_acciones'));
+	$('#barra_acciones').find('.table_acciones').css({'display':'block'});
 	var $new_requisicion = $('#barra_acciones').find('.table_acciones').find('a[href*=new_item]');
 	var $visualiza_buscador = $('#barra_acciones').find('.table_acciones').find('a[href*=visualiza_buscador]');
 	
@@ -131,49 +216,46 @@ $(function() {
 	});
 	
 	
-	//----------------------------------------------------------------
-	//valida la fecha seleccionada
-	function mayor(fecha, fecha2){
-		var xMes=fecha.substring(5, 7);
-		var xDia=fecha.substring(8, 10);
-		var xAnio=fecha.substring(0,4);
-		var yMes=fecha2.substring(5, 7);
-		var yDia=fecha2.substring(8, 10);
-		var yAnio=fecha2.substring(0,4);
+	
+	$iniciar_campos_generales = function(){
 		
-		if (xAnio > yAnio){
-			return(true);
-		}else{
-			if (xAnio == yAnio){
-				if (xMes > yMes){
-					return(true);
-				}
-				if (xMes == yMes){
-					if (xDia > yDia){
-						return(true);
-					}else{
-						return(false);
-					}
-				}else{
-					return(false);
-				}
+		var input_json_cuentas = document.location.protocol + '//' + document.location.host + '/'+controller+'/getInicializar.json';
+		$arreglo = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
+		$.post(input_json_cuentas,$arreglo,function(data){
+			
+			/*
+			$busqueda_select_sucursal.children().remove();
+			var suc_hmtl = '';
+			if(data['Data']['versuc']==true){
+				//Aqui carga todas las sucursales porque el usuario es un administrador
+				suc_hmtl = '<option value="0" selected="yes">[--- Todos ---]</option>';
+				$.each(data['Data']['Suc'],function(entryIndex,suc){
+					suc_hmtl += '<option value="' + suc['id'] + '">'+ suc['titulo'] + '</option>';
+				});
 			}else{
-				return(false);
+				//Aqui solo debe cargar la sucursal del usuario logueado
+				$.each(data['Data']['Suc'],function(entryIndex,suc){
+					if(parseInt(suc['id'])==parseInt(data['Data']['suc_id'])){
+						suc_hmtl += '<option value="' + suc['id'] + '" selected="yes">'+ suc['titulo'] + '</option>';
+					}
+				});
 			}
-		}
+			$busqueda_select_sucursal.append(suc_hmtl);
+			*/
+			
+			DataObject = data['Data'];
+			
+			//$busqueda_select_sucursal.focus();
+		});
 	}
-	//muestra la fecha actual
-	var mostrarFecha = function mostrarFecha(){
-		var ahora = new Date();
-		var anoActual = ahora.getFullYear();
-		var mesActual = ahora.getMonth();
-		mesActual = mesActual+1;
-		mesActual = (mesActual <= 9)?"0" + mesActual : mesActual;
-		var diaActual = ahora.getDate();
-		diaActual = (diaActual <= 9)?"0" + diaActual : diaActual;
-		var Fecha = anoActual + "-" + mesActual + "-" + diaActual;		
-		return Fecha;
-	}
+	
+	
+	$iniciar_campos_generales();
+	
+	
+	
+	
+	
 	
 	
 	$busqueda_fecha_inicial.click(function (s){
@@ -433,7 +515,7 @@ $(function() {
 	
 	//buscador de presentaciones disponibles para un producto
                    
-	$buscador_presentaciones_producto = function($fecha_compromiso, sku_producto,$nombre_producto,$grid_productos){
+	$buscador_presentaciones_producto = function($fecha_compromiso, sku_producto,$nombre_producto,$grid_productos, $sku_producto){
 			//verifica si el campo sku no esta vacio para realizar busqueda
 			if(sku_producto != ''){
 				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getPresentacionesProducto.json';
@@ -515,7 +597,10 @@ $(function() {
 							//llamada a la funcion que agrega el producto al grid
 							$agrega_producto_grid($grid_productos,id_prod,sku,titulo,unidad,id_pres,pres,prec_unitario,num_dec);
 							
-							$nombre_producto.val(titulo);//muestra el titulo del producto 
+							//$nombre_producto.val(titulo);//muestra el titulo del producto 
+							
+							$sku_producto.val('');
+							$nombre_producto.val('');
 							
 							//elimina la ventana de busqueda
 							var remove = function() {$(this).remove();};
@@ -526,15 +611,21 @@ $(function() {
 							//event.preventDefault();
 							var remove = function() {$(this).remove();};
 							$('#forma-buscapresentacion-overlay').fadeOut(remove);
+							$nombre_producto.val('');
+							$sku_producto.focus();
 						});
 					}else{
-						jAlert("El producto que intenta agregar no existe, pruebe ingresando otro.\nHaga clic en Buscar.",'! Atencion');
-						$('#forma-com_requisicion-window').find('input[name=titulo_producto]').val('');
+						jAlert('El producto que intenta agregar no existe, pruebe ingresando otro.\nHaga clic en Buscar.', 'Atencion!', function(r) {
+							$sku_producto.val('');
+							$sku_producto.focus();
+						});
 					}
 				});
-				
 			}else{
-					jAlert("Es necesario ingresar un Sku de producto valido", 'Atencion!');
+				jAlert('Es necesario ingresar un Sku de producto valido.', 'Atencion!', function(r) {
+					$sku_producto.val('');
+					$sku_producto.focus();
+				});
 			}
 	}//termina buscador dpresentaciones disponibles de un producto
 	
@@ -545,9 +636,9 @@ $(function() {
 			if(( $(this).find('#cant').val() != ' ' || $(this).find('#cant').val() != 0 ) ){
 			     $(this).find('#cant').val()
 			}else{
-                             jAlert("Ingrese una cantidad",'Atencion');
-                             return false;
-                        }
+				 jAlert("Ingrese una cantidad",'Atencion');
+				 return false;
+			}
      });
 
 	
@@ -594,7 +685,7 @@ $(function() {
 					trr += '<INPUT TYPE="text" 	name="presentacion'+ tr +'" value="'+  pres +'" id="pres" class="borde_oculto" readOnly="true" style="width:96px;">';
 				trr += '</td>';
 				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
-					trr += '<INPUT TYPE="text" 	name="cantidad" value=" " id="cant" style="width:76px;">';
+					trr += '<INPUT TYPE="text" 	name="cantidad" value=" " id="cant" class="cant'+ tr +'" style="width:76px;">';
 				trr += '</td>';
 			
 			trr += '</tr>';
@@ -602,31 +693,31 @@ $(function() {
 			$grid_productos.append(trr);
 			
 			//al iniciar el campo tiene un  caracter en blanco, al obtener el foco se cambia el  espacio por comillas
-			$grid_productos.find('#cant').focus(function(e){
+			$grid_productos.find('input.cant'+ tr).focus(function(e){
 				if($(this).val() == ' '){
-						$(this).val('');
+					$(this).val('');
 				}
 			});
 			
-                        
-                        
-                        
-                        $grid_productos.find('#cant').keypress(function(e){
+			
+			$grid_productos.find('input.cant'+ tr).keypress(function(e){
 				// Permitir  numeros, borrar, suprimir, TAB, puntos, comas
 				if (e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
 					return true;
 				}else {
-                                        jAlert("Solo se permiten numeros",'Atencion!!!');
+					jAlert("Solo se permiten numeros",'Atencion!!!');
 					return false;
 				}
 			});
+			
+			
 			//recalcula importe al perder enfoque el campo cantidad
-			$grid_productos.find('#cant').blur(function(){
-                            if ($(this).val() == ''){
-				//$(this).val(' ');
-                                jAlert("Ingrese una cantidad",'Atencion!!!');
-		            }
-                            
+			$grid_productos.find('input.cant'+ tr).blur(function(){
+				if ($(this).val().trim() == ''){
+					jAlert('Ingrese una cantidad.', 'Atencion!', function(r) {
+						//$grid_productos.find('input.cant'+ tr).focus();
+					});
+				}
 			});
 			
 			//elimina un producto del grid
@@ -641,7 +732,6 @@ $(function() {
 					
 					//oculta la fila eliminada
 					$(this).parent().parent().hide();
-					
 				}
 			});
 			
@@ -649,89 +739,15 @@ $(function() {
 			jAlert("El producto: "+sku+" con presentacion: "+pres+" ya se encuentra en el listado, seleccione otro diferente.", 'Atencion!');
 		}
 		
+		//Asignar enfoque al registro nuevo
+		$grid_productos.find('input.cant'+ tr).focus();
+		
 	}//termina agregar producto al grid
 	
 	
-	//valida la fecha seleccionada
-                function mayor(fecha, fecha2){
-                        var xMes=fecha.substring(5, 7);
-                        var xDia=fecha.substring(8, 10);
-                        var xAnio=fecha.substring(0,4);
-                        var yMes=fecha2.substring(5, 7);
-                        var yDia=fecha2.substring(8, 10);
-                        var yAnio=fecha2.substring(0,4);
-
-                        if (xAnio > yAnio){
-                                return(true);
-                        }else{
-                                if (xAnio == yAnio){
-                                        if (xMes > yMes){
-                                                return(true);
-                                        }
-                                        if (xMes == yMes){
-                                                if (xDia > yDia){
-                                                        return(true);
-                                                }else{
-                                                        return(false);
-                                                }
-                                        }else{
-                                                return(false);
-                                        }
-                                }else{
-                                        return(false);
-                                }
-                        }
-                }
-                
-                
-                ///fecha  menor
-                function menor(fecha, fecha2){
-                        var xMes=fecha.substring(5, 7);
-                        var xDia=fecha.substring(8, 10);
-                        var xAnio=fecha.substring(0,4);
-                        var yMes=fecha2.substring(5, 7);
-                        var yDia=fecha2.substring(8, 10);
-                        var yAnio=fecha2.substring(0,4);
-
-                        if (xAnio < yAnio){
-                                return(true);
-                        }else{
-                                if (xAnio == yAnio){
-                                        if (xMes < yMes){
-                                                return(true);
-                                        }
-                                        if (xMes == yMes){
-                                                if (xDia < yDia){
-                                                        return(true);
-                                                }else{
-                                                        return(false);
-                                                }
-                                        }else{
-                                                return(false);
-                                        }
-                                }else{
-                                        return(false);
-                                }
-                        }
-                }
-                //fin de la fecha menor
-                
-                //muestra la fecha actual
-                var mostrarFecha = function mostrarFecha(){
-                        var ahora = new Date();
-                        var anoActual = ahora.getFullYear();
-                        var mesActual = ahora.getMonth();
-                        mesActual = mesActual+1;
-                        mesActual = (mesActual <= 9)?"0" + mesActual : mesActual;
-                        var diaActual = ahora.getDate();
-                        diaActual = (diaActual <= 9)?"0" + diaActual : diaActual;
-                        var Fecha = anoActual + "-" + mesActual + "-" + diaActual;		
-                        return Fecha;
-                }
 	
 	
-	
-//nueva Requisicion
+	//nueva Requisicion
 	$new_requisicion.click(function(event){
 		event.preventDefault();
 		var id_to_show = 0;
@@ -744,7 +760,7 @@ $(function() {
 		$forma_selected.attr({id : form_to_show + id_to_show});
 		
 		
-		$('#forma-com_requisicion-window').css({"margin-left": -340, 	"margin-top": -235});
+		$('#forma-com_requisicion-window').css({"margin-left": -260, 	"margin-top": -235});
 		
 		$forma_selected.prependTo('#forma-com_requisicion-window');
 		$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
@@ -758,14 +774,20 @@ $(function() {
 			   };
         
 		var $id_requisicion = $('#forma-com_requisicion-window').find('input[name=id_requisicion]');
-                var $total_tr = $('#forma-com_requisicion-window').find('input[name=total_tr]');
-                var $folio_requisicion = $('#forma-com_requisicion-window').find('input[name=folio_requisicion]');
+		var $total_tr = $('#forma-com_requisicion-window').find('input[name=total_tr]');
+		var $folio_requisicion = $('#forma-com_requisicion-window').find('input[name=folio_requisicion]');
                 
-                var $fecha_compromiso = $('#forma-com_requisicion-window').find('input[name=fecha_compromiso]');
+		var $fecha_compromiso = $('#forma-com_requisicion-window').find('input[name=fecha_compromiso]');
 		var $observaciones = $('#forma-com_requisicion-window').find('textarea[name=observaciones]');
-                
-                var $cancelar_requisicion = $('#forma-com_requisicion-window').find('#cancelar_requisicion').hide();
-                
+         
+        var $select_empleado = $('#forma-com_requisicion-window').find('select[name=select_empleado]');
+        var $select_departamento = $('#forma-com_requisicion-window').find('select[name=select_departamento]');
+        var $folio_pedido = $('#forma-com_requisicion-window').find('input[name=folio_pedido]');
+        var $etiqueta_folio_pedido =  $('#forma-com_requisicion-window').find('#etiqueta_folio_pedido');
+        
+        
+		var $cancelar_requisicion = $('#forma-com_requisicion-window').find('#cancelar_requisicion').hide();
+		
 		var $sku_producto = $('#forma-com_requisicion-window').find('input[name=sku_producto]');
 		var $nombre_producto = $('#forma-com_requisicion-window').find('input[name=nombre_producto]');
 		//buscar producto
@@ -787,11 +809,18 @@ $(function() {
 		var $submit_actualizar = $('#forma-com_requisicion-window').find('#submit');
 		
 		
-                
-                $id_requisicion.val(0);  //para nueva requisicion   el  id es 0
-		$folio_requisicion.attr('disabled','-1'); //deshabilitar
 		
-                $descargarpdf.hide();
+		$id_requisicion.val(0);  //para nueva requisicion   el  id es 0
+		$folio_pedido.val('');
+		
+		$aplica_read_only_input_text($folio_requisicion);
+		$aplica_read_only_input_text($folio_pedido);
+		$aplica_read_only_input_text($fecha_compromiso);
+		
+		
+		$descargarpdf.hide();
+		$folio_pedido.hide();
+		$etiqueta_folio_pedido.hide();
 		
 		var respuestaProcesada = function(data){
 			if ( data['success'] == "true" ){
@@ -872,62 +901,81 @@ $(function() {
 		var options = {dataType :  'json', success : respuestaProcesada};
 		$forma_selected.ajaxForm(options);
 		
-		//$.getJSON(json_string,function(entry){
+		/*
 		$.post(input_json,$arreglo,function(entry){
 			
 			//aqui van los  campos cargados (desde que se le da clic en nuevo ----en este caso no se esta cargando ningun campo
                        
 		},"json");//termina llamada json
+		*/
+		
+		
+		//Carga select de Empleados
+		var elemento_seleccionado = DataObject['emplActualId'];
+		var texto_elemento_cero = '';
+		var index_elem = 'id';
+		var index_text_elem = 'nombre';
+		var option_fijo = false;
+		$carga_campos_select($select_empleado, DataObject['Empdos'], elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem, option_fijo);
+		
+		
+		//Carga select de Departamentos
+		elemento_seleccionado = 0;
+		$.each(DataObject['Empdos'],function(entryIndex,emp){
+			//Depende del empleado, hay que seleccionar el departamento por default si es que tiene asignado
+			if(parseInt(emp['id'])==parseInt($select_empleado.val())){
+				elemento_seleccionado = emp['depto_id'];
+			}
+		});
+		texto_elemento_cero = '[--- Seleccionar ---]';
+		index_elem = 'id';
+		index_text_elem = 'titulo';
+		option_fijo = false;
+		$carga_campos_select($select_departamento, DataObject['Deptos'], elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem, option_fijo);
+		
+		
+		$fecha_compromiso.val(DataObject['fecha_actual']);
+		
 		
                 
-                //----------------------------------------------------------------
-                 $fecha_compromiso.click(function (s){
-                       var a=$('div.datepicker');
-                        a.css({'z-index':100});
-                });
-
-
-                $fecha_compromiso.DatePicker({
-                        format:'Y-m-d',
-                        date: $(this).val(),
-                        current: $(this).val(),
-                        starts: 1,
-                        position: 'bottom',
-                        locale: {
-                                days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
-                                daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
-                                daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
-                                months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
-                                monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
-                                weekMin: 'se'
-                        },
-                        onChange: function(formated, dates){
-                                var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
-                                $fecha_compromiso.val(formated);
-                                if (formated.match(patron) ){
-                                    var valida_fecha=menor($fecha_compromiso.val(),mostrarFecha());
-                                    if (valida_fecha==true){
-                                                jAlert("Fecha no valida",'! Atencion');
-                                                $fecha_compromiso.val(mostrarFecha());
-                                        }else{
-                                                $fecha_compromiso.DatePickerHide();	
-                                        }
-                                        //var valida_fecha=mayor($fecha_compromiso.val(),mostrarFecha());
-                                        //if (valida_fecha==true){
-                                        //        jAlert("Fecha no valida",'! Atencion');
-                                        //        $fecha_compromiso.val(mostrarFecha());
-                                        //}else{
-                                    /////////////////////////////////            $fecha_compromiso.DatePickerHide();	
-                                        //}
-                                }
-                        }
-                });
+		$fecha_compromiso.click(function (s){
+			var a=$('div.datepicker');
+			a.css({'z-index':100});
+		});
+		
+		$fecha_compromiso.DatePicker({
+			format:'Y-m-d',
+			date: $fecha_compromiso.val(),
+			current: $fecha_compromiso.val(),
+			starts: 1,
+			position: 'bottom',
+			locale: {
+				days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
+				daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
+				daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
+				months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
+				monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
+				weekMin: 'se'
+			},
+			onChange: function(formated, dates){
+				var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
+				$fecha_compromiso.val(formated);
+				if (formated.match(patron) ){
+					var valida_fecha=mayor($fecha_compromiso.val(),mostrarFecha());
+					
+					if (valida_fecha==true){
+						$fecha_compromiso.DatePickerHide();	
+					}else{
+						jAlert("Fecha no valida, debe ser mayor a la actual.",'! Atencion');
+						$fecha_compromiso.val(mostrarFecha());
+					}
+				}
+			}
+		});
 
 
 
-                $fecha_compromiso.val(mostrarFecha());
-                $fecha_compromiso.val('');
-                $fecha_compromiso.attr("readonly", true);
+		
 		
 		
 		
@@ -940,7 +988,7 @@ $(function() {
 		//agregar producto al grid
 		$agregar_producto.click(function(event){
 			event.preventDefault();
-			$buscador_presentaciones_producto($fecha_compromiso, $sku_producto.val(),$nombre_producto,$grid_productos);
+			$buscador_presentaciones_producto($fecha_compromiso, $sku_producto.val(),$nombre_producto,$grid_productos, $sku_producto);
 		});
 		
 		//desencadena clic del href Agregar producto al pulsar enter en el campo sku del producto
@@ -954,24 +1002,25 @@ $(function() {
 		
 		$submit_actualizar.bind('click',function(){
 			var trCount = $("tr", $grid_productos).size();
-                        $total_tr.val(trCount);
-                        if(parseInt(trCount) > 0){
-                                $grid_productos.find('tr').each(function (index){
-				 $(this).find('#cant').val(quitar_comas( $(this).find('#cant').val() ));
-                                 var campo_cantidad=$(this).find('#cant').val(quitar_comas( $(this).find('#cant').val() ))
-                                });
-                                $grid_productos.find('tr').find('#cant').each(function (index){
-                                 // alert($(this).val());
-                                  if($(this).val()==' '){
-                                      jAlert("No se permiten campos vacios, ingrese una cantidad.",'Atencion!!!');
-                                      return false;
-                                  };
-                                });
-                        }else{
+			$total_tr.val(trCount);
+			if(parseInt(trCount) > 0){
+				$grid_productos.find('tr').each(function (index){
+					$(this).find('#cant').val(quitar_comas( $(this).find('#cant').val() ));
+					var campo_cantidad=$(this).find('#cant').val(quitar_comas( $(this).find('#cant').val() ))
+				});
+				
+				$grid_productos.find('tr').find('#cant').each(function (index){
+					// alert($(this).val());
+					if($(this).val()==' '){
+						jAlert("No se permiten campos vacios, ingrese una cantidad.",'Atencion!!!');
+						return false;
+					};
+				});
+			}else{
 				jAlert("No hay datos para actualizar", 'Atencion!');
 				return false;
 			}
-                });
+		});
 		
 		//cerrar plugin
 		$cerrar_plugin.bind('click',function(){
@@ -1022,24 +1071,30 @@ $(function() {
 			
 			$(this).modalPanel_com_requisicion();
 			
-			$('#forma-com_requisicion-window').css({"margin-left": -340, 	"margin-top": -235});
+			$('#forma-com_requisicion-window').css({"margin-left": -260, 	"margin-top": -235});
 			
 			$forma_selected.prependTo('#forma-com_requisicion-window');
 			$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
 			
 			$tabs_li_funxionalidad();
 			
-			var $total_tr =         $('#forma-com_requisicion-window').find('input[name=total_tr]');
-			var $id_requisicion=    $('#forma-com_requisicion-window').find('input[name=id_requisicion]');
-			var $accion_proceso =   $('#forma-com_requisicion-window').find('input[name=accion_proceso]');
-			var $folio_requisicion =            $('#forma-com_requisicion-window').find('input[name=folio_requisicion]');
-                        
-                        var $fecha_compromiso = $('#forma-com_requisicion-window').find('input[name=fecha_compromiso]');
-			var $observaciones =    $('#forma-com_requisicion-window').find('textarea[name=observaciones]');
-			var $sku_producto =     $('#forma-com_requisicion-window').find('input[name=sku_producto]');
-			var $nombre_producto =  $('#forma-com_requisicion-window').find('input[name=nombre_producto]');
+			var $total_tr = $('#forma-com_requisicion-window').find('input[name=total_tr]');
+			var $id_requisicion = $('#forma-com_requisicion-window').find('input[name=id_requisicion]');
+			var $accion_proceso = $('#forma-com_requisicion-window').find('input[name=accion_proceso]');
+			var $folio_requisicion = $('#forma-com_requisicion-window').find('input[name=folio_requisicion]');
+			
+			var $fecha_compromiso = $('#forma-com_requisicion-window').find('input[name=fecha_compromiso]');
+			var $observaciones = $('#forma-com_requisicion-window').find('textarea[name=observaciones]');
+			
+			var $select_empleado = $('#forma-com_requisicion-window').find('select[name=select_empleado]');
+			var $select_departamento = $('#forma-com_requisicion-window').find('select[name=select_departamento]');
+			var $folio_pedido = $('#forma-com_requisicion-window').find('input[name=folio_pedido]');
+			var $etiqueta_folio_pedido =  $('#forma-com_requisicion-window').find('#etiqueta_folio_pedido');
+			
+			var $sku_producto = $('#forma-com_requisicion-window').find('input[name=sku_producto]');
+			var $nombre_producto = $('#forma-com_requisicion-window').find('input[name=nombre_producto]');
 			//buscar producto
-			var $busca_sku =        $('#forma-com_requisicion-window').find('a[href*=busca_sku]');
+			var $busca_sku = $('#forma-com_requisicion-window').find('a[href*=busca_sku]');
 			//href para agregar producto al grid
 			var $agregar_producto = $('#forma-com_requisicion-window').find('a[href*=agregar_producto]');
 			
@@ -1063,13 +1118,18 @@ $(function() {
 			var $submit_actualizar = $('#forma-com_requisicion-window').find('#submit');
 			
 			
+			
+			$aplica_read_only_input_text($folio_requisicion);
+			$aplica_read_only_input_text($folio_pedido);
+			$aplica_read_only_input_text($fecha_compromiso);
+			
+			
+			$folio_pedido.hide();
+			$etiqueta_folio_pedido.hide();
+			
 			$cancelado.hide();
 			
-                        $folio_requisicion.attr('disabled','-1'); //deshabilitar
-			
-			//$etiqueta_digit.attr('disabled','-1');
-                        
-               //$identificador.val(0);//para nueva pedido el id es 0                       
+			                      
 			
 			if(accion_mode == 'edit'){
 				$accion_proceso.attr({'value' : "edit"});
@@ -1169,15 +1229,39 @@ $(function() {
                                                                  
 				//aqui se cargan los campos al editar
 				$.post(input_json,$arreglo,function(entry){
-					//$asa_ret_immex.val(entry['datosRequisicion']['0']['tasa_retencion_immex']);
-					$id_requisicion.val(entry['datosRequisicion']['0']['id']);
-					$folio_requisicion.val(entry['datosRequisicion']['0']['folio']);
-					$fecha_compromiso.val(entry['datosRequisicion']['0']['fecha_compromiso']);
-                                        $fecha_compromiso.attr("readonly", true);
-                                        //----------------------------------------------------------------
-                 
-                                        $observaciones.text(entry['datosRequisicion']['0']['observaciones']);
-                                        
+					$id_requisicion.val(entry['datosRequisicion'][0]['id']);
+					$folio_requisicion.val(entry['datosRequisicion'][0]['folio']);
+					$fecha_compromiso.val(entry['datosRequisicion'][0]['fecha_compromiso']);
+					$observaciones.text(entry['datosRequisicion'][0]['observaciones']);
+					$folio_pedido.val(entry['datosRequisicion'][0]['pedido']);
+					
+					if(parseInt(entry['datosRequisicion'][0]['tipo'])==2){
+						$folio_pedido.show();
+						$etiqueta_folio_pedido.show();
+					}
+					
+					//Carga select de Empleados
+					var elemento_seleccionado = entry['datosRequisicion'][0]['empleado_id'];
+					var texto_elemento_cero = '';
+					var index_elem = 'id';
+					var index_text_elem = 'nombre';
+					var option_fijo = false;
+					$carga_campos_select($select_empleado, DataObject['Empdos'], elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem, option_fijo);
+					
+					//Carga select de Departamentos
+					elemento_seleccionado = entry['datosRequisicion'][0]['depto_id'];
+					texto_elemento_cero = '[--- Seleccionar ---]';
+					index_elem = 'id';
+					index_text_elem = 'titulo';
+					option_fijo = false;
+					$carga_campos_select($select_departamento, DataObject['Deptos'], elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem, option_fijo);
+					
+		
+					
+					//----------------------------------------------------------------
+					
+					
+					
 					if(entry['datosGrid'] != null){
 						$.each(entry['datosGrid'],function(entryIndex,prod){
 							//obtiene numero de trs
@@ -1213,6 +1297,13 @@ $(function() {
 							
 							trr += '</tr>';
 							$grid_productos.append(trr);
+							
+							
+							if(parseInt(entry['datosRequisicion'][0]['status'])==1){
+								//Tipo de OC generada a partir de una requisicion
+								$grid_productos.find('#delete'+ tr).hide();
+							}
+							
                             
 							//al iniciar el campo tiene un  caracter en blanco, al obtener el foco se elimina el  espacio por comillas
 							$grid_productos.find('#cant').focus(function(e){
@@ -1299,91 +1390,82 @@ $(function() {
                                         
                                         
                                         
-                                        if(entry['datosGrid']['0']['status']=='t' ){
-                                                $cancelar_requisicion.hide();
-                                                $('#forma-com_requisicion-window').find('a[href*=busca_sku]').hide();
-                                                $('#forma-com_requisicion-window').find('a[href*=agregar_producto]').hide();
-                                                $('#forma-com_requisicion-window').find('#submit').hide();
-                                                $('#forma-com_requisicion-window').find('#cancelar_orden_compra').hide();
-                                                $folio_requisicion.attr('disabled','-1'); //deshabilitar
-                                                
-                                                $sku_producto.attr('disabled','-1'); //deshabilitar
+					if(entry['datosGrid'][0]['status']=='t' ){
+						$cancelar_requisicion.hide();
+						$('#forma-com_requisicion-window').find('a[href*=busca_sku]').hide();
+						$('#forma-com_requisicion-window').find('a[href*=agregar_producto]').hide();
+						$('#forma-com_requisicion-window').find('#submit').hide();
+						$('#forma-com_requisicion-window').find('#cancelar_orden_compra').hide();
+						$folio_requisicion.attr('disabled','-1'); //deshabilitar
+						
+						$sku_producto.attr('disabled','-1'); //deshabilitar
 						$fecha_compromiso.attr('disabled','-1'); //deshabilitar
 						$nombre_producto.attr('disabled','-1'); //deshabilitar
-                                               
 						$observaciones.attr('disabled','-1'); //deshabilitar
-						
-						
-						//$grid_productos.find('a[href*=elimina_producto]').hide();
                                                 
 						$grid_productos.find('#cant').attr('disabled','-1'); //deshabilitar campos cantidad del grid
 						$grid_productos.find('#cost').attr('disabled','-1'); //deshabilitar campos costo del grid
 						$grid_productos.find('#import').attr('disabled','-1'); //deshabilitar campos importe del grid
+					}else{ 
+						$('#forma-com_requisicion-window').find('a[href*=busca_sku]').show();
+						$('#forma-com_requisicion-window').find('a[href*=agregar_producto]').show();
+						$('#forma-com_requisicion-window').find('#submit').show();
 					}
-                                        else{ 
-                                                $('#forma-com_requisicion-window').find('a[href*=busca_sku]').show();
-                                                $('#forma-com_requisicion-window').find('a[href*=agregar_producto]').show();
-                                                $('#forma-com_requisicion-window').find('#submit').show();
-                                        }
-				//	$calcula_totales();//llamada a la funcion que calcula totales 
+				
+				
+				
+				
+					$fecha_compromiso.click(function (s){
+						var a=$('div.datepicker');
+						a.css({'z-index':100});
+					});
+					
+					$fecha_compromiso.DatePicker({
+						format:'Y-m-d',
+						date: $fecha_compromiso.val(),
+						current: $fecha_compromiso.val(),
+						starts: 1,
+						position: 'bottom',
+						locale: {
+							days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
+							daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
+							daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
+							months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
+							monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
+							weekMin: 'se'
+						},
+						onChange: function(formated, dates){
+							var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
+							$fecha_compromiso.val(formated);
+							if (formated.match(patron) ){
+								var valida_fecha=mayor($fecha_compromiso.val(),mostrarFecha());
+								
+								if (valida_fecha==true){
+									$fecha_compromiso.DatePickerHide();	
+								}else{
+									jAlert("Fecha no valida, debe ser mayor a la actual.",'! Atencion');
+									$fecha_compromiso.val(mostrarFecha());
+								}
+							}
+						}
+					});
+				
 				});//termina llamada json
                
                
             //aqui                 
                 $descargarpdf.click(function(event){
-				var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
-				var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/getPdfRequisicion/'+$id_requisicion.val()+'/'+iu+'/out.json';
-				//alert(input_json);
-				window.location.href=input_json;
+					var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
+					var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/getPdfRequisicion/'+$id_requisicion.val()+'/'+iu+'/out.json';
+					//alert(input_json);
+					window.location.href=input_json;
 				});
 			//end
 				
 				
-                                //----------------------------------------------------------------
-                                  $fecha_compromiso.click(function (s){
-                                        var a=$('div.datepicker');
-                                         a.css({'z-index':100});
-                                 });
 
-                                 
-                $fecha_compromiso.DatePicker({
-                        format:'Y-m-d',
-                        date:$fecha_compromiso.val(),
-                        current: $fecha_compromiso.val(),
-                        starts: 1,
-                        position: 'bottom',
-                        locale: {
-                                days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
-                                daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
-                                daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
-                                months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
-                                monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
-                                weekMin: 'se'
-                        },
-                        onChange: function(formated, dates){
-                                var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
-                                $fecha_compromiso.val(formated);
-                                if (formated.match(patron) ){
-                                    var valida_fecha=menor($fecha_compromiso.val(),mostrarFecha());
-                                    if (valida_fecha==true){
-                                                jAlert("Fecha no valida",'! Atencion');
-                                                $fecha_compromiso.val(mostrarFecha());
-                                        }else{
-                                                $fecha_compromiso.DatePickerHide();	
-                                        }
-                                        
-                                }
-                        }
-                });
                 
-                
-
-
-                $fecha_compromiso.val(mostrarFecha());
-                //$fecha_compromiso.val('');
-                //$fecha_compromiso.attr("readonly", true);
-		      
-                                
+				
                                 
 				//buscador de productos
 				$busca_sku.click(function(event){
@@ -1394,7 +1476,7 @@ $(function() {
 				//agregar producto al grid
 				$agregar_producto.click(function(event){
 					event.preventDefault();
-					$buscador_presentaciones_producto($fecha_compromiso.val(),$sku_producto.val(),$nombre_producto,$grid_productos);
+					$buscador_presentaciones_producto($fecha_compromiso.val(),$sku_producto.val(),$nombre_producto,$grid_productos, $sku_producto);
 				});
 				
 				

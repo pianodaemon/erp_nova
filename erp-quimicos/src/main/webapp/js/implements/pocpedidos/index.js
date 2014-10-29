@@ -2049,6 +2049,7 @@ $(function() {
 		var $id_impuesto = $('#forma-pocpedidos-window').find('input[name=id_impuesto]');
 		var $valor_impuesto = $('#forma-pocpedidos-window').find('input[name=valorimpuesto]');
 		var $incluye_produccion = $('#forma-pocpedidos-window').find('input[name=incluye_pro]');
+		var $permite_req = $('#forma-pocpedidos-window').find('input[name=permite_req]');
 		var $num_lista_precio = $('#forma-pocpedidos-window').find('input[name=num_lista_precio]');
 		
 		var pdescto = $('#forma-pocpedidos-window').find('input[name=pdescto]').val();
@@ -2244,10 +2245,11 @@ $(function() {
 			}
 			
 			
-			if($incluye_produccion.val()=='true'){
-				//aplicar evento click al check, cuando la empresa incluya modulo de produccion
+			if($incluye_produccion.val()=='true' || $permite_req.val()=='true'){
+				//Aplicar evento click al check, cuando la empresa incluya modulo de produccion
 				$aplicar_evento_click_a_input_check($grid_productos.find('.checkProd'+ tr));
-				$grid_productos.find('.checkProd'+ tr).hide();//ocultar check porque es un registro nuevo, se debe mostrar  hasta que se genere un warning
+				//Ocultar check porque es un registro nuevo, se debe mostrar  hasta que se genere un warning
+				$grid_productos.find('.checkProd'+ tr).hide();
 			}else{
 				//ocualtar campos,  cuando la empresa no incluya modulo de produccion
 				$grid_productos.find('#td_oculto'+tr).hide();
@@ -2611,6 +2613,7 @@ $(function() {
 		var $empresa_immex = $('#forma-pocpedidos-window').find('input[name=empresa_immex]');
 		var $tasa_ret_immex = $('#forma-pocpedidos-window').find('input[name=tasa_ret_immex]');
 		var $incluye_produccion = $('#forma-pocpedidos-window').find('input[name=incluye_pro]');
+		var $permite_req = $('#forma-pocpedidos-window').find('input[name=permite_req]');
 		
 		var $select_moneda = $('#forma-pocpedidos-window').find('select[name=select_moneda]');
 		var $tipo_cambio = $('#forma-pocpedidos-window').find('input[name=tipo_cambio]');
@@ -2754,6 +2757,11 @@ $(function() {
 		$aplicar_readonly_input($rem_dir);
 		$aplicar_readonly_input($dest_dir);
 		
+		//Ocultar etiquetas
+		$('#forma-pocpedidos-window').find('.tabla_header_grid').find('#td_oculto').find('#etiqueta_produccion').hide();
+		$('#forma-pocpedidos-window').find('.tabla_header_grid').find('#td_oculto').find('#etiqueta_requisicion').hide();
+		$('#forma-pocpedidos-window').find('.tabla_header_grid').find('#td_oculto').find('#etiqueta_req_prod').hide();
+		
 		//quitar enter a todos los campos input
 		$('#forma-pocpedidos-window').find('input').keypress(function(e){
 			if(e.which==13 ) {
@@ -2843,7 +2851,7 @@ $(function() {
 							var codigo_producto = $campo_input.parent().parent().find('input[name=sku]').val();
 							var titulo_producto = $campo_input.parent().parent().find('input[name=nombre]').val();
 							
-							if($incluye_produccion.val() == 'true' ){
+							if($incluye_produccion.val()=='true' || $permite_req.val()=='true'){
 								width_td = 370;
 							}else{
 								width_td = 255;
@@ -2883,7 +2891,6 @@ $(function() {
 		var options = {dataType :  'json', success : respuestaProcesada};
 		$forma_selected.ajaxForm(options);
 		
-		//$.getJSON(json_string,function(entry){
 		$.post(input_json,$arreglo,function(entry){
 			
 			//Almacenar el arreglo de unidades de medida en la variable
@@ -2897,9 +2904,26 @@ $(function() {
 			}
 			
 			$incluye_produccion.val(entry['Extras'][0]['mod_produccion']);
+			$permite_req.val(entry['Extras'][0]['per_req']);
 			$transportista.val(entry['Extras'][0]['transportista']);
 			
-			if(entry['Extras'][0]['mod_produccion']=='true'){
+			if(entry['Extras'][0]['mod_produccion']=='true' || entry['Extras'][0]['per_req']=='true'){
+				
+				if(entry['Extras'][0]['mod_produccion']=='true' && entry['Extras'][0]['per_req']=='false'){
+					//Mostrar etiqueta para cuando incluye solo produccion
+					$('#forma-pocpedidos-window').find('.tabla_header_grid').find('#td_oculto').find('#etiqueta_produccion').show();
+				}
+				
+				if(entry['Extras'][0]['mod_produccion']=='false' && entry['Extras'][0]['per_req']=='true'){
+					//Mostrar etiqueta para cuando incluye solo requisicion
+					$('#forma-pocpedidos-window').find('.tabla_header_grid').find('#td_oculto').find('#etiqueta_requisicion').show();
+				}
+				
+				if(entry['Extras'][0]['mod_produccion']=='true' && entry['Extras'][0]['per_req']=='true'){
+					//Mostrar etiqueta para cuando incluye requisicion y produccion
+					$('#forma-pocpedidos-window').find('.tabla_header_grid').find('#td_oculto').find('#etiqueta_req_prod').show();
+				}
+				
 				$('#forma-pocpedidos-window').css({"margin-left": -450, 	"margin-top": -235});
 				$('#forma-pocpedidos-window').find('.pocpedidos_div_one').css({'width':'1180px'});
 				$('#forma-pocpedidos-window').find('.pocpedidos_div_two').css({'width':'1180px'});
@@ -3860,6 +3884,7 @@ $(function() {
 			var $accion_proceso = $('#forma-pocpedidos-window').find('input[name=accion_proceso]');
 			var $folio = $('#forma-pocpedidos-window').find('input[name=folio]');
 			var $incluye_produccion = $('#forma-pocpedidos-window').find('input[name=incluye_pro]');
+			var $permite_req = $('#forma-pocpedidos-window').find('input[name=permite_req]');
 			
 			var $busca_cliente = $('#forma-pocpedidos-window').find('a[href*=busca_cliente]');
 			var $id_cliente = $('#forma-pocpedidos-window').find('input[name=id_cliente]');
@@ -4020,13 +4045,17 @@ $(function() {
 			
 			$('#forma-pocpedidos-window').find('#permite_descto').hide();
 			
-			
 			$permitir_solo_numeros($no_cuenta);
 			$no_cuenta.attr('disabled','-1');
 			$etiqueta_digit.attr('disabled','-1');
 			$folio.css({'background' : '#F0F0F0'});
 			$nocliente.css({'background' : '#F0F0F0'});
 			$dir_cliente.css({'background' : '#F0F0F0'});
+			
+			//Ocultar etiquetas
+			$('#forma-pocpedidos-window').find('.tabla_header_grid').find('#td_oculto').find('#etiqueta_produccion').hide();
+			$('#forma-pocpedidos-window').find('.tabla_header_grid').find('#td_oculto').find('#etiqueta_requisicion').hide();
+			$('#forma-pocpedidos-window').find('.tabla_header_grid').find('#td_oculto').find('#etiqueta_req_prod').hide();
 			
 			//quitar enter a todos los campos input
 			$('#forma-pocpedidos-window').find('input').keypress(function(e){
@@ -4173,8 +4202,25 @@ $(function() {
 					}
 					
 					$incluye_produccion.val(entry['Extras']['0']['mod_produccion']);
+					$permite_req.val(entry['Extras']['0']['per_req']);
 					
-					if(entry['Extras']['0']['mod_produccion']=='true'){
+					if(entry['Extras'][0]['mod_produccion']=='true' || entry['Extras'][0]['per_req']=='true'){
+						
+						if(entry['Extras'][0]['mod_produccion']=='true' && entry['Extras'][0]['per_req']=='false'){
+							//Mostrar etiqueta para cuando incluye solo produccion
+							$('#forma-pocpedidos-window').find('.tabla_header_grid').find('#td_oculto').find('#etiqueta_produccion').show();
+						}
+						
+						if(entry['Extras'][0]['mod_produccion']=='false' && entry['Extras'][0]['per_req']=='true'){
+							//Mostrar etiqueta para cuando incluye solo requisicion
+							$('#forma-pocpedidos-window').find('.tabla_header_grid').find('#td_oculto').find('#etiqueta_requisicion').show();
+						}
+						
+						if(entry['Extras'][0]['mod_produccion']=='true' && entry['Extras'][0]['per_req']=='true'){
+							//Mostrar etiqueta para cuando incluye requisicion y produccion
+							$('#forma-pocpedidos-window').find('.tabla_header_grid').find('#td_oculto').find('#etiqueta_req_prod').show();
+						}
+						
 						$('#forma-pocpedidos-window').css({"margin-left": -450, 	"margin-top": -235});
 						$('#forma-pocpedidos-window').find('.pocpedidos_div_one').css({'width':'1180px'});
 						$('#forma-pocpedidos-window').find('.pocpedidos_div_two').css({'width':'1180px'});
@@ -4464,13 +4510,9 @@ $(function() {
 								}
 								
 								trr += '<input type="hidden" 	name="totimpuesto'+ tr +'" id="totimp" value="'+ importeIva +'">';
-								
 								trr += '<input type="hidden" name="importe_del_descto" id="importe_del_descto" value="'+ importe_del_descuento +'">';
 								trr += '<input type="hidden" name="importe_con_descto" id="importe_con_descto" value="'+ importe_con_descto +'">';
-								
 							trr += '</td>';
-							
-							
 							
 							trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="60">';
 								trr += '<input type="hidden" name="idIeps"     value="'+ prod['ieps_id'] +'" id="idIeps">';
@@ -4480,7 +4522,6 @@ $(function() {
 							trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
 								trr += '<input type="text" name="importeIeps" value="'+ importeIeps +'" class="borde_oculto" id="importeIeps" style="width:76px; text-align:right;" readOnly="true">';
 							trr += '</td>';
-							
 							
 							var cant_prod = prod['cant_produccion'];
 							
@@ -4492,7 +4533,6 @@ $(function() {
 							var desactivado="";
 							var check=prod['valor_check'];
 							var valor_seleccionado = prod['valor_selecionado'];
-							
 							
 							trr += '<td class="grid2" id="td_oculto'+ tr +'" style="font-size: 11px;  border:1px solid #C1DAD7;" width="20">';
 								trr += '<input type="checkbox" 	name="checkProd" class="checkProd'+ tr +'" '+check+' '+desactivado+'>';
@@ -4525,7 +4565,7 @@ $(function() {
                             
                             
                             
-                            if(entry['Extras']['0']['mod_produccion']=='true'){
+                            if(entry['Extras'][0]['mod_produccion']=='true' || entry['Extras'][0]['per_req']=='true'){
 								//Aplicar evento click al check, cuando la empresa incluya modulo de produccion
 								$aplicar_evento_click_a_input_check($grid_productos.find('.checkProd'+ tr));
 								
@@ -4541,14 +4581,15 @@ $(function() {
                             
                             
 							//al iniciar el campo tiene un  caracter en blanco, al obtener el foco se elimina el  espacio por comillas
-							$grid_productos.find('#cant').focus(function(e){
+							$grid_productos.find('.cantidad'+ tr ).focus(function(e){
 								if($(this).val() == ' '){
 									$(this).val('');
 								}
 							});
 							
-							//recalcula importe al perder enfoque el campo cantidad
-							$grid_productos.find('#cant').blur(function(){
+							//Recalcula importe al perder enfoque el campo cantidad
+							//$grid_productos.find('#cant').blur(function(){
+							$grid_productos.find('.cantidad'+ tr ).blur(function(){
 								var $campoCantidad = $(this);
 								var $campoPrecioU = $(this).parent().parent().find('#cost');
 								var $campoImporte = $(this).parent().parent().find('#import');
@@ -4608,14 +4649,14 @@ $(function() {
 							});
 							
 							//al iniciar el campo tiene un  caracter en blanco, al obtener el foco se elimina el  espacio por comillas
-							$grid_productos.find('#cost').focus(function(e){
+							$grid_productos.find('.costo'+ tr).focus(function(e){
 								if($(this).val() == ' '){
 									$(this).val('');
 								}
 							});
 							
 							//Recalcula importe al perder enfoque el campo costo
-							$grid_productos.find('#cost').blur(function(){
+							$grid_productos.find('.costo'+ tr).blur(function(){
 								var $campoCantidad = $(this).parent().parent().find('#cant');
 								var $campoPrecioU = $(this);
 								var $campoImporte = $(this).parent().parent().find('#import');
