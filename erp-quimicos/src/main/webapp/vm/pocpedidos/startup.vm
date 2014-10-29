@@ -161,6 +161,7 @@
 				<input type="hidden" name="cta_mn">
                 <input type="hidden" name="cta_usd">
                 <input type="hidden" name="incluye_pro">
+                <input type="hidden" name="permite_req">
                 <input type="hidden" name="transportista">
                 <input type="hidden" name="num_lista_precio">
 					
@@ -465,7 +466,7 @@
 																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="60">&nbsp;%&nbsp;IEPS</td>
 																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;Monto&nbsp;IEPS</td>
 																	
-																	<td class="grid" id="td_oculto" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;Producci&oacute;n</td>
+																	<td class="grid" id="td_oculto" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;<span id="etiqueta_produccion">Producci&oacute;n</span><span id="etiqueta_requisicion">Requisici&oacute;n</span><span id="etiqueta_req_prod">Req./Prod.</span></td>
 																	<td class="grid" id="td_oculto" style="background-color: rgb(180, 180, 180);" width="40">&nbsp;</td>
 																</tr>
 															</thead>

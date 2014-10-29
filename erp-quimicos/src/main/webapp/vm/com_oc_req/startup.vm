@@ -12,12 +12,11 @@
 
         <link rel="stylesheet" href="../../css/modalbox/comordencompra/formaBuscapresentaciones.css" type="text/css" />
         <link rel="stylesheet" href="../../css/modalbox/comordencompra/formaBuscaproducto.css" type="text/css" />
-        <link rel="stylesheet" href="../../css/modalbox/comordencompra/formaCancelaEmision.css" type="text/css" />
         
         
         <!--  js for this catalogo -->
         <script type="text/javascript" src="../../js/components/jquery-form/jquery-form.js"></script>
-	<script type="text/javascript" src="../../js/components/formatearnumeros/agrega_comas.js"></script>
+		<script type="text/javascript" src="../../js/components/formatearnumeros/agrega_comas.js"></script>
 		
         
         
@@ -25,7 +24,6 @@
 		
         <script type="text/javascript" src="../../js/components/modalbox/comordencompra/modalboxBuscapresentacion.js"></script>
         <script type="text/javascript" src="../../js/components/modalbox/comordencompra/modalboxBuscaproducto.js"></script>
-        <script type="text/javascript" src="../../js/components/modalbox/comordencompra/modalboxCancelaEmision.js"></script>
         
         
         <script type="text/javascript" src="../../js/components/modalbox/com_oc_req/modalboxCom_oc_req.js"></script>
@@ -45,7 +43,7 @@
 		<table class="table_acciones" style="display:none" border="0">
 			<tr>
 				<td width="15" height="30"></td>
-				<td height="30"><a href="new_item" class="tooltip"><div class="onmouseOutNewItem" id="nItem"></div><span>Crear Nueva orden de compra</span></a></td>
+				<td height="30"><a href="new_item" class="tooltip"><div class="onmouseOutNewItem" id="nItem"></div><span>Nuevo</span></a></td>
 				<td width="15" height="30"></td>
 				<td height="30"><a href="visualiza_buscador" class="tooltip"><div class="onmouseOutVisualizaBuscador" id="vbuscador"></div><span>Busqueda</span></a> </td>
 			</tr>
@@ -138,7 +136,7 @@
 					
                     <div id="div_two" title="" class="com_oc_req_div_two">
                         <div class="columns on-2">
-                            <div class="fixed column" style="width:873px; padding-left:6px;"><strong>Requisici&oacute;n Orden de Compras</strong></div>
+                            <div class="fixed column" style="width:873px; padding-left:6px;"><strong>Autorizaci&oacute;n de Requisici&oacute;n</strong></div>
                             <div class="fixed column" style="width:20px; height:25px;">
                                 <div id="close" style="height:25px; background-image:url('../../img/modalbox/close.png'); background-color:; background-position:top; cursor:pointer; background-repeat:no-repeat;"></div>
                             </div>

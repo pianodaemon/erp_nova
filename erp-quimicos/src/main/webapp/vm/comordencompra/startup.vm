@@ -136,8 +136,7 @@
                             </div>
                         </div>
                     </div>
-
-
+                    
                     <div id="div_three" title="" class="comordencompra_div_three">
                         <div class="columns" >
                             <div class=" fixed column">
@@ -149,7 +148,6 @@
                         <div class="columns" style="background:#731F6C;">
                             <div class="container" style="background:white;">
                                 <div class="fixed column" class="content_x" >
-
                                     <div id="tabx-1" class="contenidoPes" >
 										
                                         <table border="0" style="margin:0; padding:0;">
@@ -175,33 +173,27 @@
                                                                 <td width="90"><a href="busca_proveedor">(Buscar&nbsp;)</a></td>
                                                                 <td width="15"></td>
                                                                 <td width="90" align="right"><span>Folio&nbsp;&nbsp;&nbsp;</span></td>
-                                                                <td width="75"><input type="text" name="folio" style="width:75px;" readOnly="true"></td>
-                                                                <td width="15"></td>
+                                                                <td width="100"><input type="text" name="folio" style="width:100px; border:2px solid #000;" readOnly="true"></td>
                                                             </tr>
 															
-                                                            <tr><td colspan="10" height="5"></td></tr>
+                                                            <tr><td colspan="9" height="5"></td></tr>
                                                             <tr>
                                                                 <td width="10"></td>
                                                                 <td width="95">Razon&nbsp;social</td>
-                                                                <td colspan="8" width="532"><input type="text" name="razonproveedor" style="width:532px;"></td>
+                                                                <td colspan="7" width="532"><input type="text" name="razonproveedor" style="width:532px;"></td>
                                                             </tr>
                                                             <tr><td colspan="9" height="5"></td></tr>
                                                             <tr>
                                                                 <td width="10"></td>
                                                                 <td width="95">Direcci&oacute;n</td>
-                                                                <td colspan="8" width="532"><input type="text" name="dirproveedor" style="width:532px;" readOnly="true"></td>
+                                                                <td colspan="7" width="532"><input type="text" name="dirproveedor" style="width:532px;" readOnly="true"></td>
                                                             </tr>
-
                                                         </table>
-
                                                     </td>
-
-
-
-
+                                                    
                                                     <td width="10"></td>
                                                     <!--<td width="60"></td>-->
-
+                                                    
                                                     <td width="440" colspan="2" valign="top" >
                                                         <table border="0">
                                                             <tr>
@@ -220,11 +212,6 @@
                                                         </table>
                                                     </td>
                                                 </tr>
-                                                
-                                                
-                                                
-                                                
-                                                
                                                 
                                                 
                                                 <tr>
@@ -271,7 +258,6 @@
                                                                 <td width="25"></td>
                                                             </tr>
                                                             
-                                                            
                                                             <tr>
                                                                 <td width="10">&nbsp;</td>
                                                                 <td width="95">T&eacute;rminos&nbsp;de&nbsp;pago</td>
@@ -292,7 +278,6 @@
                                                                 -->
                                                                 <td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" align="top" rel="warning_grupo"></div></td>
                                                             </tr>
-                                                            
                                                             
                                                             <tr>
                                                                 <td width="10" height="5"></td>
@@ -326,7 +311,7 @@
                                                                 <td width="120"><input type="checkbox" name="check_anex_cert_hojas"></td>
                                                                 <td width="25"></td>
                                                             </tr>
-                                                            <!--
+                                                            
                                                             <tr>
                                                                 <td width="10" height="5"></td>
                                                                 <td width="95"></td>
@@ -341,22 +326,23 @@
                                                                 <td width="25"></td>
                                                             </tr>
                                                             
-                                                            
                                                             <tr>
                                                                 <td width="10">&nbsp;</td>
-                                                                <td width="95">Consignado&nbsp;a</td>
-                                                                <td width="275" colspan="3">
-																	<input type="text" name="consigandoA" style="width:265px;">
-                                                                </td>
-                                                                <td ><div class="interrogacion"><img SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_consiganadoa"></div></td>
+                                                                <td width="95">Folio&nbsp;requisici&oacute;n</td>
+                                                                <td width="100">
+																	<input type="text" name="folio_requisicion" value="" style="width:100px; border:2px solid #000;">
+																	<input type="hidden" name="tipo_oc" value="0">
+																</td>
+                                                                <td width="25"><div class="interrogacion"><img SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_requisicion"></div></td>
+                                                                <td width="80" ></td>
+                                                                <td width="70"></td>
+                                                                <td width="25"></td>
                                                                 <td width="45"></td>
-                                                                <td width="165" colspan="2"></td>
+                                                                <td width="45"></td>
+                                                                <td width="120"></td>
                                                                 <td width="25"></td>
                                                             </tr>
-                                                            -->
-                                                            
                                                         </table>
-
                                                     </td>
 
 
@@ -379,14 +365,9 @@
                                                                 </td>
                                                                 <td width="25"><div class="interrogacion"><img SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_consiganadoa"></div></td>
                                                             </tr>
-
                                                         </table>
                                                     </td>
                                                 </tr>
-                                                
-                                                
-                                                
-                                                
                                                 
                                                 
                                                 <tr>
@@ -395,12 +376,12 @@
                                                             <tr><td colspan="11" height="2"></td></tr>
                                                             <tr>
                                                                 <td width="10"></td>
-                                                                <td width="70">C&oacute;digo&nbsp;producto</td>
-                                                                <td width="135"><input type="text" name="sku_producto" style="width:120px;"></td>
-                                                                <td width="50"><a  href="agregar_producto">(Agregar)</a></td>
+                                                                <td width="95">C&oacute;digo&nbsp;producto</td>
+                                                                <td width="120"><input type="text" name="sku_producto" style="width:120px;"></td>
+                                                                <td width="60"><a href="agregar_producto">(Agregar)</a></td>
                                                                 <td width="45">Nombre</td>
-                                                                <td width="300"><input type="text" name="nombre_producto" style="width:300px;"></td>
-                                                                <td width="55"><a href="busca_sku">(Buscar)</a></td>
+                                                                <td width="280"><input type="text" name="nombre_producto" style="width:280px;"></td>
+                                                                <td width="60"><a href="busca_sku">(Buscar)</a></td>
                                                                 <td width="15"></td>
                                                                 <td width="60" align="right">
                                                                     <input type="button" id="descargarpdf" value="PDF" style="width:50px; font-weight: bold;">
@@ -427,10 +408,8 @@
 																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="90">&nbsp;Unidad</td>
 																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="100">&nbsp;Presentaci&oacute;n</td>
 																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;Cantidad</td>
-																	
 																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;Recibido</td>
 																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;Pendiente</td>
-																	
 																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;Precio&nbsp;</td>
 																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="90">&nbsp;Importe</td>
 																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="100">&nbsp;Estado</td>
