@@ -258,7 +258,7 @@ public class PocSpringDao implements PocInterfaceDao{
             + "poc_pedidos_detalle.valor_imp,"
             + "poc_pedidos_detalle.gral_ieps_id,"
             + "(poc_pedidos_detalle.valor_ieps * 100) AS valor_ieps, "
-            + "(CASE WHEN poc_pedidos_detalle.backorder=TRUE THEN 'checked' ELSE '' END) AS valor_check, "
+            + "(CASE WHEN poc_pedidos_detalle.backorder=TRUE OR poc_pedidos_detalle.requisicion=TRUE THEN 'checked' ELSE '' END) AS valor_check, "
             + "(CASE WHEN poc_pedidos_detalle.backorder=TRUE THEN 1 ELSE 0 END) AS valor_selecionado, "
             + "(poc_pedidos_detalle.cantidad - poc_pedidos_detalle.reservado) AS cant_produccion, "
             + "(CASE WHEN poc_pedidos_detalle.descto IS NULL THEN 0 ELSE poc_pedidos_detalle.descto END) AS descto,"
@@ -269,12 +269,12 @@ public class PocSpringDao implements PocInterfaceDao{
         + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = poc_pedidos_detalle.inv_prod_unidad_id "
         + "LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = poc_pedidos_detalle.presentacion_id "
         + "LEFT JOIN poc_ped_cot on (poc_ped_cot.poc_ped_id = poc_pedidos_detalle.poc_pedido_id and poc_ped_cot.poc_ped_det_id=poc_pedidos_detalle.id) "
-        + "WHERE poc_pedidos_detalle.poc_pedido_id="+id_pedido;
+        + "WHERE poc_pedidos_detalle.poc_pedido_id=? ORDER BY poc_pedidos_detalle.id;";
         
         //System.out.println("Obtiene datos grid prefactura: "+sql_query);
         ArrayList<HashMap<String, String>> hm_grid = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
-            new Object[]{}, new RowMapper() {
+            new Object[]{new Integer(id_pedido)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, String> row = new HashMap<String, String>();
@@ -448,7 +448,7 @@ public class PocSpringDao implements PocInterfaceDao{
         + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = poc_cot_detalle.inv_prod_unidad_id "
         + "LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = poc_cot_detalle.inv_presentacion_id "
         + "LEFT JOIN gral_ieps ON gral_ieps.id=inv_prod.ieps "
-        + "WHERE poc_cot_detalle.poc_cot_id=?;";
+        + "WHERE poc_cot_detalle.poc_cot_id=? ORDER BY poc_cot_detalle.id;";
 
         //System.out.println("Obteniendo datos de la cotizacion: "+sql_query);
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
@@ -800,6 +800,7 @@ public class PocSpringDao implements PocInterfaceDao{
         mapDatos.put("permitir_kits", String.valueOf(map.get("permitir_kits")));
         mapDatos.put("cambiar_unidad_medida", String.valueOf(map.get("cambiar_unidad_medida")));
         mapDatos.put("permitir_descto", String.valueOf(map.get("permitir_descto")));
+        mapDatos.put("permitir_req", String.valueOf(map.get("permitir_req_com")));
         return mapDatos;
     }
 

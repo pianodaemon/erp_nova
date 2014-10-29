@@ -218,74 +218,7 @@ public class ComSpringDao  implements ComInterfaceDao {
         return hm_monedas;
     }
     
-    
-    
-    
-
-     
-    @Override
-    public ArrayList<HashMap<String, String>> getComOrdenCompra_DatosGrid(Integer id_orden_compra) {
-        String sql_query = ""
-                    + "SELECT com_orden_compra_detalle.id as id_detalle,"
-                    + "com_orden_compra_detalle.inv_prod_id,"
-                    + "inv_prod.sku AS codigo,"
-                    + "inv_prod.descripcion AS titulo,"
-                    + "(CASE WHEN inv_prod_unidades.titulo IS NULL THEN '' ELSE inv_prod_unidades.titulo END) as unidad,"
-                    + "(CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS decimales,"
-                    + "(CASE WHEN inv_prod_presentaciones.id IS NULL THEN 0 ELSE inv_prod_presentaciones.id END) as id_presentacion,"
-                    + "(CASE WHEN inv_prod_presentaciones.titulo IS NULL THEN '' ELSE inv_prod_presentaciones.titulo END) as presentacion,"
-                    + "com_orden_compra_detalle.cantidad,"
-                    + "com_orden_compra_detalle.precio_unitario,"
-                    + "(com_orden_compra_detalle.cantidad * com_orden_compra_detalle.precio_unitario) AS importe, "
-                    + "com_orden_compra_detalle.gral_imp_id,"
-                    + "com_orden_compra_detalle.valor_imp,"
-                    + "com_orden_compra_detalle.cant_surtido AS cant_rec,"
-                    + "(CASE WHEN (com_orden_compra_detalle.cantidad::double precision - com_orden_compra_detalle.cant_surtido)<=0.0001 THEN 0 ELSE (com_orden_compra_detalle.cantidad::double precision - com_orden_compra_detalle.cant_surtido) END) AS cant_pen, "
-                    + "(CASE WHEN com_orden_compra_detalle.estatus=1 THEN 'PARCIAL' WHEN com_orden_compra_detalle.estatus=2 THEN 'COMPLETO' WHEN com_orden_compra_detalle.estatus=3 THEN 'CANCELADO' ELSE '' END) AS pstatus, "
-                    + "com_orden_compra_detalle.estatus "
-                + "FROM com_orden_compra_detalle "
-                + "LEFT JOIN inv_prod on inv_prod.id = com_orden_compra_detalle.inv_prod_id "
-                + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "
-                + "LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = com_orden_compra_detalle.presentacion_id "
-                + "WHERE com_orden_compra_detalle.com_orden_compra_id="+id_orden_compra;
-        //0=Sin Estatus, 1=Parcial(Surtido Parcial), 2=Surtido(Surtido Completo), 3=Cancelado
         
-        //System.out.println("Obtiene datos grid prefactura: "+sql_query);
-        ArrayList<HashMap<String, String>> hm_grid = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-            sql_query,  
-            new Object[]{}, new RowMapper() {
-                @Override
-                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    HashMap<String, String> row = new HashMap<String, String>();
-                    row.put("id_detalle",String.valueOf(rs.getInt("id_detalle")));
-                    row.put("inv_prod_id",String.valueOf(rs.getInt("inv_prod_id")));
-                    row.put("codigo",rs.getString("codigo"));
-                    row.put("titulo",rs.getString("titulo"));
-                    row.put("unidad",rs.getString("unidad"));
-                    row.put("id_presentacion",String.valueOf(rs.getInt("id_presentacion")));
-                    row.put("presentacion",rs.getString("presentacion"));
-                    //row.put("cantidad",StringHelper.roundDouble( rs.getString("cantidad"), rs.getInt("decimales") ));
-                    row.put("cantidad",StringHelper.roundDouble( rs.getString("cantidad"), 2 ));
-                    row.put("precio_unitario",StringHelper.roundDouble(rs.getDouble("precio_unitario"),4) );
-                    row.put("importe",StringHelper.roundDouble(rs.getDouble("importe"),4) );
-                    
-                    row.put("gral_imp_id",String.valueOf(rs.getInt("gral_imp_id")));
-                    row.put("valor_imp",StringHelper.roundDouble(rs.getDouble("valor_imp"),2) );
-                    
-                    row.put("cant_rec",StringHelper.roundDouble(rs.getDouble("cant_rec"),2) );
-                    row.put("cant_pen",StringHelper.roundDouble(rs.getDouble("cant_pen"),2) );
-                    row.put("pstatus",rs.getString("pstatus"));
-                    row.put("estatus",rs.getString("estatus"));
-                    return row;
-                }
-            }
-        );
-        return hm_grid;
-    }
-    
-    
-
-    
     
     
     //obtiene datos del header del pedido
@@ -318,7 +251,8 @@ public class ComSpringDao  implements ComInterfaceDao {
             + "com_orden_compra.impuesto,"
             + "com_orden_compra.total,"
             + "(CASE WHEN com_orden_compra.fecha_entrega IS NULL THEN '' ELSE to_char(com_orden_compra.fecha_entrega, 'yyyy-mm-dd') END) AS fecha_entrega, "
-            + "com_orden_compra.anexa_documentos "
+            + "com_orden_compra.anexa_documentos,"
+            + "com_orden_compra.tipo_orden_compra "
         + "from com_orden_compra "
         + "join cxp_prov on cxp_prov.id=com_orden_compra.proveedor_id "
         + "join gral_mun on gral_mun.id=cxp_prov .municipio_id "
@@ -360,12 +294,176 @@ public class ComSpringDao  implements ComInterfaceDao {
                     row.put("total",StringHelper.roundDouble(rs.getDouble("total"),2));
                     row.put("fecha_entrega",rs.getString("fecha_entrega"));
                     row.put("anexar_doc",String.valueOf(rs.getBoolean("anexa_documentos")));
+                    row.put("tipo_oc",String.valueOf(rs.getInt("tipo_orden_compra")));
                     return row;
                 }
             }
         );
         return hm;
     } 
+    
+    
+    
+    
+    
+    
+
+     
+    @Override
+    public ArrayList<HashMap<String, String>> getComOrdenCompra_DatosGrid(Integer id_orden_compra) {
+        String sql_query = ""
+                    + "SELECT com_orden_compra_detalle.id as id_detalle,"
+                    + "com_orden_compra_detalle.inv_prod_id,"
+                    + "inv_prod.sku AS codigo,"
+                    + "inv_prod.descripcion AS titulo,"
+                    + "(CASE WHEN inv_prod_unidades.titulo IS NULL THEN '' ELSE inv_prod_unidades.titulo END) as unidad,"
+                    + "(CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS decimales,"
+                    + "(CASE WHEN inv_prod_presentaciones.id IS NULL THEN 0 ELSE inv_prod_presentaciones.id END) as id_presentacion,"
+                    + "(CASE WHEN inv_prod_presentaciones.titulo IS NULL THEN '' ELSE inv_prod_presentaciones.titulo END) as presentacion,"
+                    + "com_orden_compra_detalle.cantidad,"
+                    + "com_orden_compra_detalle.precio_unitario,"
+                    + "(com_orden_compra_detalle.cantidad * com_orden_compra_detalle.precio_unitario) AS importe, "
+                    + "com_orden_compra_detalle.gral_imp_id,"
+                    + "com_orden_compra_detalle.valor_imp,"
+                    + "com_orden_compra_detalle.cant_surtido AS cant_rec,"
+                    + "(CASE WHEN (com_orden_compra_detalle.cantidad::double precision - com_orden_compra_detalle.cant_surtido)<=0.0001 THEN 0 ELSE (com_orden_compra_detalle.cantidad::double precision - com_orden_compra_detalle.cant_surtido) END) AS cant_pen, "
+                    + "(CASE WHEN com_orden_compra_detalle.estatus=1 THEN 'PARCIAL' WHEN com_orden_compra_detalle.estatus=2 THEN 'COMPLETO' WHEN com_orden_compra_detalle.estatus=3 THEN 'CANCELADO' ELSE '' END) AS pstatus, "
+                    + "com_orden_compra_detalle.estatus, "
+                    + "(CASE WHEN com_oc_req.id IS NULL THEN '' ELSE com_oc_req.folio END) as folio_req, "
+                    + "(CASE WHEN com_oc_requisicion.id IS NULL THEN 0 ELSE com_oc_requisicion.com_oc_req_id END) as req_id,  "
+                    + "(CASE WHEN com_oc_requisicion.id IS NULL THEN 0 ELSE com_oc_requisicion.com_oc_req_det_id END) as req_det_id "
+                + "FROM com_orden_compra_detalle "
+                + "LEFT JOIN inv_prod on inv_prod.id = com_orden_compra_detalle.inv_prod_id "
+                + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "
+                + "LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = com_orden_compra_detalle.presentacion_id "
+                + "LEFT JOIN com_oc_requisicion on com_oc_requisicion.com_orden_compra_det_id=com_orden_compra_detalle.id "
+                + "LEFT JOIN com_oc_req on com_oc_req.id=com_oc_requisicion.com_oc_req_id "
+                + "WHERE com_orden_compra_detalle.com_orden_compra_id="+id_orden_compra;
+        //0=Sin Estatus, 1=Parcial(Surtido Parcial), 2=Surtido(Surtido Completo), 3=Cancelado
+        
+        System.out.println("Obtiene datos grid OC: "+sql_query);
+        ArrayList<HashMap<String, String>> hm_grid = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id_detalle",String.valueOf(rs.getInt("id_detalle")));
+                    row.put("inv_prod_id",String.valueOf(rs.getInt("inv_prod_id")));
+                    row.put("codigo",rs.getString("codigo"));
+                    row.put("titulo",rs.getString("titulo"));
+                    row.put("unidad",rs.getString("unidad"));
+                    row.put("id_presentacion",String.valueOf(rs.getInt("id_presentacion")));
+                    row.put("presentacion",rs.getString("presentacion"));
+                    //row.put("cantidad",StringHelper.roundDouble( rs.getString("cantidad"), rs.getInt("decimales") ));
+                    row.put("cantidad",StringHelper.roundDouble( rs.getString("cantidad"), 2 ));
+                    row.put("precio_unitario",StringHelper.roundDouble(rs.getDouble("precio_unitario"),4) );
+                    row.put("importe",StringHelper.roundDouble(rs.getDouble("importe"),4) );
+                    row.put("gral_imp_id",String.valueOf(rs.getInt("gral_imp_id")));
+                    row.put("valor_imp",StringHelper.roundDouble(rs.getDouble("valor_imp"),2) );
+                    row.put("cant_rec",StringHelper.roundDouble(rs.getDouble("cant_rec"),2) );
+                    row.put("cant_pen",StringHelper.roundDouble(rs.getDouble("cant_pen"),2) );
+                    row.put("pstatus",rs.getString("pstatus"));
+                    row.put("estatus",rs.getString("estatus"));
+                    row.put("folio_req",rs.getString("folio_req"));
+                    row.put("req_id",String.valueOf(rs.getInt("req_id")));
+                    row.put("req_det_id",String.valueOf(rs.getInt("req_det_id")));
+                    return row;
+                }
+            }
+        );
+        return hm_grid;
+    }
+    
+    
+    
+    
+    
+    //Obtiene datos del header de la Requisicion
+    @Override
+    public ArrayList<HashMap<String, String>> getComOrdenCompra_DatosRequisicion(String folio_req, Integer id_empresa) {
+        String sql_query = ""
+        + "SELECT "
+            + "com_oc_req.id, "
+            + "com_oc_req.folio, "
+            + "com_oc_req.observaciones, "
+            + "to_char(com_oc_req.fecha_compromiso,'yyyy-mm-dd') AS fecha_compromiso , "
+            + "com_oc_req.status, "
+            + "com_oc_req.gral_empleado_id,  "
+            + "com_oc_req.gral_depto_id "
+        + "from com_oc_req "
+        +"WHERE com_oc_req.folio=? AND com_oc_req.gral_emp_id=? AND com_oc_req.status=0 AND com_oc_req.cancelado=false;";
+       //System.out.println("ESto es del header de Requisicion de orden de compra::::"+sql_query); 
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_query,  
+            new Object[]{folio_req, new Integer(id_empresa)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("folio",rs.getString("folio"));
+                    row.put("fecha_compromiso",rs.getString("fecha_compromiso"));
+                    row.put("observaciones",rs.getString("observaciones"));
+                    row.put("empleado_id",String.valueOf(rs.getInt("gral_empleado_id")));
+                    row.put("depto_id",String.valueOf(rs.getInt("gral_depto_id")));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    } 
+    
+    
+    
+    
+    
+    //Obtiene detalles de la Requisicion
+    @Override
+    public ArrayList<HashMap<String, String>> getComOrdenCompra_DetallesRequisicion(Integer id_requisicion) {
+        String sql_query = ""
+        +" SELECT "
+            + "com_oc_req_detalle.id as id_detalle,"
+            +" com_oc_req_detalle.inv_prod_id,"
+            +" inv_prod.sku AS codigo,"
+            +" inv_prod.descripcion AS titulo,"
+            +" (CASE WHEN inv_prod_unidades.titulo IS NULL THEN '' ELSE inv_prod_unidades.titulo END) as unidad,"
+            +" (CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS decimales,"
+            +" (CASE WHEN inv_prod_presentaciones.id IS NULL THEN 0 ELSE inv_prod_presentaciones.id END) as id_presentacion,"
+            +" (CASE WHEN inv_prod_presentaciones.titulo IS NULL THEN 'sin_presentacion' ELSE inv_prod_presentaciones.titulo END) as presentacion,"
+            +" com_oc_req_detalle.cantidad ,   "
+            +" com_oc_req_detalle.status "
+        +" FROM com_oc_req_detalle "
+        +" LEFT JOIN inv_prod on inv_prod.id = com_oc_req_detalle.inv_prod_id "
+        +" LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "
+        +" LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = com_oc_req_detalle.presentacion_id "
+        +" WHERE com_oc_req_detalle.com_oc_req_id=?;";
+
+        //System.out.println("Obtiene datos grid requisiciones: "+sql_query);
+        ArrayList<HashMap<String, String>> hm_grid = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_query,  
+            new Object[]{new Integer(id_requisicion)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id_detalle",String.valueOf(rs.getInt("id_detalle")));
+                    row.put("inv_prod_id",String.valueOf(rs.getInt("inv_prod_id")));
+                    row.put("codigo",rs.getString("codigo"));
+                    row.put("titulo",rs.getString("titulo"));
+                    row.put("unidad",rs.getString("unidad"));
+                    row.put("id_presentacion",String.valueOf(rs.getInt("id_presentacion")));
+                    row.put("presentacion",rs.getString("presentacion"));
+                    row.put("cantidad",StringHelper.roundDouble( rs.getString("cantidad"),2 ));
+                    row.put("decimales",String.valueOf(rs.getInt("decimales")));
+                    return row;
+                }
+            }
+        );
+        return hm_grid;
+    }
+    
+    
+    
+    
     
    @Override
     public ArrayList<HashMap<String, String>> getViaEnvarque() {
@@ -845,7 +943,7 @@ public class ComSpringDao  implements ComInterfaceDao {
         //System.out.println("Busqueda GetPage: "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query, 
-            new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+            new Object[]{data_string,new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, Object> row = new HashMap<String, Object>();
@@ -1252,21 +1350,23 @@ public class ComSpringDao  implements ComInterfaceDao {
 @Override
 	public ArrayList<HashMap<String, Object>> getCom_requisicion_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
 	String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
-                    String sql_to_query = "SELECT  "
-                    +" com_oc_req.id,   "
-                    +" com_oc_req.folio,   "
-                    +" (CASE WHEN com_oc_req.status=0 then 'REQUISICION GENERADA' " 
-	            +" when com_oc_req.status=1 then 'AUTORIZADO' "
-                    +" else 'CANCELADO'end ) as estado, "
-                    + "to_char(com_oc_req.momento_creacion,'yyyy/mm/dd')as momento_creacion"
-                    +" FROM com_oc_req  "
-                    +" JOIN ("+sql_busqueda+") as subt on subt.id=com_oc_req.id "
-                    + "order by "+orderBy+" "+asc+" limit ? OFFSET ?";
-        
+                String sql_to_query = ""
+                + "SELECT  "
+                    +"com_oc_req.id,   "
+                    +"com_oc_req.folio,   "
+                    +"(CASE WHEN com_oc_req.status=0 then 'REQUISICION GENERADA' when com_oc_req.status=1 then 'AUTORIZADO' else 'CANCELADO'end ) as estado, "
+                    +"to_char(com_oc_req.momento_creacion,'dd/mm/yyyy')as momento_creacion,"
+                    +"to_char(com_oc_req.fecha_compromiso,'dd/mm/yyyy')as fecha_compromiso, "
+                    +"(CASE WHEN gral_empleados.id IS NULL THEN '' ELSE gral_empleados.nombre_pila ||' '||gral_empleados.apellido_paterno||' '||gral_empleados.apellido_materno END ) as solicitado_por "
+                +" FROM com_oc_req "
+                +"LEFT JOIN gral_empleados ON gral_empleados.id=com_oc_req.gral_empleado_id "
+                +" JOIN ("+sql_busqueda+") as subt on subt.id=com_oc_req.id "
+                + "order by "+orderBy+" "+asc+" limit ? OFFSET ?";
+                
         	//System.out.println("datos del grid principal: "+sql_to_query);
 		ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
 		    sql_to_query, 
-		    new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+		    new Object[]{data_string,new Integer(pageSize),new Integer(offset)}, new RowMapper() {
 		        @Override
 		        public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
 		            HashMap<String, Object> row = new HashMap<String, Object>();
@@ -1274,7 +1374,8 @@ public class ComSpringDao  implements ComInterfaceDao {
 		            row.put("folio",rs.getString("folio"));
 		            row.put("estado",rs.getString("estado"));
 		            row.put("momento_creacion",rs.getString("momento_creacion"));
-		            
+                            row.put("fecha_compromiso",rs.getString("fecha_compromiso"));
+                            row.put("solicitado_por",rs.getString("solicitado_por").toUpperCase());
 		            
 		            return row;
 		        }
@@ -1283,9 +1384,8 @@ public class ComSpringDao  implements ComInterfaceDao {
 		return hm;
 	}
 
-///////////////////////////7777777777777777////////////
-
-@Override
+        ///////////////////////////7777777777777777////////////
+        @Override
 	public ArrayList<HashMap<String, String>> getCom_requisicion_Datos(Integer id_requisicion) {
         String sql_query = "    "
                     + "SELECT      "
@@ -1298,11 +1398,15 @@ public class ComSpringDao  implements ComInterfaceDao {
                     + " com_oc_req.status, "
                     +"(CASE WHEN gral_empleados.nombre_pila IS NULL THEN '' ELSE gral_empleados.nombre_pila END)||' '||  "
                     +"(CASE WHEN gral_empleados.apellido_paterno IS NULL THEN '' ELSE gral_empleados.apellido_paterno END)||' '||   "
-                    +"(CASE WHEN gral_empleados.apellido_materno IS NULL THEN '' ELSE gral_empleados.apellido_materno END) AS nombre_usuario    "
+                    +"(CASE WHEN gral_empleados.apellido_materno IS NULL THEN '' ELSE gral_empleados.apellido_materno END) AS nombre_usuario,"
+                    + "com_oc_req.gral_empleado_id,  "
+                    + "com_oc_req.gral_depto_id,  "
+                    + "com_oc_req.folio_pedido, "
+                    + "com_oc_req.tipo "
                     + " from com_oc_req "
                     +"JOIN gral_usr ON gral_usr.id=com_oc_req.gral_usr_id_creacion "
                     +"LEFT JOIN gral_empleados ON gral_empleados.id=gral_usr.gral_empleados_id "
-                    + " WHERE com_oc_req.id= "+id_requisicion;
+                    +"WHERE com_oc_req.id= "+id_requisicion;
        //System.out.println("ESto es del header de Requisicion de orden de compra::::"+sql_query); 
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,  
@@ -1318,6 +1422,10 @@ public class ComSpringDao  implements ComInterfaceDao {
                     row.put("cancelado",rs.getString("cancelado"));
                     row.put("status",String.valueOf(rs.getInt("status")));
                     row.put("nombre_usuario",rs.getString("nombre_usuario"));
+                    row.put("empleado_id",String.valueOf(rs.getInt("gral_empleado_id")));
+                    row.put("depto_id",String.valueOf(rs.getInt("gral_depto_id")));
+                    row.put("pedido",rs.getString("folio_pedido"));
+                    row.put("tipo",String.valueOf(rs.getInt("tipo")));
                     return row;
                 }
             }
@@ -1325,59 +1433,109 @@ public class ComSpringDao  implements ComInterfaceDao {
         return hm;
     } 
 
-///////////////////////////////////////////////////////////////////////
-
-@Override
-	public ArrayList<HashMap<String, String>> getCom_requisicion_DatosGrid(Integer id_requisicion) {
-        String sql_query = ""
-                    +" SELECT com_oc_req_detalle.id as id_detalle,"
-                    +" com_oc_req_detalle.inv_prod_id,"
-                    +" inv_prod.sku AS codigo,"
-                    +" inv_prod.descripcion AS titulo,"
-                    +" (CASE WHEN inv_prod_unidades.titulo IS NULL THEN '' ELSE inv_prod_unidades.titulo END) as unidad,"
-                    +" (CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS decimales,"
-                    +" (CASE WHEN inv_prod_presentaciones.id IS NULL THEN 0 ELSE inv_prod_presentaciones.id END) as id_presentacion,"
-                    +" (CASE WHEN inv_prod_presentaciones.titulo IS NULL THEN 'sin_presentacion' ELSE inv_prod_presentaciones.titulo END) as presentacion,"
-                    +" com_oc_req_detalle.cantidad ,   "
-                    +" com_oc_req_detalle.status"
-                    +" FROM com_oc_req_detalle "
-		    +" LEFT JOIN inv_prod on inv_prod.id = com_oc_req_detalle.inv_prod_id "
-		    +" LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "
-		    +" LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = com_oc_req_detalle.presentacion_id "
-		    +" WHERE com_oc_req_detalle.com_oc_req_id="+id_requisicion;
         
-		//System.out.println("Obtiene datos grid requisiciones: "+sql_query);
-		ArrayList<HashMap<String, String>> hm_grid = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-		    sql_query,  
-		    new Object[]{}, new RowMapper() {
-		        @Override
-		        public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
-		            HashMap<String, String> row = new HashMap<String, String>();
-		            row.put("id_detalle",String.valueOf(rs.getInt("id_detalle")));
-		            row.put("inv_prod_id",String.valueOf(rs.getInt("inv_prod_id")));
-		            row.put("codigo",rs.getString("codigo"));
-		            row.put("titulo",rs.getString("titulo"));
-		            row.put("unidad",rs.getString("unidad"));
-		            row.put("id_presentacion",String.valueOf(rs.getInt("id_presentacion")));
-		            row.put("presentacion",rs.getString("presentacion"));
-		            row.put("cantidad",StringHelper.roundDouble( rs.getString("cantidad"), 2 ));
-		            
-		            row.put("status",rs.getString("status"));
-		            
-		            
-		            return row;
-		        }
-		    }
-		);
-         return hm_grid;
-	}
+        
+    ///////////////////////////////////////////////////////////////////////
+    @Override
+    public ArrayList<HashMap<String, String>> getCom_requisicion_DatosGrid(Integer id_requisicion) {
+    String sql_query = ""
+                +" SELECT com_oc_req_detalle.id as id_detalle,"
+                +" com_oc_req_detalle.inv_prod_id,"
+                +" inv_prod.sku AS codigo,"
+                +" inv_prod.descripcion AS titulo,"
+                +" (CASE WHEN inv_prod_unidades.titulo IS NULL THEN '' ELSE inv_prod_unidades.titulo END) as unidad,"
+                +" (CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS decimales,"
+                +" (CASE WHEN inv_prod_presentaciones.id IS NULL THEN 0 ELSE inv_prod_presentaciones.id END) as id_presentacion,"
+                +" (CASE WHEN inv_prod_presentaciones.titulo IS NULL THEN 'sin_presentacion' ELSE inv_prod_presentaciones.titulo END) as presentacion,"
+                +" com_oc_req_detalle.cantidad ,   "
+                +" com_oc_req_detalle.status"
+                +" FROM com_oc_req_detalle "
+                +" LEFT JOIN inv_prod on inv_prod.id = com_oc_req_detalle.inv_prod_id "
+                +" LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "
+                +" LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = com_oc_req_detalle.presentacion_id "
+                +" WHERE com_oc_req_detalle.com_oc_req_id="+id_requisicion;
+
+            //System.out.println("Obtiene datos grid requisiciones: "+sql_query);
+            ArrayList<HashMap<String, String>> hm_grid = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+                sql_query,  
+                new Object[]{}, new RowMapper() {
+                    @Override
+                    public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                        HashMap<String, String> row = new HashMap<String, String>();
+                        row.put("id_detalle",String.valueOf(rs.getInt("id_detalle")));
+                        row.put("inv_prod_id",String.valueOf(rs.getInt("inv_prod_id")));
+                        row.put("codigo",rs.getString("codigo"));
+                        row.put("titulo",rs.getString("titulo"));
+                        row.put("unidad",rs.getString("unidad"));
+                        row.put("id_presentacion",String.valueOf(rs.getInt("id_presentacion")));
+                        row.put("presentacion",rs.getString("presentacion"));
+                        row.put("cantidad",StringHelper.roundDouble( rs.getString("cantidad"), 2 ));
+
+                        row.put("status",rs.getString("status"));
+
+
+                        return row;
+                    }
+                }
+            );
+        return hm_grid;
+    }
+
+
+
+
+
+
+    @Override
+    public ArrayList<HashMap<String, Object>> getEmpleados(Integer id_empresa) {
+
+        String sql_to_query = "select id, gral_empleados.nombre_pila ||' '||gral_empleados.apellido_paterno||' '||gral_empleados.apellido_materno as nombre, gral_depto_id  "
+                + "from gral_empleados where borrado_logico=false and gral_emp_id=? order by gral_empleados.nombre_pila;";
+        
+        ArrayList<HashMap<String, Object>> escolaridad = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{ new Integer(id_empresa)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("nombre",rs.getString("nombre"));
+                    row.put("depto_id",rs.getInt("gral_depto_id"));
+                    return row;
+                }
+            }
+        );
+        return escolaridad;
+    }
+
+    
+    //Obtiene todos los departamentos de la empresa
+    @Override
+    public ArrayList<HashMap<String, Object>> getDepartamentos(Integer id_empresa) {
+        String sql_to_query = "SELECT id, titulo FROM gral_deptos WHERE borrado_logico=false AND vigente=true AND gral_emp_id=? order by titulo";
+        
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(id_empresa)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getString("id"));
+                    row.put("titulo",rs.getString("titulo"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+
 
 
 
 //////////////////////////////////////////////////////
 
-    //Metodos para convertir las Requisiciones en ORden de Compra.
-    @Override
+        //Metodos para convertir las Requisiciones en ORden de Compra.
+        @Override
 	public ArrayList<HashMap<String, Object>> getCom_oc_req_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
 	String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
                     String sql_to_query = "SELECT  "
@@ -1388,22 +1546,21 @@ public class ComSpringDao  implements ComInterfaceDao {
 	            +" when com_orden_compra.status=1 then 'AUTORIZADO' "
                     +" else 'CANCELADO'end ) as estado, "
                     +" (CASE WHEN com_orden_compra.moneda_id=1 THEN 'M.N.'   "
-                    +" ELSE erp_monedas.descripcion_abr END) as denominacion,  "
+                    +" ELSE gral_mon.descripcion_abr END) as denominacion,  "
                     + "to_char(com_orden_compra.momento_creacion,'yyyy/mm/dd')as momento_creacion, "
                     + "com_orden_compra.total "
                     +" FROM com_orden_compra  "
-                    //+" join com_orden_compra_detalle on  com_orden_compra_detalle.com_orden_compra_id=com_orden_compra.id "
                     +" JOIN ("+sql_busqueda+") as subt on subt.id=com_orden_compra.id "
                     +" JOIN cxp_prov on cxp_prov.id = com_orden_compra.proveedor_id   "
-                    +" JOIN erp_monedas ON erp_monedas.id=com_orden_compra.moneda_id  "
+                    +" JOIN gral_mon ON gral_mon.id=com_orden_compra.moneda_id  "
                     +" JOIN com_proceso on com_proceso.id = com_orden_compra.com_proceso_id   "
                     +" JOIN com_proceso_flujo on com_proceso_flujo.id = com_proceso.com_proceso_flujo_id  where com_orden_compra.tipo_orden_compra = 1"
                     + "order by "+orderBy+" "+asc+" limit ? OFFSET ?";
-        
+                    
 		//System.out.println("datos del grid principal: "+sql_to_query);
 		ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
 		    sql_to_query, 
-		    new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+		    new Object[]{data_string,new Integer(pageSize),new Integer(offset)}, new RowMapper() {
 		        @Override
 		        public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
 		            HashMap<String, Object> row = new HashMap<String, Object>();
@@ -1436,7 +1593,7 @@ public class ComSpringDao  implements ComInterfaceDao {
                     + "cxp_prov.razon_social, "
                     + "cxp_prov.calle||' '||cxp_prov.numero||', '||cxp_prov.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo||' C.P. '||cxp_prov.cp AS direccion, "
                     + "com_orden_compra.moneda_id, "
-                    + "erp_monedas.descripcion_abr AS moneda, "
+                    + "gral_mon.descripcion_abr AS moneda, "
                     + "com_orden_compra.tipo_cambio, "
                     + "com_orden_compra.grupo, "
 		    + "cxp_prov_credias.id  as  cxp_prov_credias_id ,"
@@ -1450,7 +1607,7 @@ public class ComSpringDao  implements ComInterfaceDao {
                     + "join gral_mun on gral_mun.id=cxp_prov .municipio_id "
                     + "join gral_edo on gral_edo.id=cxp_prov .estado_id "
                     + "join gral_pais on  gral_pais.id=cxp_prov .pais_id "
-                    + "join erp_monedas on erp_monedas.id= com_orden_compra.moneda_id "
+                    + "join gral_mon on gral_mon.id= com_orden_compra.moneda_id "
                     + "left join cxp_prov_credias on cxp_prov_credias.id=com_orden_compra.cxp_prov_credias_id "
                     + "join cxp_prov_tipos_embarque on cxp_prov_tipos_embarque.id =com_orden_compra.tipo_embarque_id "
                     + "WHERE com_orden_compra.id="+id_com_oc_req;
