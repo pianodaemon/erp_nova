@@ -184,32 +184,20 @@ public class CompOrdenCompraController {
     
     
     
-    
-    
-    
-    
-    
-    
-    
     @RequestMapping(method = RequestMethod.POST, value="/getOrden_Compra.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getOrden_CompraJson(
             @RequestParam(value="id_orden_compra", required=true) String id_orden_compra,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
-            ) {
+        ) {
         
         log.log(Level.INFO, "Ejecutando getOrden_CompraJson de {0}", CompOrdenCompraController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         ArrayList<HashMap<String, String>> datosOrdenCompra = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> datosGrid = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> valorIva = new ArrayList<HashMap<String, String>>();
-        ArrayList<HashMap<String, String>> monedas = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> arrayExtra = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> extra = new HashMap<String, String>();
-        //ArrayList<HashMap<String, String>> vendedores = new ArrayList<HashMap<String, String>>();
-        ArrayList<HashMap<String, String>> condiciones = new ArrayList<HashMap<String, String>>();
-        ArrayList<HashMap<String, String>> via_envarque = new ArrayList<HashMap<String, String>>();
-        //ArrayList<HashMap<String, String>> metodos_pago = new ArrayList<HashMap<String, String>>();
         
         HashMap<String, String> userDat = new HashMap<String, String>();
         HashMap<String, String> dirEmp = new HashMap<String, String>();
@@ -240,22 +228,47 @@ public class CompOrdenCompraController {
         extra.put("cosignado_a", consignado_a) ;
         arrayExtra.add(0,extra);
         
-        monedas = this.getComDao().getMonedas();
-        //vendedores = this.getComDao().getAgentes(id_empresa, id_sucursal);
-        condiciones = this.getComDao().getCondicionesDePago();
-        via_envarque = this.getComDao().getViaEnvarque();
-        //metodos_pago = this.getComDao().getMetodosPago();
-        
-        jsonretorno.put("via_embarque", via_envarque);
-        
         jsonretorno.put("datosOrdenCompra", datosOrdenCompra);
         jsonretorno.put("datosGrid", datosGrid);
         jsonretorno.put("iva", valorIva);
-        jsonretorno.put("Monedas", monedas);
         jsonretorno.put("Extra", arrayExtra);
-        //jsonretorno.put("Vendedores", vendedores);
-        jsonretorno.put("Condiciones", condiciones);
-        //jsonretorno.put("MetodosPago", metodos_pago);
+        jsonretorno.put("Monedas", this.getComDao().getMonedas());
+        jsonretorno.put("Condiciones", this.getComDao().getCondicionesDePago());
+        jsonretorno.put("via_embarque", this.getComDao().getViaEnvarque());
+        
+        return jsonretorno;
+    }
+    
+    
+    
+    
+    //Obtiene datos de la Orden de Compra
+    @RequestMapping(method = RequestMethod.POST, value="/getDatosRequisicion.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getDatosRequisicionJson(
+            @RequestParam(value="folio_req", required=true) String folio_req,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+        ) {
+        
+        log.log(Level.INFO, "Ejecutando getDatosRequisicionJson de {0}", CompOrdenCompraController.class.getName());
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        ArrayList<HashMap<String, String>> Datos = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> Detalles = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        
+        //Decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        
+        Datos = this.getComDao().getComOrdenCompra_DatosRequisicion(folio_req, id_empresa);
+        if(Datos.size()>0){
+            Detalles = this.getComDao().getComOrdenCompra_DetallesRequisicion(Integer.parseInt(Datos.get(0).get("id")));
+        }
+        
+        jsonretorno.put("DatosReq", Datos);
+        jsonretorno.put("DetallesReq", Detalles);
         
         return jsonretorno;
     }
@@ -264,8 +277,7 @@ public class CompOrdenCompraController {
     
     
     
-    
-   //bucador de proveedores
+    //Buscador de proveedores
     //obtiene los proveedores para el buscador
     @RequestMapping(method = RequestMethod.POST, value="/getBuscaProveedores.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getBuscaProveedoresJson(
@@ -410,6 +422,7 @@ public class CompOrdenCompraController {
             @RequestParam(value="total", required=true) String total,
             @RequestParam(value="fecha_entrega", required=true) String fecha_entrega,
             @RequestParam(value="check_anex_cert_hojas", required=false) String check_anex_cert_hojas,
+            @RequestParam(value="tipo_oc", required=true) String tipo_oc,
             
             @RequestParam(value="accion_proceso", required=true) String accion_proceso,
             @RequestParam(value="eliminado", required=false) String[] eliminado,
@@ -420,6 +433,8 @@ public class CompOrdenCompraController {
             @RequestParam(value="valor_imp", required=false) String[] valor_imp,
             @RequestParam(value="cantidad", required=false) String[] cantidad,
             @RequestParam(value="costo", required=false) String[] costo,
+            @RequestParam(value="idreq", required=false) String[] idreq,
+            @RequestParam(value="iddetreq", required=false) String[] iddetreq,
             @ModelAttribute("user") UserSessionData user
         ) {
             
@@ -434,9 +449,12 @@ public class CompOrdenCompraController {
             String arreglo[];
             arreglo = new String[eliminado.length];
             
+            //idreq = Id de la tabla header de requisicion
+            //iddetreq = Id de la tabla detalle de requisicion
+            
             for(int i=0; i<eliminado.length; i++) {
-                arreglo[i]= "'"+eliminado[i] +"___" + iddetalle[i] +"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + id_impuesto[i] +"___" + cantidad[i] +"___" + costo[i] + "___"+valor_imp[i] +"'";
-                //System.out.println(arreglo[i]);
+                arreglo[i]= "'"+eliminado[i] +"___"+ iddetalle[i] +"___"+ idproducto[i] +"___"+ id_presentacion[i] +"___"+ id_impuesto[i] +"___"+ cantidad[i] +"___"+ costo[i] +"___"+ valor_imp[i] + "___"+ idreq[i] +"___"+ iddetreq[i] +"'";
+                System.out.println(arreglo[i]);
             }
             
             //serializar el arreglo
@@ -454,7 +472,7 @@ public class CompOrdenCompraController {
             
             check_anex_cert_hojas = StringHelper.verificarCheckBox(check_anex_cert_hojas);
             
-            String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_orden_compra+"___"+id_proveedor+"___"+observaciones.toUpperCase()+"___"+select_moneda+"___"+tipo_cambio+"___"+grupo +"___"+select_condiciones+"___"+consigandoA+"___"+tipo_envarque_id+"___"+fecha_entrega+"___"+check_anex_cert_hojas;
+            String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_orden_compra+"___"+id_proveedor+"___"+observaciones.toUpperCase()+"___"+select_moneda+"___"+tipo_cambio+"___"+grupo +"___"+select_condiciones+"___"+consigandoA+"___"+tipo_envarque_id+"___"+fecha_entrega+"___"+check_anex_cert_hojas+"___"+tipo_oc;
             
             //System.out.println("data_string: "+data_string);
             

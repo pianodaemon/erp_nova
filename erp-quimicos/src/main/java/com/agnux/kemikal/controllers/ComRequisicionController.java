@@ -7,6 +7,7 @@ package com.agnux.kemikal.controllers;
 import com.agnux.cfd.v2.Base64Coder;
 import com.agnux.common.helpers.StringHelper;
 import com.agnux.common.helpers.FileHelper;
+import com.agnux.common.helpers.TimeHelper;
 import com.agnux.common.obj.DataPost;
 import com.agnux.common.obj.ResourceProject;
 import com.agnux.common.obj.UserSessionData;
@@ -98,10 +99,11 @@ public class ComRequisicionController {
         log.log(Level.INFO, "Ejecutando starUp de {0}", CompOrdenCompraController.class.getName());
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
         infoConstruccionTabla.put("id", "Acciones:70");
-        infoConstruccionTabla.put("folio", "Requisicion:100");
+        infoConstruccionTabla.put("folio", "Folio:80");
         infoConstruccionTabla.put("estado", "Estado:150");
-        infoConstruccionTabla.put("momento_creacion", "fecha de alta:150");
-        
+        infoConstruccionTabla.put("momento_creacion", "Fecha de alta:100");
+        infoConstruccionTabla.put("fecha_compromiso", "Fecha Compromiso:120");
+        infoConstruccionTabla.put("solicitado_por", "Solicita:300");
         
         ModelAndView x = new ModelAndView("com_requisicion/startup", "title", "Requisici&oacute;n");
         x = x.addObject("layoutheader", resource.getLayoutheader());
@@ -177,12 +179,47 @@ public class ComRequisicionController {
         return jsonretorno;
     }
     
+    
+    
+    
+    @RequestMapping(method = RequestMethod.POST, value="/getInicializar.json")
+    public @ResponseBody HashMap<String,Object> getCuentasMayorJson(
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+        ) {
+        
+        log.log(Level.INFO, "Ejecutando getInicializarJson de {0}", CtbPolizasContablesController.class.getName());
+        HashMap<String,Object> jsonretorno = new HashMap<String,Object>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        HashMap<String, Object> data = new HashMap<String, Object>();
+        
+        //Decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        
+        data.put("suc_id", id_sucursal);
+        data.put("emplActualId", Integer.parseInt(userDat.get("empleado_id")));
+        data.put("fecha_actual", TimeHelper.getFechaActualYMD());
+        
+        data.put("Empdos", this.getComDao().getEmpleados(id_empresa));
+        data.put("Deptos", this.getComDao().getDepartamentos(id_empresa));
+        
+        jsonretorno.put("Data", data);
+        
+        return jsonretorno;
+    }
+    
+    
+    
+    
     @RequestMapping(method = RequestMethod.POST, value="/getcom_requisicion.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getcom_oc_reqJson(
             @RequestParam(value="id_requisicion", required=true) String id_requisicion,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
-            ) {
+        ) {
         
         log.log(Level.INFO, "Ejecutando getcom_requisicionJson de {0}", CompOrdenCompraController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
@@ -191,7 +228,7 @@ public class ComRequisicionController {
         
         HashMap<String, String> userDat = new HashMap<String, String>();
         
-        //decodificar id de usuario
+        //Decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
         userDat = this.getHomeDao().getUserById(id_usuario);
         
@@ -323,6 +360,10 @@ public class ComRequisicionController {
             @RequestParam(value="fecha_compromiso", required=true) String fecha_compromiso,
             @RequestParam(value="observaciones", required=true) String observaciones,
             @RequestParam(value="accion_proceso", required=true) String accion_proceso,
+            @RequestParam(value="select_empleado", required=true) String select_empleado,
+            @RequestParam(value="select_departamento", required=true) String select_departamento,
+            @RequestParam(value="folio_pedido", required=true) String folio_pedido,
+            
             @RequestParam(value="eliminado", required=false) String[] eliminado,
             @RequestParam(value="iddetalle", required=false) String[] iddetalle,
             @RequestParam(value="id_producto", required=false) String[] idproducto,
@@ -343,9 +384,7 @@ public class ComRequisicionController {
             arreglo = new String[eliminado.length];
             
             for(int i=0; i<eliminado.length; i++) {
-                System.out.println("Este es el id del productoo:"+idproducto[i]);
                 arreglo[i]= "'"+eliminado[i] +"___" +iddetalle[i]+"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + cantidad[i] +"'";
-                //System.out.println(arreglo[i]);
             }
             
             //serializar el arreglo
@@ -368,7 +407,10 @@ public class ComRequisicionController {
                     id_usuario+"___"+
                     id_requisicion+"___"+
                     fecha_compromiso+"___"+
-                    observaciones.toUpperCase();
+                    observaciones.toUpperCase()+"___"+
+                    select_empleado+"___"+
+                    select_departamento+"___"+
+                    folio_pedido;
             
             
             System.out.println("data_string: "+data_string);
@@ -450,7 +492,6 @@ public class ComRequisicionController {
         datosRequisicion.put("nombre_usuario", datosReq.get(0).get("nombre_usuario"));
         datosRequisicion.put("status", datosReq.get(0).get("status"));
        
-
         
         lista_productos = this.getComDao().getCom_requisicion_DatosGrid(id_requisicion);
         
@@ -475,25 +516,6 @@ public class ComRequisicionController {
         
         return null;        
     }
-    
-    
-    //termina PDF
-
-  
-    
-    
-    
-    
-    
-    //aqui
-      /**
-     *
-     * @param identificador
-     * @param id_user_cod
-     * @param model
-     * @return
-     */
-    
      
    
 }

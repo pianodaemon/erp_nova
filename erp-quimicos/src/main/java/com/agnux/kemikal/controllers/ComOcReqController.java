@@ -85,7 +85,7 @@ public class ComOcReqController {
     @RequestMapping(value="/startup.agnux")
     public ModelAndView startUp(HttpServletRequest request, HttpServletResponse response, 
             @ModelAttribute("user") UserSessionData user
-            )throws ServletException, IOException {
+        )throws ServletException, IOException {
         
         log.log(Level.INFO, "Ejecutando starUp de {0}", ComOcReqController.class.getName());
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
@@ -97,9 +97,7 @@ public class ComOcReqController {
         infoConstruccionTabla.put("momento_creacion", "Momento Creacion:100");
         infoConstruccionTabla.put("total", "Total:100");
         
-        
-        
-        ModelAndView x = new ModelAndView("com_oc_req/startup", "title", "Requisici&ocute;n Orden de compra");
+        ModelAndView x = new ModelAndView("com_oc_req/startup", "title", "Autorizaci&oacute;n de Requisici&oacute;n");
         x = x.addObject("layoutheader", resource.getLayoutheader());
         x = x.addObject("layoutmenu", resource.getLayoutmenu());
         x = x.addObject("layoutfooter", resource.getLayoutfooter());
@@ -138,7 +136,7 @@ public class ComOcReqController {
         HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
         HashMap<String,String> has_busqueda = StringHelper.convert2hash(StringHelper.ascii2string(cadena_busqueda));
         
-        //aplicativo Orden de Compra
+        //Aplicativo Orden de Compra
         Integer app_selected = 107;
         
         //decodificar id de usuario

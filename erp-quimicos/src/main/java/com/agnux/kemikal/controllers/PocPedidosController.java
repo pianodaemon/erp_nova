@@ -254,6 +254,9 @@ public class PocPedidosController {
         extra.put("cambioUM", parametros.get("cambiar_unidad_medida"));
         extra.put("per_descto", parametros.get("permitir_descto"));
         
+        //Esta variable indica si se debe generar requisicion de compra
+        extra.put("per_req", parametros.get("permitir_req"));
+        
         valorIva= this.getPocDao().getValoriva(id_sucursal);
         tc.put("tipo_cambio", StringHelper.roundDouble(this.getPocDao().getTipoCambioActual(), 4));
         tipoCambioActual.add(0,tc);
