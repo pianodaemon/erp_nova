@@ -492,7 +492,7 @@
 												<a href="#" class="sub">Procesos &raquo;</a>
 												<ul>
 													<li class="topline"><a href="../invcargadoc/startup.agnux">Carga de Documentos</a></li>
-													<li class="topline"><a href="../logasignarutas/startup.agnux">Administrador de Viajes</a></li>
+													<li class="topline"><a href="../logadmviaje/startup.agnux">Viajes</a></li>
 												</ul>
 											</li>
 										</ul>
