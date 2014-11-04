@@ -56,15 +56,15 @@
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			</tr>
 			<tr>
-				<td width=10>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 				<td><input type="text" name="busqueda_folio" style="width:90px;"></td>
-				<td width=10>&nbsp;&nbsp;</td>
+				<td width="10">&nbsp;&nbsp;</td>
 				<td><input type="text" name="busqueda_rfc" style="width:150px;"></td>
-				<td width=10>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 				<td><input type="text" name="busqueda_razon_social" style="width:220px;"></td>
-				<td width=10>&nbsp;&nbsp;</td>
+				<td width="10">&nbsp;&nbsp;</td>
 				<td><select name="busqueda_select_tipo" style="width:150px;"><option value="0">[--Seleccionar Tipo--]</option></select></td>
-				<td width=10>&nbsp;&nbsp;</td>
+				<td width="10">&nbsp;&nbsp;</td>
 				<td></td>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 				<td><input type="button" value="Buscar"></td>
@@ -139,7 +139,7 @@
 												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_tipo"></div></td>
 											</tr>
 											<tr>
-												<td width="5">&nbsp;</td>
+												<td width="5" height="8"></td>
 												<td width="75"></td>
 												<td width="5"></td>
 												<td width="15"></td>
@@ -170,7 +170,7 @@
 											</tr>
 
 											<tr>
-												<td colspan="16">&nbsp;</td>
+												<td colspan="16" height="8"></td>
 											</tr>
 											<tr>
 												<td width="5"></td>
@@ -185,7 +185,7 @@
 												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_numeroint"></div></td>
 											</tr>
 											<tr>
-												<td colspan="16">&nbsp;</td>
+												<td colspan="16" height="8"></td>
 											</tr>
 											<tr>
 												<td width="5"></td>
@@ -200,7 +200,7 @@
 												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_numeroext"></td>
 											</tr>
 											<tr>
-												<td colspan="16">&nbsp;</td>
+												<td colspan="16" height="8"></td>
 											</tr>
 											<tr>
 												<td width="5"></td>
@@ -220,7 +220,7 @@
 												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_municipio"></div></td>
 											</tr>
 											<tr>
-												<td width="5" height="7" colspan="16">&nbsp;</td>
+												<td colspan="16" height="8"></td>
 											</tr>
 											<tr>
 												<td width="5"></td>
@@ -240,7 +240,7 @@
 												<td width="25"></td>
 											</tr>
 											<tr>
-												<td width="5" height="7" colspan="16">&nbsp;</td>
+												<td colspan="16" height="8"></td>
 											</tr>
 											<tr>
 												<td width="5"></td>
@@ -260,8 +260,27 @@
 												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_ext1"></div></td>
 											</tr>
 
-											
-											
+											<tr>
+												<td colspan="16" height="8"></td>
+											</tr>
+											<tr>
+												<td colspan="16">
+													<table>
+														<tr>
+															<td width="5"></td>
+															<td width="75">Solicitar firma</td>
+															<td><input type="checkbox" name="check_firma"></td>
+															<td width="50"></td>
+															<td width="75">Solicitar sello</td>
+															<td><input type="checkbox" name="check_sello"></td>
+															<td width="32"></td>
+															<td width="90">Solicitar efectivo</td>
+															<td><input type="checkbox" name="check_efectivo"></td>
+															<td width="25"></td>
+														</tr>
+													</table>
+												</td>
+											</tr>
 										</table>
                                         
                                         

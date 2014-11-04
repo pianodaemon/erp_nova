@@ -97,7 +97,7 @@
                                 <div class="fixed column" class="content_x" >
 									
                                     <div id="tabx-1" class="contenidoPes" >
-                                        <table border="0">
+                                        <table border="1">
                                             <tr>
                                                 <td width="5"></td>
                                                 <td width="140">Marca</td>
@@ -112,7 +112,7 @@
                                                 <td width="5"></td>
                                                 <td width="140">N&uacute;mero&nbsp;Econ&oacute;mico</td>
                                                 <td width="200"><INPUT TYPE="text" name="numero_economico" style="width:100px;"></td>
-                                                                                                                     <!--warning_url es el valor que esta en la funcion validar por aplicativo = url -->
+												 <!--warning_url es el valor que esta en la funcion validar por aplicativo = url -->
                                                 <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_numero_economico"></div></td>
                                                 <td width="5"></td>
                                             </tr>   
@@ -120,7 +120,7 @@
                                                 <td width="5">&nbsp;</td>
                                             </tr>
                                         </table>
-                                    </div>			
+                                    </div>
                                 </div>
                             </div>
                             <div class="fixed column" id="botones" style="width:359px; background:; text-align:right; padding-left:; position:absolute;margin-top:4px;">
