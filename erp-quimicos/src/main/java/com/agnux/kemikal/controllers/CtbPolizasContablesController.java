@@ -143,7 +143,6 @@ public class CtbPolizasContablesController {
             }
         }
         
-        
         String data_string = app_selected+"___"+id_usuario+"___"+sucursal+"___"+tipo_pol+"___"+status+"___"+concepto+"___"+poliza+"___"+fecha_inicial+"___"+fecha_final;
         //System.out.println("data_string: "+data_string);
         //Obtiene total de registros en base de datos, con los parametros de busqueda

@@ -240,6 +240,9 @@ public class ClientsDestController {
         @RequestParam(value="tel2", required=true) String tel2,
         @RequestParam(value="ext1", required=true) String ext1,
         @RequestParam(value="email", required=true) String email,
+        @RequestParam(value="check_firma", required=false) String check_firma,
+        @RequestParam(value="check_sello", required=false) String check_sello,
+        @RequestParam(value="check_efectivo", required=false) String check_efectivo,
         Model model,@ModelAttribute("user") UserSessionData user
     ) {
         
@@ -267,6 +270,11 @@ public class ClientsDestController {
         select_estado = StringHelper.verificarSelect(select_estado);
         select_municipio = StringHelper.verificarSelect(select_municipio);
         
+        //Verificar campos checkbox
+        check_firma = StringHelper.verificarCheckBox(check_firma);
+        check_sello = StringHelper.verificarCheckBox(check_sello);
+        check_efectivo = StringHelper.verificarCheckBox(check_efectivo);
+
         String data_string = 
         app_selected
         +"___"+command_selected
@@ -287,7 +295,10 @@ public class ClientsDestController {
         +"___"+ext1
         +"___"+tel2
         +"___"+email
-        +"___"+folio_ext;
+        +"___"+folio_ext
+        +"___"+check_firma
+        +"___"+check_sello
+        +"___"+check_efectivo;
         
         //System.out.println("data_string: "+data_string);
         

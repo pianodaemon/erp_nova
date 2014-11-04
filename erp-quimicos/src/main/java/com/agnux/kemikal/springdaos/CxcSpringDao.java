@@ -1005,7 +1005,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
-            new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+            new Object[]{data_string,new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, Object> row = new HashMap<String, Object>();
@@ -4257,10 +4257,10 @@ return subfamilias;
     @Override
     public ArrayList<HashMap<String, Object>> getClientsDest_Datos(Integer id) {
         String sql_query = ""
-                + "SELECT id,folio, folio_ext,rfc,razon_social AS destinatario,tipo,calle,no_int,no_ext,colonia,gral_mun_id,gral_edo_id,gral_pais_id,cp,(CASE WHEN tel1 IS NULL THEN '' ELSE tel1 END) AS tel1,(CASE WHEN tel2 IS NULL THEN '' ELSE tel2 END) AS tel2,ext,email "
-                + "FROM cxc_destinatarios "
-                + "WHERE id=?";
-
+        + "SELECT id,folio, folio_ext,rfc,razon_social AS destinatario,tipo,calle,no_int,no_ext,colonia,gral_mun_id,gral_edo_id,gral_pais_id,cp,(CASE WHEN tel1 IS NULL THEN '' ELSE tel1 END) AS tel1,(CASE WHEN tel2 IS NULL THEN '' ELSE tel2 END) AS tel2,ext,email, solicitar_firma, solicitar_sello, solicitar_efectivo "
+        + "FROM cxc_destinatarios "
+        + "WHERE id=?";
+        
         //System.out.println("Ejecutando getDestinatario:"+ sql_query);
         //System.out.println("identificador: "+id);
 
@@ -4288,6 +4288,9 @@ return subfamilias;
                     row.put("telefono2",rs.getString("tel2"));
                     row.put("extension",rs.getString("ext"));
                     row.put("email",rs.getString("email"));
+                    row.put("sfirma",rs.getBoolean("solicitar_firma"));
+                    row.put("ssello",rs.getBoolean("solicitar_sello"));
+                    row.put("sefectivo",rs.getBoolean("solicitar_efectivo"));
                     return row;
                 }
             }
