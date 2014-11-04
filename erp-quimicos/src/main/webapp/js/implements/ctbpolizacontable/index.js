@@ -285,7 +285,7 @@ $(function() {
 		var elemento_seleccionado = 0;
 		var mostrar_opciones = 'true';
 		$carga_select_con_arreglo_fijo($busqueda_select_estatus, array_status, elemento_seleccionado, mostrar_opciones);
-
+		
 		
 		var input_json_cuentas = document.location.protocol + '//' + document.location.host + '/'+controller+'/getInicializar.json';
 		$arreglo = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}

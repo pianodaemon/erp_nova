@@ -206,6 +206,9 @@ $(function() {
 		var $tel1 = $('#forma-clientsdest-window').find('input[name=tel1]');
 		var $ext1 = $('#forma-clientsdest-window').find('input[name=ext1]');
 		var $tel2 = $('#forma-clientsdest-window').find('input[name=tel2]');
+		var $check_firma = $('#forma-clientsdest-window').find('input[name=check_firma]');
+		var $check_sello = $('#forma-clientsdest-window').find('input[name=check_sello]');
+		var $check_efectivo = $('#forma-clientsdest-window').find('input[name=check_efectivo]');
 		
 		var $cerrar_plugin = $('#forma-clientsdest-window').find('#close');
 		var $cancelar_plugin = $('#forma-clientsdest-window').find('#boton_cancelar');
@@ -389,7 +392,10 @@ $(function() {
 			var $tel1 = $('#forma-clientsdest-window').find('input[name=tel1]');
 			var $ext1 = $('#forma-clientsdest-window').find('input[name=ext1]');
 			var $tel2 = $('#forma-clientsdest-window').find('input[name=tel2]');
-                        
+			var $check_firma = $('#forma-clientsdest-window').find('input[name=check_firma]');
+			var $check_sello = $('#forma-clientsdest-window').find('input[name=check_sello]');
+			var $check_efectivo = $('#forma-clientsdest-window').find('input[name=check_efectivo]');
+			
 			var $cerrar_plugin = $('#forma-clientsdest-window').find('#close');
 			var $cancelar_plugin = $('#forma-clientsdest-window').find('#boton_cancelar');
 			var $submit_actualizar = $('#forma-clientsdest-window').find('#submit');
@@ -453,6 +459,9 @@ $(function() {
 					$tel1.attr({'value' : entry['Datos'][0]['telefono1']});
 					$ext1.attr({'value' : entry['Datos'][0]['extension']});
 					$tel2.attr({'value' : entry['Datos'][0]['telefono2']});
+					$check_firma.attr('checked', (entry['Datos'][0]['sfirma']==true)? true:false );
+					$check_sello.attr('checked', (entry['Datos'][0]['ssello']==true)? true:false );
+					$check_efectivo.attr('checked', (entry['Datos'][0]['sefectivo']==true)? true:false );
 					
 					var tipo_hmtl='';
 					if(parseInt(entry['Datos'][0]['tipo'])==0){
