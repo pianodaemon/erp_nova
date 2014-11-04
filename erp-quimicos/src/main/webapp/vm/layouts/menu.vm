@@ -285,16 +285,10 @@
 
 													<li class="topline"><a href="../com_requisicion/startup.agnux">Requisici&oacute;n</a></li>
 													<li class="topline"><a href="../com_oc_req/startup.agnux">Autorizaci&oacute;n de Requisici&oacute;n</a></li>
-													
-													<li class="topline"><a href="../comreqautorizacion/startup.agnux">Autorizaci&oacute;n de Requisici&oacute;n 2</a></li>
-													
-													
 													<li class="topline"><a href="../comordencompra/startup.agnux">Orden de Compra</a></li>
 													<li class="topline"><a href="../comcompraautorizacion/startup.agnux">Autorizaci&oacute;n de O. C.</a></li>
-													
 													<li class="topline"><a href="../entradamercancias/startup.agnux">Facturas de Compras</a></li>
 													<li class="topline"><a href="../comfacdevolucion/startup.agnux">Devoluci&oacute;n</a></li>
-													
 													<li class="topline"><a href="../invcapturacostos/startup.agnux">Costo de Reposici&oacute;n</a></li>
 													<!--
 													<li class="topline"><a href="#">Cancelaci&oacute;n</a></li>
@@ -386,8 +380,6 @@
 													<li class="topline"><a href="../invcontrolcostos/startup.agnux">Control de Costos</a></li>
 													<li class="topline"><a href="../invactualizaprecios/startup.agnux">Actualizar Precios</a></li>
 													<li class="topline"><a href="../invcarga/startup.agnux">Carga de Inventario F&iacute;sico</a></li>
-													
-													
 													<!--
 													<li class="topline"><a href="#">Actualizar Precios</a></li>
 													<li class="topline"><a href="#">Existencias F&iacute;sicas</a></li>
@@ -484,28 +476,6 @@
 									</li>
 
 
-									<!--
-									<li class="accessible">
-										<a href="http://jdsharp.us" class="accessible">Rutas &raquo;</a>
-										<ul>
-											<li>
-												<a href="#" class="sub">Cat&aacute;logos &raquo;</a>
-												<ul>
-													<li><a href="../logvehiculos/startup.agnux">Unidades</a></li>
-													<li><a href="../logoperadores/startup.agnux">Operadores</a></li>
-												</ul>
-											</li>
-
-											<li>
-												<a href="#" class="sub">Procesos &raquo;</a>
-												<ul>
-													<li class="topline"><a href="../logasignarutas/startup.agnux">Asignaci&oacute;n</a></li>
-												</ul>
-											</li>
-										</ul>
-									</li>
-									-->
-
 
 									<li class="accessible">
 										<a href="http://jdsharp.us" class="accessible">Rutas &raquo;</a>
@@ -522,7 +492,7 @@
 												<a href="#" class="sub">Procesos &raquo;</a>
 												<ul>
 													<li class="topline"><a href="../invcargadoc/startup.agnux">Carga de Documentos</a></li>
-													<li class="topline"><a href="../logadmviaje/startup.agnux">Administrador de Viajes</a></li>
+													<li class="topline"><a href="../logasignarutas/startup.agnux">Administrador de Viajes</a></li>
 												</ul>
 											</li>
 										</ul>
