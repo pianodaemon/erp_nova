@@ -151,3 +151,11 @@ html ul.pestanas li.active, html ul.pestanas li.active a:hover{
 	border-color:transparent; 
 	background:transparent;
 }
+
+.gral input{
+	height:15px;
+}
+
+.gral select{
+	height:17px;
+}
