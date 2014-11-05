@@ -30,34 +30,49 @@
 			<td height="30"><a href="visualiza_buscador" class="tooltip"><div class="onmouseOutVisualizaBuscador" id="vbuscador"></div><span>Busqueda</span></a>  </td>
 			</tr>
 		</table>
-        
+		
+		
+		
         <!--Esta tabla va  en la barra de buscador -->
 		<table border="0" class="tabla_buscador" style="display:none">
-                    <tr>
-                       <td colspan="9">&nbsp;&nbsp;</td>
-                    </tr>
-
-                    <tr>
-                        <td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                        <td>N&uacute;mero de Control</td>
-                        <td width="10">&nbsp;&nbsp;</td>
-                        <td><INPUT TYPE="text" name="busqueda_cve_operador" style="width:150px;"></td>
-                        <td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                        <td width="10">&nbsp;&nbsp;</td>
-                        <td>Nombre</td>
-                        <td width="10">&nbsp;&nbsp;</td>
-                        <td><INPUT TYPE="text" name="busqueda_nombre" style="width:200px;"></td>
-                        <td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                        <td width="10">&nbsp;&nbsp;</td>
-                        <td><INPUT TYPE="button" value="Buscar"></td>
-                        <td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                        <td ><INPUT TYPE="button" value="Limpiar"></td>
-                        <td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                    </tr>
-                    <tr>
-                        <td colspan="9">&nbsp;&nbsp;</td>
-                    </tr>
+			<tr>
+				<td colspan="27">&nbsp;&nbsp;</td>
+			</tr>
+			<tr>
+				<td width="10"></td>
+				<td width="150">Sucursal</td>
+				<td width="10"></td>
+				<td width="80">No.&nbsp;de&nbsp;Control</td>
+				<td width="10"></td>
+				<td width="200">Nombre</td>
+				<td width="10"></td>
+				<td width="200">Transportista</td>
+				
+				<td width="25"></td>
+				<td></td>
+				<td width="10"></td>
+				<td></td>
+				<td width="10"></td>
+			</tr>
+			
+			<tr>
+				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				<td width="150"><select name="busqueda_select_sucursal" style="width:150px;"><option value="0" selected="yes">[-- --]</option></select></td>
+				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				<td width="80"><input type="text" name="busqueda_cve_operador" style="width:80px;"></td>
+				<td width="10">&nbsp;</td>
+				<td width="200"><input type="text" name="busqueda_nombre" style="width:200px;"></td>
+				<td width="10">&nbsp;</td>
+				<td width="200"><select name="busqueda_select_transportista" style="width:200px;"><option value="0" selected="yes">[-- --]</option></select></td>
+				
+				<td width="25"></td>
+				<td><input type="button" value="Buscar"></td>
+				<td width="10"></td>
+				<td ><input type="button" value="Limpiar"></td>
+				<td width="10"></td>
+			</tr>
 		</table>
+        
         <table class="acciones">
             <tr>
                 <td>&nbsp;&nbsp;</td>
@@ -97,52 +112,64 @@
                                 <div class="fixed column" class="content_x" >
 									
                                     <div id="tabx-1" class="contenidoPes" >
-                                        <table border="0">
-                                            <tr>
-                                                <td width="5"></td>
-                                                <td width="140">N&uacute;mero de Control</td>
-                                                <td width="100"><INPUT TYPE="text" name="clave_operador" readonly="true" style="width:100px;"></td>
-                                                <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_operador"></div></td>
-                                                <td width="5"></td>
-                                            </tr>
-                                            <tr>
-                                                <td width="5">&nbsp;</td>
-                                            </tr>
-                                            <tr>
-                                                <td width="5"></td>
-                                                <td width="140">Nombre</td>
-                                                <td width="600"><INPUT TYPE="text" name="nombre" style="width:300px;"></td>
-                                                                                                                     <!--warning_url es el valor que esta en la funcion validar por aplicativo = url -->
-                                                <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_nombre"></div></td>
-                                                <td width="5"></td>
-                                            </tr>   
-                                            <tr>
-                                                <td width="5">&nbsp;</td>
-                                            </tr>
-                                              <tr>
-                                                <td width="5"></td>
-                                                <td width="140">Apellido Paterno</td>
-                                                <td width="600"><INPUT TYPE="text" name="apellido_paterno" style="width:300px;"></td>
-                                                                                                                     <!--warning_url es el valor que esta en la funcion validar por aplicativo = url -->
-                                                <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_paterno"></div></td>
-                                                <td width="5"></td>
-                                            </tr>   
-                                            <tr>
-                                                <td width="5">&nbsp;</td>
-                                            </tr>
-                                              <tr>
-                                                <td width="5"></td>
-                                                <td width="140">Apellido Materno</td>
-                                                <td width="600"><INPUT TYPE="text" name="apellido_materno" style="width:300px;"></td>
-                                                                                                                     <!--warning_url es el valor que esta en la funcion validar por aplicativo = url -->
-                                                <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_materno"></div></td>
-                                                <td width="5"></td>
-                                            </tr>   
-                                            <tr>
-                                                <td width="5">&nbsp;</td>
-                                            </tr>
+                                        <table border="0" class="gral">
+											<tr>
+												<td width="5"></td>
+												<td width="100">No. de Control</td>
+												<td width="100"><INPUT TYPE="text" name="clave_operador" readonly="true" style="width:100px;"></td>
+												<td width="200"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_operador"></div></td>
+												<td width="25"></td>
+												<td width="5"></td>
+											</tr>
+											<tr>
+												<td width="5" height="8"></td>
+												<td width="100"></td>
+												<td width="100"></td>
+												<td width="200"></td>
+												<td width="25"></td>
+												<td width="5"></td>
+											</tr>
+											<tr>
+												<td width="5"></td>
+												<td width="100">Nombre</td>
+												<td width="300" colspan="2"><INPUT TYPE="text" name="nombre" style="width:300px;"></td>
+												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_nombre"></div></td>
+												<td width="5"></td>
+											</tr>   
+											<tr>
+												<td width="6" height="8"></td>
+											</tr>
+											<tr>
+												<td width="5"></td>
+												<td width="100">Apellido Paterno</td>
+												<td width="300" colspan="2"><INPUT TYPE="text" name="apellido_paterno" style="width:300px;"></td>
+												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_paterno"></div></td>
+												<td width="5"></td>
+											</tr>
+											<tr>
+												<td width="6" height="8"></td>
+											</tr>
+											<tr>
+												<td width="5"></td>
+												<td width="100">Apellido Materno</td>
+												<td width="300" colspan="2"><INPUT TYPE="text" name="apellido_materno" style="width:300px;"></td>
+												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_materno"></div></td>
+												<td width="5"></td>
+											</tr>
+											<tr>
+												<td width="6">&nbsp;</td>
+											</tr>
+											<tr>
+												<td width="5"></td>
+												<td width="100">Transportista</td>
+												<td width="300" colspan="2"><select name="select_transportista" style="width:300px;"></select></td>
+												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_transportista"></div></td>
+												<td width="5"></td>
+											</tr>
+											
                                         </table>
-                                    </div>			
+                                        
+                                    </div>
                                 </div>
                             </div>
                             <div class="fixed column" id="botones" style="width:560px; background:; text-align:right; padding-left:; position:absolute;margin-top:4px;">
