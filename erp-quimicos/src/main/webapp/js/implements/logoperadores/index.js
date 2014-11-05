@@ -7,6 +7,35 @@ $(function() {
 	    return work.join(',');
 	};
 	
+	var DataObject;
+	
+	
+	//Carga los campos select con los datos que recibe como parametro
+	$carga_campos_select = function($campo_select, $arreglo_elementos, elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem, fijo){
+		var select_html = '';
+		
+		if(texto_elemento_cero != ''){
+			select_html = '<option value="0">'+texto_elemento_cero+'</option>';
+		}
+		
+		if(parseInt(elemento_seleccionado)<=0 && texto_elemento_cero==''){
+			select_html = '<option value="0">[--- ---]</option>';
+		}
+		
+		$.each($arreglo_elementos,function(entryIndex,elemento){
+			if( parseInt(elemento[index_elem]) == parseInt(elemento_seleccionado) ){
+				select_html += '<option value="' + elemento[index_elem] + '" selected="yes">' + elemento[index_text_elem] + '</option>';
+			}else{
+				if(!fijo){
+					select_html += '<option value="' + elemento[index_elem] + '" >' + elemento[index_text_elem] + '</option>';
+				}
+			}
+		});
+		
+		$campo_select.children().remove();
+		$campo_select.append(select_html);
+	}
+	
 	$('#header').find('#header1').find('span.emp').text($('#lienzo_recalculable').find('input[name=emp]').val());
 	$('#header').find('#header1').find('span.suc').text($('#lienzo_recalculable').find('input[name=suc]').val());
     var $username = $('#header').find('#header1').find('span.username');
@@ -46,27 +75,27 @@ $(function() {
     
 	
 	var $cadena_busqueda = "";
+	var $busqueda_select_sucursal = $('#barra_buscador').find('.tabla_buscador').find('select[name=busqueda_select_sucursal]');
 	var $busqueda_cve_operador = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_cve_operador]');
 	var $busqueda_nombre = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_nombre]');
-        
-	//var $busca_numeconomico =$('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_numeconomico]');
+	var $busqueda_select_transportista = $('#barra_buscador').find('.tabla_buscador').find('select[name=busqueda_select_transportista]');
 	var $buscar = $('#barra_buscador').find('.tabla_buscador').find('input[value$=Buscar]');
 	var $limbuscarpiar = $('#barra_buscador').find('.tabla_buscador').find('input[value$=Limpiar]');
-	
 	
 	
 	var to_make_one_search_string = function(){
 		var valor_retorno = "";
 		var signo_separador = "=";
+		valor_retorno += "sucursal" + signo_separador + $busqueda_select_sucursal.val() + "|";
 		valor_retorno += "clave_operador" + signo_separador + $busqueda_cve_operador.val() + "|";
 		valor_retorno += "nombre" + signo_separador + $busqueda_nombre.val() + "|";
+		valor_retorno += "transportista" + signo_separador + $busqueda_select_transportista.val() + "|";
 		valor_retorno += "iu" + signo_separador + $('#lienzo_recalculable').find('input[name=iu]').val() + "|";
 		return valor_retorno;
 	};
 	
 	cadena = to_make_one_search_string();
 	$cadena_busqueda = cadena.toCharCode();
-	//$cadena_busqueda = cadena;
 	
 	$buscar.click(function(event){
 		event.preventDefault();
@@ -79,8 +108,12 @@ $(function() {
 	
 	$limbuscarpiar.click(function(event){
 		event.preventDefault();
-                $busqueda_cve_operador.val(' ');
-                $busqueda_nombre.val(' ');
+		$busqueda_cve_operador.val('');
+		$busqueda_nombre.val('');
+		
+		//Llamada a la funcion que inicializa datos
+		$iniciar_campos_generales();
+	
 	});
 	
 	
@@ -124,10 +157,50 @@ $(function() {
 	
 	
 	
+	$iniciar_campos_generales = function(){
+		var input_json_cuentas = document.location.protocol + '//' + document.location.host + '/'+controller+'/getInicializar.json';
+		$arreglo = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
+		$.post(input_json_cuentas,$arreglo,function(data){
+			
+			$busqueda_select_sucursal.children().remove();
+			var suc_hmtl = '';
+			if(data['Data']['versuc']==true){
+				//Aqui carga todas las sucursales porque el usuario es un administrador
+				suc_hmtl = '<option value="0" selected="yes">[--- Todos ---]</option>';
+				$.each(data['Data']['Suc'],function(entryIndex,suc){
+					suc_hmtl += '<option value="' + suc['id'] + '">'+ suc['titulo'] + '</option>';
+				});
+			}else{
+				//Aqui solo debe cargar la sucursal del usuario logueado
+				$.each(data['Data']['Suc'],function(entryIndex,suc){
+					if(parseInt(suc['id'])==parseInt(data['Data']['suc_id'])){
+						suc_hmtl += '<option value="' + suc['id'] + '" selected="yes">'+ suc['titulo'] + '</option>';
+					}
+				});
+			}
+			$busqueda_select_sucursal.append(suc_hmtl);
+			
+			
+			//Carga select de Sucursales
+			var elemento_seleccionado = 0;
+			var texto_elemento_cero = '[-- --]';
+			var index_elem = 'id';
+			var index_text_elem = 'titulo';
+			var option_fijo = false;
+			$carga_campos_select($busqueda_select_transportista, data['Data']['Trans'], elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem, option_fijo);
+			
+			
+			
+			
+			DataObject = data['Data'];
+			
+			$busqueda_select_sucursal.focus();
+		});
+	}
 	
 	
-	
-	
+	//Llamada a la funcion que inicializa datos
+	$iniciar_campos_generales();
 	
 	
 	$tabs_li_funxionalidad = function(){
@@ -191,12 +264,11 @@ $(function() {
                 
 		//campos de la vista
 		var $campo_id = $('#forma-logoperadores-window').find('input[name=identificador]'); 
-                //alert($campo_id);
-		//var $marca = $('#forma-logoperadores-window').find('input[name=clave_operador]');
 		var $nombre = $('#forma-logoperadores-window').find('input[name=nombre]');
 		var $apellido_paterno = $('#forma-logoperadores-window').find('input[name=apellido_paterno]');
 		var $apellido_materno = $('#forma-logoperadores-window').find('input[name=apellido_materno]');
-
+		var $select_transportista = $('#forma-logoperadores-window').find('select[name=select_transportista]');
+		
 		//botones		
 		var $cerrar_plugin = $('#forma-logoperadores-window').find('#close');
 		var $cancelar_plugin = $('#forma-logoperadores-window').find('#boton_cancelar');
@@ -221,10 +293,10 @@ $(function() {
 					tmp = data['success'].split('___')[element];
 					longitud = tmp.split(':');
 					if( longitud.length > 1 ){
-                                            $('#forma-logoperadores-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
-                                            .parent()
-                                            .css({'display':'block'})
-                                            .easyTooltip({tooltipId: "easyTooltip2",content: tmp.split(':')[1]});
+						$('#forma-logoperadores-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
+						.parent()
+						.css({'display':'block'})
+						.easyTooltip({tooltipId: "easyTooltip2",content: tmp.split(':')[1]});
 					}
 				}
 			}
@@ -232,17 +304,27 @@ $(function() {
 		var options = {dataType :  'json', success : respuestaProcesada};
 		$forma_selected.ajaxForm(options);
                 
-                var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getOperador.json';
+		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getOperador.json';
 		var parametros={
-                    id:0,
-                    iu: $('#lienzo_recalculable').find('input[name=iu]').val()
-                }
-                //alert($('#lienzo_recalculable').find('input[name=iu]').val())
-                $.post(input_json,parametros,function(entry){
-                        
-                });//termina llamada json
+			id:0,
+			iu: $('#lienzo_recalculable').find('input[name=iu]').val()
+		}
 		
-                
+		/*
+		$.post(input_json,parametros,function(entry){
+				
+		});//termina llamada json
+		*/
+		
+		//Carga select de Sucursales
+		var elemento_seleccionado = 0;
+		var texto_elemento_cero = '[-- --]';
+		var index_elem = 'id';
+		var index_text_elem = 'titulo';
+		var option_fijo = false;
+		$carga_campos_select($select_transportista, DataObject['Trans'], elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem, option_fijo);
+		
+		
 		$cerrar_plugin.bind('click',function(){
 			var remove = function() {$(this).remove();};
 			$('#forma-logoperadores-overlay').fadeOut(remove);
@@ -254,7 +336,11 @@ $(function() {
 			$buscar.trigger('click');
 		});
 	});
-        
+    /*    
+"T600";4;"''";"5680";75;"2014-11-04 17:14:20.235065+00";FALSE
+"T600";4;"''";"5620";102;"2014-11-04 17:14:20.245576+00";FALSE
+*/
+
         //Eventos del grid edicion,borrar!
 	var carga_formaCC00_for_datagrid00 = function(id_to_show, accion_mode){
 		//aqui entra para eliminar una entrada
@@ -265,17 +351,16 @@ $(function() {
 						'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
 						};
 			jConfirm('Realmente desea eliminar el Operador seleccionado', 'Dialogo de confirmacion', function(r) {
-                            if (r){
-                                $.post(input_json,$arreglo,function(entry){
-                                        if ( entry['success'] == '1' ){
-                                                jAlert("El Operador fue eliminado exitosamente", 'Atencion!');
-                                                $get_datos_grid();
-                                        }
-                                        else{
-                                                jAlert("El Operador no pudo ser eliminado", 'Atencion!');
-                                        }
-                                },"json");
-                            }
+				if (r){
+					$.post(input_json,$arreglo,function(entry){
+						if ( entry['success'] == '1' ){
+							jAlert("El Operador fue eliminado exitosamente", 'Atencion!');
+							$get_datos_grid();
+						}else{
+							jAlert("El Operador no pudo ser eliminado", 'Atencion!');
+						}
+					},"json");
+				}
 			});
                     
 		}else{
@@ -289,27 +374,27 @@ $(function() {
 			$(this).modalPanel_logoperadores();
 						
 			$('#forma-logoperadores-window').css({"margin-left": -300, 	"margin-top": -200});
-                        $forma_selected.prependTo('#forma-logoperadores-window');
-                        $forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
-                        $tabs_li_funxionalidad();
+			$forma_selected.prependTo('#forma-logoperadores-window');
+			$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
+			$tabs_li_funxionalidad();
 
-                        //campos de la vista
-                        var $campo_id = $('#forma-logoperadores-window').find('input[name=identificador]'); 
-                        //alert($campo_id);
-                        var $clave_operador = $('#forma-logoperadores-window').find('input[name=clave_operador]');
-                        var $nombre = $('#forma-logoperadores-window').find('input[name=nombre]');
-                        var $apellido_paterno = $('#forma-logoperadores-window').find('input[name=apellido_paterno]');
-                        var $apellido_materno = $('#forma-logoperadores-window').find('input[name=apellido_materno]');
-                       $clave_operador.attr("readonly",true);
+			//campos de la vista
+			var $campo_id = $('#forma-logoperadores-window').find('input[name=identificador]'); 
+			var $clave_operador = $('#forma-logoperadores-window').find('input[name=clave_operador]');
+			var $nombre = $('#forma-logoperadores-window').find('input[name=nombre]');
+			var $apellido_paterno = $('#forma-logoperadores-window').find('input[name=apellido_paterno]');
+			var $apellido_materno = $('#forma-logoperadores-window').find('input[name=apellido_materno]');
+			var $select_transportista = $('#forma-logoperadores-window').find('select[name=select_transportista]');
+			
+			//botones                        
+			var $cerrar_plugin = $('#forma-logoperadores-window').find('#close');
+			var $cancelar_plugin = $('#forma-logoperadores-window').find('#boton_cancelar');
+			var $submit_actualizar = $('#forma-logoperadores-window').find('#submit');
 
-                        //botones                        
-                        var $cerrar_plugin = $('#forma-logoperadores-window').find('#close');
-                        var $cancelar_plugin = $('#forma-logoperadores-window').find('#boton_cancelar');
-                        var $submit_actualizar = $('#forma-logoperadores-window').find('#submit');
+			$clave_operador.attr("readonly",true);
 			
 			if(accion_mode == 'edit'){
-                            
-                            //aqui es el post que envia los datos a getOperador.json
+				//aqui es el post que envia los datos a getOperador.json
 				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getOperador.json';
 				$arreglo = {'id':id_to_show,
 							'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
@@ -320,8 +405,7 @@ $(function() {
 						var remove = function() {$(this).remove();};
 						$('#forma-logoperadores-overlay').fadeOut(remove);
 						jAlert("Los datos se han actualizado.", 'Atencion!');
-                                                $get_datos_grid();
-						
+						$get_datos_grid();
 					}
 					else{
 						// Desaparece todas las interrogaciones si es que existen
@@ -347,14 +431,21 @@ $(function() {
 				
 				//aqui se cargan los campos al editar
 				$.post(input_json,$arreglo,function(entry){
-				// aqui van los campos de editar
-                                $campo_id.attr({'value' : entry['Operador']['0']['id']});
-                                $clave_operador.attr({'value' : entry['Operador']['0']['clave']});
-                                $nombre.attr({'value' : entry['Operador']['0']['nombre']});      
-				$apellido_paterno.attr({'value' : entry['Operador']['0']['apellido_paterno']});
-				$apellido_materno.attr({'value' : entry['Operador']['0']['apellido_materno']});   
+					$campo_id.attr({'value' : entry['Operador'][0]['id']});
+					$clave_operador.attr({'value' : entry['Operador'][0]['clave']});
+					$nombre.attr({'value' : entry['Operador'][0]['nombre']});      
+					$apellido_paterno.attr({'value' : entry['Operador'][0]['apellido_paterno']});
+					$apellido_materno.attr({'value' : entry['Operador'][0]['apellido_materno']});
+					
+					//Carga select de Sucursales
+					var elemento_seleccionado = entry['Operador'][0]['trans_id'];
+					var texto_elemento_cero = '[-- --]';
+					var index_elem = 'id';
+					var index_text_elem = 'titulo';
+					var option_fijo = false;
+					$carga_campos_select($select_transportista, DataObject['Trans'], elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem, option_fijo);
+					
 				 },"json");//termina llamada json
-				
 				
 				
 				//Ligamos el boton cancelar al evento click para eliminar la forma
