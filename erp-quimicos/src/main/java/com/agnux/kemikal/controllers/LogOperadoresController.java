@@ -107,7 +107,7 @@ public class LogOperadoresController {
             Model model
         ) {
         
-        log.log(Level.INFO, "Ejecutando getInicializarJson de {0}", LogAdmViajeController.class.getName());
+        log.log(Level.INFO, "Ejecutando getInicializarJson de {0}", LogOperadoresController.class.getName());
         HashMap<String,Object> jsonretorno = new HashMap<String,Object>();
         HashMap<String, String> userDat = new HashMap<String, String>();
         HashMap<String, Object> data = new HashMap<String, Object>();
