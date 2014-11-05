@@ -651,15 +651,15 @@ public class LogSpringDao implements LogInterfaceDao{
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
         
         String sql_to_query = ""
-                + "SELECT log_choferes.id, log_choferes.clave as numero_control, log_choferes.nombre  || ' ' || CASE " +
-                                "WHEN log_choferes.apellido_paterno is NULL THEN '' " +
-                                "ELSE log_choferes.apellido_paterno END || ' ' || CASE " +
-                                "WHEN log_choferes.apellido_materno is NULL THEN '' " +
-                                "ELSE log_choferes.apellido_materno END AS nombre " +
-                                "FROM log_choferes "                       
-                                +"JOIN ("+sql_busqueda+") AS sbt ON sbt.id = log_choferes.id "
-                                +"WHERE log_choferes.borrado_logico=false "
-                                +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
+                + "SELECT log_choferes.id, "
+                + "log_choferes.clave as numero_control, "
+                + "log_choferes.nombre  || ' ' || CASE WHEN log_choferes.apellido_paterno is NULL THEN '' ELSE log_choferes.apellido_paterno END || ' ' || CASE WHEN log_choferes.apellido_materno is NULL THEN '' ELSE log_choferes.apellido_materno END AS nombre,"
+                + "(case when log_transportista.id is null then '' else log_transportista.razon_social end) as transportista "
+                + "FROM log_choferes "
+                + "left join log_transportista on log_transportista.id=log_choferes.log_transportista_id "                       
+                +"JOIN ("+sql_busqueda+") AS sbt ON sbt.id = log_choferes.id "
+                +"WHERE log_choferes.borrado_logico=false "
+                +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
         
         //System.out.println("Busqueda GetPage: "+sql_to_query+" "+data_string+" "+ offset +" "+ pageSize);
         //System.out.println("esto es el query  :  "+sql_to_query);
@@ -672,6 +672,7 @@ public class LogSpringDao implements LogInterfaceDao{
                     row.put("id",rs.getInt("id"));
                     row.put("numero_control",rs.getString("numero_control"));
                     row.put("nombre",rs.getString("nombre"));
+                    row.put("transportista",rs.getString("transportista"));
                    
                     return row;
                 }
@@ -687,7 +688,7 @@ public class LogSpringDao implements LogInterfaceDao{
     @Override
     public ArrayList<HashMap<String, String>> getOperadores_Datos(Integer id) {
         
-        String sql_to_query = "SELECT id,clave,nombre,apellido_paterno,apellido_materno FROM log_choferes WHERE id="+id;
+        String sql_to_query = "SELECT id,clave,nombre,apellido_paterno,apellido_materno, log_transportista_id as trans_id FROM log_choferes WHERE id="+id;
         
         ArrayList<HashMap<String, String>> dato_operador = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -700,6 +701,7 @@ public class LogSpringDao implements LogInterfaceDao{
                     row.put("nombre",rs.getString("nombre"));
                     row.put("apellido_paterno",rs.getString("apellido_paterno"));
                     row.put("apellido_materno",rs.getString("apellido_materno"));
+                    row.put("trans_id",String.valueOf(rs.getInt("trans_id")));
                     return row;
                 }
             }
@@ -753,6 +755,38 @@ public class LogSpringDao implements LogInterfaceDao{
     
     
     
+    
+    //Obtiene las sucursales de la empresa indicada
+    @Override
+    public ArrayList<HashMap<String, Object>> getTransportistas(Integer idEmp, Integer idSuc) {
+        String sql_to_query = "";
+        if(idSuc>0){
+            //Obtener transportistas de la sucursal
+            sql_to_query = "SELECT distinct id, folio, razon_social as titulo FROM log_transportista WHERE gral_emp_id=? and gral_suc_id="+idSuc+" AND borrado_logico=false order by razon_social;";
+        }else{
+            //obtener todos los transportistas de la empresa sin importar la sucursal
+            sql_to_query = "SELECT distinct id, folio, razon_social as titulo FROM log_transportista WHERE gral_emp_id=? AND borrado_logico=false order by razon_social;";
+        }
+        
+        ArrayList<HashMap<String, Object>> hm_facturas = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(idEmp)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("folio",rs.getString("folio"));
+                    row.put("titulo",rs.getString("titulo"));
+                    return row;
+                }
+            }
+        );
+        return hm_facturas;
+    }
+    
+    
+    
+    
     //Buscador de Unidades(Vehiculos)
     @Override
     public ArrayList<HashMap<String, Object>> getBuscadorUnidades(String no_unidad, String marca, Integer id_empresa, Integer id_sucursal) {
@@ -766,12 +800,12 @@ public class LogSpringDao implements LogInterfaceDao{
                     + "log_vehiculos.folio, "
                     + "log_vehiculos.numero_economico as no_eco,"
                     + "log_vehiculos.marca,"
-                    + "(CASE WHEN log_vehiculo_tipo.id IS NULL THEN '' ELSE log_vehiculo_tipo.titulo END) AS tipo_unidad,"
+                    + "(CASE WHEN log_vehiculo_clase.id IS NULL THEN '' ELSE log_vehiculo_clase.titulo END) AS clase_unidad,"
                     + "log_vehiculos.placa,"
                     + "(CASE WHEN log_choferes.id IS NULL THEN '' ELSE log_choferes.clave END) AS no_operador,"
                     + "(CASE WHEN log_choferes.id IS NULL THEN '' ELSE ((CASE WHEN log_choferes.nombre IS NULL THEN '' ELSE log_choferes.nombre||' ' END)||(CASE WHEN log_choferes.apellido_paterno IS NULL THEN '' ELSE log_choferes.apellido_paterno||' ' END)||(CASE WHEN log_choferes.apellido_materno IS NULL THEN '' ELSE log_choferes.apellido_materno END)) END) AS operador "
                 + "FROM log_vehiculos "
-                + "LEFT JOIN log_vehiculo_tipo ON log_vehiculo_tipo.id=log_vehiculos.log_vehiculo_tipo_id "
+                + "LEFT JOIN log_vehiculo_clase ON log_vehiculo_clase.id=log_vehiculos.log_vehiculo_clase_id "
                 + "LEFT JOIN log_choferes ON log_choferes.id=log_vehiculos.log_chofer_id "
                 + "WHERE log_vehiculos.folio ILIKE ? AND log_vehiculos.marca ILIKE ? AND log_vehiculos.gral_emp_id=? AND log_vehiculos.borrado_logico=false "+where+";";
         
@@ -786,7 +820,7 @@ public class LogSpringDao implements LogInterfaceDao{
                     row.put("folio",rs.getString("folio"));
                     row.put("no_eco",rs.getString("no_eco"));
                     row.put("marca",rs.getString("marca"));
-                    row.put("tipo_unidad",rs.getString("tipo_unidad"));
+                    row.put("clase_unidad",rs.getString("clase_unidad"));
                     row.put("placa",rs.getString("placa"));
                     row.put("no_operador",rs.getString("no_operador"));
                     row.put("operador",rs.getString("operador"));
@@ -813,12 +847,12 @@ public class LogSpringDao implements LogInterfaceDao{
                     + "log_vehiculos.folio, "
                     + "log_vehiculos.numero_economico as no_eco,"
                     + "log_vehiculos.marca,"
-                    + "(CASE WHEN log_vehiculo_tipo.id IS NULL THEN '' ELSE log_vehiculo_tipo.titulo END) AS tipo_unidad,"
+                    + "(CASE WHEN log_vehiculo_clase.id IS NULL THEN '' ELSE log_vehiculo_clase.titulo END) AS clase_unidad,"
                     + "log_vehiculos.placa,"
                     + "(CASE WHEN log_choferes.id IS NULL THEN '' ELSE log_choferes.clave END) AS no_operador,"
                     + "(CASE WHEN log_choferes.id IS NULL THEN '' ELSE ((CASE WHEN log_choferes.nombre IS NULL THEN '' ELSE log_choferes.nombre||' ' END)||(CASE WHEN log_choferes.apellido_paterno IS NULL THEN '' ELSE log_choferes.apellido_paterno||' ' END)||(CASE WHEN log_choferes.apellido_materno IS NULL THEN '' ELSE log_choferes.apellido_materno END)) END) AS operador "
                 + "FROM log_vehiculos "
-                + "LEFT JOIN log_vehiculo_tipo ON log_vehiculo_tipo.id=log_vehiculos.log_vehiculo_tipo_id "
+                + "LEFT JOIN log_vehiculo_clase ON log_vehiculo_clase.id=log_vehiculos.log_vehiculo_clase_id "
                 + "LEFT JOIN log_choferes ON log_choferes.id=log_vehiculos.log_chofer_id "
                 + "WHERE upper(log_vehiculos.folio)=? AND log_vehiculos.gral_emp_id=? AND log_vehiculos.borrado_logico=false "+where+" LIMIT 1;";
         //System.out.println("getDatosVehiculo: "+sql_query);
@@ -833,7 +867,7 @@ public class LogSpringDao implements LogInterfaceDao{
                     row.put("folio",rs.getString("folio"));
                     row.put("no_eco",rs.getString("no_eco"));
                     row.put("marca",rs.getString("marca"));
-                    row.put("tipo_unidad",rs.getString("tipo_unidad"));
+                    row.put("clase_unidad",rs.getString("clase_unidad"));
                     row.put("placa",rs.getString("placa"));
                     row.put("no_operador",rs.getString("no_operador"));
                     row.put("operador",rs.getString("operador"));
@@ -997,11 +1031,11 @@ public class LogSpringDao implements LogInterfaceDao{
             + "to_char(log_viaje.fecha::timestamp with time zone, 'dd/mm/yyyy') as fecha, "
             + "(CASE WHEN log_choferes.nombre IS NULL THEN '' ELSE log_choferes.nombre END) || (CASE WHEN log_choferes.apellido_paterno is NULL THEN '' ELSE log_choferes.apellido_paterno END) || CASE WHEN log_choferes.apellido_materno is NULL THEN '' ELSE log_choferes.apellido_materno	END AS operador,  "
             + "(CASE WHEN log_vehiculos.id IS NULL THEN '' ELSE log_vehiculos.marca END) AS vehiculo, "
-            + "(CASE WHEN log_vehiculo_tipo.id IS NULL THEN '' ELSE log_vehiculo_tipo.titulo END) AS tipo "
+            + "(CASE WHEN log_vehiculo_clase.id IS NULL THEN '' ELSE log_vehiculo_clase.titulo END) AS clase "
         + "FROM log_viaje "
         + "LEFT JOIN log_choferes ON log_choferes.id=log_viaje.log_chofer_id "
         + "LEFT JOIN log_vehiculos ON log_vehiculos.id=log_viaje.log_vehiculo_id "
-        + "LEFT JOIN log_vehiculo_tipo ON log_vehiculo_tipo.id=log_viaje.log_vehiculo_tipo_id " 
+        + "LEFT JOIN log_vehiculo_clase ON log_vehiculo_clase.id=log_viaje.log_vehiculo_clase_id " 
         +"JOIN ("+sql_busqueda+") AS sbt ON sbt.id=log_viaje.id "
         +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
         
@@ -1017,7 +1051,7 @@ public class LogSpringDao implements LogInterfaceDao{
                     row.put("fecha",rs.getString("fecha"));
                     row.put("operador",rs.getString("operador"));
                     row.put("vehiculo",rs.getString("vehiculo"));
-                    row.put("tipo",rs.getString("tipo"));
+                    row.put("clase",rs.getString("clase"));
                     return row;
                 }
             }
@@ -1044,7 +1078,7 @@ public class LogSpringDao implements LogInterfaceDao{
             + "log_vehiculos.marca AS unidad, "
             + "log_viaje.no_economico, "
             + "log_viaje.placas, "
-            + "(CASE WHEN log_vehiculo_tipo.id IS NULL THEN '' ELSE log_vehiculo_tipo.titulo END) AS tipo, "
+            + "(CASE WHEN log_vehiculo_clase.id IS NULL THEN '' ELSE log_vehiculo_clase.titulo END) AS clase, "
             + "log_choferes.clave AS no_operador,"
             + "(CASE WHEN log_choferes.nombre IS NULL THEN '' ELSE log_choferes.nombre END) || (CASE WHEN log_choferes.apellido_paterno is NULL THEN '' ELSE log_choferes.apellido_paterno END) || CASE WHEN log_choferes.apellido_materno is NULL THEN '' ELSE log_choferes.apellido_materno END AS operador, "
             + "log_viaje.observaciones, "
@@ -1052,7 +1086,7 @@ public class LogSpringDao implements LogInterfaceDao{
         + "from log_viaje "
         + "left JOIN log_choferes on log_choferes.id=log_viaje.log_chofer_id "
         + "join log_vehiculos on log_vehiculos.id=log_viaje.log_vehiculo_id "
-        + "left join log_vehiculo_tipo on log_vehiculo_tipo.id=log_viaje.log_vehiculo_tipo_id " 
+        + "left join log_vehiculo_clase on log_vehiculo_clase.id=log_viaje.log_vehiculo_clase_id " 
         + "where log_viaje.id=? order by log_viaje.id;";
         
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
@@ -1071,7 +1105,7 @@ public class LogSpringDao implements LogInterfaceDao{
                     row.put("unidad",rs.getString("unidad"));
                     row.put("no_economico",rs.getString("no_economico"));
                     row.put("placas",rs.getString("placas"));
-                    row.put("tipo",rs.getString("tipo"));
+                    row.put("clase",rs.getString("clase"));
                     row.put("operador",rs.getString("operador"));
                     row.put("no_operador",rs.getString("no_operador"));
                     row.put("observaciones",rs.getString("observaciones"));

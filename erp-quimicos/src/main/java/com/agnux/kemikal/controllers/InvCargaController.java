@@ -437,13 +437,13 @@ public class InvCargaController {
 
                         //Inventario
                         if(select_tipo_reporte.equals("1")){
-                            id_prod = verificarTipoDatoCelda(row.getCell(0), false);
-                            codigo = verificarTipoDatoCelda(row.getCell(1), false);
-                            id_almacen = verificarTipoDatoCelda(row.getCell(4), false);
-                            existencia = verificarTipoDatoCelda(row.getCell(6), true);
-
+                            id_prod = verificarTipoDatoCelda(row.getCell(0),"int", false);
+                            codigo = verificarTipoDatoCelda(row.getCell(1),"string",false);
+                            id_almacen = verificarTipoDatoCelda(row.getCell(4),"int", false);
+                            existencia = verificarTipoDatoCelda(row.getCell(6),"double",true);
+                            
                             existencia = StringHelper.removerComas(existencia);
-                            System.out.println("Data: "+id_empresa+"___"+id_prod+"___"+codigo+"___"+id_almacen+"___"+existencia);
+                            //System.out.println("Data: "+id_empresa+"___"+id_prod+"___"+codigo+"___"+id_almacen+"___"+existencia);
                             if(!id_almacen.matches(patron_enteros)){
                                 success="false";
                                 msj = "Valor para NO_ALMACEN no valido. <br>Fila "+(i+1) +"  =>   no_prod: <b>"+id_prod+"</b>     codigo: <b>"+codigo+"</b>      no_almacen: <b>"+id_almacen+"</b>      existencia: <b>"+existencia+"</b>";
@@ -490,18 +490,17 @@ public class InvCargaController {
 
                         //LOTES
                         if(select_tipo_reporte.equals("2")){
-
-                            id_prod = verificarTipoDatoCelda(row.getCell(0), false);
-                            codigo = verificarTipoDatoCelda(row.getCell(1), false);
-                            id_almacen = verificarTipoDatoCelda(row.getCell(4), false);
-                            lote_int = verificarTipoDatoCelda(row.getCell(6), false);
-                            lote_prov = verificarTipoDatoCelda(row.getCell(7), false);
-                            existencia = verificarTipoDatoCelda(row.getCell(8), true);
-
+                            id_prod = verificarTipoDatoCelda(row.getCell(0),"int",false);
+                            codigo = verificarTipoDatoCelda(row.getCell(1),"string",false);
+                            id_almacen = verificarTipoDatoCelda(row.getCell(4),"int",false);
+                            lote_int = verificarTipoDatoCelda(row.getCell(6),"string", false);
+                            lote_prov = verificarTipoDatoCelda(row.getCell(7),"string",false);
+                            existencia = verificarTipoDatoCelda(row.getCell(8), "double",true);
+                            
                             existencia = StringHelper.removerComas(existencia);
-
+                            
                             //System.out.println("Fila "+(i+1) +" => "+id_empresa+"___"+id_prod+"___"+codigo+"___"+id_almacen+"___"+lote_int+"___"+lote_prov+"___"+existencia);
-
+                            
                             if(!id_almacen.matches(patron_enteros)){
                                 success="false";
                                 msj = "Valor para NO_ALMACEN no valido. <br>Fila "+(i+1) +"  =>   no_prod: <b>"+id_prod+"</b>     codigo: <b>"+codigo+"</b>      no_almacen: <b>"+id_almacen+"</b>      lote_int: <b>"+lote_int+"</b>      lote_prov: <b>"+lote_prov+"</b>      existencia: <b>"+existencia+"</b>";
@@ -579,10 +578,37 @@ public class InvCargaController {
                                 msj="El Inventario se ha ctualizado con &eacute;xito.";
                             }
                         }
-
                     }else{
-                        success="false";
-                        msj="No se ha podido actualizarl el inventario debido a errores en el proceso. Intente nuevamente.";
+                        //System.out.println("success::: "+success);
+                        
+                        String msj2="";
+                        
+                        String arregloError[] = success.split("___");
+                        int detail=0;
+                        int error=0;
+                        for(int i=0; i<arregloError.length; i++){
+                            if (arregloError[i].indexOf("Detail") > -1){
+                                if(detail==0){
+                                    msj2 += arregloError[i]+"\n";
+                                    detail++;
+                                }
+                            }
+                            
+                            if (arregloError[i].indexOf("ERROR") > -1){
+                                if(error==0){
+                                    msj2 += arregloError[i].substring(arregloError[i].indexOf("ERROR"))+"\n";
+                                    error++;
+                                }
+                            }
+                        }
+                        
+                        if(!msj2.equals("")){
+                            success="false";
+                            msj="No se ha podido actualizarl el inventario debido a errores en el proceso. Intente nuevamente.\n\n"+msj2;
+                        }else{
+                            success="false";
+                            msj="No se ha podido actualizarl el inventario debido a errores en el proceso. Intente nuevamente.";   
+                        }
                     }
                     
                     System.out.println("::TERMINA DE PROCESO QUE ACTUALIZA EL INVENTARIO => "+msj);
@@ -606,21 +632,33 @@ public class InvCargaController {
     
     
     
-    
-    private String verificarTipoDatoCelda(Cell celda, boolean decimal){
+    private String verificarTipoDatoCelda(Cell celda, String tipo_dato, boolean decimal){
         String dato="";
-        
-        if(celda.getCellType() == Cell.CELL_TYPE_STRING){
-            dato = celda.getStringCellValue();
-        }
-        
-        if(celda.getCellType() == Cell.CELL_TYPE_NUMERIC){
-            if(decimal){
-                dato = StringHelper.roundDouble(celda.getNumericCellValue(), 4);
-            }else{
-                dato = String.valueOf((int)celda.getNumericCellValue());
+        try{
+            if(celda.getCellType() == Cell.CELL_TYPE_STRING){
+                dato = celda.getStringCellValue();
+                //System.out.println("getCellType:"+celda.getCellType()+"       Value:"+String.valueOf(celda.getStringCellValue()));
             }
+
+            if(celda.getCellType() == Cell.CELL_TYPE_NUMERIC){
+                if(tipo_dato.equals("string")){
+                    dato = String.valueOf(celda.getNumericCellValue());
+                }
+
+                if(tipo_dato.equals("int")){
+                    dato = String.valueOf((int)celda.getNumericCellValue());
+                }
+
+                if(tipo_dato.equals("double")){
+                    dato = StringHelper.roundDouble(celda.getNumericCellValue(), 4);
+                }
+                //System.out.println("getCellType:"+celda.getCellType()+"       Value:"+String.valueOf(celda.getNumericCellValue()));
+            }
+        }catch (NullPointerException ex) {
+            System.out.println("Entro en NULL");
         }
+
+        
         return dato;
     }
     

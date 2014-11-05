@@ -5,6 +5,7 @@
 package com.agnux.kemikal.controllers;
 import com.agnux.cfd.v2.Base64Coder;
 import com.agnux.common.helpers.StringHelper;
+import com.agnux.common.helpers.TimeHelper;
 import com.agnux.common.obj.DataPost;
 import com.agnux.common.obj.ResourceProject;
 import com.agnux.common.obj.UserSessionData;
@@ -68,8 +69,9 @@ public class LogOperadoresController {
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
      
         infoConstruccionTabla.put("id", "Acciones:90");
-        infoConstruccionTabla.put("numero_control", "N&uacute;mero Control:90");
-        infoConstruccionTabla.put("nombre", "Nombre:400");
+        infoConstruccionTabla.put("numero_control", "No. Control:90");
+        infoConstruccionTabla.put("nombre", "Nombre:350");
+        infoConstruccionTabla.put("transportista", "Transportista:350");
         
         ModelAndView x = new ModelAndView("logoperadores/startup", "title", "Cat&aacute;logo de Operadores");
         
@@ -98,6 +100,43 @@ public class LogOperadoresController {
     }
     
     
+    
+    @RequestMapping(method = RequestMethod.POST, value="/getInicializar.json")
+    public @ResponseBody HashMap<String,Object> getCuentasMayorJson(
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+        ) {
+        
+        log.log(Level.INFO, "Ejecutando getInicializarJson de {0}", LogAdmViajeController.class.getName());
+        HashMap<String,Object> jsonretorno = new HashMap<String,Object>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        HashMap<String, Object> data = new HashMap<String, Object>();
+        
+        //Decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        
+        data.put("suc_id", id_sucursal);
+        
+        if(this.getLogDao().getUserRolAdmin(id_usuario)>0){
+            data.put("versuc", true);
+            //Si es administrador asignamos id de sucursal cero, para obtener todos los transportistas sin importar la empresa 
+            id_sucursal=0;
+        }else{
+            data.put("versuc", false);
+        }
+        
+        data.put("Suc", this.getLogDao().getSucursales(id_empresa));
+        data.put("Trans", this.getLogDao().getTransportistas(id_empresa, id_sucursal));
+        jsonretorno.put("Data", data);
+        
+        return jsonretorno;
+    }
+    
+    
+    
     @RequestMapping(method = RequestMethod.POST, value="/getOperador.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getOperadorJson(
             @RequestParam(value="id", required=true) Integer id,
@@ -115,9 +154,6 @@ public class LogOperadoresController {
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
         userDat = this.getHomeDao().getUserById(id_usuario);
         
-       // Integer id = Integer.parseInt(userDat.get("id"));
-       
-        
         if( id != 0 ){
             datosOperador = this.getLogDao().getOperadores_Datos(id);
           
@@ -125,8 +161,6 @@ public class LogOperadoresController {
         
        //datos marcas es lo que me trajo de la consulta y los pone en el json
        jsonretorno.put("Operador", datosOperador);
-     
-//        jsonretorno.put("Regiones", regiones);
         
         return jsonretorno;
     }
@@ -152,28 +186,29 @@ public class LogOperadoresController {
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
         
-        //variables para el buscador
+        //Variables para el buscador
+        String sucursal = StringHelper.isNullString(String.valueOf(has_busqueda.get("sucursal")));
+        String transportista = StringHelper.isNullString(String.valueOf(has_busqueda.get("transportista")));
         String clave_operador = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("clave_operador")))+"%";        
-        String nombre = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("nombre")))+"%";        
-       
+        String nombre = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("nombre")))+"%";
         
-        String data_string = app_selected+"___"+id_usuario+"___"+clave_operador+"___"+nombre;
+        String data_string = app_selected+"___"+id_usuario+"___"+clave_operador+"___"+nombre+"___"+sucursal+"___"+transportista;
         
-        //obtiene total de registros en base de datos, con los parametros de busqueda
-        int total_items = this.getLogDao().countAll(data_string);              
-                
+        //Obtiene total de registros en base de datos, con los parametros de busqueda
+        int total_items = this.getLogDao().countAll(data_string);
         
-        //calcula el total de paginas
+        //Calcula el total de paginas
         int total_pags = resource.calculaTotalPag(total_items,items_por_pag);
         
-        //variables que necesita el datagrid, para no tener que hacer uno por cada aplicativo
+        //Variables que necesita el datagrid, para no tener que hacer uno por cada aplicativo
         DataPost dataforpos = new DataPost(orderby, desc, items_por_pag, pag_start, display_pag, input_json, cadena_busqueda,total_items,total_pags, id_user_cod);
         
         int offset = resource.__get_inicio_offset(items_por_pag, pag_start);
         
-        //obtiene los registros para el grid, de acuerdo a los parametros de busqueda
+        //Obtiene los registros para el grid, de acuerdo a los parametros de busqueda
         jsonretorno.put("Data", this.getLogDao().getOperadores_PaginaGrid(data_string, offset, items_por_pag, orderby, desc));
-        //obtiene el hash para los datos que necesita el datagrid
+        
+        //Obtiene el hash para los datos que necesita el datagrid
         jsonretorno.put("DataForGrid", dataforpos.formaHashForPos(dataforpos));
         
         return jsonretorno;
@@ -209,6 +244,7 @@ public class LogOperadoresController {
             @RequestParam(value="nombre", required=true) String nombre,
             @RequestParam(value="apellido_paterno", required=true) String apellido_paterno,
             @RequestParam(value="apellido_materno", required=true) String apellido_materno,
+            @RequestParam(value="select_transportista", required=true) String select_transportista,
             @ModelAttribute("user") UserSessionData user,
             Model model
             ) {
@@ -230,7 +266,7 @@ public class LogOperadoresController {
         }
         
         
-        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id+"___"+nombre.toUpperCase()+"___"+apellido_paterno+"___"+apellido_materno;
+        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id+"___"+nombre.toUpperCase()+"___"+apellido_paterno.toUpperCase()+"___"+apellido_materno.toUpperCase()+"___"+select_transportista;
         
         succes = this.getLogDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
         //System.out.println("ESTO TRAE SUCEESSSS"+succes);

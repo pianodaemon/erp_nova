@@ -48,6 +48,7 @@ public interface LogInterfaceDao {
     public ArrayList<HashMap<String, Object>> getBuscadorUnidades(String no_unidad, String marca, Integer id_empresa, Integer id_sucursal);
     public ArrayList<HashMap<String, Object>> getDatosUnidadByNoUnidad(String no_unidad, Integer id_empresa, Integer id_sucursal);
     public ArrayList<HashMap<String, Object>> getSucursales(Integer idEmp);
+    public ArrayList<HashMap<String, Object>> getTransportistas(Integer idEmp, Integer idSuc);
     public ArrayList<HashMap<String, Object>> getLogAdmViaje_CargasPendientes(Integer id_empresa, Integer id_suc_user, String no_clie, String no_carga, String no_ped, String no_dest, String dest, String poblacion);
     public ArrayList<HashMap<String, Object>> getLogAdmViaje_DetallePedido(Integer id_ped);
     public ArrayList<HashMap<String, Object>> getLogAdmViaje_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);

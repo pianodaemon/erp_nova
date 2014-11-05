@@ -68,7 +68,7 @@ public class LogVehiculosController {
         
         infoConstruccionTabla.put("id", "Acciones:90");
         infoConstruccionTabla.put("marca", "Marca:130");
-        infoConstruccionTabla.put("numero_economico", "Número Económico:130");
+        infoConstruccionTabla.put("numero_economico", "No. Económico:130");
         
         ModelAndView x = new ModelAndView("logvehiculos/startup", "title", "Cat&aacute;logo de Vehiculos");
         

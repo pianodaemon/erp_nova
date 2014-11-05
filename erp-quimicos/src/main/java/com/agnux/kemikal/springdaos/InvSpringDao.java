@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.*;
+import org.postgresql.util.PSQLException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -8500,7 +8501,7 @@ public class InvSpringDao implements InvInterfaceDao{
             if(tipo.equals("2")){
                 
                 insertSql = "INSERT INTO inv_lote_tmp (emp_id, prod_id, codigo, alm_id, lote_int, lote_prov, exi, fecha) VALUES(?, ?, ?, ?, ?, ?, ?, now());";
-                System.out.println("insertSql: "+insertSql);
+                //System.out.println("insertSql: "+insertSql);
                 
                 // define query arguments
                 Object[] params = new Object[] { new Integer(param[0]), new Integer(param[1]), new String(param[2]), new Integer(param[3]), new String(param[4]), new String(param[5]), new Double(param[6]) };
@@ -8566,13 +8567,18 @@ public class InvSpringDao implements InvInterfaceDao{
         String sql_to_query = "select * from inv_carga_inventario_fisico("+usuario_id+","+empresa_id+","+sucursal_id+","+tipo+");";
         
         String valor_retorno="";
-        Map<String, Object> update = this.getJdbcTemplate().queryForMap(sql_to_query);
         
-        valor_retorno = update.get("inv_carga_inventario_fisico").toString();
+        try{
+            Map<String, Object> update = this.getJdbcTemplate().queryForMap(sql_to_query);
+            valor_retorno = update.get("inv_carga_inventario_fisico").toString();
+        }catch (RuntimeException ex) {
+            //System.out.println(ex.getMessage());
+            valor_retorno = " "+String.valueOf(ex.getMessage().replace("\n", "___"));
+            //System.out.println("valor_retorno: "+valor_retorno);
+        }
         
         return valor_retorno;
     }
-    
     
     
     
