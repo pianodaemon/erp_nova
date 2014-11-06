@@ -383,8 +383,8 @@
                                     <tr>
                                         <td width="5"></td>
                                         <td width="75px">Moneda</td>
-                                        <td width=5></td>
-                                        <td><SELECT NAME="moneda" style="width:150px;"></SELECT></td>
+                                        <td width="5"></td>
+                                        <td width="150"><SELECT NAME="moneda" style="width:150px;"></SELECT></td>
                                         <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_moneda"></td>
                                         <td width="5"></td>
                                         <td width="75">Tiempo&nbsp;de&nbsp;entrega</td>
@@ -402,6 +402,30 @@
                                         <td width="5" height="7" colspan="15">&nbsp;</td>
                                     </tr>
                                     
+                                    
+                                    <tr>
+                                        <td width="5"></td>
+                                        <td width="75">Transportista</td>
+                                        <td width="5"></td>
+                                        <td width="150"><input type="checkbox" name="check_transportista"></td>
+                                        <td width="25"></td>
+                                        <td width="5"></td>
+                                        <td width="75"></td>
+                                        <td width="5"></td>
+                                        <td width="150"></td>
+                                        <td width="25"></td>
+                                        <td width="5"></td>
+                                        <td width="75"></td>
+                                        <td width="5"></td>
+                                        <td width="150"></td>
+                                        <td width="25"></td>
+                                    </tr>
+                                    
+                                    <tr>
+                                        <td width="5" height="7" colspan="15">&nbsp;</td>
+                                    </tr>
+                                    
+                                    
                                     <tr>
                                         <td width="5"></td>
 										<td colspan="13">Comentarios</td>
@@ -410,7 +434,7 @@
                                     
                                     <tr>
                                         <td width="5"></td>
-										<td colspan="13"><textarea name="comentarios" rows="2" cols="60" style="width:780px;"></textarea></td>
+										<td colspan="13"><textarea name="comentarios" rows="2" cols="60" style="width:780px; resize:none;"></textarea></td>
                                         <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_estatus"></div></td>
                                     </tr>
                                     
