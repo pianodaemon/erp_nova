@@ -160,7 +160,7 @@ $(function() {
 			}
 			
 			if(activeTab == '#tabx-2'){
-				$('#forma-proveedors-window').find('.proveedors_div_one').css({'height':'300px'});
+				$('#forma-proveedors-window').find('.proveedors_div_one').css({'height':'330px'});
 			}
 			
 			if(activeTab == '#tabx-3'){
@@ -569,6 +569,7 @@ $(function() {
 			var $select_tiempo_entrega = $('#forma-proveedors-window').find('select[name=tentrega]');
 			var $select_estatus = $('#forma-proveedors-window').find('select[name=estatus]');
 			var $campo_comentarios = $('#forma-proveedors-window').find('textarea[name=comentarios]');
+			var $check_transportista = $('#forma-proveedors-window').find('input[name=check_transportista]');
 			
 			//tab3 Credito
 			var $campo_limite_credito = $('#forma-proveedors-window').find('input[name=limite_credito]');
@@ -1248,6 +1249,7 @@ $(function() {
 				var $select_tiempo_entrega = $('#forma-proveedors-window').find('select[name=tentrega]');
 				var $select_estatus = $('#forma-proveedors-window').find('select[name=estatus]');
 				var $campo_comentarios = $('#forma-proveedors-window').find('textarea[name=comentarios]');
+				var $check_transportista = $('#forma-proveedors-window').find('input[name=check_transportista]');
 				
 				//tab3 Credito
 				var $campo_limite_credito = $('#forma-proveedors-window').find('input[name=limite_credito]');
@@ -1562,60 +1564,60 @@ $(function() {
 					}
 					
 					
-					$campo_id_proveedor.attr({ 'value' : entry['Proveedor']['0']['id'] });
-					$campo_folio.attr({ 'value' : entry['Proveedor']['0']['folio'] });
-					$campo_rfc.attr({ 'value' : entry['Proveedor']['0']['rfc'] });
-					$campo_curp.attr({ 'value' : entry['Proveedor']['0']['curp'] });
-					$campo_raz_social.attr({ 'value' : entry['Proveedor']['0']['razon_social'] });
-					$campo_nombre_comercial.attr({ 'value' : entry['Proveedor']['0']['clave_comercial'] });
-					$campo_calle.attr({ 'value' : entry['Proveedor']['0']['calle'] });
-					$campo_num_calle.attr({ 'value' : entry['Proveedor']['0']['numero'] });
-					$campo_colonia.attr({ 'value' : entry['Proveedor']['0']['colonia'] });
-					$campo_cp.attr({ 'value' : entry['Proveedor']['0']['cp'] });
-					$campo_entrecalles.attr({ 'value' : entry['Proveedor']['0']['entre_calles'] });
-					$campo_loc_alternativa.attr({ 'value' : entry['Proveedor']['0']['localidad_alternativa'] });
-					$campo_tel1.attr({ 'value' : entry['Proveedor']['0']['telefono1'] });
-					$campo_ext1.attr({ 'value' : entry['Proveedor']['0']['extension1'] });
-					$campo_fax.attr({ 'value' : entry['Proveedor']['0']['fax'] });
-					$campo_tel2.attr({ 'value' : entry['Proveedor']['0']['telefono2'] });
-					$campo_ext2.attr({ 'value' : entry['Proveedor']['0']['extension2'] });
-					$campo_email.attr({ 'value' : entry['Proveedor']['0']['correo_electronico'] });
-					$campo_pag_web.attr({ 'value' : entry['Proveedor']['0']['web_site'] });
+					$campo_id_proveedor.attr({ 'value' : entry['Proveedor'][0]['id'] });
+					$campo_folio.attr({ 'value' : entry['Proveedor'][0]['folio'] });
+					$campo_rfc.attr({ 'value' : entry['Proveedor'][0]['rfc'] });
+					$campo_curp.attr({ 'value' : entry['Proveedor'][0]['curp'] });
+					$campo_raz_social.attr({ 'value' : entry['Proveedor'][0]['razon_social'] });
+					$campo_nombre_comercial.attr({ 'value' : entry['Proveedor'][0]['clave_comercial'] });
+					$campo_calle.attr({ 'value' : entry['Proveedor'][0]['calle'] });
+					$campo_num_calle.attr({ 'value' : entry['Proveedor'][0]['numero'] });
+					$campo_colonia.attr({ 'value' : entry['Proveedor'][0]['colonia'] });
+					$campo_cp.attr({ 'value' : entry['Proveedor'][0]['cp'] });
+					$campo_entrecalles.attr({ 'value' : entry['Proveedor'][0]['entre_calles'] });
+					$campo_loc_alternativa.attr({ 'value' : entry['Proveedor'][0]['localidad_alternativa'] });
+					$campo_tel1.attr({ 'value' : entry['Proveedor'][0]['telefono1'] });
+					$campo_ext1.attr({ 'value' : entry['Proveedor'][0]['extension1'] });
+					$campo_fax.attr({ 'value' : entry['Proveedor'][0]['fax'] });
+					$campo_tel2.attr({ 'value' : entry['Proveedor'][0]['telefono2'] });
+					$campo_ext2.attr({ 'value' : entry['Proveedor'][0]['extension2'] });
+					$campo_email.attr({ 'value' : entry['Proveedor'][0]['correo_electronico'] });
+					$campo_pag_web.attr({ 'value' : entry['Proveedor'][0]['web_site'] });
+					$check_transportista.attr('checked',  (entry['Proveedor'][0]['transportista']=='true')? true:false );
 					
-					$campo_limite_credito.attr({ 'value' : entry['Proveedor']['0']['limite_credito'] });
-					$campo_descuento.attr({ 'value' : entry['Proveedor']['0']['descuento'] });
-					$txtarea_condiciones.text(entry['Proveedor']['0']['condiciones']);
-					$txtarea_observaciones.text(entry['Proveedor']['0']['observaciones']);
+					$campo_limite_credito.attr({ 'value' : entry['Proveedor'][0]['limite_credito'] });
+					$campo_descuento.attr({ 'value' : entry['Proveedor'][0]['descuento'] });
+					$txtarea_condiciones.text(entry['Proveedor'][0]['condiciones']);
+					$txtarea_observaciones.text(entry['Proveedor'][0]['observaciones']);
 					
-					$campo_vent_contacto.attr({ 'value' : entry['Proveedor']['0']['vent_contacto'] });
-					$campo_vent_puesto.attr({ 'value' : entry['Proveedor']['0']['vent_puesto'] });
-					$campo_vent_calle.attr({ 'value' : entry['Proveedor']['0']['vent_calle'] });
-					$campo_vent_numcalle.attr({ 'value' : entry['Proveedor']['0']['vent_numero'] });
-					$campo_vent_colonia.attr({ 'value' : entry['Proveedor']['0']['vent_colonia'] });
-					$campo_vent_cp.attr({ 'value' : entry['Proveedor']['0']['vent_cp'] });
-					$campo_vent_entrecalles.attr({ 'value' : entry['Proveedor']['0']['vent_entre_calles'] });
-					$campo_vent_tel1.attr({ 'value' : entry['Proveedor']['0']['vent_telefono1'] });
-					$campo_vent_ext1.attr({ 'value' : entry['Proveedor']['0']['vent_extension1'] });
-					$campo_vent_fax.attr({ 'value' : entry['Proveedor']['0']['vent_fax'] });
-					$campo_vent_tel2.attr({ 'value' : entry['Proveedor']['0']['vent_telefono2'] });
-					$campo_vent_ext2.attr({ 'value' : entry['Proveedor']['0']['vent_extension2'] });
-					$campo_vent_email.attr({ 'value' : entry['Proveedor']['0']['vent_email'] });
+					$campo_vent_contacto.attr({ 'value' : entry['Proveedor'][0]['vent_contacto'] });
+					$campo_vent_puesto.attr({ 'value' : entry['Proveedor'][0]['vent_puesto'] });
+					$campo_vent_calle.attr({ 'value' : entry['Proveedor'][0]['vent_calle'] });
+					$campo_vent_numcalle.attr({ 'value' : entry['Proveedor'][0]['vent_numero'] });
+					$campo_vent_colonia.attr({ 'value' : entry['Proveedor'][0]['vent_colonia'] });
+					$campo_vent_cp.attr({ 'value' : entry['Proveedor'][0]['vent_cp'] });
+					$campo_vent_entrecalles.attr({ 'value' : entry['Proveedor'][0]['vent_entre_calles'] });
+					$campo_vent_tel1.attr({ 'value' : entry['Proveedor'][0]['vent_telefono1'] });
+					$campo_vent_ext1.attr({ 'value' : entry['Proveedor'][0]['vent_extension1'] });
+					$campo_vent_fax.attr({ 'value' : entry['Proveedor'][0]['vent_fax'] });
+					$campo_vent_tel2.attr({ 'value' : entry['Proveedor'][0]['vent_telefono2'] });
+					$campo_vent_ext2.attr({ 'value' : entry['Proveedor'][0]['vent_extension2'] });
+					$campo_vent_email.attr({ 'value' : entry['Proveedor'][0]['vent_email'] });
 					
-					$campo_cob_contacto.attr({ 'value' : entry['Proveedor']['0']['cob_contacto'] });
-					$campo_cob_puesto.attr({ 'value' : entry['Proveedor']['0']['cob_puesto'] });
-					$campo_cob_calle.attr({ 'value' : entry['Proveedor']['0']['cob_calle'] });
-					$campo_cob_numcalle.attr({ 'value' : entry['Proveedor']['0']['cob_numero'] });
-					$campo_cob_colonia.attr({ 'value' : entry['Proveedor']['0']['cob_colonia'] });
-					$campo_cob_cp.attr({ 'value' : entry['Proveedor']['0']['cob_cp'] });
-					$campo_cob_entrecalles.attr({ 'value' : entry['Proveedor']['0']['cob_entre_calles'] });
-					$campo_cob_tel1.attr({ 'value' : entry['Proveedor']['0']['cob_telefono1'] });
-					$campo_cob_ext1.attr({ 'value' : entry['Proveedor']['0']['cob_extension1'] });
-					$campo_cob_fax.attr({ 'value' : entry['Proveedor']['0']['cob_fax'] });
-					$campo_cob_tel2.attr({ 'value' : entry['Proveedor']['0']['cob_telefono2'] });
-					$campo_cob_ext2.attr({ 'value' : entry['Proveedor']['0']['cob_extension2'] });
-					$campo_cob_email.attr({ 'value' : entry['Proveedor']['0']['cob_email'] });
-					$txtarea_observaciones.text(entry['Proveedor']['0']['comentarios']);
-				
+					$campo_cob_contacto.attr({ 'value' : entry['Proveedor'][0]['cob_contacto'] });
+					$campo_cob_puesto.attr({ 'value' : entry['Proveedor'][0]['cob_puesto'] });
+					$campo_cob_calle.attr({ 'value' : entry['Proveedor'][0]['cob_calle'] });
+					$campo_cob_numcalle.attr({ 'value' : entry['Proveedor'][0]['cob_numero'] });
+					$campo_cob_colonia.attr({ 'value' : entry['Proveedor'][0]['cob_colonia'] });
+					$campo_cob_cp.attr({ 'value' : entry['Proveedor'][0]['cob_cp'] });
+					$campo_cob_entrecalles.attr({ 'value' : entry['Proveedor'][0]['cob_entre_calles'] });
+					$campo_cob_tel1.attr({ 'value' : entry['Proveedor'][0]['cob_telefono1'] });
+					$campo_cob_ext1.attr({ 'value' : entry['Proveedor'][0]['cob_extension1'] });
+					$campo_cob_fax.attr({ 'value' : entry['Proveedor'][0]['cob_fax'] });
+					$campo_cob_tel2.attr({ 'value' : entry['Proveedor'][0]['cob_telefono2'] });
+					$campo_cob_ext2.attr({ 'value' : entry['Proveedor'][0]['cob_extension2'] });
+					$campo_cob_email.attr({ 'value' : entry['Proveedor'][0]['cob_email'] });
+					$txtarea_observaciones.text(entry['Proveedor'][0]['comentarios']);
 					
 					
 					//Alimentando los campos select de las pais
@@ -1632,9 +1634,9 @@ $(function() {
 					
 					//Alimentando los campos select del estado
 					$select_estado.children().remove();
-					var entidad_hmtl = "";
+					var entidad_hmtl = '<option value="0"  selected="yes">[-Seleccionar entidad-]</option>'
 					$.each(entry['entidades'],function(entryIndex,entidad){
-						if(entidad['cve_ent'] == entry['Proveedor']['0']['estado_id']){
+						if(entidad['cve_ent'] == entry['Proveedor'][0]['estado_id']){
 							entidad_hmtl += '<option value="' + entidad['cve_ent'] + '"  selected="yes">' + entidad['nom_ent'] + '</option>';
 						}else{
 							entidad_hmtl += '<option value="' + entidad['cve_ent'] + '"  >' + entidad['nom_ent'] + '</option>';
@@ -1644,9 +1646,9 @@ $(function() {
 					
 					//Alimentando los campos select de los municipios
 					$select_localidad.children().remove();
-					var localidad_hmtl = "";
+					var localidad_hmtl = '<option value="0" selected="yes" >[-Seleccionar municipio-]</option>';
 					$.each(entry['municipios'],function(entryIndex,mun){
-						if(mun['cve_mun'] == entry['Proveedor']['0']['municipio_id']){
+						if(mun['cve_mun'] == entry['Proveedor'][0]['municipio_id']){
 							localidad_hmtl += '<option value="' + mun['cve_mun'] + '"  selected="yes">' + mun['nom_mun'] + '</option>';
 						}else{
 							localidad_hmtl += '<option value="' + mun['cve_mun'] + '"  >' + mun['nom_mun'] + '</option>';
@@ -1658,7 +1660,7 @@ $(function() {
                     $select_impuesto.children().remove();
                     var impuesto_html = '<option value="0">[- Impuesto -]</option>';
                     $.each(entry['Impuestos'],function(entryIndex,imp){
-						if(parseInt(imp['id']) == parseInt(entry['Proveedor']['0']['impuesto'])){
+						if(parseInt(imp['id']) == parseInt(entry['Proveedor'][0]['impuesto'])){
 							impuesto_html += '<option value="' + imp['id'] + '"  selected="yes">' + imp['descripcion'] + '</option>';
 						}else{
 							impuesto_html += '<option value="' + imp['id'] + '"  >' + imp['descripcion'] + '</option>';
@@ -1671,7 +1673,7 @@ $(function() {
                     $select_zona.children().remove();
                     var zona_html = '<option value="0">[-Zona-]</option>';
                     $.each(entry['Zonas'],function(entryIndex,zona){
-						if(parseInt(zona['id']) == parseInt(entry['Proveedor']['0']['cxp_prov_zona_id'])){
+						if(parseInt(zona['id']) == parseInt(entry['Proveedor'][0]['cxp_prov_zona_id'])){
 							zona_html += '<option value="' + zona['id'] + '" selected="yes">' + zona['nombre_zona'] + '</option>';
 						}else{
 							zona_html += '<option value="' + zona['id'] + '"  >' + zona['nombre_zona'] + '</option>';
@@ -1682,7 +1684,7 @@ $(function() {
                     $select_grupo.children().remove();
                     var grupo_html = '<option value="0">[-Grupo-]</option>';
                     $.each(entry['Grupos'],function(entryIndex,grupo){
-						if(parseInt(grupo['id']) == parseInt(entry['Proveedor']['0']['grupo_id'])){
+						if(parseInt(grupo['id']) == parseInt(entry['Proveedor'][0]['grupo_id'])){
 							grupo_html += '<option value="' + grupo['id'] + '"  selected="yes">' + grupo['nombre_grupo'] + '</option>';
 						}else{
 							grupo_html += '<option value="' + grupo['id'] + '"  >' + grupo['nombre_grupo'] + '</option>';
@@ -1694,7 +1696,7 @@ $(function() {
 					$select_prov_tipo.children().remove();
 					var tiposproov_html = '<option value="0">[--Seleccionar tipo--]</option>';
 					$.each(entry['proveedor_tipo'],function(entryIndex,tipo){
-						if(parseInt(tipo['id']) == parseInt(entry['Proveedor']['0']['proveedortipo_id'])){
+						if(parseInt(tipo['id']) == parseInt(entry['Proveedor'][0]['proveedortipo_id'])){
 							tiposproov_html += '<option value="' + tipo['id'] + '"  selected="yes">' + tipo['titulo'] + '</option>';
 						}else{
 							tiposproov_html += '<option value="' + tipo['id'] + '"  >' + tipo['titulo'] + '</option>';
@@ -1705,7 +1707,7 @@ $(function() {
                     $select_clasif1.children().remove();
                     var clasif1_html = '<option value="0">[-Clasificacion 1-]</option>';
                     $.each(entry['Clas1'],function(entryIndex,clas1){
-						if(parseInt(clas1['id']) == parseInt(entry['Proveedor']['0']['clasif_1'])){
+						if(parseInt(clas1['id']) == parseInt(entry['Proveedor'][0]['clasif_1'])){
 							clasif1_html += '<option value="' + clas1['id'] + '" selected="yes">' + clas1['clasificacion1'] + '</option>';
 						}else{
 							clasif1_html += '<option value="' + clas1['id'] + '"  >' + clas1['clasificacion1'] + '</option>';
@@ -1717,7 +1719,7 @@ $(function() {
                     $select_clasif2.children().remove();
                     var clasif2_html = '<option value="0">[-Clasificacion 2-]</option>';
                     $.each(entry['Clas2'],function(entryIndex,clas2){
-						if(parseInt(clas2['id']) == parseInt(entry['Proveedor']['0']['clasif_2'])){
+						if(parseInt(clas2['id']) == parseInt(entry['Proveedor'][0]['clasif_2'])){
 							clasif2_html += '<option value="' + clas2['id'] + '"  selected="yes">' + clas2['clasificacion2'] + '</option>';
 						}else{
 							clasif2_html += '<option value="' + clas2['id'] + '"  >' + clas2['clasificacion2'] + '</option>';
@@ -1729,7 +1731,7 @@ $(function() {
                     $select_clasif3.children().remove();
                     var clasif3_html = '<option value="0">[-Clasificacion 3-]</option>';
                     $.each(entry['Clas3'],function(entryIndex,clas3){
-						if(parseInt(clas3['id']) == parseInt(entry['Proveedor']['0']['clasif_3'])){
+						if(parseInt(clas3['id']) == parseInt(entry['Proveedor'][0]['clasif_3'])){
 							clasif3_html += '<option value="' + clas3['id'] + '"  selected="yes">' + clas3['clasificacion3'] + '</option>';
 						}else{
 							clasif3_html += '<option value="' + clas3['id'] + '" >' + clas3['clasificacion3'] + '</option>';
@@ -1741,7 +1743,7 @@ $(function() {
 					$select_moneda.children().remove();
 					var moneda_hmtl = '<option value="0">[-Seleccionar moneda-]</option>';
 					$.each(entry['monedas'],function(entryIndex,moneda){
-						if(parseInt(moneda['id']) == parseInt(entry['Proveedor']['0']['moneda_id'])){
+						if(parseInt(moneda['id']) == parseInt(entry['Proveedor'][0]['moneda_id'])){
 							moneda_hmtl += '<option value="' + moneda['id'] + '"  selected="yes">' + moneda['descripcion'] + '</option>';
 						}else{
 							moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
@@ -1754,7 +1756,7 @@ $(function() {
 					$select_tiempo_entrega.children().remove();
 					var tiempos_html = '<option value="0">[-Seleccionar tiempo-]</option>';
 					$.each(entry['te'],function(entryIndex,tiempo){
-						if(parseInt(tiempo['id']) == parseInt(entry['Proveedor']['0']['tiempo_entrega_id'])){
+						if(parseInt(tiempo['id']) == parseInt(entry['Proveedor'][0]['tiempo_entrega_id'])){
 							tiempos_html += '<option value="' + tiempo['id'] + '"  selected="yes">' + tiempo['descripcion'] + '</option>';
 						}else{
 							tiempos_html += '<option value="' + tiempo['id'] + '"  >' + tiempo['descripcion'] + '</option>';
@@ -1780,7 +1782,7 @@ $(function() {
 					$select_credito.children().remove();
 					var credito_hmtl = '';
 					$.each(entry['DiasCredito'],function(entryIndex,credito){
-						if(parseInt(credito['id']) == parseInt(entry['Proveedor']['0']['dias_credito_id'])){
+						if(parseInt(credito['id']) == parseInt(entry['Proveedor'][0]['dias_credito_id'])){
 							credito_hmtl += '<option value="' + credito['id'] + '" selected="yes">' + credito['descripcion'] + '</option>';
 						}else{
 							credito_hmtl += '<option value="' + credito['id'] + '"  >' + credito['descripcion'] + '</option>';
@@ -1793,7 +1795,7 @@ $(function() {
 					$select_inicio_credito.children().remove();
 					var inicio_hmtl = '<option value="0" selected="yes">[--Seleccionar inicio --]</option>';
 					$.each(entry['InicioCredito'],function(entryIndex,inicio){
-						if(parseInt(inicio['id']) == parseInt(entry['Proveedor']['0']['credito_a_partir'])){
+						if(parseInt(inicio['id']) == parseInt(entry['Proveedor'][0]['credito_a_partir'])){
 							inicio_hmtl += '<option value="' + inicio['id'] + '" selected="yes">' + inicio['titulo'] + '</option>';
 						}else{
 							inicio_hmtl += '<option value="' + inicio['id'] + '"  >' + inicio['titulo'] + '</option>';
@@ -1805,7 +1807,7 @@ $(function() {
 					$select_tipo_embarque.children().remove();
 					var embarque_hmtl = '<option value="0" selected="yes">[--Seleccionar tipo --]</option>';
 					$.each(entry['TiposEmbarque'],function(entryIndex,tipo){
-						if(parseInt(tipo['id']) == parseInt(entry['Proveedor']['0']['cxp_prov_tipo_embarque_id'])){
+						if(parseInt(tipo['id']) == parseInt(entry['Proveedor'][0]['cxp_prov_tipo_embarque_id'])){
 							embarque_hmtl += '<option value="' + tipo['id'] + '" selected="yes">' + tipo['titulo'] + '</option>';
 						}else{
 							embarque_hmtl += '<option value="' + tipo['id'] + '"  >' + tipo['titulo'] + '</option>';
@@ -1834,7 +1836,7 @@ $(function() {
 					$select_vent_pais.children().remove();
 					var vent_pais_hmtl = "";
 					$.each(entry['pais'],function(entryIndex,pais){
-						if(pais['cve_pais'] == entry['Proveedor']['0']['vent_pais_id']){
+						if(pais['cve_pais'] == entry['Proveedor'][0]['vent_pais_id']){
 							vent_pais_hmtl += '<option value="' + pais['cve_pais'] + '"  selected="yes">' + pais['pais_ent'] + '</option>';
 						}else{
 							vent_pais_hmtl += '<option value="' + pais['cve_pais'] + '"  >' + pais['pais_ent'] + '</option>';
@@ -1844,9 +1846,9 @@ $(function() {
 					
 					//Alimentando los campos select del estado del contacto ventas
 					$select_vent_estado.children().remove();
-					var vent_entidad_hmtl = "";
+					var vent_entidad_hmtl = '<option value="0"  selected="yes">[-Seleccionar entidad-]</option>'
 					$.each(entry['entidades'],function(entryIndex,entidad){
-						if(entidad['cve_ent'] == entry['Proveedor']['0']['vent_estado_id']){
+						if(entidad['cve_ent'] == entry['Proveedor'][0]['vent_estado_id']){
 							vent_entidad_hmtl += '<option value="' + entidad['cve_ent'] + '"  selected="yes">' + entidad['nom_ent'] + '</option>';
 						}else{
 							vent_entidad_hmtl += '<option value="' + entidad['cve_ent'] + '"  >' + entidad['nom_ent'] + '</option>';
@@ -1856,9 +1858,9 @@ $(function() {
 					
 					//Alimentando los campos select de los municipios del contacto ventas
 					$select_vent_localidad.children().remove();
-					var vent_localidad_hmtl = "";
+					var vent_localidad_hmtl = '<option value="0" selected="yes" >[-Seleccionar municipio-]</option>';
 					$.each(entry['ventmunicipios'],function(entryIndex,mun){
-						if(mun['cve_mun'] == entry['Proveedor']['0']['vent_municipio_id']){
+						if(mun['cve_mun'] == entry['Proveedor'][0]['vent_municipio_id']){
 							vent_localidad_hmtl += '<option value="' + mun['cve_mun'] + '"  selected="yes">' + mun['nom_mun'] + '</option>';
 						}else{
 							vent_localidad_hmtl += '<option value="' + mun['cve_mun'] + '"  >' + mun['nom_mun'] + '</option>';
@@ -1872,7 +1874,7 @@ $(function() {
 					$select_cob_pais.children().remove();
 					var cob_pais_hmtl = '<option value="0" selected="yes">[-Seleccionar pais-]</option>';
 					$.each(entry['pais'],function(entryIndex,pais){
-						if(pais['cve_pais'] == entry['Proveedor']['0']['cob_pais_id']){
+						if(pais['cve_pais'] == entry['Proveedor'][0]['cob_pais_id']){
 							cob_pais_hmtl += '<option value="' + pais['cve_pais'] + '"  selected="yes">' + pais['pais_ent'] + '</option>';
 						}else{
 							cob_pais_hmtl += '<option value="' + pais['cve_pais'] + '"  >' + pais['pais_ent'] + '</option>';
@@ -1884,7 +1886,7 @@ $(function() {
 					$select_cob_estado.children().remove();
 					var cob_entidad_hmtl = '<option value="0" selected="yes" >[-Seleccionar entidad--]</option>';
 					$.each(entry['entidades'],function(entryIndex,entidad){
-						if(entidad['cve_ent'] == entry['Proveedor']['0']['cob_estado_id']){
+						if(entidad['cve_ent'] == entry['Proveedor'][0]['cob_estado_id']){
 							cob_entidad_hmtl += '<option value="' + entidad['cve_ent'] + '"  selected="yes">' + entidad['nom_ent'] + '</option>';
 						}else{
 							cob_entidad_hmtl += '<option value="' + entidad['cve_ent'] + '"  >' + entidad['nom_ent'] + '</option>';
@@ -1896,7 +1898,7 @@ $(function() {
 					$select_cob_localidad.children().remove();
 					var cob_localidad_hmtl = '<option value="0" selected="yes" >[-Seleccionar municipio-]</option>';
 					$.each(entry['cobmunicipios'],function(entryIndex,mun){
-						if(mun['cve_mun'] == entry['Proveedor']['0']['cob_municipio_id']){
+						if(mun['cve_mun'] == entry['Proveedor'][0]['cob_municipio_id']){
 							cob_localidad_hmtl += '<option value="' + mun['cve_mun'] + '"  selected="yes">' + mun['nom_mun'] + '</option>';
 						}else{
 							cob_localidad_hmtl += '<option value="' + mun['cve_mun'] + '"  >' + mun['nom_mun'] + '</option>';
