@@ -204,7 +204,7 @@ public class ProveedoresController {
         arrayExtra.add(0,extra);
         
         if(id != 0){
-            proveedor = this.getCxpDao().getProveedor(id);
+            proveedor = this.getCxpDao().getProveedor_Datos(id);
             contactos = this.getCxpDao().getProveedor_Contactos(id);            
             entidades = this.getCxpDao().getEntidadesForThisPais(proveedor.get(0).get("pais_id").toString());
             municipios = this.getCxpDao().getLocalidadesForThisEntidad(proveedor.get(0).get("pais_id").toString(), proveedor.get(0).get("estado_id").toString());
@@ -362,6 +362,7 @@ public class ProveedoresController {
             @RequestParam(value="moneda", required=true) String moneda,
             @RequestParam(value="tentrega", required=true) String tentrega,
             @RequestParam(value="estatus", required=true) String estatus,
+            @RequestParam(value="check_transportista", required=false) String check_transportista,
             @RequestParam(value="limite_credito", required=true) String limite_credito,
             @RequestParam(value="credito", required=true) String dias_credito,
             @RequestParam(value="descuento", required=true) String descuento,
@@ -437,6 +438,8 @@ public class ProveedoresController {
             if(prov_tipo.equals("2")){
                 rfc2 = "XEXX010101000";
             }
+            
+            check_transportista = StringHelper.verificarCheckBox(check_transportista);
             
             String data_string = 
             app_selected
@@ -519,8 +522,9 @@ public class ProveedoresController {
             +"___"+id_cta_egreso
             +"___"+id_cta_ietu
             +"___"+id_cta_complement
-            +"___"+id_cta_pasivo_complement;
-                    
+            +"___"+id_cta_pasivo_complement
+            +"___"+check_transportista;
+            
             succes = this.getCxpDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
             
             log.log(Level.INFO, "despues de validacion {0}", String.valueOf(succes.get("success")));

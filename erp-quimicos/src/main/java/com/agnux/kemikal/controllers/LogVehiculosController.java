@@ -70,7 +70,7 @@ public class LogVehiculosController {
         infoConstruccionTabla.put("marca", "Marca:130");
         infoConstruccionTabla.put("numero_economico", "No. Económico:130");
         
-        ModelAndView x = new ModelAndView("logvehiculos/startup", "title", "Cat&aacute;logo de Vehiculos");
+        ModelAndView x = new ModelAndView("logvehiculos/startup", "title", "Cat&aacute;logo de Unidades");
         
         x = x.addObject("layoutheader", resource.getLayoutheader());
         x = x.addObject("layoutmenu", resource.getLayoutmenu());
@@ -96,38 +96,9 @@ public class LogVehiculosController {
         return x;
     }
     
-    @RequestMapping(method = RequestMethod.POST, value="/getVehiculo.json")
-    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getVehiculoJson(
-            @RequestParam(value="id", required=true) Integer id,
-            @RequestParam(value="iu", required=true) String id_user_cod,
-            Model model
-            ){
-        
-        log.log(Level.INFO, "Ejecutando getVehiculojson de {0}", LogVehiculosController.class.getName());
-        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
-        HashMap<String, String> userDat = new HashMap<String, String>();
-       
-        ArrayList<HashMap<String, String>> datosVehiculo = new ArrayList<HashMap<String, String>>(); 
-       
-        //decodificar id de usuario
-        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
-        userDat = this.getHomeDao().getUserById(id_usuario);
-        
-       // Integer id = Integer.parseInt(userDat.get("id"));
-       
-        
-        if( id != 0 ){
-            datosVehiculo = this.getLogDao().getVehiculo_Datos(id);
-          
-        }
-        
-       //datos marcas es lo que me trajo de la consulta y los pone en el json
-       jsonretorno.put("Vehiculo", datosVehiculo);
-     
-//        jsonretorno.put("Regiones", regiones);
-        
-        return jsonretorno;
-    }
+    
+    
+    
     @RequestMapping(value="/getAllVehiculos.json", method = RequestMethod.POST)
      public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getAllVehiculosJson(
            @RequestParam(value="orderby", required=true) String orderby,
@@ -143,10 +114,10 @@ public class LogVehiculosController {
         HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
         HashMap<String,String> has_busqueda = StringHelper.convert2hash(StringHelper.ascii2string(cadena_busqueda));
         
-        //aplicativo catalogo de marcas 
+        //Catalogo de Unidades
         Integer app_selected = 73;
         
-        //decodificar id de usuario
+        //Decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
         
         //variables para el buscador
@@ -156,20 +127,19 @@ public class LogVehiculosController {
         
         String data_string = app_selected+"___"+id_usuario+"___"+numero_economico+"___"+marca;
         
-        //obtiene total de registros en base de datos, con los parametros de busqueda
-        int total_items = this.getLogDao().countAll(data_string);              
-                
+        //Obtiene total de registros en base de datos, con los parametros de busqueda
+        int total_items = this.getLogDao().countAll(data_string);
         
-        //calcula el total de paginas
+        //Calcula el total de paginas
         int total_pags = resource.calculaTotalPag(total_items,items_por_pag);
         
-        //variables que necesita el datagrid, para no tener que hacer uno por cada aplicativo
+        //Variables que necesita el datagrid, para no tener que hacer uno por cada aplicativo
         DataPost dataforpos = new DataPost(orderby, desc, items_por_pag, pag_start, display_pag, input_json, cadena_busqueda,total_items,total_pags, id_user_cod);
         
         int offset = resource.__get_inicio_offset(items_por_pag, pag_start);
         
         //obtiene los registros para el grid, de acuerdo a los parametros de busqueda
-        jsonretorno.put("Data", this.getLogDao().getVehiculos_PaginaGrid(data_string, offset, items_por_pag, orderby, desc));
+        jsonretorno.put("Data", this.getLogDao().getUnidades_PaginaGrid(data_string, offset, items_por_pag, orderby, desc));
         //obtiene el hash para los datos que necesita el datagrid
         jsonretorno.put("DataForGrid", dataforpos.formaHashForPos(dataforpos));
         
@@ -177,24 +147,45 @@ public class LogVehiculosController {
     }
     
     
-    //cambia el estatus del borrado logico
-    @RequestMapping(method = RequestMethod.POST, value="/logicDelete.json")
-    public @ResponseBody HashMap<String, String> logicDeleteJson(
-            @RequestParam(value="id", required=true) Integer id,
+    
+    
+    @RequestMapping(method = RequestMethod.POST, value="/getInicializar.json")
+    public @ResponseBody HashMap<String,Object> getCuentasMayorJson(
             @RequestParam(value="iu", required=true) String id_user,
             Model model
-            ) {
+        ) {
         
-        HashMap<String, String> jsonretorno = new HashMap<String, String>();
-        //decodificar id de usuario
+        log.log(Level.INFO, "Ejecutando getInicializarJson de {0}", LogVehiculosController.class.getName());
+        HashMap<String,Object> jsonretorno = new HashMap<String,Object>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        HashMap<String, Object> data = new HashMap<String, Object>();
+        
+        //Decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
         
-        Integer app_selected = 73;
-        String command_selected = "delete";
-        String extra_data_array = "'sin datos'";
-        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id;
+        data.put("suc_id", id_sucursal);
         
-        jsonretorno.put("success",String.valueOf( this.getLogDao().selectFunctionForThisApp(data_string,extra_data_array)) );
+        if(this.getLogDao().getUserRolAdmin(id_usuario)>0){
+            data.put("versuc", true);
+            //Si es administrador asignamos id de sucursal cero, para obtener todos los transportistas sin importar la empresa 
+            id_sucursal=0;
+        }else{
+            data.put("versuc", false);
+        }
+        
+        data.put("Suc", this.getLogDao().getSucursales(id_empresa));
+        data.put("Marcas", this.getLogDao().getUnidades_Marcas(id_empresa));
+        data.put("TUnidades", this.getLogDao().getUnidades_Tipos(id_empresa));
+        data.put("Clases", this.getLogDao().getUnidades_Clases(id_empresa));
+        data.put("TPlacas", this.getLogDao().getUnidades_TiposPlaca(id_empresa));
+        data.put("TRodadas", this.getLogDao().getUnidades_TiposRodada(id_empresa));
+        data.put("TCajas", this.getLogDao().getUnidades_TiposCaja(id_empresa));
+        data.put("Anios", this.getLogDao().getUnidades_AniosUnidad());
+        
+        jsonretorno.put("Data", data);
         
         return jsonretorno;
     }
@@ -202,7 +193,149 @@ public class LogVehiculosController {
     
     
     
-        //crear y editar una marca
+    //Obtiene los proveedores para el buscador.
+    //Solo proveedores marcados con el campo Transportista=True
+    @RequestMapping(method = RequestMethod.POST, value="/getBuscaProveedores.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getBuscaProveedoresJson(
+            @RequestParam(value="rfc", required=true) String rfc,
+            @RequestParam(value="no_proveedor", required=true) String no_proveedor,
+            @RequestParam(value="nombre", required=true) String nombre,
+            @RequestParam(value="transportista", required=true) String transportista,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+        ) {
+        
+        log.log(Level.INFO, "Ejecutando getBuscaProveedoresJson de {0}", LogVehiculosController.class.getName());
+        HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        
+        jsonretorno.put("Proveedores", this.getLogDao().getBuscadorProveedores(rfc, no_proveedor, nombre, transportista, id_empresa));
+        
+        return jsonretorno;
+    }
+    
+    
+    
+    /*
+    Obtener datos del Proveedor a partir del Numero de Control
+    Solo proveedores marcados con el campo Transportista=True
+    */
+    @RequestMapping(method = RequestMethod.POST, value="/getDataByNoProv.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getDataByNoProvJson(
+            @RequestParam(value="no_proveedor", required=true) String no_proveedor,
+            @RequestParam(value="transportista", required=true) String transportista,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+        ) {
+        
+        HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+       
+        //Decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        //Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        
+        jsonretorno.put("Proveedor", this.getLogDao().getDatosProveedorByNoProv(no_proveedor, transportista, id_empresa));
+        return jsonretorno;
+    }
+    
+    
+    
+    
+    /*
+    Buscar Operadores(choferes)
+    Permite hacer la busqueda de choferes registrados en la sucursal.
+    Permite buscar cualquier operador sin importar si esta relacionado con un transportista
+    */
+    @RequestMapping(method = RequestMethod.POST, value="/getBuscadorOperadores.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getBuscadorOperadoresJson(
+            @RequestParam(value="no_operador", required=true) String no_operador,
+            @RequestParam(value="nombre", required=true) String nombre,
+            @RequestParam(value="id_prov", required=true) Integer id_prov,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+        ) {
+        
+        HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        
+        //Decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        
+        jsonretorno.put("Operadores", this.getLogDao().getBuscadorOperadores(no_operador, nombre, id_prov, id_empresa, id_sucursal));
+        
+        return jsonretorno;
+    }
+    
+    
+    /*
+    Obtener datos del Operador a partir de la clave
+    Permite hacer la busqueda en la sucursal actual.
+    Permite buscar cualquier operador sin importar si esta relacionado con un transportista
+    */
+    @RequestMapping(method = RequestMethod.POST, value="/getDataOperadorByNo.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getDataOperadorByNoJson(
+            @RequestParam(value="no_operador", required=true) String no_operador,
+            @RequestParam(value="id_prov", required=true) Integer id_prov,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+        ) {
+        HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+       
+        //Decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        
+        jsonretorno.put("Operador", this.getLogDao().getDatosOperadorByNo(no_operador, id_prov, id_empresa, id_sucursal));
+        
+        return jsonretorno;
+    }
+    
+    
+    
+    
+    @RequestMapping(method = RequestMethod.POST, value="/getVehiculo.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getVehiculoJson(
+            @RequestParam(value="id", required=true) Integer id,
+            @RequestParam(value="iu", required=true) String id_user_cod,
+            Model model
+        ){
+        
+        log.log(Level.INFO, "Ejecutando getVehiculojson de {0}", LogVehiculosController.class.getName());
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+       
+        ArrayList<HashMap<String, String>> datosVehiculo = new ArrayList<HashMap<String, String>>(); 
+       
+        //Decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        
+        if( id != 0 ){
+            datosVehiculo = this.getLogDao().getUnidades_Datos(id);
+        }
+        
+        //Datos de la Unidad
+        jsonretorno.put("Vehiculo", datosVehiculo);
+        return jsonretorno;
+    }
+
+    
+    //crear y editar una marca
     @RequestMapping(method = RequestMethod.POST, value="/edit.json")
     public @ResponseBody HashMap<String, String> editJson(
             @RequestParam(value="identificador", required=true) Integer id,
@@ -241,6 +374,29 @@ public class LogVehiculosController {
         jsonretorno.put("success",String.valueOf(succes.get("success")));
         
         log.log(Level.INFO, "Salida json {0}", String.valueOf(jsonretorno.get("success")));
+        return jsonretorno;
+    }
+    
+    
+    //Cambia el estatus del borrado logico
+    @RequestMapping(method = RequestMethod.POST, value="/logicDelete.json")
+    public @ResponseBody HashMap<String, String> logicDeleteJson(
+            @RequestParam(value="id", required=true) Integer id,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+            ) {
+        
+        HashMap<String, String> jsonretorno = new HashMap<String, String>();
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        
+        Integer app_selected = 73;
+        String command_selected = "delete";
+        String extra_data_array = "'sin datos'";
+        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id;
+        
+        jsonretorno.put("success",String.valueOf( this.getLogDao().selectFunctionForThisApp(data_string,extra_data_array)) );
+        
         return jsonretorno;
     }
     

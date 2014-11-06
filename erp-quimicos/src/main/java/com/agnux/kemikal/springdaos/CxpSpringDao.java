@@ -182,7 +182,7 @@ public class CxpSpringDao implements CxpInterfaceDao{
     
     
     @Override
-    public ArrayList<HashMap<String, String>> getProveedor(Integer idProveedor) {
+    public ArrayList<HashMap<String, String>> getProveedor_Datos(Integer idProveedor) {
         ArrayList<HashMap<String, String>> prov = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             "SELECT id, "
                     + "folio, "
@@ -256,7 +256,8 @@ public class CxpSpringDao implements CxpInterfaceDao{
                     + "cob_telefono2, "
                     + "cob_extension2, "
                     + "cob_email, "
-                    + "comentarios "
+                    + "comentarios,"
+                    + "transportista "
             + "FROM cxp_prov where id = ?",  
             new Object[]{new Integer(idProveedor)}, new RowMapper() {
                 @Override
@@ -335,6 +336,7 @@ public class CxpSpringDao implements CxpInterfaceDao{
                     row.put("cob_extension2",rs.getString("cob_extension2"));
                     row.put("cob_email",rs.getString("cob_email"));
                     row.put("comentarios",rs.getString("comentarios"));
+                    row.put("transportista",String.valueOf(rs.getBoolean("transportista")));
                     return row;
                 }
             }

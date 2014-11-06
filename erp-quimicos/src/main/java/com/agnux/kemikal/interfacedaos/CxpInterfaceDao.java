@@ -30,7 +30,7 @@ public interface CxpInterfaceDao {
     
     //catalogo de proveedores
     public ArrayList<HashMap<String, Object>> getProveedor_PaginaGrid(String data_string,int offset, int pageSize, String orderBy , String asc);
-    public ArrayList<HashMap<String, String>> getProveedor(Integer idProveedor);
+    public ArrayList<HashMap<String, String>> getProveedor_Datos(Integer idProveedor);
     public ArrayList<HashMap<String, String>> getProveedor_Contactos(Integer idProveedor);
     public ArrayList<HashMap<String, String>> getProveedor_Tipos();
     public ArrayList<HashMap<String, String>> getProveedor_TiemposEntrega();

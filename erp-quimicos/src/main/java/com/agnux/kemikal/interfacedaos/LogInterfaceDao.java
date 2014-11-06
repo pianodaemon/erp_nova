@@ -36,8 +36,20 @@ public interface LogInterfaceDao {
     public HashMap<String, String> getRuta_DatosPdf(Integer id_ruta);
     public ArrayList<HashMap<String, String>> getRuta_ListaFacturasPdf(Integer id_ruta);
     
-    public ArrayList<HashMap<String, String>> getVehiculo_Datos(Integer id); 
-    public ArrayList<HashMap<String, Object>> getVehiculos_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
+    public ArrayList<HashMap<String, String>> getUnidades_Datos(Integer id); 
+    public ArrayList<HashMap<String, Object>> getUnidades_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
+    public ArrayList<HashMap<String, Object>> getUnidades_Marcas(Integer idEmp);
+    public ArrayList<HashMap<String, Object>> getUnidades_Tipos(Integer idEmp);
+    public ArrayList<HashMap<String, Object>> getUnidades_Clases(Integer idEmp);
+    public ArrayList<HashMap<String, Object>> getUnidades_TiposPlaca(Integer idEmp);
+    public ArrayList<HashMap<String, Object>> getUnidades_TiposRodada(Integer idEmp);
+    public ArrayList<HashMap<String, Object>> getUnidades_TiposCaja(Integer idEmp);
+    public ArrayList<HashMap<String, Object>> getUnidades_AniosUnidad();
+    public ArrayList<HashMap<String, Object>> getBuscadorProveedores(String rfc, String no_proveedor, String razon_social, String transportista,Integer id_empresa);
+    public ArrayList<HashMap<String, Object>> getDatosProveedorByNoProv(String numeroProveedor, String transportista, Integer id_empresa);
+    public ArrayList<HashMap<String, Object>> getBuscadorOperadores(String no_operador, String nombre, Integer id_proveedor, Integer id_empresa, Integer id_sucursal);
+    public ArrayList<HashMap<String, Object>> getDatosOperadorByNo(String no_operador, Integer id_proveedor, Integer id_empresa, Integer id_sucursal);
+    
     
     //Metodos para el catalogo de Operadores
     public ArrayList<HashMap<String, String>> getOperadores_Datos(Integer id);
