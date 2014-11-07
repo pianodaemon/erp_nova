@@ -2125,7 +2125,8 @@ $(function() {
 						//$descargarpdf.attr('disabled','-1'); //deshabilitar
 						$fecha_entrega.attr('disabled','-1'); //deshabilitar
 						
-						consigandoA.attr('disabled','-1'); //deshabilitar
+						$folio_requisicion.attr('disabled','-1'); //deshabilitar
+						$consigandoA.attr('disabled','-1'); //deshabilitar
 						$select_moneda.attr('disabled','-1'); //deshabilitar
 						$select_via_embarque.attr('disabled','-1'); //deshabilitar
 						$select_condiciones.attr('disabled','-1');

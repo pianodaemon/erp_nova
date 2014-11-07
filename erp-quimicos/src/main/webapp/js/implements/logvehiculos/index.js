@@ -66,6 +66,56 @@ $(function() {
 		$input.attr('readonly',false);
 	}
 	
+	
+	//Funcion para hacer que un campo solo acepte numeros
+	$permitir_solo_numeros = function($campo){
+		//validar campo costo, solo acepte numeros y punto
+		$campo.keypress(function(e){
+			// Permitir  numeros, borrar, suprimir, TAB, puntos, comas
+			if (e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
+				return true;
+			}else {
+				return false;
+			}
+		});
+	}
+	
+	
+	//Valida que la cantidad ingresada no tenga mas de un punto decimal
+	$validar_numero_puntos = function($campo, campo_nombre){
+		//Buscar cuantos puntos tiene  Precio Unitario
+		var coincidencias = $campo.val().match(/\./g);
+		var numPuntos = coincidencias ? coincidencias.length : 0;
+		if(parseInt(numPuntos)>1){
+			jAlert('El valor ingresado para el campo '+campo_nombre+' es incorrecto, tiene mas de un punto('+$campo.val()+').', 'Atencion!', function(r) { 
+				$campo.focus();
+			});
+		}
+	}
+	
+	
+	$aplica_evento_focus_input_numerico = function($campo){
+		//Al iniciar el campo tiene un caracter en blanco o tiene comas, al obtener el foco se elimina el  espacio por espacio en blanco
+		$campo.focus(function(e){
+			var valor=quitar_comas($(this).val().trim());
+			
+			if(valor.trim() != ''){
+				if(parseFloat(valor)<=0){
+					$(this).val('');
+				}else{
+					$(this).val(valor);
+				}
+			}
+		});
+	}
+	
+	
+	var quitar_comas= function($valor){
+		$valor = $valor+'';
+		return $valor.split(',').join('');
+	}
+	
+	
 	$('#header').find('#header1').find('span.emp').text($('#lienzo_recalculable').find('input[name=emp]').val());
 	$('#header').find('#header1').find('span.suc').text($('#lienzo_recalculable').find('input[name=suc]').val());
     var $username = $('#header').find('#header1').find('span.username');
@@ -271,7 +321,7 @@ $(function() {
 	
 	//Agregar datos del proveedor seleccionado
 	$agregarDatosProveedorSeleccionado = function($id_prov, $no_prov, $proveedor, id_proveedor, no_proveedor, razon_soc_proveedor, $busca_proveedor){
-		var $id_perador = $('#forma-logvehiculos-window').find('input[name=id_perador]');
+		var $id_operador = $('#forma-logvehiculos-window').find('input[name=id_operador]');
 		var $no_operador = $('#forma-logvehiculos-window').find('input[name=no_operador]');
 		var $operador = $('#forma-logvehiculos-window').find('input[name=operador]');
 		var $busca_operador = $('#forma-logvehiculos-window').find('#busca_operador');
@@ -287,7 +337,7 @@ $(function() {
 		
 		if(parseInt($id_prov.val())>0){
 			//Si el id del proveedor(transportista) es mayor a cero, entonces buscamos todos los peradores(choferes) que tiene registrados
-			$busca_operadores($id_perador, $no_operador, $operador, $id_prov.val(), $busca_operador);
+			$busca_operadores($id_operador, $no_operador, $operador, $id_prov.val(), $busca_operador);
 		}
 	}
 	
@@ -585,7 +635,7 @@ $(function() {
 		var $forma_selected = $('#' + form_to_show).clone();
 		$forma_selected.attr({id : form_to_show + id_to_show});
 		
-		$('#forma-logvehiculos-window').css({"margin-left": -400, 	"margin-top": -200});
+		$('#forma-logvehiculos-window').css({"margin-left": -400, 	"margin-top": -240});
 		$forma_selected.prependTo('#forma-logvehiculos-window');
 		$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
 		$tabs_li_funxionalidad();
@@ -611,9 +661,11 @@ $(function() {
 		var $id_prov = $('#forma-logvehiculos-window').find('input[name=id_prov]');
 		var $no_prov = $('#forma-logvehiculos-window').find('input[name=no_prov]');
 		var $proveedor = $('#forma-logvehiculos-window').find('input[name=proveedor]');
-		var $id_perador = $('#forma-logvehiculos-window').find('input[name=id_perador]');
+		var $id_operador = $('#forma-logvehiculos-window').find('input[name=id_operador]');
 		var $no_operador = $('#forma-logvehiculos-window').find('input[name=no_operador]');
 		var $operador = $('#forma-logvehiculos-window').find('input[name=operador]');
+		
+		var $comentarios = $('#forma-logvehiculos-window').find('textarea[name=comentarios]');
 		
 		var $busca_proveedor = $('#forma-logvehiculos-window').find('#busca_proveedor');
 		var $busca_operador = $('#forma-logvehiculos-window').find('#busca_operador');
@@ -624,8 +676,38 @@ $(function() {
 		
 		$identificador.attr({'value' : 0});
 		$id_prov.val(0);
+		$cap_volumen.val('0.000');
+		$cap_peso.val('0.000');
 		$aplica_read_only_input_text($folio);
-       
+		
+		//Permitir solo numeros y punto
+		$permitir_solo_numeros($cap_volumen);
+		$permitir_solo_numeros($cap_peso);
+		
+		//Aplicar envento focus
+		$aplica_evento_focus_input_numerico($cap_volumen);
+		$aplica_evento_focus_input_numerico($cap_peso);
+		
+
+		$cap_volumen.blur(function(){
+			$validar_numero_puntos($(this), "Capacidad&nbsp;m&#179;");
+			if($(this).val().trim()==''){
+				$(this).val(0);
+			}
+			$(this).val(parseFloat($(this).val()).toFixed(3));
+		});
+		
+		$cap_peso.blur(function(){
+			$validar_numero_puntos($(this), "Capacidad Ton.");
+			if($(this).val().trim()==''){
+				$(this).val(0);
+			}
+			$(this).val(parseFloat($(this).val()).toFixed(3));
+		});
+		
+
+
+		
 		var respuestaProcesada = function(data){
 			if ( data['success'] == "true" ){
 				jAlert("La Unidad fue dado de alta con exito.", 'Atencion!');
@@ -755,7 +837,6 @@ $(function() {
 		
 		
 		
-		
 		//Buscador de provedores(Transportista)
 		$busca_proveedor.click(function(event){
 			event.preventDefault();
@@ -808,7 +889,7 @@ $(function() {
 								$busca_proveedor.show();
 								
 								//--Datos del OPERADOR------------------
-								$id_perador.val(0);
+								$id_operador.val(0);
 								$no_operador.val('');
 								$operador.val('');
 								
@@ -844,7 +925,7 @@ $(function() {
 			sin importar el contratista con el que esté registrado
 			*/
 			var id_proveedor=0;
-			$busca_operadores($id_perador, $no_operador, $operador, id_proveedor, $busca_operador);
+			$busca_operadores($id_operador, $no_operador, $operador, id_proveedor, $busca_operador);
 		});
 		
 		$(this).aplicarEventoKeypressEjecutaTrigger($operador, $busca_operador);
@@ -868,11 +949,11 @@ $(function() {
 							var id_proveedor=0;
 							
 							//Llamada a la función que agrega datos del proveedor seleccionado
-							$agregarDatosOperadorSeleccionado($id_perador, $no_operador, $operador, id_operador, no_operador, operador, $busca_operador);
+							$agregarDatosOperadorSeleccionado($id_operador, $no_operador, $operador, id_operador, no_operador, operador, $busca_operador);
 							
 						}else{
 							jAlert('N&uacute;mero de Operador desconocido.', 'Atencion!', function(r) {
-								$id_perador.val(0);
+								$id_operador.val(0);
 								$no_operador.val('');
 								$no_operador.focus(); 
 							});
@@ -887,7 +968,7 @@ $(function() {
 						jConfirm('Seguro que desea cambiar el Operador seleccionado?', 'Dialogo de Confirmacion', function(r) {
 							// If they confirmed, manually trigger a form submission
 							if (r) {
-								$id_perador.val(0);
+								$id_operador.val(0);
 								$no_operador.val('');
 								$operador.val('');
 								
@@ -896,7 +977,6 @@ $(function() {
 								
 								//Mostrar link busca Operadores
 								$busca_operador.show();
-								
 								
 								$no_operador.focus();
 							}else{
@@ -913,10 +993,6 @@ $(function() {
 		
 		
 		
-		
-		
-		
-                
 		$cerrar_plugin.bind('click',function(){
 			var remove = function() {$(this).remove();};
 			$('#forma-logvehiculos-overlay').fadeOut(remove);
@@ -927,6 +1003,9 @@ $(function() {
 			$('#forma-logvehiculos-overlay').fadeOut(remove);
 			$buscar.trigger('click');
 		});
+		
+		//Asignar enfoque al primer campo editable
+		$select_tipo_unidad.focus();
 	});
 	
 	
@@ -990,9 +1069,11 @@ $(function() {
 			var $id_prov = $('#forma-logvehiculos-window').find('input[name=id_prov]');
 			var $no_prov = $('#forma-logvehiculos-window').find('input[name=no_prov]');
 			var $proveedor = $('#forma-logvehiculos-window').find('input[name=proveedor]');
-			var $id_perador = $('#forma-logvehiculos-window').find('input[name=id_perador]');
+			var $id_operador = $('#forma-logvehiculos-window').find('input[name=id_operador]');
 			var $no_operador = $('#forma-logvehiculos-window').find('input[name=no_operador]');
 			var $operador = $('#forma-logvehiculos-window').find('input[name=operador]');
+			
+			var $comentarios = $('#forma-logvehiculos-window').find('textarea[name=comentarios]');
 			
 			var $busca_proveedor = $('#forma-logvehiculos-window').find('#busca_proveedor');
 			var $busca_operador = $('#forma-logvehiculos-window').find('#busca_operador');
@@ -1002,7 +1083,9 @@ $(function() {
 			var $cancelar_plugin = $('#forma-logvehiculos-window').find('#boton_cancelar');
 			var $submit_actualizar = $('#forma-logvehiculos-window').find('#submit');
 			
-			$id_prov.val(0);
+			//$id_prov.val(0);
+			//$cap_volumen.val('0.000');
+			//$cap_peso.val('0.000');
 			$aplica_read_only_input_text($folio);
 			
 			if(accion_mode == 'edit'){
@@ -1043,23 +1126,164 @@ $(function() {
 				//Aqui se cargan los campos al editar
 				$.post(input_json,$arreglo,function(entry){
 					$identificador.attr({'value' : entry['Vehiculo'][0]['id']});
-					$marca.attr({'value' : entry['Vehiculo'][0]['marca']});      
-					$no_economico.attr({'value' : entry['Vehiculo'][0]['no_economico']});  
+					$folio.attr({'value' : entry['Vehiculo'][0]['folio']});
+					$color.attr({'value' : entry['Vehiculo'][0]['color']});
+					$no_economico.attr({'value' : entry['Vehiculo'][0]['numero_economico']});
+					$placas.attr({'value' : entry['Vehiculo'][0]['placa']});
+					$no_serie.attr({'value' : entry['Vehiculo'][0]['numero_serie']});
+					$cap_volumen.attr({'value' : entry['Vehiculo'][0]['cap_volumen']});
+					$cap_peso.attr({'value' : entry['Vehiculo'][0]['cap_peso']});
+					$id_prov.attr({'value' : entry['Vehiculo'][0]['prov_id']});
+					$no_prov.attr({'value' : entry['Vehiculo'][0]['no_prov']});
+					$proveedor.attr({'value' : entry['Vehiculo'][0]['proveedor']});
+					$id_operador.attr({'value' : entry['Vehiculo'][0]['operador_id']});
+					$no_operador.attr({'value' : entry['Vehiculo'][0]['no_operador']});
+					$operador.attr({'value' : entry['Vehiculo'][0]['operador']});
+					$comentarios.text(entry['Vehiculo'][0]['comentarios']);
+					
+					
+					//Carga select de Tipos de Unidades
+					var elemento_seleccionado = entry['Vehiculo'][0]['tipo_id'];
+					var texto_elemento_cero = '[-- --]';
+					if(parseInt(DataObject['TUnidades'].length) > 0 ){
+						texto_elemento_cero = '';
+					}
+					var index_elem = 'id';
+					var index_text_elem = 'titulo';
+					var option_fijo = false;
+					$carga_campos_select($select_tipo_unidad, DataObject['TUnidades'], elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem, option_fijo);
+					
+					//Carga select de Clase de unidad
+					elemento_seleccionado = entry['Vehiculo'][0]['clase_id'];
+					texto_elemento_cero = '[-- --]';
+					if(parseInt(DataObject['Clases'].length) > 0 ){
+						if(parseInt(elemento_seleccionado)>0){
+							texto_elemento_cero = '';
+						}
+					}
+					index_elem = 'id';
+					index_text_elem = 'titulo';
+					option_fijo = false;
+					$carga_campos_select($select_clase, DataObject['Clases'], elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem, option_fijo);
+					
+					
+					//Carga select de Marcas e Camiones(Unidades)
+					elemento_seleccionado = entry['Vehiculo'][0]['marca_id'];
+					texto_elemento_cero = '[-- --]';
+					if(parseInt(DataObject['Marcas'].length) > 0 ){
+						if(parseInt(elemento_seleccionado)>0){
+							texto_elemento_cero = '';
+						}
+					}
+					index_elem = 'id';
+					index_text_elem = 'titulo';
+					option_fijo = false;
+					$carga_campos_select($select_marca, DataObject['Marcas'], elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem, option_fijo);
+					
+					
+					//Carga select de Tipos de Placas
+					elemento_seleccionado = entry['Vehiculo'][0]['tplaca_id'];
+					texto_elemento_cero = '[-- --]';
+					if(parseInt(DataObject['TPlacas'].length) > 0 ){
+						if(parseInt(elemento_seleccionado)>0){
+							texto_elemento_cero = '';
+						}
+					}
+					index_elem = 'id';
+					index_text_elem = 'titulo';
+					option_fijo = false;
+					$carga_campos_select($select_tipo_placa, DataObject['TPlacas'], elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem, option_fijo);
+					
+					
+					//Carga select de Tipos de Rodadas
+					elemento_seleccionado = entry['Vehiculo'][0]['trodada_id'];
+					texto_elemento_cero = '[-- --]';
+					if(parseInt(DataObject['TRodadas'].length) > 0 ){
+						if(parseInt(elemento_seleccionado)>0){
+							texto_elemento_cero = '';
+						}
+					}
+					index_elem = 'id';
+					index_text_elem = 'titulo';
+					option_fijo = false;
+					$carga_campos_select($select_tipo_rodada, DataObject['TRodadas'], elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem, option_fijo);
+					
+					
+					//Carga select de Tipos de Caja
+					elemento_seleccionado = entry['Vehiculo'][0]['tcaja_id'];
+					texto_elemento_cero = '[-- --]';
+					if(parseInt(DataObject['TCajas'].length) > 0 ){
+						if(parseInt(elemento_seleccionado)>0){
+							texto_elemento_cero = '';
+						}
+					}
+					index_elem = 'id';
+					index_text_elem = 'titulo';
+					option_fijo = false;
+					$carga_campos_select($select_tipo_caja, DataObject['TCajas'], elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem, option_fijo);
+					
+					
+					//Carga select de Años
+					$select_anio.children().remove();
+					var anio_html = '';
+					$.each(DataObject['Anios'],function(entryIndex,anio){
+						if(parseInt(anio['valor'])==parseInt(entry['Vehiculo'][0]['anio'])){
+							anio_html += '<option value="' + anio['valor'] + '" selected="yes">'+ anio['valor'] + '</option>';
+						}else{
+							anio_html += '<option value="' + anio['valor'] + '">'+ anio['valor'] + '</option>';
+						}
+					});
+					$select_anio.append(anio_html);
+					
+					
+					//Cargar select de clasificacion2
+					var elemento_seleccionado = entry['Vehiculo'][0]['clasificacion2'];
+					var mostrar_opciones = 'true';
+					$carga_select_con_arreglo_fijo($select_clasif2, array_clasificacion2, elemento_seleccionado, mostrar_opciones);
+					
 				},"json");//termina llamada json
 				
+				
+				//Permitir solo numeros y punto
+				$permitir_solo_numeros($cap_volumen);
+				$permitir_solo_numeros($cap_peso);
+				
+				//Aplicar envento focus
+				$aplica_evento_focus_input_numerico($cap_volumen);
+				$aplica_evento_focus_input_numerico($cap_peso);
+				
+
+				$cap_volumen.blur(function(){
+					$validar_numero_puntos($(this), "Capacidad&nbsp;m&#179;");
+					if($(this).val().trim()==''){
+						$(this).val(0);
+					}
+					$(this).val(parseFloat($(this).val()).toFixed(3));
+				});
+				
+				$cap_peso.blur(function(){
+					$validar_numero_puntos($(this), "Capacidad Ton.");
+					if($(this).val().trim()==''){
+						$(this).val(0);
+					}
+					$(this).val(parseFloat($(this).val()).toFixed(3));
+				});
+
 				
 				
 				//Buscador de provedores(Transportista)
 				$busca_proveedor.click(function(event){
 					event.preventDefault();
-					$busca_proveedores($id_prov, $no_prov, $proveedor );
+					$busca_proveedores($id_prov, $no_prov, $proveedor, $busca_proveedor );
 				});
 				
 				
 				$no_prov.keypress(function(e){
+					var valor=$(this).val();
+					
 					if(e.which == 13){
 						var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDataByNoProv.json';
-						$arreglo2 = {'no_proveedor':$no_prov.val(),  'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
+						$arreglo2 = {'no_proveedor':$no_prov.val(),  'transportista':'true', 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
 						
 						$.post(input_json2,$arreglo2,function(entry2){
 							if(parseInt(entry2['Proveedor'].length) > 0 ){
@@ -1067,8 +1291,8 @@ $(function() {
 								var no_proveedor = entry2['Proveedor'][0]['numero_proveedor'];
 								var razon_soc_proveedor = entry2['Proveedor'][0]['razon_social'];
 								
-								//llamada a la función que agrega datos del proveedor seleccionado
-								$agregarDatosProveedorSeleccionado($id_prov, $no_prov, $proveedor);
+								//Llamada a la función que agrega datos del proveedor seleccionado
+								$agregarDatosProveedorSeleccionado($id_prov, $no_prov, $proveedor, id_proveedor, no_proveedor, razon_soc_proveedor, $busca_proveedor);
 							}else{
 								$id_prov.val(0);
 								$no_prov.val('');
@@ -1081,8 +1305,128 @@ $(function() {
 						},"json");//termina llamada json
 						
 						return false;
+					}else{
+						if (parseInt(e.which) == 8) {
+							//Si se oprime la tecla borrar se vacía el campo no_prov 
+							if(parseInt(valor.length)>0 && parseInt($id_prov.val())>0){
+								jConfirm('Seguro que desea cambiar el Proveedor seleccionado?', 'Dialogo de Confirmacion', function(r) {
+									// If they confirmed, manually trigger a form submission
+									if (r) {
+										$id_prov.val(0);
+										$no_prov.val('');
+										$proveedor.val('');
+										
+										//Quitar solo lectura una vez que se ha eliminado datos del Proveedor
+										$quitar_readonly_input($proveedor);
+										
+										//Mostrar link busca Proveedores
+										$busca_proveedor.show();
+										
+										//--Datos del OPERADOR------------------
+										$id_operador.val(0);
+										$no_operador.val('');
+										$operador.val('');
+										
+										//Quitar solo lectura una vez que se ha eliminado datos del Proveedor
+										$quitar_readonly_input($operador);
+										
+										//Mostrar link busca Operadores
+										$busca_operador.show();
+										//--Datos del OPERADOR------------------
+										
+										$no_prov.focus();
+									}else{
+										$no_prov.val(valor);
+										$no_prov.focus();
+									}
+								});
+							}else{
+								$no_prov.focus();
+							}
+						}
+					}
+					
+				});
+				
+				
+				
+				
+				//Buscador de Operadores
+				$busca_operador.click(function(event){
+					event.preventDefault();
+					/*
+					Le asignamos cero al id del proveedor para permitir la busqueda de todos los choferes 
+					sin importar el contratista con el que esté registrado
+					*/
+					var id_proveedor=0;
+					$busca_operadores($id_operador, $no_operador, $operador, id_proveedor, $busca_operador);
+				});
+				
+				$(this).aplicarEventoKeypressEjecutaTrigger($operador, $busca_operador);
+				
+				$no_operador.keypress(function(e){
+					var valor=$(this).val();
+					if(e.which == 13){
+						if($no_operador.val().trim()!=''){
+							var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDataOperadorByNo.json';
+							$arreglo2 = {'no_operador':$no_operador.val(), 'id_prov':0, 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
+							$.post(input_json2,$arreglo2,function(entry2){
+								if(parseInt(entry2['Operador'].length) > 0 ){
+									var id_operador = entry2['Operador'][0]['id'];
+									var no_operador = entry2['Operador'][0]['id'];
+									var operador = entry2['Operador'][0]['id'];
+									
+									/*
+									Le asignamos cero al id del proveedor para permitir la busqueda de todos los choferes 
+									sin importar el contratista con el que esté registrado
+									*/
+									var id_proveedor=0;
+									
+									//Llamada a la función que agrega datos del proveedor seleccionado
+									$agregarDatosOperadorSeleccionado($id_operador, $no_operador, $operador, id_operador, no_operador, operador, $busca_operador);
+									
+								}else{
+									jAlert('N&uacute;mero de Operador desconocido.', 'Atencion!', function(r) {
+										$id_operador.val(0);
+										$no_operador.val('');
+										$no_operador.focus(); 
+									});
+								}
+							},"json");//termina llamada json
+						}
+						return false;
+					}else{
+						if (parseInt(e.which) == 8) {
+							//Si se oprime la tecla borrar se vacía el campo no_prov 
+							if(parseInt(valor.length)>0 && parseInt($id_prov.val())>0){
+								jConfirm('Seguro que desea cambiar el Operador seleccionado?', 'Dialogo de Confirmacion', function(r) {
+									// If they confirmed, manually trigger a form submission
+									if (r) {
+										$id_operador.val(0);
+										$no_operador.val('');
+										$operador.val('');
+										
+										//Quitar solo lectura una vez que se ha eliminado datos del Operador
+										$quitar_readonly_input($operador);
+										
+										//Mostrar link busca Operadores
+										$busca_operador.show();
+										
+										$no_operador.focus();
+									}else{
+										$no_prov.val(valor);
+										$no_prov.focus();
+									}
+								});
+							}else{
+								$no_prov.focus();
+							}
+						}
 					}
 				});
+
+
+
 				
 				//Ligamos el boton cancelar al evento click para eliminar la forma
 				$cancelar_plugin.bind('click',function(){
