@@ -83,7 +83,7 @@
 			
 		   <div id="div_two" title="" class="logvehiculos_div_two">
                         <div class="columns on-2">
-                            <div class="fixed column" id="cierra" style="width:710px; padding-left:6px;"><strong>Cat&aacute;logo de Unidades</strong></div>
+                            <div class="fixed column" id="cierra" style="width:730px; padding-left:6px;"><strong>Cat&aacute;logo de Unidades</strong></div>
                             <div class="fixed column" style="width:20px; height:25px;">
                                 <div id="close" style="height:25px;background-image:url('../../img/modalbox/close.png'); background-color:; background-position:top; cursor:pointer; background-repeat:no-repeat;"></div>
                             </div>
@@ -136,7 +136,7 @@
                                                 <td width="45"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_marca"></div></td>
 												<td width="78">A&ntilde;o</td>
                                                 <td width="120"><select name="select_anio" style="width:120px;"></select></td>
-                                                <td width="45"></td>
+                                                <td width="45"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_anio"></div></td>
                                                 <td width="75">Color</td>
                                                 <td width="140"><INPUT TYPE="text" name="color" style="width:140px;"></td>
                                                 <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_color"></div></td>
@@ -215,7 +215,7 @@
                                                 <td width="5"></td>
                                                 <td width="85">No.&nbsp;Operador</td>
                                                 <td width="110">
-													<input type="hidden" name="id_perador">
+													<input type="hidden" name="id_operador">
 													<INPUT TYPE="text" name="no_operador" style="width:110px;">
 												</td>
 												<td width="45"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_nooperador"></div></td>
@@ -231,11 +231,25 @@
                                             <tr>
                                                 <td colspan="10" height="8"></td>
                                             </tr>
+                                            <tr>
+												<td width="5"></td>
+                                                <td colspan="7">Comentarios</td>
+                                                <td width="140"></td>
+                                                <td width="25"></td>
+                                            </tr>
+                                            <tr>
+												<td width="5"></td>
+                                                <td colspan="7">
+													<textarea name="comentarios" rows="2" cols="60" style="width:560px; resize:none;"></textarea>
+                                                </td>
+                                                <td width="140"></td>
+                                                <td width="25"></td>
+                                            </tr>
                                         </table>
                                     </div>
                                 </div>
                             </div>
-                            <div class="fixed column" id="botones" style="width:720px; background:; text-align:right; padding-left:; position:absolute;margin-top:4px;">
+                            <div class="fixed column" id="botones" style="width:740px; background:; text-align:right; padding-left:; position:absolute;margin-top:4px;">
                                 <table border="0">
                                         <tr><td colspan="4" height="7"></td></tr>
                                         <tr>
