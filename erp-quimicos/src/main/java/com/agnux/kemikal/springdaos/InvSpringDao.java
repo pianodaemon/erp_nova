@@ -8582,15 +8582,6 @@ public class InvSpringDao implements InvInterfaceDao{
     
     
     
-    
-    
-    
-    
-    
-    //----------------------------------------------------------------------------
-    //METODOS PARA CARGA DE DOCUMENTOS
-    //----------------------------------------------------------------------------
-
     @Override
     public ArrayList<HashMap<String, Object>> getBuscadorClientes(String cadena, Integer filtro, Integer id_empresa, Integer id_sucursal) {
         String where="";
@@ -8618,29 +8609,31 @@ public class InvSpringDao implements InvInterfaceDao{
             where +=" AND sucursal_id="+id_sucursal;
         }
 
-	String sql_query = "SELECT "
-                                    +"sbt.id,"
-                                    +"sbt.numero_control,"
-                                    +"sbt.rfc,"
-                                    +"sbt.razon_social,"
-                                    //+"sbt.direccion,"
-                                    +"sbt.moneda_id,"
-                                    +"gral_mon.descripcion as moneda "
-                            +"FROM(SELECT cxc_clie.id,"
-                                            +"cxc_clie.numero_control,"
-                                            +"cxc_clie.rfc, "
-                                            +"cxc_clie.razon_social,"
-                                            //+"cxc_clie.calle||' '||cxc_clie.numero||', '||cxc_clie.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo||' C.P. '||cxc_clie.cp as direccion, "
-                                            +"cxc_clie.moneda as moneda_id "
-                                    +"FROM cxc_clie "
-                                    + "JOIN gral_pais ON gral_pais.id = cxc_clie.pais_id "
-                                    + "JOIN gral_edo ON gral_edo.id = cxc_clie.estado_id "
-                                    + "JOIN gral_mun ON gral_mun.id = cxc_clie.municipio_id "
-                                    +" WHERE empresa_id ="+id_empresa+"  "
-                                    +" AND cxc_clie.borrado_logico=false  "+where+" "
-                            +") AS sbt "
-                            +"LEFT JOIN gral_mon on gral_mon.id = sbt.moneda_id ORDER BY sbt.id;";
-        System.out.println("BuscarCliente: "+sql_query);
+	String sql_query = ""
+        + "SELECT "
+            +"sbt.id,"
+            +"sbt.numero_control,"
+            +"sbt.rfc,"
+            +"sbt.razon_social,"
+            //+"sbt.direccion,"
+            +"sbt.moneda_id,"
+            +"gral_mon.descripcion as moneda "
+        +"FROM("
+            + "SELECT cxc_clie.id,"
+                +"cxc_clie.numero_control,"
+                +"cxc_clie.rfc, "
+                +"cxc_clie.razon_social,"
+                //+"cxc_clie.calle||' '||cxc_clie.numero||', '||cxc_clie.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo||' C.P. '||cxc_clie.cp as direccion, "
+                +"cxc_clie.moneda as moneda_id "
+            +"FROM cxc_clie "
+            + "JOIN gral_pais ON gral_pais.id = cxc_clie.pais_id "
+            + "JOIN gral_edo ON gral_edo.id = cxc_clie.estado_id "
+            + "JOIN gral_mun ON gral_mun.id = cxc_clie.municipio_id "
+            +" WHERE empresa_id ="+id_empresa+"  "
+            +" AND cxc_clie.borrado_logico=false  "+where+" "
+        +") AS sbt "
+        +"LEFT JOIN gral_mon on gral_mon.id = sbt.moneda_id ORDER BY sbt.id;";
+        //System.out.println("BuscarCliente: "+sql_query);
         ArrayList<HashMap<String, Object>> hm_cli = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_query,
             new Object[]{}, new RowMapper() {
@@ -8675,31 +8668,32 @@ public class InvSpringDao implements InvInterfaceDao{
         }
 
 	String sql_query = ""
-                + "SELECT "
-                        +"sbt.id,"
-                        +"sbt.numero_control,"
-                        +"sbt.rfc,"
-                        +"sbt.razon_social,"
-                        //+"sbt.direccion,"
-                        +"sbt.moneda_id,"
-                        +"gral_mon.descripcion as moneda "
-                +"FROM(SELECT cxc_clie.id,"
-                                +"cxc_clie.numero_control,"
-                                +"cxc_clie.rfc, "
-                                +"cxc_clie.razon_social,"
-                                //+"cxc_clie.calle||' '||cxc_clie.numero||', '||cxc_clie.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo||' C.P. '||cxc_clie.cp as direccion, "
-                                +"cxc_clie.moneda AS moneda_id "
-                        +"FROM cxc_clie "
-                        + "JOIN gral_pais ON gral_pais.id = cxc_clie.pais_id "
-                        + "JOIN gral_edo ON gral_edo.id = cxc_clie.estado_id "
-                        + "JOIN gral_mun ON gral_mun.id = cxc_clie.municipio_id "
-                        +" WHERE empresa_id ="+id_empresa+"  "
-                        +" AND cxc_clie.borrado_logico=false  "+where+" "
-                        + "AND  cxc_clie.numero_control='"+no_control.toUpperCase()+"'"
-                +") AS sbt "
-                +"LEFT JOIN gral_mon on gral_mon.id = sbt.moneda_id ORDER BY sbt.id LIMIT 1;";
+        + "SELECT "
+            +"sbt.id,"
+            +"sbt.numero_control,"
+            +"sbt.rfc,"
+            +"sbt.razon_social,"
+            //+"sbt.direccion,"
+            +"sbt.moneda_id,"
+            +"gral_mon.descripcion as moneda "
+        +"FROM("
+            + "SELECT cxc_clie.id,"
+                +"cxc_clie.numero_control,"
+                +"cxc_clie.rfc, "
+                +"cxc_clie.razon_social,"
+                //+"cxc_clie.calle||' '||cxc_clie.numero||', '||cxc_clie.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo||' C.P. '||cxc_clie.cp as direccion, "
+                +"cxc_clie.moneda AS moneda_id "
+            +"FROM cxc_clie "
+            + "JOIN gral_pais ON gral_pais.id = cxc_clie.pais_id "
+            + "JOIN gral_edo ON gral_edo.id = cxc_clie.estado_id "
+            + "JOIN gral_mun ON gral_mun.id = cxc_clie.municipio_id "
+            +" WHERE empresa_id ="+id_empresa+"  "
+            +" AND cxc_clie.borrado_logico=false  "+where+" "
+            + "AND  cxc_clie.numero_control='"+no_control.toUpperCase()+"'"
+        +") AS sbt "
+        +"LEFT JOIN gral_mon on gral_mon.id = sbt.moneda_id ORDER BY sbt.id LIMIT 1;";
 
-        System.out.println("getDatosCliente: "+sql_query);
+        //System.out.println("getDatosCliente: "+sql_query);
 
         ArrayList<HashMap<String, Object>> hm_cli = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_query,
@@ -8721,166 +8715,6 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm_cli;
     }
-    
-    
-    //Elimina el contenido de esta tabla de la empresa y sucursal indicada en los parametros.
-    @Override
-    public int getDeleteFromInvCargaDocTmp(Integer id_emp, Integer id_suc) {
-        int row=0;
-        String updateSql="";
-        
-        try{
-            updateSql = "DELETE FROM inv_carga_doc_tmp WHERE emp_id=? AND suc_id=?;";
-            
-            //System.out.println("updateSql: "+updateSql);
-            
-            // define query arguments
-            Object[] params = new Object[] { new Integer(id_emp),new Integer(id_suc)};
-            
-            // define SQL types of the arguments
-            int[] types = new int[] { Types.SMALLINT, Types.SMALLINT };
-            
-            // execute insert query to insert the data
-            // return number of row / rows processed by the executed query
-            row = this.getJdbcTemplate().update(updateSql, params, types);
-            
-            //System.out.println(row + " row inserted.");
-        } catch (Exception e) {
-            System.out.println("ERROR: "+e.getMessage());
-            row=0;
-        }
-        
-        return row;
-    }
-    
-    
-    
-    //Carga la tabla temporal con los datos del Documento
-    @Override
-    public HashMap<String, String> getInsertInvCargaDocTmp(String data_string) {
-        HashMap<String, String> retorno = new HashMap<String, String>();
-        
-        int row=0;
-        String msj="";
-        int rowCountClieId=0;
-        int rowCountProdId=0;
-        String insertSql = "";
-        boolean cargar_registro=false;
-        
-        String param[] = data_string.split("___");
-        
-        
-        if(param[8].trim().equals("")){
-            retorno.put("destinatario", "false___El Cliente Destinatario no tiene numero de cotrol. Revise el archivo.");
-            cargar_registro=false;
-        }else{
-            retorno.put("destinatario", "true___ .");
-            cargar_registro=true;
-        }
-        /*
-        rowCountClieId = this.getJdbcTemplate().queryForInt("select count(id) from cxc_destinatarios where upper(trim(folio_ext))='"+param[8]+"' and borrado_logico=false and gral_emp_id="+param[0]+";");
-        if(rowCountClieId<=0){
-            retorno.put("destinatario", "false___Se agrego este Destinatario al catalogo. ");
-        }else{
-            retorno.put("destinatario", "true___ .");
-        }
-        */
-        
-        /*
-        rowCountPoblacionId = this.getJdbcTemplate().queryForInt("select count(id) from gral_mun where upper(trim(titulo))='"+param[10]+"'");
-        if(rowCountPoblacionId<=0){
-            retorno.put("poblacion", "false___No se encontro la Poblacion. ");
-            cargar_registro = false;
-        }else{
-            retorno.put("poblacion", "true___ .");
-        }
-        */
-        
-        if(param[11].trim().equals("")){
-            retorno.put("producto", "false___El producto no tiene c&oacute;digo. Revise el archivo.");
-            cargar_registro=false;
-        }else{
-            retorno.put("producto", "true___ .");
-            cargar_registro=true;
-        }
-        
-        /*
-        rowCountProdId = this.getJdbcTemplate().queryForInt("select count(id) from inv_prod where upper(trim(sku))='"+param[11]+"' and borrado_logico=false and empresa_id="+param[0]+";");
-        if(rowCountProdId<=0){
-            insertSql = "";
-            
-            this.getJdbcTemplate().update(msj);
-            
-            retorno.put("producto", "false___Se agrego este producto al catalogo. ");
-        }else{
-            retorno.put("producto", "true___ .");
-        }
-        */
-        
-        /*
-        rowCountUnidadId = this.getJdbcTemplate().queryForInt("select count(id) from inv_prod_unidades where upper(trim(titulo_abr))='"+param[14]+"' and borrado_logico=false;");
-        if(rowCountUnidadId<=0){
-            retorno.put("unidad", "false___No se encontro la Unidad de Medida en el catalogo. ");
-            cargar_registro = false;
-        }else{
-            retorno.put("unidad", "true___ .");
-        }
-        */
-        
-        if(cargar_registro){
-            try{
-                insertSql = "";
-                
-                //Cargar en la tabla INV_EXI_TMP
-                insertSql = "INSERT INTO inv_carga_doc_tmp(emp_id,suc_id,user_id,alm_id,no_carga,no_pedido,pos,fecha_entrega, cliente_id, no_dest,nombre_dest,poblacion_dest,codigo_prod,descripcion_prod,cantidad,unidad,peso,volumen,no_entrega,puesto_exp,fecha_carga,estatus) "
-                        + "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,true);";
-                //System.out.println("insertSql: "+insertSql);
-                
-                // define query arguments
-                Object[] params = new Object[] { new Integer(param[0]),new Integer(param[1]),new Integer(param[2]),new Integer(param[3]),param[4],param[5],param[6],param[7], new Integer(param[20]),param[8],param[9],param[10],param[11],param[12],param[13],param[14],param[15],param[16],param[17],param[18],param[19]};
-                
-                // define SQL types of the arguments
-                int[] types = new int[] {Types.SMALLINT,Types.SMALLINT,Types.SMALLINT,Types.SMALLINT,Types.VARCHAR,Types.VARCHAR,Types.VARCHAR,Types.DATE, Types.INTEGER, Types.VARCHAR,Types.VARCHAR,Types.VARCHAR,Types.VARCHAR,Types.VARCHAR,Types.VARCHAR,Types.VARCHAR,Types.VARCHAR,Types.VARCHAR,Types.VARCHAR,Types.VARCHAR,Types.DATE};
-                
-                // execute insert query to insert the data
-                // return number of row / rows processed by the executed query
-                row = this.getJdbcTemplate().update(insertSql, params, types);
-                
-                msj = "true___ .";
-                //System.out.println(row + " row inserted.");
-            } catch (Exception e) {
-                msj =  "false___No se cargo el registro debido a errores internos["+e.getMessage()+"]. Intente nuevamente.";
-            }
-        }else{
-            msj = "false___No se cargo el registro.";
-        }
-        
-        retorno.put("cargado", msj);
-        return retorno;
-    }
-    
-    
-    //Verifica que el documento con  las cargas no ha sido dado de alta anteriormente
-    @Override
-    public int getVerificarDocumento(Integer id_emp, Integer id_clie, String no_carga) {
-        int rowCount = this.getJdbcTemplate().queryForInt("select count(log_doc_carga.id) from log_doc join log_doc_carga on (log_doc_carga.log_doc_id=log_doc.id and log_doc_carga.no_carga='"+no_carga+"') where log_doc.gral_emp_id="+id_emp+" and log_doc.cxc_clie_id="+id_clie+";");
-        
-        return rowCount;
-    }
-    
-    //LLamada al procedimiento que carga las tablas relacionadas al documento y actualiza inventario
-    @Override
-    public String getUpdateDocInvExi(Integer usuario_id, Integer empresa_id, Integer sucursal_id, Integer id_cliente) {
-        String sql_to_query = "select * from inv_carga_documentos("+usuario_id+","+empresa_id+","+sucursal_id+","+id_cliente+");";
-        
-        String valor_retorno="";
-        Map<String, Object> update = this.getJdbcTemplate().queryForMap(sql_to_query);
-        
-        valor_retorno = update.get("inv_carga_documentos").toString();
-        
-        return valor_retorno;
-    }
-    
     
     
 }

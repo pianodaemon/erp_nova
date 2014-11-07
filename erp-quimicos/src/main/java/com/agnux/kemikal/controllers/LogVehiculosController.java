@@ -44,7 +44,7 @@ public class LogVehiculosController {
     private static final Logger log  = Logger.getLogger(LogVehiculosController.class.getName());
     
     @Autowired
-    @Qualifier("daoLog")   //utilizo todos los metodos de invinterfacedao
+    @Qualifier("daoLog")
     private LogInterfaceDao logDao;
     
     public LogInterfaceDao getLogDao() {
@@ -52,7 +52,7 @@ public class LogVehiculosController {
     }
     
     @Autowired
-    @Qualifier("daoHome")   //permite controlar usuarios que entren
+    @Qualifier("daoHome")
     private HomeInterfaceDao HomeDao;
     
     public HomeInterfaceDao getHomeDao() {
@@ -67,8 +67,14 @@ public class LogVehiculosController {
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
         
         infoConstruccionTabla.put("id", "Acciones:90");
+        infoConstruccionTabla.put("folio", "Folio:80");
         infoConstruccionTabla.put("marca", "Marca:130");
-        infoConstruccionTabla.put("numero_economico", "No. Económico:130");
+        infoConstruccionTabla.put("anio", "A&ntilde;o:50");
+        infoConstruccionTabla.put("clase", "Clase:70");
+        infoConstruccionTabla.put("cap_volumen", "Cap. m&#179;:70");
+        infoConstruccionTabla.put("cap_peso", "Cap. Ton.:70");
+        infoConstruccionTabla.put("tipo_caja", "Tipo Caja:150");
+        infoConstruccionTabla.put("transportista", "Transportista:230");
         
         ModelAndView x = new ModelAndView("logvehiculos/startup", "title", "Cat&aacute;logo de Unidades");
         
@@ -88,7 +94,7 @@ public class LogVehiculosController {
         String codificado = Base64Coder.encodeString(userId);
        
         //decodificar id de usuario
-        String decodificado = Base64Coder.decodeString(codificado);
+        //String decodificado = Base64Coder.decodeString(codificado);
         
         //id de usuario codificado
         x = x.addObject("iu", codificado);
@@ -333,17 +339,32 @@ public class LogVehiculosController {
         jsonretorno.put("Vehiculo", datosVehiculo);
         return jsonretorno;
     }
-
     
-    //crear y editar una marca
+    
+    //Crear y editar
     @RequestMapping(method = RequestMethod.POST, value="/edit.json")
     public @ResponseBody HashMap<String, String> editJson(
             @RequestParam(value="identificador", required=true) Integer id,
-            @RequestParam(value="marca", required=true) String marca,
-            @RequestParam(value="numero_economico", required=true) String numero_economico,
+            @RequestParam(value="select_tipo_unidad", required=true) String select_tipo_unidad,
+            @RequestParam(value="select_clase", required=true) String select_clase,
+            @RequestParam(value="select_marca", required=true) String select_marca,
+            @RequestParam(value="select_anio", required=true) String select_anio,
+            @RequestParam(value="color", required=true) String color,
+            @RequestParam(value="no_economico", required=true) String no_economico,
+            @RequestParam(value="select_tipo_placa", required=true) String select_tipo_placa,
+            @RequestParam(value="placas", required=true) String placas,
+            @RequestParam(value="no_serie", required=true) String no_serie,
+            @RequestParam(value="select_tipo_rodada", required=true) String select_tipo_rodada,
+            @RequestParam(value="select_tipo_caja", required=true) String select_tipo_caja,
+            @RequestParam(value="cap_volumen", required=true) String cap_volumen,
+            @RequestParam(value="cap_peso", required=true) String cap_peso,
+            @RequestParam(value="select_clasif2", required=true) String select_clasif2,
+            @RequestParam(value="id_prov", required=false) String id_prov,
+            @RequestParam(value="id_operador", required=false) String id_operador,
+            @RequestParam(value="comentarios", required=false) String comentarios,
             @ModelAttribute("user") UserSessionData user,
             Model model
-            ) {
+        ) {
         
         HashMap<String, String> jsonretorno = new HashMap<String, String>();
         HashMap<String, String> succes = new HashMap<String, String>();
@@ -361,11 +382,32 @@ public class LogVehiculosController {
             command_selected = "edit";
         }
         
-        
-        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id+"___"+marca.toUpperCase()+"___"+numero_economico;
+        String data_string = 
+                app_selected
+                +"___"+command_selected
+                +"___"+id_usuario
+                +"___"+id
+                +"___"+select_tipo_unidad
+                +"___"+select_clase
+                +"___"+select_marca
+                +"___"+select_anio
+                +"___"+color.toUpperCase()
+                +"___"+no_economico.toUpperCase()
+                +"___"+select_tipo_placa
+                +"___"+placas.toUpperCase()
+                +"___"+no_serie.toUpperCase()
+                +"___"+select_tipo_rodada
+                +"___"+select_tipo_caja
+                +"___"+cap_volumen
+                +"___"+cap_peso
+                +"___"+select_clasif2
+                +"___"+id_prov
+                +"___"+id_operador
+                +"___"+comentarios.toUpperCase();
         
         succes = this.getLogDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
         //System.out.println("ESTO TRAE SUCEESSSS"+succes);
+        
         log.log(Level.INFO, "despues de validacion {0}", String.valueOf(succes.get("success")));
         if( String.valueOf(succes.get("success")).equals("true") ){
             actualizo = this.getLogDao().selectFunctionForThisApp(data_string, extra_data_array);

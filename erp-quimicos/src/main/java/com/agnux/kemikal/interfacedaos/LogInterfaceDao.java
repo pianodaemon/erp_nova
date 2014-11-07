@@ -55,6 +55,16 @@ public interface LogInterfaceDao {
     public ArrayList<HashMap<String, String>> getOperadores_Datos(Integer id);
     public ArrayList<HashMap<String, Object>> getOperadores_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
     
+    //Carga de Documentos
+    public ArrayList<HashMap<String, Object>> getBuscadorClientes(String cadena, Integer filtro, Integer id_empresa, Integer id_sucursal);
+    public ArrayList<HashMap<String, Object>> getDatosClienteByNoCliente(String no_control, Integer id_empresa, Integer id_sucursal);
+    public ArrayList<HashMap<String, String>> getAlmacenesSucursal(Integer id_empresa, Integer id_sucursal);
+    public int getDeleteFromLogCargaDocTmp(Integer id_emp, Integer suc);
+    public HashMap<String, String> getInsertLogCargaDocTmp(String data_string);
+    public String getUpdateDocInvExi(Integer usuario_id, Integer empresa_id, Integer sucursal_id, Integer id_cliente);
+    public int getVerificarDocumento(Integer id_emp, Integer id_clie, String no_carga);
+    
+    
     
     public Integer getUserRolAdmin(Integer id_user);
     public ArrayList<HashMap<String, Object>> getBuscadorUnidades(String no_unidad, String marca, Integer id_empresa, Integer id_sucursal);
@@ -66,4 +76,7 @@ public interface LogInterfaceDao {
     public ArrayList<HashMap<String, Object>> getLogAdmViaje_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
     public ArrayList<HashMap<String, Object>> getLoAdmViaje_Datos(Integer id);
     public ArrayList<HashMap<String, Object>> getLoAdmViaje_DatosGrid(Integer id);
+    public HashMap<String, String> getLoAdmViaje_DatosPdf(Integer id);
+    public ArrayList<HashMap<String, String>> getLoAdmViaje_ListaPdf(Integer id_);
+    
 }
