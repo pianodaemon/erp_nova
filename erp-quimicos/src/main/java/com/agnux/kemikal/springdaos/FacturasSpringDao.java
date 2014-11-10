@@ -4889,7 +4889,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
         
 	String sql_to_query = ""
-        + "SELECT DISTINCT fac_par.id,fac_par.gral_suc_id AS suc_id, gral_suc.titulo AS sucursal FROM fac_par  "
+        + "SELECT DISTINCT fac_par.id,fac_par.gral_suc_id AS suc_id, (case when gral_suc.clave is null then '' else gral_suc.clave end) as clave, gral_suc.titulo AS sucursal FROM fac_par  "
         + "JOIN gral_suc ON gral_suc.id=fac_par.gral_suc_id "
         + "JOIN ("+sql_busqueda+") as subt on subt.id=fac_par.id "
         + "order by "+orderBy+" "+asc+" limit ? OFFSET ?";
@@ -4899,12 +4899,13 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query, 
-            new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+            new Object[]{data_string,new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, Object> row = new HashMap<String, Object>();
                     row.put("id",rs.getInt("id"));
                     row.put("suc_id",rs.getInt("suc_id"));
+                    row.put("clave",rs.getString("clave"));
                     row.put("sucursal",rs.getString("sucursal"));
                     return row;
                 }
@@ -4912,6 +4913,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         );
         return hm;
     }
+    
     
     @Override
     public ArrayList<HashMap<String, Object>> getFacPar_Datos(Integer id) {

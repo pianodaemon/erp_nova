@@ -1735,4 +1735,95 @@ public class CtbSpringDao implements CtbInterfaceDao{
         return velor_retorno;
     }
     
+    
+    
+    //METODOS PARA CONFIGURACION DE PARAMETROS DE CONTABILIDAD
+    @Override
+    public ArrayList<HashMap<String, Object>> getCtbPar_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
+        
+        String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
+        
+	String sql_to_query = ""
+        + "SELECT DISTINCT "
+            + "ctb_par.id,"
+            + "(case when gral_suc.clave is null then '' else gral_suc.clave end) as clave, "
+            + "ctb_par.gral_suc_id AS suc_id, "
+            + "gral_suc.titulo AS sucursal "
+        + "FROM ctb_par  "
+        + "JOIN gral_suc ON gral_suc.id=ctb_par.gral_suc_id "
+        + "JOIN ("+sql_busqueda+") as subt on subt.id=ctb_par.id "
+        + "order by "+orderBy+" "+asc+" limit ? OFFSET ?";
+        
+        //System.out.println("Busqueda GetPage: "+sql_to_query);
+        //System.out.println("cliente: "+cliente+ "fecha_inicial:"+fecha_inicial+" fecha_final: "+fecha_final+ " offset:"+offset+ " pageSize: "+pageSize+" orderBy:"+orderBy+" asc:"+asc);
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query, 
+            new Object[]{data_string,new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("suc_id",rs.getInt("suc_id"));
+                    row.put("clave",rs.getString("clave"));
+                    row.put("sucursal",rs.getString("sucursal"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    @Override
+    public ArrayList<HashMap<String, Object>> getCtbPar_Datos(Integer id) {
+        String sql_to_query="SELECT fac_par.id, gral_suc.id AS id_suc, gral_suc.titulo AS sucursal, fac_par.inv_alm_id AS alm_id_venta, (CASE WHEN fac_par.gral_emails_id_envio IS NULL THEN 0 ELSE fac_par.gral_emails_id_envio END) AS id_correo_envio, (CASE WHEN fac_par.gral_emails_id_cco IS NULL THEN 0 ELSE fac_par.gral_emails_id_cco END) AS id_correo_cco, (CASE WHEN fac_par.validar_pres_pedido IS NULL THEN false ELSE fac_par.validar_pres_pedido END) AS valida_exi, (CASE WHEN fac_par.formato_pedido IS NULL THEN 0 ELSE fac_par.formato_pedido END) AS formato_pedido, (CASE WHEN emaile.email IS NULL THEN '' ELSE emaile.email END) AS email_envio, (CASE WHEN emaile.passwd IS NULL THEN '' ELSE emaile.passwd END) AS passwd_envio, (CASE WHEN emaile.port IS NULL THEN '' ELSE emaile.port END) AS port_envio, (CASE WHEN emaile.host IS NULL THEN '' ELSE emaile.host END) AS host_envio, (CASE WHEN emailcco.email IS NULL THEN '' ELSE emailcco.email END) AS email_cco FROM fac_par JOIN gral_suc ON gral_suc.id=fac_par.gral_suc_id LEFT JOIN gral_emails AS emaile ON (emaile.id=fac_par.gral_emails_id_envio AND emaile.gral_emp_id=fac_par.gral_emp_id AND emaile.gral_suc_id=fac_par.gral_suc_id AND emaile.borrado_logico=false) LEFT JOIN gral_emails AS emailcco ON (emailcco.id=fac_par.gral_emails_id_cco AND emailcco.gral_emp_id=fac_par.gral_emp_id AND emailcco.gral_suc_id=fac_par.gral_suc_id AND emailcco.borrado_logico=false) WHERE fac_par.id=?;";
+        ArrayList<HashMap<String,Object>>hm=(ArrayList<HashMap<String,Object>>)this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(id)},new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs,int rowNum)throws SQLException{
+                 HashMap<String,Object>row=new HashMap<String,Object>();
+                 row.put("id",rs.getString("id"));
+                 row.put("id_suc",rs.getString("id_suc"));
+                 row.put("sucursal",rs.getString("sucursal"));
+                 row.put("correo_e_id",rs.getString("id_correo_envio"));
+                 row.put("correo_cco_id",rs.getString("id_correo_cco"));
+                 row.put("alm_id_venta",rs.getString("alm_id_venta"));
+                 row.put("valida_exi",String.valueOf(rs.getBoolean("valida_exi")));
+                 row.put("formato_pedido",rs.getString("formato_pedido"));
+                 row.put("email_envio",rs.getString("email_envio"));
+                 row.put("passwd_envio",rs.getString("passwd_envio"));
+                 row.put("port_envio",rs.getString("port_envio"));
+                 row.put("host_envio",rs.getString("host_envio"));
+                 row.put("email_cco",rs.getString("email_cco"));
+                 return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    //obtiene los almacenes de la empresa indicada
+    @Override
+    public ArrayList<HashMap<String, Object>> getCtbPar_Almacenes(Integer id_emp, Integer id_suc) {
+	String sql_query = "SELECT DISTINCT inv_alm.id, inv_alm.titulo FROM inv_alm JOIN inv_suc_alm ON (inv_suc_alm.almacen_id = inv_alm.id AND inv_alm.borrado_logico=FALSE) JOIN gral_suc ON gral_suc.id=inv_suc_alm.sucursal_id WHERE gral_suc.empresa_id=? AND gral_suc.id=?;";
+        ArrayList<HashMap<String, Object>> hm_alm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{new Integer(id_emp), new Integer(id_suc)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getString("id"));
+                    row.put("titulo",rs.getString("titulo"));
+                    return row;
+                }
+            }
+        );
+        return hm_alm;
+    }
+    
+    
+    
 }

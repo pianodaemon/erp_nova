@@ -106,4 +106,9 @@ public interface CtbInterfaceDao {
     public ArrayList<HashMap<String, Object>> getDatosCuentaContable(Integer detalle, String cta, String scta, String sscta, String ssscta, String sssscta, Integer id_empresa, Integer id_sucursal);
     
     
+    //Metodos para Configuracion de Parametros de Contabilidad
+    public ArrayList<HashMap<String, Object>> getCtbPar_PaginaGrid(String data_string,int offset, int pageSize, String orderBy , String asc);
+    public ArrayList<HashMap<String, Object>> getCtbPar_Datos(Integer id_factura);
+    public ArrayList<HashMap<String, Object>> getCtbPar_Almacenes(Integer id_emp, Integer id_suc);
+    
 }
