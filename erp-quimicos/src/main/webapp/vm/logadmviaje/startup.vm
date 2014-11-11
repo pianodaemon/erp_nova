@@ -8,11 +8,13 @@
         <!--  css for this catalogo -->
         <link rel="stylesheet" href="../../css/modalbox/logadmviaje/formaLogAdmViaje.css" type="text/css" />
         <link rel="stylesheet" href="../../css/modalbox/logadmviaje/formaBuscaUnidad.css" type="text/css" />
+        <link rel="stylesheet" href="../../css/modalbox/logadmviaje/formaBuscaproducto.css" type="text/css" />
         
         <!--  js for this catalogo -->
         <script type="text/javascript" src="../../js/components/jquery-form/jquery-form.js"></script>
         <script type="text/javascript" src="../../js/components/modalbox/logadmviaje/modalboxLogAdmViaje.js"></script>
         <script type="text/javascript" src="../../js/components/modalbox/logadmviaje/modalboxBuscaUnidad.js"></script>
+        <script type="text/javascript" src="../../js/components/modalbox/logadmviaje/modalboxBuscaproducto.js"></script>
         <script type="text/javascript" src="../../js/implements/logadmviaje/index.js" ></script>
         <script type="text/javascript" src="../../js/components/formatearnumeros/agrega_comas.js"></script>
         #include("${layoutmenu}")
@@ -143,6 +145,7 @@
                             <div class=" fixed column">
                                 <ul class="pestanas">
                                     <li><a href="#tabx-1"><strong>Viaje</strong></a></li>
+                                    <li><a href="#tabx-2"><strong>Serv. Adic.</strong></a></li>
                                 </ul>
                             </div>
                         </div>
@@ -385,7 +388,96 @@
 											</tr>
 
                                         </table>
-                                    </div>
+                                    </div><!--Termina tabx-1-->
+                                    
+                                    <div id="tabx-2" class="contenidoPes" >
+										
+										
+										<table border="0" style="margin:0px; padding:0px;">
+											
+											<tr>
+												<td width="620"></td>
+												<td width="10"></td>
+												<td width="515"></td>
+											</tr>
+											
+											<tr>
+												<td width="620" class="header_grid" style="border-top:1px solid #C1DAD7; border-bottom:1px solid #C1DAD7; border-left:1px solid #FFFFFF; border-right: 1px solid #FFFFFF; background-color:#D4D3D3;">&nbsp;&nbsp;&nbsp;Buscar y agregar servicios adicionales</td>
+												<td width="10"></td>
+												<td width="515"></td>
+											</tr>
+											<tr>
+												<td width="620">
+													<table border="0" class="gral">
+														<tr><td colspan="11" height="10"></td></tr>
+														<tr>
+															<td width="10"></td>
+															<td width="83">C&oacute;digo&nbsp;servicio</td>
+															<td width="100"><INPUT TYPE="text" name="sku_producto" style="width:100px;"></td>
+															<td width="65"><a  href="agregar_producto">&nbsp;(Agregar)</a></td>
+															<td width="60">Descripci&oacute;n</td>
+															<td width="220"><INPUT TYPE="text" name="nombre_producto" style="width:220px;"></td>
+															<td width="60"><a  href="busca_sku">&nbsp;(Buscar)</a></td>
+														</tr>
+													</table>
+												</td>
+												<td width="10"></td>
+												<td width="515"></td>
+											</tr>
+											
+											
+											<tr>
+												<td width="620">
+													
+													<table>
+														<thead>
+															<tr>
+																<td colspan="5" height="2"></td>
+															</tr>
+															<tr>
+																<td class="grid" style="background-color:rgb(180, 180, 180); border-botton:0px none;" align="center" width="30">#</td>
+																<td class="grid" style="background-color:rgb(180, 180, 180);" align="center" width="100">C&oacute;digo</td>
+																<td class="grid" style="background-color:rgb(180, 180, 180);" align="center" width="250">Descripci&oacute;n</td>
+																<td class="grid" style="background-color:rgb(180, 180, 180);" align="center" width="80">Unidad</td>
+																<td class="grid" style="background-color:rgb(180, 180, 180);" align="center" width="90">Precio</td>
+															</tr>
+														</thead>
+														<tbody>
+															<tr>
+																<td colspan="5" height="2"></td>
+															</tr>
+															<tr>
+																<td colspan="5">
+																	<div style="overflow:scroll; overflow-x:hidden; overflow-y:auto; width:100%; height:200px; border:1px solid #C1DAD7 !important;">	
+																		 <table>
+																			  <tbody style="background-color:#ffffff;" valign="top" id="grid_adicionales">
+																				   
+																			  </tbody>
+																		 </table>
+																	</div>
+																</td>
+															</tr>
+														</tbody>
+														<tfoot>
+															<tr>
+																<td class="grid4" width="30"></td>
+																<td class="grid4" width="100"></td>
+																<td class="grid4" width="250"></td>
+																<td class="grid4" width="80"></td>
+																<td class="grid4" width="90"></td>
+															</tr>
+														</tfoot>
+													</table>
+												</td>
+												<td width="10"></td>
+												<td width="515"></td>
+												
+											</tr>
+											
+                                        </table>
+										
+										
+									</div><!--tabx-2-->
 									
                                 </div>
                             </div>
@@ -509,7 +601,130 @@
 				</tr>
 			</table>
 		</div>
+		<!--Termina buscador de Unidades-->
 		
+		
+		<!--Inicia buscador de Servicios Adicionales-->
+		<div class="buscador_productos" style="display:none;">	
+			<table width="100%" border="0" class="formaBusqueda_productos">
+				<tr>
+					<td>
+						<div class="div_dos_productos">
+							<table width="100%" border="0">
+								<thead>
+									<tr>
+										<td colspan="8" height="50" valign="top"><div class="titulo_productos" width="100%"><strong>Buscador de productos</strong></div></td>
+									</tr>
+								</thead>
+								
+								<tbody>
+									<tr>
+										<td width="10"></td>
+										<td width="10" style="background:#ffffff;"></td>
+										<td colspan="4" style="background:#ffffff;" width="600">
+											
+											<table id="tabla_busqueda" border="0"  class="contenidobusqueda">
+												<tr>
+													<td colspan="7" width="600" height="10"></td>
+												</tr>
+												<tr>
+													<td width="70">C&oacute;digo&nbsp;</td>
+													<td width="120"><INPUT TYPE="text" name="campo_sku" style="width:120px;"></td>
+													<td width="25"></td>
+													<td width="90">Tipo&nbsp;de&nbsp;Producto</td>
+													<td width="200">
+														<SELECT NAME="tipo_producto" style="width:180px;">
+															<OPTION value="0" selected="yes">[--Seleccionar Tipo--]</OPTION>
+														</SELECT>
+													</td>
+													<td width="25"></td>
+													<td width="90"></td>
+												</tr>
+												<tr>
+													<td colspan="7" width="600" height="10"></td>
+												</tr>
+												<tr>
+													<td width="70">Descripci&oacute;n</td>
+													<td width="400" colspan="4"><INPUT TYPE="text" name="campo_descripcion" style="width:415px;"></td>
+													<td width="25"></td>
+													<td width="90" align="right">
+														<INPUT TYPE="button" id="busca_producto_modalbox" class="onmouseOutBuscar">
+													</td>
+												</tr>
+											</table>
+											
+										</td>
+										<td width="10" style="background:#ffffff"></td>
+										<td width="10"></td>
+									</tr>
+									
+									<tr style="font-size:13px;">
+										<td width="10"></td>
+										<td width="10" style="background:#ffffff"></td>
+										
+										<td width="120" style="background:#A8A9AB;">C&oacute;digo&nbsp;</td>
+										<td width="280" style="background:#A8A9AB;">Nombre</td>
+										<td width="90" style="background:#A8A9AB;">Unidad</td>
+										<td width="110" style="background:#A8A9AB;">Tipo</td>
+										
+										<td width="10" style="background:#ffffff"></td>
+										<td width="10"></td>
+									</tr>
+									
+									<tr>
+										<td width="10"></td>
+										<td width="10" style="background:#ffffff"></td>
+										<td style="background:#ffffff; border: solid 1px #454442;" colspan="4" width="600">
+											<div style="overflow:scroll; overflow-x:auto; overflow-y:auto; width:600px; height:120px; align=top;">
+												<table  border="0" id="tabla_resultado" width="580">
+													<!--aqui van los resultados de la busqueda-->
+													<!--
+														<tr>
+															<td width="70">Lote</td>
+															<td width="140">Sku</td>
+															<td width="300">Nombre</td>
+															<td width="70">Disponible</td>
+														</tr>
+													-->
+												</table>
+											</div>
+										</td>
+										<td width="10" style="background:#ffffff"></td>
+										<td width="10"></td>
+									</tr>
+									<tr>
+										<td width="10"></td>
+										<td width="10" colspan="6" height="4" style="background:#ffffff"></td>
+										<td width="10"></td>
+									</tr>
+									<tr>
+										<td width="10"></td>
+										<td width="10" style="background:#ffffff"></td>
+										
+										<td width="120"  style="background:#ffffff"></td>
+										<td width="280" style="background:#ffffff"></td>
+										<td width="90" style="background:#ffffff"></td>
+										<td width="110" style="background:#ffffff" align="right">
+											<INPUT TYPE="button" id="cencela" class="onmouseOutCancelar">
+										</td>
+										
+										<td width="10" style="background:#ffffff"></td>
+										<td width="10"></td>
+									</tr>
+									<tr>
+										<td width="10"></td>
+										<td width="10" colspan="6" height="6" style="background:#ffffff"></td>
+										<td width="10"></td>
+									</tr>
+								</tbody>
+								
+							</table>
+						</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<!--Termina buscador de Servicios Adicionales-->
         
     </body>
 </html>	
