@@ -733,7 +733,7 @@ $(function() {
 		
 		//ocultar boton de facturar y descargar pdf. Solo debe estar activo en editar
 		//$descargarpdf.attr('disabled','-1');
-		$identificador.val(0);//para nueva pedido el id es 0
+		$identificador.val(0);
 		
 		//$folio.css({'background' : '#F0F0F0'});
 		
