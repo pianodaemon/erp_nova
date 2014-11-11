@@ -78,5 +78,16 @@ public interface LogInterfaceDao {
     public ArrayList<HashMap<String, Object>> getLoAdmViaje_DatosGrid(Integer id);
     public HashMap<String, String> getLoAdmViaje_DatosPdf(Integer id);
     public ArrayList<HashMap<String, String>> getLoAdmViaje_ListaPdf(Integer id_);
+    public ArrayList<HashMap<String, Object>> getBuscadorServiciosAdicionales(String sku, String descripcion, Integer id_empresa);
+    public ArrayList<HashMap<String, Object>> getDataServicioAdicional(String codigo, Integer id_empresa);
+ 
+    
+    //Catalogo de servicios adicionales
+    public ArrayList<HashMap<String, Object>> getServAdic_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
+    public ArrayList<HashMap<String, Object>> getServAdic_Datos(Integer id);
+    public ArrayList<HashMap<String, Object>> getBuscadorProductos(String sku, String tipo, String descripcion, Integer id_empresa);
+    public ArrayList<HashMap<String, Object>> getDataProductBySku(String codigo, String tipo, Integer id_empresa);
+    public ArrayList<HashMap<String, Object>> getProducto_Tipos();
+    
     
 }

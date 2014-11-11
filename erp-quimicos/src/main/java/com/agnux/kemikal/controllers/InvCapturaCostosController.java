@@ -213,7 +213,7 @@ public class InvCapturaCostosController {
         ArrayList<HashMap<String, String>> arrayTiposProducto = new ArrayList<HashMap<String, String>>();
         
         //decodificar id de usuario
-        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
+        //Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
         arrayTiposProducto=this.getInvDao().getProducto_Tipos();
         
         jsonretorno.put("prodTipos", arrayTiposProducto);
@@ -283,7 +283,8 @@ public class InvCapturaCostosController {
             @RequestParam(value = "tipo", required = true) String tipo,
             @RequestParam(value = "descripcion", required = true) String descripcion,
             @RequestParam(value = "iu", required = true) String id_user,
-            Model model) {
+            Model model
+        ) {
         
         log.log(Level.INFO, "Ejecutando getBuscadorProductosJson de {0}", InvCapturaCostosController.class.getName());
         HashMap<String, ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String, ArrayList<HashMap<String, String>>>();

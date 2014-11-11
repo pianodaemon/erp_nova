@@ -115,7 +115,7 @@ public class LogSpringDao implements LogInterfaceDao{
         //System.out.println("IMPRIMIENDO EL GRID DE RUTAS checar??: "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query, 
-            new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+            new Object[]{data_string, new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, Object> row = new HashMap<String, Object>();
@@ -2115,6 +2115,302 @@ public class LogSpringDao implements LogInterfaceDao{
 
         return hm;
     }
+    
+    
+    
+    
+    
+    //Catalogo de Servicios Adicionales
+    @Override
+    public ArrayList<HashMap<String, Object>> getServAdic_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
+        String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
+        
+	String sql_to_query = ""
+        + "select log_serv_adic.id, "
+                + "inv_prod.sku, "
+                + "(case when inv_prod_unidades.titulo is null then '' else inv_prod_unidades.titulo end) as unidad, "
+                + "inv_prod.descripcion, "
+                + "inv_prod_tipos.titulo as tipo "
+        + "FROM log_serv_adic "
+        + "join inv_prod on inv_prod.id=log_serv_adic.inv_prod_id "
+        + "left join inv_prod_tipos on inv_prod_tipos.id= inv_prod.tipo_de_producto_id "
+        + "left join inv_prod_unidades on inv_prod_unidades.id=inv_prod.unidad_id "
+        +"join ("+sql_busqueda+") as subt on subt.id=log_serv_adic.id "
+        +"order by "+orderBy+" "+asc+" limit ? offset ?";
+
+        //System.out.println("Busqueda GetPage: "+sql_to_query);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{data_string, new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("sku",rs.getString("sku"));
+                    row.put("unidad",rs.getString("unidad"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("tipo",rs.getString("tipo"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    
+    
+    @Override
+    public ArrayList<HashMap<String, Object>> getServAdic_Datos(Integer id) {
+        String sql_to_query = ""
+        + "select "
+            + "log_serv_adic.id as id_reg,"
+            + "inv_prod.id as id_prod,"
+            + "inv_prod.sku as codigo, "
+            + "inv_prod.descripcion, "
+            + "(case when inv_prod_unidades.titulo is null then '' else inv_prod_unidades.titulo end) as unidad "
+        + "from log_serv_adic "
+        + "join inv_prod on (inv_prod.id=log_serv_adic.inv_prod_id and inv_prod.borrado_logico=false) "
+        + "left join inv_prod_unidades on inv_prod_unidades.id=inv_prod.unidad_id "
+        + "where log_serv_adic.id=?";
+        
+        //System.out.println("grid de productos equivalentes"+sql_to_query);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(id)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id_reg",rs.getInt("id_reg"));
+                    row.put("id_prod",rs.getInt("id_prod"));
+                    row.put("codigo",rs.getString("codigo"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("unidad",rs.getString("unidad"));
+
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    
+    @Override
+    public ArrayList<HashMap<String, Object>> getBuscadorProductos(String sku, String tipo, String descripcion, Integer id_empresa) {
+        String where = "";
+	if(!sku.equals("")){
+            where=" and inv_prod.sku ilike '%"+sku+"%'";
+	}
+        
+	if(!tipo.equals("0")){
+            where +=" and inv_prod.tipo_de_producto_id="+tipo;
+	}
+        
+	if(!descripcion.equals("")){
+            where +=" and inv_prod.descripcion ilike '%"+descripcion+"%'";
+	}
+        
+        String sql_to_query = ""
+        + "select "
+            +"inv_prod.id,"
+            +"inv_prod.sku,"
+            +"inv_prod.descripcion, "
+            + "inv_prod.unidad_id, "
+            + "inv_prod_unidades.titulo AS unidad, "
+            +"inv_prod_tipos.titulo AS tipo,"
+            + "inv_prod_unidades.decimales "
+        +"from inv_prod "
+        + "left join inv_prod_tipos on inv_prod_tipos.id=inv_prod.tipo_de_producto_id "
+        + "left join inv_prod_unidades on inv_prod_unidades.id=inv_prod.unidad_id "
+        + "where inv_prod.empresa_id=? and inv_prod.borrado_logico=false "+where+" order by inv_prod.descripcion;";
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        
+        //System.out.println("sql_to_query: "+sql_to_query);
+
+        ArrayList<HashMap<String, Object>> hm_datos_productos = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(id_empresa)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("sku",rs.getString("sku"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("unidad_id",rs.getInt("unidad_id"));
+                    row.put("unidad",rs.getString("unidad"));
+                    row.put("tipo",rs.getString("tipo"));
+                    row.put("decimales",rs.getInt("decimales"));
+                    return row;
+                }
+            }
+        );
+        return hm_datos_productos;
+    }
+    
+    
+
+    //Busca datos de un producto en especifico a partir del codigo
+    @Override
+    public ArrayList<HashMap<String, Object>> getDataProductBySku(String codigo, String tipo, Integer id_empresa) {
+        String where = "";
+        
+	if(!tipo.equals("0")){
+            where +=" and inv_prod.tipo_de_producto_id="+tipo;
+	}
+        
+        String sql_to_query = ""
+        + "select "
+            +"inv_prod.id,"
+            +"inv_prod.sku,"
+            +"inv_prod.descripcion, "
+            + "inv_prod.unidad_id, "
+            + "inv_prod_unidades.titulo AS unidad, "
+            +"inv_prod_tipos.titulo AS tipo,"
+            + "inv_prod_unidades.decimales "
+        +"from inv_prod "
+        + "left join inv_prod_tipos on inv_prod_tipos.id=inv_prod.tipo_de_producto_id "
+        + "left join inv_prod_unidades on inv_prod_unidades.id=inv_prod.unidad_id "
+        + "where inv_prod.empresa_id=? and inv_prod.borrado_logico=false and inv_prod.sku=?  "+where+" limit 1;";
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(id_empresa), codigo.toUpperCase()}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("sku",rs.getString("sku"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("unidad_id",String.valueOf(rs.getInt("unidad_id")));
+                    row.put("unidad",rs.getString("unidad"));
+                    row.put("tipo",rs.getString("tipo"));
+                    row.put("decimales",String.valueOf(rs.getInt("decimales")));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+
+    
+    
+    //Obtiene tipos de productos
+    @Override
+    public ArrayList<HashMap<String, Object>> getProducto_Tipos() {
+	String sql_query = "SELECT DISTINCT id,titulo FROM inv_prod_tipos WHERE borrado_logico=false order by titulo ASC;";
+        ArrayList<HashMap<String, Object>> hm_tp = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getString("id"));
+                    row.put("titulo",rs.getString("titulo"));
+                    return row;
+                }
+            }
+        );
+        
+        return hm_tp;
+    }
+    
+    
+    
+    //Buscador de Servicios Adicionales
+    @Override
+    public ArrayList<HashMap<String, Object>> getBuscadorServiciosAdicionales(String sku, String descripcion, Integer id_empresa) {
+        String where = "";
+	if(!sku.equals("")){
+            where=" and inv_prod.sku ilike '%"+sku+"%'";
+	}
+        
+	if(!descripcion.equals("")){
+            where +=" and inv_prod.descripcion ilike '%"+descripcion+"%'";
+	}
+        
+        String sql_to_query = ""
+        + "select "
+            +"inv_prod.id,"
+            +"inv_prod.sku,"
+            +"inv_prod.descripcion, "
+            + "inv_prod.unidad_id, "
+            + "inv_prod_unidades.titulo AS unidad, "
+            +"inv_prod_tipos.titulo AS tipo,"
+            + "inv_prod_unidades.decimales "
+        +"from log_serv_adic "
+        + "join inv_prod on inv_prod.id=log_serv_adic.inv_prod_id "
+        + "left join inv_prod_tipos on inv_prod_tipos.id=inv_prod.tipo_de_producto_id "
+        + "left join inv_prod_unidades on inv_prod_unidades.id=inv_prod.unidad_id "
+        + "where inv_prod.empresa_id=? and inv_prod.borrado_logico=false "+where+" order by inv_prod.descripcion;";
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        
+        //System.out.println("sql_to_query: "+sql_to_query);
+
+        ArrayList<HashMap<String, Object>> hm_datos_productos = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(id_empresa)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("sku",rs.getString("sku"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("unidad_id",rs.getInt("unidad_id"));
+                    row.put("unidad",rs.getString("unidad"));
+                    row.put("tipo",rs.getString("tipo"));
+                    row.put("decimales",rs.getInt("decimales"));
+                    return row;
+                }
+            }
+        );
+        return hm_datos_productos;
+    }
+    
+    
+    
+    //Busca datos de un Servicio adicional en especifico a partir del codigo
+    @Override
+    public ArrayList<HashMap<String, Object>> getDataServicioAdicional(String codigo, Integer id_empresa) {
+        String where = "";
+        
+        String sql_to_query = ""
+        + "SELECT "
+            + "inv_prod.id,"
+            + "inv_prod.sku,"
+            + "inv_prod.descripcion, "
+            + "inv_prod.unidad_id, "
+            + "inv_prod_unidades.titulo AS unidad, "
+            + "inv_prod_tipos.titulo AS tipo,"
+            + "inv_prod_unidades.decimales "
+        +"FROM log_serv_adic "
+        + "join inv_prod on inv_prod.id=log_serv_adic.inv_prod_id "
+        + "left join inv_prod_tipos ON inv_prod_tipos.id=inv_prod.tipo_de_producto_id "
+        + "left join inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id "
+        + "where inv_prod.empresa_id=? and inv_prod.borrado_logico=false and inv_prod.sku=?  "+where+" limit 1;";
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(id_empresa), codigo.toUpperCase()}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("sku",rs.getString("sku"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("unidad_id",String.valueOf(rs.getInt("unidad_id")));
+                    row.put("unidad",rs.getString("unidad"));
+                    row.put("tipo",rs.getString("tipo"));
+                    row.put("decimales",String.valueOf(rs.getInt("decimales")));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+
     
     
     

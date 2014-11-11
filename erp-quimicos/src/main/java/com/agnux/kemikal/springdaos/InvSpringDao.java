@@ -565,7 +565,7 @@ public class InvSpringDao implements InvInterfaceDao{
         //System.out.println("Busqueda GetPage: "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
-            new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+            new Object[]{data_string, new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, Object> row = new HashMap<String, Object>();
@@ -1939,7 +1939,7 @@ public class InvSpringDao implements InvInterfaceDao{
     }
 
 
-    //busca datos de un producto en especifico a partir del codigo
+    //Busca datos de un producto en especifico a partir del codigo
     @Override
     public ArrayList<HashMap<String, String>> getDataProductBySku(String codigo, Integer id_empresa) {
         String sql_to_query = ""

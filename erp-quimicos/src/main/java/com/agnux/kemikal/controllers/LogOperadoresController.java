@@ -5,7 +5,6 @@
 package com.agnux.kemikal.controllers;
 import com.agnux.cfd.v2.Base64Coder;
 import com.agnux.common.helpers.StringHelper;
-import com.agnux.common.helpers.TimeHelper;
 import com.agnux.common.obj.DataPost;
 import com.agnux.common.obj.ResourceProject;
 import com.agnux.common.obj.UserSessionData;
@@ -24,17 +23,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
  *
- * @Ezcur
+ * @Noe Martinez
+ * gpmarsan@gmail.com
+ * 
  */
 
 @Controller

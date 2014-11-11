@@ -12,13 +12,13 @@ package com.agnux.kemikal.springdaos;
 
 import com.agnux.common.helpers.StringHelper;
 import com.agnux.kemikal.interfacedaos.ComInterfaceDao;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 //public class ComSpringDao  implements ComInterfaceDao {
 public class ComSpringDao  implements ComInterfaceDao {
     private JdbcTemplate jdbcTemplate;
@@ -641,7 +641,7 @@ public class ComSpringDao  implements ComInterfaceDao {
         //System.out.println("getComOrdenCompra_PaginaGrid: "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query, 
-            new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+            new Object[]{data_string,new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, Object> row = new HashMap<String, Object>();
