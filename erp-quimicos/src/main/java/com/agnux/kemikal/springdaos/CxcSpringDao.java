@@ -4224,10 +4224,13 @@ return subfamilias;
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
         
 	String sql_to_query = ""
-                + "SELECT cxc_destinatarios.id,cxc_destinatarios.folio,cxc_destinatarios.rfc,cxc_destinatarios.razon_social AS destinatario,"
+                + "SELECT cxc_destinatarios.id,cxc_destinatarios.folio, cxc_destinatarios.folio_ext, cxc_destinatarios.rfc,cxc_destinatarios.razon_social AS destinatario,"
                     + "(CASE WHEN trim(cxc_destinatarios.tel1)='' OR cxc_destinatarios.tel1 IS NULL THEN tel2 ELSE cxc_destinatarios.tel1||''||(CASE WHEN cxc_destinatarios.tel2='' OR cxc_destinatarios.tel2 IS NULL THEN '' ELSE ','||cxc_destinatarios.tel2 END ) END ) AS tel,"
-                    + "(CASE WHEN cxc_destinatarios.tipo=1 THEN 'NACIONAL' WHEN cxc_destinatarios.tipo=2 THEN 'EXTRANJERO' ELSE '' END) AS tipo "
+                    + "(CASE WHEN cxc_destinatarios.tipo=1 THEN 'NACIONAL' WHEN cxc_destinatarios.tipo=2 THEN 'EXTRANJERO' ELSE '' END) AS tipo,"
+                    + "(case when cxc_clie.id is null then '' else cxc_clie.clave_comercial end) as cliente "
                 + "FROM cxc_destinatarios "
+                + "left join cxc_clie_dest on cxc_clie_dest.cxc_destinatario_id=cxc_destinatarios.id "
+                + "left join cxc_clie on cxc_clie.id=cxc_clie_dest.cxc_clie_id "
                 +"JOIN ("+sql_busqueda+") as subt on subt.id=cxc_destinatarios.id "
                 +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
 
@@ -4236,16 +4239,18 @@ return subfamilias;
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
-            new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+            new Object[]{data_string, new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, Object> row = new HashMap<String, Object>();
                     row.put("id",rs.getInt("id"));
                     row.put("folio",rs.getString("folio"));
+                    row.put("folio_ext",rs.getString("folio_ext"));
                     row.put("rfc",rs.getString("rfc"));
                     row.put("destinatario",rs.getString("destinatario"));
                     row.put("tel",rs.getString("tel"));
                     row.put("tipo",rs.getString("tipo"));
+                    row.put("cliente",rs.getString("cliente"));
                     return row;
                 }
             }
@@ -4257,9 +4262,14 @@ return subfamilias;
     @Override
     public ArrayList<HashMap<String, Object>> getClientsDest_Datos(Integer id) {
         String sql_query = ""
-        + "SELECT id,folio, folio_ext,rfc,razon_social AS destinatario,tipo,calle,no_int,no_ext,colonia,gral_mun_id,gral_edo_id,gral_pais_id,cp,(CASE WHEN tel1 IS NULL THEN '' ELSE tel1 END) AS tel1,(CASE WHEN tel2 IS NULL THEN '' ELSE tel2 END) AS tel2,ext,email, solicitar_firma, solicitar_sello, solicitar_efectivo "
-        + "FROM cxc_destinatarios "
-        + "WHERE id=?";
+        + "select cxc_destinatarios.id,cxc_destinatarios.folio, cxc_destinatarios.folio_ext,cxc_destinatarios.rfc,cxc_destinatarios.razon_social AS destinatario,cxc_destinatarios.tipo,cxc_destinatarios.calle, cxc_destinatarios.no_int, cxc_destinatarios.no_ext, cxc_destinatarios.colonia, cxc_destinatarios.gral_mun_id, cxc_destinatarios.gral_edo_id, cxc_destinatarios.gral_pais_id, cxc_destinatarios.cp,(CASE WHEN cxc_destinatarios.tel1 IS NULL THEN '' ELSE cxc_destinatarios.tel1 END) AS tel1,(CASE WHEN cxc_destinatarios.tel2 IS NULL THEN '' ELSE cxc_destinatarios.tel2 END) AS tel2, cxc_destinatarios.ext, cxc_destinatarios.email, cxc_destinatarios.solicitar_firma, cxc_destinatarios.solicitar_sello, cxc_destinatarios.solicitar_efectivo,"
+                + "(case when cxc_clie.id is null then 0 else cxc_clie.id end) as cliente_id,"
+                + "(case when cxc_clie.id is null then '' else cxc_clie.numero_control end) as no_control,"
+                + "(case when cxc_clie.id is null then '' else cxc_clie.razon_social end) as cliente "
+        + "from cxc_destinatarios "
+        + "left join cxc_clie_dest on cxc_clie_dest.cxc_destinatario_id=cxc_destinatarios.id "
+        + "left join cxc_clie on cxc_clie.id=cxc_clie_dest.cxc_clie_id "
+        + "where cxc_destinatarios.id=? order by cxc_destinatarios.id desc limit 1";
         
         //System.out.println("Ejecutando getDestinatario:"+ sql_query);
         //System.out.println("identificador: "+id);
@@ -4291,6 +4301,10 @@ return subfamilias;
                     row.put("sfirma",rs.getBoolean("solicitar_firma"));
                     row.put("ssello",rs.getBoolean("solicitar_sello"));
                     row.put("sefectivo",rs.getBoolean("solicitar_efectivo"));
+                    
+                    row.put("cliente_id",rs.getInt("cliente_id"));
+                    row.put("no_control",rs.getString("no_control"));
+                    row.put("cliente",rs.getString("cliente"));
                     return row;
                 }
             }

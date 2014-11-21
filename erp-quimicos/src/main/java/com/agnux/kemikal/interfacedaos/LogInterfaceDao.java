@@ -76,6 +76,7 @@ public interface LogInterfaceDao {
     public ArrayList<HashMap<String, Object>> getLogAdmViaje_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
     public ArrayList<HashMap<String, Object>> getLoAdmViaje_Datos(Integer id);
     public ArrayList<HashMap<String, Object>> getLoAdmViaje_DatosGrid(Integer id);
+    public ArrayList<HashMap<String, Object>> getLoAdmViaje_Adicionales(Integer id);
     public HashMap<String, String> getLoAdmViaje_DatosPdf(Integer id);
     public ArrayList<HashMap<String, String>> getLoAdmViaje_ListaPdf(Integer id_);
     public ArrayList<HashMap<String, Object>> getBuscadorServiciosAdicionales(String sku, String descripcion, Integer id_empresa);
@@ -89,5 +90,30 @@ public interface LogInterfaceDao {
     public ArrayList<HashMap<String, Object>> getDataProductBySku(String codigo, String tipo, Integer id_empresa);
     public ArrayList<HashMap<String, Object>> getProducto_Tipos();
     
+    //Metodos para el catalogo de Vehiculo Marca
+    public ArrayList<HashMap<String, String>> getVehiculoMarca_Datos(Integer id);
+    public ArrayList<HashMap<String, Object>> getVehiculoMarca_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
+
+    //Metodos para el catalogo de Vehiculo Tipo Rodada
+    public ArrayList<HashMap<String, String>> getVehiculoTipoRodada_Datos(Integer id);
+    public ArrayList<HashMap<String, Object>> getVehiculoTipoRodada_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
+
+    //Metodos para el catalogo de Vehiculo Tipo Caja
+    public ArrayList<HashMap<String, String>> getVehiculoTipoCaja_Datos(Integer id);
+    public ArrayList<HashMap<String, Object>> getVehiculoTipoCaja_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
+    
+    //Metodos para el catalogo de Vehiculo Tipo Unidades
+    public ArrayList<HashMap<String, String>> getVehiculoTipoUnidades_Datos(Integer id);
+    public ArrayList<HashMap<String, Object>> getVehiculoTipoUnidades_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
+    
+    //app = 188 Aplicativo Captura de Numero de Facturas(LOG)
+    public ArrayList<HashMap<String, Object>> getLogRegCarga_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
+    public ArrayList<HashMap<String, Object>> getLogRegCarga_Datos(Integer id);
+    public ArrayList<HashMap<String, Object>> getLogRegCarga_DatosGrid(Integer id);
+    public ArrayList<HashMap<String, Object>> tratar_datos_grid(ArrayList<HashMap<String, Object>> partidas);
+    
+    public ArrayList<HashMap<String, Object>> getLogPar(Integer id_emp, Integer id_suc);
+    public ArrayList<HashMap<String, Object>> getBuscadorDestinatarios(String cadena, Integer filtro, Integer cliente_id, Integer id_empresa, Integer id_sucursal);
+    public ArrayList<HashMap<String, Object>> getDatosByNoDestinatario(String no_control, Integer cliente_id, Integer id_empresa, Integer id_sucursal);
     
 }

@@ -1445,6 +1445,7 @@ public class GralSpringDao implements GralInterfaceDao{
             +"(CASE WHEN sbt.gral_rol_id IS NOT NULL THEN '1' ELSE '0' END) AS seleccionado "
         +"FROM gral_rol "
         +"LEFT JOIN (SELECT  DISTINCT gral_rol_id FROM gral_usr_rol WHERE gral_usr_id="+id_usuario+") AS sbt ON sbt.gral_rol_id=gral_rol.id "
+        +"where gral_rol.borrado_logico=false "
         +"ORDER BY gral_rol.titulo ";
         
         

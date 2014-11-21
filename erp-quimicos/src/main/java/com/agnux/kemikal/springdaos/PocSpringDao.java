@@ -622,7 +622,7 @@ public class PocSpringDao implements PocInterfaceDao{
             + "ped_trans.trans_observaciones,"
             + "(CASE WHEN log_vehiculos.id IS NULL THEN 0 ELSE log_vehiculos.id END) AS vehiculo_id,"
             + "(CASE WHEN log_vehiculos.id IS NULL THEN '' ELSE log_vehiculos.numero_economico END) AS vehiculo_no,"
-            + "(CASE WHEN log_vehiculos.id IS NULL THEN '' ELSE log_vehiculos.marca END) AS vehiculo_marca,"
+            + "(CASE WHEN log_vehiculo_marca.id IS NULL THEN '' ELSE log_vehiculo_marca.titulo END) AS vehiculo_marca,"
             + "(CASE WHEN agen_a.id IS NULL THEN 0 ELSE agen_a.id END) AS agena_id,"
             + "(CASE WHEN agen_a.id IS NULL THEN '' ELSE agen_a.folio END) AS agena_no,"
             + "(CASE WHEN agen_a.id IS NULL THEN '' ELSE agen_a.razon_social END) AS agena_nombre,"
@@ -641,6 +641,7 @@ public class PocSpringDao implements PocInterfaceDao{
         + "LEFT JOIN (SELECT cxc_destinatarios.id, cxc_destinatarios.folio,cxc_destinatarios.razon_social,(CASE WHEN cxc_destinatarios.calle IS NULL THEN '' ELSE cxc_destinatarios.calle END) AS calle, (CASE WHEN cxc_destinatarios.no_int IS NULL THEN '' ELSE (CASE WHEN cxc_destinatarios.no_int IS NULL OR cxc_destinatarios.no_int='' THEN '' ELSE 'NO.INT.'||cxc_destinatarios.no_int END)  END) AS no_int, (CASE WHEN cxc_destinatarios.no_ext IS NULL THEN '' ELSE (CASE WHEN cxc_destinatarios.no_ext IS NULL OR cxc_destinatarios.no_ext='' THEN '' ELSE 'NO.EXT.'||cxc_destinatarios.no_ext END)  END) AS no_ext, (CASE WHEN cxc_destinatarios.colonia IS NULL THEN '' ELSE cxc_destinatarios.colonia END) AS colonia,(CASE WHEN gral_mun.id IS NULL OR gral_mun.id=0 THEN '' ELSE gral_mun.titulo END) AS municipio,(CASE WHEN gral_edo.id IS NULL OR gral_edo.id=0 THEN '' ELSE gral_edo.titulo END) AS estado,(CASE WHEN gral_pais.id IS NULL OR gral_pais.id=0 THEN '' ELSE gral_pais.titulo END) AS pais,(CASE WHEN cxc_destinatarios.cp IS NULL THEN '' ELSE cxc_destinatarios.cp END) AS cp FROM cxc_destinatarios LEFT JOIN gral_pais ON gral_pais.id = cxc_destinatarios.gral_pais_id LEFT JOIN gral_edo ON gral_edo.id = cxc_destinatarios.gral_edo_id LEFT JOIN gral_mun ON gral_mun.id = cxc_destinatarios.gral_mun_id ) AS dest ON dest.id=ped_trans.cxc_destinatario_id "
         + "LEFT JOIN cxc_agentes_aduanales AS agen_a ON agen_a.id=ped_trans.cxc_agente_aduanal_id "
         + "LEFT JOIN log_vehiculos ON log_vehiculos.id=ped_trans.log_vehiculo_id "
+        + "LEFT JOIN log_vehiculo_marca ON log_vehiculo_marca.id=log_vehiculos.log_vehiculo_marca_id "
         + "WHERE ped_trans.poc_pedido_id=?;";
         
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(

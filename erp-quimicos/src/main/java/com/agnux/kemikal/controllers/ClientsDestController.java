@@ -68,11 +68,13 @@ public class ClientsDestController {
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
         
         infoConstruccionTabla.put("id", "Acciones:90");
-        infoConstruccionTabla.put("folio", "No.Control:100");
+        infoConstruccionTabla.put("folio", "No. Control:80");
+        infoConstruccionTabla.put("folio_ext", "Folio Externo:90");
         infoConstruccionTabla.put("rfc", "RFC:100");
         infoConstruccionTabla.put("destinatario", "Nombre o Razon Social:250");
         infoConstruccionTabla.put("tel", "Tel&eacute;fono:100");
         infoConstruccionTabla.put("tipo", "Tipo:100");
+        infoConstruccionTabla.put("cliente", "Cliente:120");
         
         ModelAndView x = new ModelAndView("clientsdest/startup", "title", "Cat&aacute;logo de Destinatarios");
         
@@ -215,6 +217,62 @@ public class ClientsDestController {
     }
     
     
+    
+    //Buscador de clientes
+    @RequestMapping(method = RequestMethod.POST, value="/getBuscadorClientes.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getBuscadorClientesJson(
+            @RequestParam(value="cadena", required=true) String cadena,
+            @RequestParam(value="filtro", required=true) Integer filtro,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+        ) {
+        
+        HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        
+        
+        jsonretorno.put("Clientes", this.getCxcDao().getBuscadorClientes(cadena,filtro,id_empresa, id_sucursal));
+        
+        return jsonretorno;
+    }
+    
+    
+    
+    //Obtener datos del cliente a partir del Numero de Control
+    @RequestMapping(method = RequestMethod.POST, value="/getDataByNoClient.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getDataByNoClientJson(
+            @RequestParam(value="no_control", required=true) String no_control,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+        ) {
+        
+        HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        
+        //Decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        
+        
+        jsonretorno.put("Cliente", this.getCxcDao().getDatosClienteByNoCliente(no_control, id_empresa, id_sucursal));
+        
+        return jsonretorno;
+    }
+    
+    
+    
     //Crear y editar
     @RequestMapping(method = RequestMethod.POST, value="/edit.json")
     public @ResponseBody HashMap<String, String> editJson(
@@ -238,6 +296,7 @@ public class ClientsDestController {
         @RequestParam(value="check_firma", required=false) String check_firma,
         @RequestParam(value="check_sello", required=false) String check_sello,
         @RequestParam(value="check_efectivo", required=false) String check_efectivo,
+        @RequestParam(value="id_cliente", required=true) String id_cliente,
         Model model,@ModelAttribute("user") UserSessionData user
     ) {
         
@@ -293,7 +352,8 @@ public class ClientsDestController {
         +"___"+folio_ext
         +"___"+check_firma
         +"___"+check_sello
-        +"___"+check_efectivo;
+        +"___"+check_efectivo
+        +"___"+id_cliente;
         
         //System.out.println("data_string: "+data_string);
         
