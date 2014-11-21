@@ -659,7 +659,7 @@ $(function() {
         
         var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
         
-        $arreglo = {'orderby':'id','desc':'DESC','items_por_pag':10,'pag_start':1,'display_pag':10,'input_json':'/'+controller+'/getAllCuentasContables.json', 'cadena_busqueda':$cadena_busqueda, 'iu':iu}
+        $arreglo = {'orderby':'id','desc':'ASC','items_por_pag':10,'pag_start':1,'display_pag':10,'input_json':'/'+controller+'/getAllCuentasContables.json', 'cadena_busqueda':$cadena_busqueda, 'iu':iu}
         
         $.post(input_json,$arreglo,function(data){
             
