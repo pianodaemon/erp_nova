@@ -72,7 +72,7 @@ public class CtbCuentasContablesController {
         infoConstruccionTabla.put("c", "C:30");
         infoConstruccionTabla.put("cuenta", "Cuenta:170");
         infoConstruccionTabla.put("detalle","Detalle:50");
-        infoConstruccionTabla.put("descripcion","Descripci&oacute;n:300");
+        infoConstruccionTabla.put("descripcion","Descripci&oacute;n:330");
         infoConstruccionTabla.put("nivel", "Nivel&nbsp;Cta.:70");
         infoConstruccionTabla.put("estatus","Estatus:100");
         
