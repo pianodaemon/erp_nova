@@ -7,10 +7,12 @@
 		
         <!--  css for this catalogo -->
         <link rel="stylesheet" href="../../css/modalbox/clientsdest/formaclientsdest.css" type="text/css" />
+        <link rel="stylesheet" href="../../css/modalbox/clientsdest/formaBuscaclientes.css" type="text/css" />
 		
         <!--  js for this catalogo -->
         <script type="text/javascript" src="../../js/components/jquery-form/jquery-form.js"></script>
         <script type="text/javascript" src="../../js/components/modalbox/clientsdest/modalboxclientsdest.js"></script>
+        <script type="text/javascript" src="../../js/components/modalbox/clientsdest/modalboxBuscacliente.js"></script>
         <script type="text/javascript" src="../../js/implements/clientsdest/index.js" ></script>
         
         #include("${layoutmenu}")
@@ -93,7 +95,7 @@
         <!--clase la quite por causar problemas      tabulador -->
                 <div id="div_one" class="panelcito_modal clientsdest_div_one"  style="display:none;" title="">
                 
-                <input type="hidden" name="identificador">
+					<input type="hidden" name="identificador">
 					
                     <div id="div_two" title="" class="clientsdest_div_two">
                         <div class="columns on-2">
@@ -120,7 +122,7 @@
                                     <div id="tabx-1" class="contenidoPes" >
 										
 										
-										<table border="0">
+										<table border="0" class="gral">
 											<tr>
 												<td width="5"></td>
 												<td width="75">Folio</td>
@@ -265,22 +267,49 @@
 											</tr>
 											<tr>
 												<td colspan="16">
-													<table>
+													<table border="0">
+														
 														<tr>
 															<td width="5"></td>
-															<td width="75">Solicitar firma</td>
+															<td width="75">Solicitar&nbsp;firma</td>
 															<td><input type="checkbox" name="check_firma"></td>
 															<td width="50"></td>
-															<td width="75">Solicitar sello</td>
+															<td width="75">Solicitar&nbsp;sello</td>
 															<td><input type="checkbox" name="check_sello"></td>
-															<td width="32"></td>
-															<td width="90">Solicitar efectivo</td>
+															<td width="28"></td>
+															<td width="90">Solicitar&nbsp;efectivo</td>
 															<td><input type="checkbox" name="check_efectivo"></td>
 															<td width="25"></td>
 														</tr>
 													</table>
 												</td>
 											</tr>
+											
+											<tr>
+												<td width="5"></td>
+												<td width="75">No. Cliente</td>
+												<td width="5"></td>
+												<td width="150" colspan="2">
+													<input type="hidden" name="id_cliente" value="0">
+													<input type="text" name="no_cliente" style="width:150px;">
+												</td>
+												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_nocliente"></div></td>
+												<td width="5"></td>
+												<td width="70">Cliente</td>
+												<td width="5"></td>
+												
+												<td width="265" colspan="4"><input type="text" name="razon_cliente" style="width:265px;"></td>
+												<!--
+												<td width="35"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_tel2"></div></td>
+												<td width="5"></td>
+												<td width="75">Extensi&oacute;n&nbsp;</td>
+												-->
+												<td width="5"></td>
+												<td width="150"><a href="#busca_cliente">&nbsp;(Buscar)</a></td>
+												<td width="25"></td>
+											</tr>
+											
+											
 										</table>
                                         
                                         
