@@ -252,3 +252,17 @@
     height:16px;
 }
 
+
+.onmouseOutEditar {
+	background-image: url(../../../img/editar.png);
+	background-repeat: no-repeat;
+    width:16px;
+    height:15px;
+}
+
+.onmouseOverEditar {
+	background-image: url(../../../img/editar1.png);
+	background-repeat: no-repeat;
+    width:16px;
+    height:15px;
+}
