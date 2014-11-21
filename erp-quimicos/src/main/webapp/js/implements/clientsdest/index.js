@@ -173,6 +173,229 @@ $(function() {
 	
 	
 	
+	//Aplicar solo lectura
+	$aplica_read_only_input_text = function($campo){
+		$campo.attr("readonly", true);
+		$campo.css({'background' : '#f0f0f0'});
+	}
+	
+	//Quitar solo lectura a campo
+	$quitar_readonly_input = function($input){
+		$input.css({'background' : '#ffffff'});
+		$input.attr('readonly',false);
+	}
+	
+	
+	
+	//Agregar los datos del cliente seleccionado
+	$agregarDatosClienteSeleccionado = function($id_cliente, $no_cliente, $razon_cliente, id_cliente, no_control, razon_social, $busca_cliente){
+		$id_cliente.val(id_cliente);
+		$no_cliente.val(no_control);
+		$razon_cliente.val(razon_social);
+		
+		//Aplicar solo lectura al campo
+		$aplica_read_only_input_text($razon_cliente);
+		
+		//Ocultar link de busqueda
+		$busca_cliente.hide();
+		
+		//Asignar enfoque
+		$no_cliente.focus();
+	}
+	
+	
+	//Agregar los datos del cliente seleccionado
+	$vaciarCamposCliente = function($id_cliente, $no_cliente, $razon_cliente, $busca_cliente){
+		$id_cliente.val(0);
+		$no_cliente.val('');
+		$razon_cliente.val('');
+		
+		//Quitar solo lectura a campo
+		$quitar_readonly_input($razon_cliente);
+			
+		//Mostrar link de busqueda
+		$busca_cliente.show();
+		
+		//Asignar enfoque
+		$no_cliente.focus();
+	}
+
+
+
+	//Buscador de clientes
+	$busca_clientes = function($id_cliente, $nocliente, $razoncliente, id_user, $busca_cliente){
+		//limpiar_campos_grids();
+		$(this).modalPanel_Buscacliente();
+		var $dialogoc =  $('#forma-buscacliente-window');
+		//var $dialogoc.prependTo('#forma-buscaproduct-window');
+		$dialogoc.append($('div.buscador_clientes').find('table.formaBusqueda_clientes').clone());
+		$('#forma-buscacliente-window').css({"margin-left": -200, 	"margin-top": -190});
+		
+		var $tabla_resultados = $('#forma-buscacliente-window').find('#tabla_resultado');
+		var $busca_cliente_modalbox = $('#forma-buscacliente-window').find('#busca_cliente_modalbox');
+		var $cancelar_plugin_busca_cliente = $('#forma-buscacliente-window').find('#cencela');
+		
+		var $cadena_buscar = $('#forma-buscacliente-window').find('input[name=cadena_buscar]');
+		var $select_filtro_por = $('#forma-buscacliente-window').find('select[name=filtropor]');
+		
+		//Funcionalidad botones
+		$busca_cliente_modalbox.mouseover(function(){
+			$(this).removeClass("onmouseOutBuscar").addClass("onmouseOverBuscar");
+		});
+		
+		$busca_cliente_modalbox.mouseout(function(){
+			$(this).removeClass("onmouseOverBuscar").addClass("onmouseOutBuscar");
+		});
+		
+		$cancelar_plugin_busca_cliente.mouseover(function(){
+			$(this).removeClass("onmouseOutCancelar").addClass("onmouseOverCancelar");
+		});
+		$cancelar_plugin_busca_cliente.mouseout(function(){
+			$(this).removeClass("onmouseOverCancelar").addClass("onmouseOutCancelar");
+		});
+		
+		var html = '';
+		$select_filtro_por.children().remove();
+		html='<option value="0">[-- Opcion busqueda --]</option>';
+		
+		if($nocliente.val().trim() != ''){
+			//asignamos el numero de control al campo de busqueda
+			$cadena_buscar.val($nocliente.val());
+			if(razon_social_cliente == ''){
+				html+='<option value="1" selected="yes">No. de control</option>';
+			}else{
+				html+='<option value="1">No. de control</option>';
+			}
+		}else{
+			html+='<option value="1">No. de control</option>';
+		}
+		html+='<option value="2">RFC</option>';
+		if($razoncliente.val().trim() != ''){
+			//asignamos la Razon Social del Cliente al campo Nombre
+			$cadena_buscar.val($razoncliente.val());
+			html+='<option value="3" selected="yes">Razon social</option>';
+		}else{
+			if($razoncliente.val().trim()=='' && $nocliente.val().trim()==''){
+				html+='<option value="3" selected="yes">Razon social</option>';
+			}else{
+				html+='<option value="3">Razon social</option>';
+			}
+		}
+		html+='<option value="4">CURP</option>';
+		html+='<option value="5">Alias</option>';
+		$select_filtro_por.append(html);
+		
+		
+		$cadena_buscar.focus();
+		
+		//click buscar clientes
+		$busca_cliente_modalbox.click(function(event){
+			//event.preventDefault();
+			var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getBuscadorClientes.json';
+			$arreglo = {	'cadena':$cadena_buscar.val(),
+							'filtro':$select_filtro_por.val(),
+							'iu':id_user 
+                        }
+			
+			var trr = '';
+			$tabla_resultados.children().remove();
+			$.post(input_json,$arreglo,function(entry){
+				$.each(entry['Clientes'],function(entryIndex,cliente){
+					trr = '<tr>';
+						trr += '<td width="80">';
+							trr += '<input type="hidden" id="idclient" value="'+cliente['id']+'">';
+							trr += '<span class="no_control">'+cliente['numero_control']+'</span>';
+						trr += '</td>';
+						trr += '<td width="145"><span class="rfc">'+cliente['rfc']+'</span></td>';
+						trr += '<td width="375"><span class="razon">'+cliente['razon_social']+'</span></td>';
+					trr += '</tr>';
+					
+					$tabla_resultados.append(trr);
+				});
+				
+				$tabla_resultados.find('tr:odd').find('td').css({'background-color' : '#e7e8ea'});
+				$tabla_resultados.find('tr:even').find('td').css({'background-color' : '#FFFFFF'});
+				
+				$('tr:odd' , $tabla_resultados).hover(function () {
+					$(this).find('td').css({background : '#FBD850'});
+				}, function() {
+					$(this).find('td').css({'background-color':'#e7e8ea'});
+				});
+				$('tr:even' , $tabla_resultados).hover(function () {
+					$(this).find('td').css({'background-color':'#FBD850'});
+				}, function() {
+					$(this).find('td').css({'background-color':'#FFFFFF'});
+				});
+				
+				
+				//seleccionar un producto del grid de resultados
+				$tabla_resultados.find('tr').click(function(){
+					var id_cliente = $(this).find('#idclient').val();
+					var no_control = $(this).find('span.no_control').html();
+					var razon_social = $(this).find('span.razon').html();
+					
+					$agregarDatosClienteSeleccionado($id_cliente, $nocliente, $razoncliente, id_cliente, no_control, razon_social, $busca_cliente);
+					
+					//elimina la ventana de busqueda
+					var remove = function() {$(this).remove();};
+					$('#forma-buscacliente-overlay').fadeOut(remove);
+					
+					//Asignar el enfoque al campo Numero de Control
+					$nocliente.focus();
+				});
+			});
+		});//termina llamada json
+		
+		
+		//si hay algo en el campo cadena_buscar al cargar el buscador, ejecuta la busqueda
+		if($cadena_buscar.val() != ''){
+			$busca_cliente_modalbox.trigger('click');
+		}
+		
+		$(this).aplicarEventoKeypressEjecutaTrigger($cadena_buscar, $busca_cliente_modalbox);
+		$(this).aplicarEventoKeypressEjecutaTrigger($select_filtro_por, $busca_cliente_modalbox);
+		
+		$cancelar_plugin_busca_cliente.click(function(event){
+			//event.preventDefault();
+			var remove = function() {$(this).remove();};
+			$('#forma-buscacliente-overlay').fadeOut(remove);
+			$razoncliente.focus();
+		});
+	}
+	//Termina buscador de clientes
+
+
+
+	//Buscar datos de un cliente en especifico
+	var $buscar_datos_de_cliente_especifico = function($id_cliente, $no_cliente, $razon_cliente, $busca_cliente){
+		
+		var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDataByNoClient.json';
+		$arreglo2 = {'no_control':$no_cliente.val(),  'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
+		
+		$.post(input_json2,$arreglo2,function(entry2){
+			
+			if(parseInt(entry2['Cliente'].length) > 0 ){
+				var id_cliente = entry2['Cliente'][0]['id'];
+				var no_control = entry2['Cliente'][0]['numero_control'];
+				var razon_social = entry2['Cliente'][0]['razon_social'];
+				
+				$agregarDatosClienteSeleccionado($id_cliente, $no_cliente, $razon_cliente, id_cliente, no_control, razon_social, $busca_cliente);
+			}else{
+				$id_cliente.val(0);
+				$no_cliente.val('');
+				$razon_cliente.val('');
+				
+				jAlert('N&uacute;mero de cliente desconocido.\nEs necesario seleccionar un cliente.', 'Atencion!', function(r) { 
+					$no_cliente.focus(); 
+				});
+			}
+		},"json");//termina llamada json
+	}
+	
+	
+	
+	
+	
 	//nuevo 
 	$new_clientsdest.click(function(event){
 		event.preventDefault();
@@ -209,6 +432,12 @@ $(function() {
 		var $check_firma = $('#forma-clientsdest-window').find('input[name=check_firma]');
 		var $check_sello = $('#forma-clientsdest-window').find('input[name=check_sello]');
 		var $check_efectivo = $('#forma-clientsdest-window').find('input[name=check_efectivo]');
+		
+		var $razon_cliente = $('#forma-clientsdest-window').find('input[name=razon_cliente]');
+		var $id_cliente = $('#forma-clientsdest-window').find('input[name=id_cliente]');
+		var $no_cliente = $('#forma-clientsdest-window').find('input[name=no_cliente]');
+		
+		var $busca_cliente = $('#forma-clientsdest-window').find('a[href=#busca_cliente]');
 		
 		var $cerrar_plugin = $('#forma-clientsdest-window').find('#close');
 		var $cancelar_plugin = $('#forma-clientsdest-window').find('#boton_cancelar');
@@ -318,6 +547,66 @@ $(function() {
 		},"json");//termina llamada json
         
         
+        
+        
+        
+		//Buscador de clientes
+		$busca_cliente.click(function(event){
+			event.preventDefault();
+			$busca_clientes($id_cliente, $no_cliente, $razon_cliente, $('#lienzo_recalculable').find('input[name=iu]').val(), $busca_cliente);
+		});
+		
+		//Asignar evento keypress al campo Razon Social del cliente para abrir el buscador al pulsar enter sobre este campo
+		$(this).aplicarEventoKeypressEjecutaTrigger($razon_cliente, $busca_cliente);
+		
+		$no_cliente.keypress(function(e){
+			var valor=$(this).val();
+			
+			if(e.which == 13){
+				//Llamada a funcion para la busqueda de datos de un cliente en especifico
+				$buscar_datos_de_cliente_especifico($id_cliente, $no_cliente, $razon_cliente, $busca_cliente);
+				
+				return false;
+			}else{
+				if (parseInt(e.which) == 8) {
+					//Si se oprime la tecla borrar se vacía el campo no_economico 
+					if(parseInt(valor.length)>0 && parseInt($id_cliente.val())>0){
+						jConfirm('Seguro que desea cambiar el Cliente seleccionado?', 'Dialogo de Confirmacion', function(r) {
+							// If they confirmed, manually trigger a form submission
+							if (r) {
+								//LLamada a la funcion para vaciar campos
+								$vaciarCamposCliente($id_cliente, $no_cliente, $razon_cliente, $busca_cliente);
+							}else{
+								$no_cliente.val(valor);
+								$no_cliente.focus();
+							}
+						});
+					}else{
+						$no_cliente.focus();
+					}
+				}
+			}
+		});
+		
+		
+		
+		//Buscar datos del cliente al perder el enfoque
+		$no_cliente.blur(function(e){
+			var valor=$(this).val().trim();
+			
+			if(valor!='' && parseInt($id_cliente.val())==0){
+				//Llamada a funcion para la busqueda de datos de un cliente en especifico
+				$buscar_datos_de_cliente_especifico($id_cliente, $no_cliente, $razon_cliente, $busca_cliente);
+				
+				return false;
+			}
+		});
+		
+        
+        
+        
+        
+        
         $cerrar_plugin.bind('click',function(){
 			var remove = function() {$(this).remove();};
 			$('#forma-clientsdest-overlay').fadeOut(remove);
@@ -396,6 +685,12 @@ $(function() {
 			var $check_sello = $('#forma-clientsdest-window').find('input[name=check_sello]');
 			var $check_efectivo = $('#forma-clientsdest-window').find('input[name=check_efectivo]');
 			
+			var $razon_cliente = $('#forma-clientsdest-window').find('input[name=razon_cliente]');
+			var $id_cliente = $('#forma-clientsdest-window').find('input[name=id_cliente]');
+			var $no_cliente = $('#forma-clientsdest-window').find('input[name=no_cliente]');
+			
+			var $busca_cliente = $('#forma-clientsdest-window').find('a[href=#busca_cliente]');
+			
 			var $cerrar_plugin = $('#forma-clientsdest-window').find('#close');
 			var $cancelar_plugin = $('#forma-clientsdest-window').find('#boton_cancelar');
 			var $submit_actualizar = $('#forma-clientsdest-window').find('#submit');
@@ -408,7 +703,7 @@ $(function() {
 			//$destinatario.attr({ 'readOnly':true });
 			
 			if(accion_mode == 'edit'){
-                                
+				
 				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDestinatario.json';
 				$arreglo = {'id':id_to_show, 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
 				
@@ -462,6 +757,15 @@ $(function() {
 					$check_firma.attr('checked', (entry['Datos'][0]['sfirma']==true)? true:false );
 					$check_sello.attr('checked', (entry['Datos'][0]['ssello']==true)? true:false );
 					$check_efectivo.attr('checked', (entry['Datos'][0]['sefectivo']==true)? true:false );
+					
+					$razon_cliente.attr({'value' : entry['Datos'][0]['cliente']});
+					$id_cliente.attr({'value' : entry['Datos'][0]['cliente_id']});
+					$no_cliente.attr({'value' : entry['Datos'][0]['no_control']});
+					
+					
+					if(parseInt(entry['Datos'][0]['cliente'])>0){
+						$busca_cliente.hide();
+					}
 					
 					var tipo_hmtl='';
 					if(parseInt(entry['Datos'][0]['tipo'])==0){
@@ -553,7 +857,65 @@ $(function() {
 					});
 					
 				},"json");//termina llamada json
-                                
+				
+				
+				
+				//Buscador de clientes
+				$busca_cliente.click(function(event){
+					event.preventDefault();
+					$busca_clientes($id_cliente, $no_cliente, $razon_cliente, $('#lienzo_recalculable').find('input[name=iu]').val(), $busca_cliente);
+				});
+				
+				//Asignar evento keypress al campo Razon Social del cliente para abrir el buscador al pulsar enter sobre este campo
+				$(this).aplicarEventoKeypressEjecutaTrigger($razon_cliente, $busca_cliente);
+				
+				$no_cliente.keypress(function(e){
+					var valor=$(this).val();
+					
+					if(e.which == 13){
+						//Llamada a funcion para la busqueda de datos de un cliente en especifico
+						$buscar_datos_de_cliente_especifico($id_cliente, $no_cliente, $razon_cliente, $busca_cliente);
+						
+						return false;
+					}else{
+						if (parseInt(e.which) == 8) {
+							//Si se oprime la tecla borrar se vacía el campo no_economico 
+							if(parseInt(valor.length)>0 && parseInt($id_cliente.val())>0){
+								jConfirm('Seguro que desea cambiar el Cliente seleccionado?', 'Dialogo de Confirmacion', function(r) {
+									// If they confirmed, manually trigger a form submission
+									if (r) {
+										//LLamada a la funcion para vaciar campos
+										$vaciarCamposCliente($id_cliente, $no_cliente, $razon_cliente, $busca_cliente);
+									}else{
+										$no_cliente.val(valor);
+										$no_cliente.focus();
+									}
+								});
+							}else{
+								$no_cliente.focus();
+							}
+						}
+					}
+				});
+				
+				
+				
+				//Buscar datos del cliente al perder el enfoque
+				$no_cliente.blur(function(e){
+					var valor=$(this).val().trim();
+					
+					if(valor!='' && parseInt($id_cliente.val())==0){
+						//Llamada a funcion para la busqueda de datos de un cliente en especifico
+						$buscar_datos_de_cliente_especifico($id_cliente, $no_cliente, $razon_cliente, $busca_cliente);
+						
+						return false;
+					}
+				});
+				
+				
+				
+				
+				
 				//Ligamos el boton cancelar al evento click para eliminar la forma
 				$cancelar_plugin.bind('click',function(){
 					var remove = function() {$(this).remove();};
