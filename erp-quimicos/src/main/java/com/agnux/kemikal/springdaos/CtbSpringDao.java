@@ -358,6 +358,10 @@ public class CtbSpringDao implements CtbInterfaceDao{
     public ArrayList<HashMap<String, Object>> getCuentasContables_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
         
+        if(orderBy.equals("id")){
+            orderBy="cta_mayor, clasifica, cta";
+        }
+        
 	String sql_to_query = ""
                 + "SELECT "
                     + "ctb_cta.id,"
