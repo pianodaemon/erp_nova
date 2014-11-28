@@ -265,9 +265,12 @@
 															   <td width="25"></td>
 															   <td width="45"></td>
 															   -->
-															   <td width="90"></td>
-															   <td width="90"></td>
-															   <td width="25"></td>
+															   <td width="90">Tipo de Unidad</td>
+															   <td width="90">
+																   <input type="hidden" name="id_tipo_uni">
+																	<INPUT TYPE="text" name="tipo_unidad" style="width:90px;">
+															   </td>
+															   <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_tunidad"></div></td>
 														  <tr>
 													 </table>
 												</td>
@@ -311,40 +314,44 @@
 
 											<tr>
 												<td colspan="3" style="padding:0px;">
-													<table>
+													<table border="0">
 														<thead>
 															<tr>
-																<td colspan="13" height="2"></td>
+																<td colspan="14" height="2"></td>
 															</tr>
 															<tr class="gral">
 																<td class="grid_busqueda" width="30"></td>
-																<td class="grid_busqueda" width="80"><input type="text" name="no_clie" style="width:76px;"></td>
+																<td class="grid_busqueda" width="60"><input type="text" name="no_clie" style="width:56px;"></td>
 																<td class="grid_busqueda" width="80"><input type="text" name="no_carga" style="width:76px;"></td>
 																<td class="grid_busqueda" width="80"><input type="text" name="no_ped" style="width:76px;"></td>
 																<td class="grid_busqueda" width="60"><input type="text" name="no_dest" style="width:56px;"></td>
-																<td class="grid_busqueda" width="200"><input type="text" name="dest" style="width:196px;"></td>
-																<td class="grid_busqueda" width="180"><input type="text" name="poblacion" style="width:176px;"></td>
-																<td class="grid_busqueda" width="55"><a href="#busqueda" id="buscar_pendientes">(Busqueda)</a></td>
-																<td class="grid_busqueda" width="60"></td>
-																<td class="grid_busqueda" width="60"></td>
+																<td class="grid_busqueda" width="190"><input type="text" name="dest" style="width:186px;"></td>
+																<td class="grid_busqueda" width="170"><input type="text" name="poblacion" style="width:166px;"></td>
+																<td class="grid_busqueda" width="60"><a href="#busqueda" id="buscar_pendientes">(Busqueda)</a></td>
+																<td class="grid_busqueda" width="70"></td>
+																<td class="grid_busqueda" width="70"></td>
+																<td class="grid_busqueda" width="50"></td>
 																<td class="grid_busqueda" width="30"></td>
 																<td class="grid_busqueda" width="30"></td>
 																<td class="grid_busqueda" width="50"></td>
 															</tr>
 															<tr>
-																<td colspan="13" height="2"></td>
+																<td colspan="14" height="2"></td>
 															</tr>
 															<tr>
-																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" align="center" width="30">#</td>
-																<td class="grid" style="background-color: rgb(180, 180, 180);" align="center" width="80">No.&nbsp;Cliente</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" align="center" width="30">
+																	<input type="checkbox" name="check_head" id="check_head" value="check">
+																</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180);" align="center" width="60">No.&nbsp;Cliente</td>
 																<td class="grid" style="background-color: rgb(180, 180, 180);" align="center" width="80">No.&nbsp;Carga</td>
 																<td class="grid" style="background-color: rgb(180, 180, 180);" align="center" width="80">No.&nbsp;Pedido</td>
 																<td class="grid" style="background-color: rgb(180, 180, 180);" align="center" width="60">No.&nbsp;Dest.</td>
-																<td class="grid" style="background-color: rgb(180, 180, 180);" align="center" width="200">Destinatario</td>
-																<td class="grid" style="background-color: rgb(180, 180, 180);" align="center" width="180">Poblaci&oacute;n</td>
-																<td class="grid" style="background-color: rgb(180, 180, 180);" align="center" width="55">Peso(t)</td>
-																<td class="grid" style="background-color: rgb(180, 180, 180);" align="center" width="60">Volumen(m&#179;)</td>
-																<td class="grid" style="background-color: rgb(180, 180, 180);" align="center" width="60">Estatus</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180);" align="center" width="190">Destinatario</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180);" align="center" width="170">Poblaci&oacute;n</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180);" align="center" width="60">Cant. Uni.</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180);" align="center" width="70">Peso(t)</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180);" align="center" width="70">Volumen(m&#179;)</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180);" align="center" width="50">Estatus</td>
 																<td class="grid" style="background-color: rgb(180, 180, 180);" align="center" width="30">Firma</td>
 																<td class="grid" style="background-color: rgb(180, 180, 180);" align="center" width="30">Sello</td>
 																<td class="grid" style="background-color: rgb(180, 180, 180);" align="center" width="50">Efectivo</td>
@@ -352,11 +359,11 @@
 														</thead>
 														<tbody>
 															<tr>
-																<td colspan="13" height="2"></td>
+																<td colspan="14" height="2"></td>
 															</tr>
 															<tr>
-																<td colspan="13">
-																	<div style="overflow:scroll; overflow-x:hidden; overflow-y:auto; width:100%; height:200px; border:1px solid #C1DAD7 !important;">	
+																<td colspan="14">
+																	<div style="overflow:scroll; overflow-x:hidden; overflow-y:auto; width:100%; height:200px; border:1px solid #C1DAD7 !important;">
 																		 <table>
 																			  <tbody style="background-color:#ffffff;" valign="top" class="grid_partidas">
 																				   
@@ -365,22 +372,34 @@
 																	</div>
 																</td>
 															</tr>
+															
+															<tr style="display:none;">
+																<td colspan="14">
+																	<table id="table2" style="display:none;">
+																		<tbody class="grid_partidas2">
+																		</tbody>
+																	</table>
+																</td>
+															</tr>
+															
 														</tbody>
 														<tfoot>
 															<tr>
-																<td class="grid4" width="30"></td>
-																<td class="grid4" width="80"></td>
+															<td class="grid4" width="30"></td>
+																<td class="grid4" width="60"></td>
 																<td class="grid4" width="80"></td>
 																<td class="grid4" width="80"></td>
 																<td class="grid4" width="60"></td>
-																<td class="grid4" width="200"></td>
-																<td class="grid3" width="180"></td>
-																<td style="background:#fff; border-left:1px solid #ccc; border-right:1px solid #ccc; border-bottom:1px solid #ccc; border-top:1px solid #ccc; padding:4px; text-align:right;" width="55" class="sum_peso">0.000</td>
-																<td style="background:#fff; border-left:1px solid #ccc; border-right:1px solid #ccc; border-bottom:1px solid #ccc; border-top:1px solid #ccc; padding:4px; text-align:right;" width="60" class="sum_vol">0.000</td>
-																<td style="background:#fff; border-left:1px solid #ccc; border-right:1px solid #fff; border-bottom:1px solid #fff; border-top:1px solid #ccc; padding:4px;" width="60"></td>
+																<td class="grid4" width="190"></td>
+																<td class="grid3" width="170"></td>
+																
+																<td style="background:#fff; border-left:1px solid #ccc; border-right:1px solid #ccc; border-bottom:1px solid #ccc; border-top:1px solid #ccc; padding:2px; text-align:right;" width="60" class="sum_uni">0.000</td>
+																<td style="background:#fff; border-left:1px solid #ccc; border-right:1px solid #ccc; border-bottom:1px solid #ccc; border-top:1px solid #ccc; padding:2px; text-align:right;" width="70" class="sum_peso">0.000</td>
+																<td style="background:#fff; border-left:1px solid #ccc; border-right:1px solid #ccc; border-bottom:1px solid #ccc; border-top:1px solid #ccc; padding:2px; text-align:right;" width="70" class="sum_vol">0.000</td>
+																<td style="background:#fff; border-left:1px solid #ccc; border-right:1px solid #fff; border-bottom:1px solid #fff; border-top:1px solid #ccc; padding:2px;" width="50"></td>
 																<td class="grid4" width="30"></td>
 																<td class="grid4" width="30"></td>
-																<td class="grid4" width="30"></td>
+																<td class="grid4" width="50"></td>
 															</tr>
 														</tfoot>
 													</table>
@@ -392,8 +411,9 @@
                                     
                                     <div id="tabx-2" class="contenidoPes" >
 										
+										<input type="hidden" name="adicionales" value="">
 										
-										<table border="0" style="margin:0px; padding:0px;">
+										<table border="1" style="margin:0px; padding:0px;">
 											
 											<tr>
 												<td width="620"></td>
@@ -404,7 +424,7 @@
 											<tr>
 												<td width="620" class="header_grid" style="border-top:1px solid #C1DAD7; border-bottom:1px solid #C1DAD7; border-left:1px solid #FFFFFF; border-right: 1px solid #FFFFFF; background-color:#D4D3D3;">&nbsp;&nbsp;&nbsp;Buscar y agregar servicios adicionales</td>
 												<td width="10"></td>
-												<td width="515"></td>
+												<td width="515" class="header_grid" style="border-top:1px solid #C1DAD7; border-bottom:1px solid #C1DAD7; border-left:1px solid #FFFFFF; border-right: 1px solid #FFFFFF; background-color:#D4D3D3;">&nbsp;&nbsp;&nbsp;Buscar y seleccionar la ruta</td>
 											</tr>
 											<tr>
 												<td width="620">
@@ -412,7 +432,7 @@
 														<tr><td colspan="11" height="10"></td></tr>
 														<tr>
 															<td width="10"></td>
-															<td width="83">C&oacute;digo&nbsp;servicio</td>
+															<td width="83">C&oacute;digo&nbsp;Servicio</td>
 															<td width="100"><INPUT TYPE="text" name="sku_producto" style="width:100px;"></td>
 															<td width="65"><a  href="agregar_producto">&nbsp;(Agregar)</a></td>
 															<td width="60">Descripci&oacute;n</td>
@@ -422,14 +442,30 @@
 													</table>
 												</td>
 												<td width="10"></td>
-												<td width="515"></td>
+												<td width="515">
+												
+													<table border="1" class="gral">
+														<tr><td colspan="11" height="10"></td></tr>
+														<tr>
+															<td width="10"></td>
+															<td width="50">No.&nbsp;Ruta</td>
+															<td width="70"><INPUT TYPE="text" name="no_ruta" style="width:70px;"></td>
+															<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_noruta"></div></td>
+															<td width="35">Ruta</td>
+															<td width="240"><INPUT TYPE="text" name="titulo_ruta" style="width:240px;"></td>
+															<td width="50"><a  href="busca_ruta">&nbsp;(Buscar)</a></td>
+														</tr>
+													</table>
+												
+												</td>
 											</tr>
 											
 											
 											<tr>
-												<td width="620">
+												<td width="620" height="341" valign="top">
+													<!--Datos de los servicios adicionales-->
 													
-													<table>
+													<table border="1">
 														<thead>
 															<tr>
 																<td colspan="5" height="2"></td>
@@ -448,8 +484,8 @@
 															</tr>
 															<tr>
 																<td colspan="5">
-																	<div style="overflow:scroll; overflow-x:hidden; overflow-y:auto; width:100%; height:200px; border:1px solid #C1DAD7 !important;">	
-																		 <table>
+																	<div style="overflow:scroll; overflow-x:hidden; overflow-y:auto; width:100%; height:160px; border:1px solid #C1DAD7 !important;">	
+																		 <table class="gral">
 																			  <tbody style="background-color:#ffffff;" valign="top" id="grid_adicionales">
 																				   
 																			  </tbody>
@@ -460,17 +496,53 @@
 														</tbody>
 														<tfoot>
 															<tr>
-																<td class="grid4" width="30"></td>
+																<td class="grid4" width="30">&nbsp;</td>
 																<td class="grid4" width="100"></td>
 																<td class="grid4" width="250"></td>
-																<td class="grid4" width="80"></td>
-																<td class="grid4" width="90"></td>
+																<td class="grid3" width="80"></td>
+																<td style="background:#fff; border-left:1px solid #ccc; border-right:1px solid #ccc; border-bottom:1px solid #ccc; border-top:1px solid #ccc; padding:4px; text-align:right;" width="70" class="monto_adicionales">0.00</td>
+															</tr>
+															
+															<tr>
+																<td width="550" colspan="5">
+																	<div id="div_warning_grid" style="display:none;">
+																		<table border ="0">
+																			<tr>
+																				<td width="10"></td>
+																				<td width="530" colspan="3"><div style="color:#d41000;">&nbsp;&nbsp;Datos&nbsp;no&nbsp;validos</div></td>
+																				<td width="10"></td>
+																			</tr>
+																			<tr>
+																				<td width="10"></td>
+																				<td width="20" style="background-color:#A8A9AB; font-weight:bold;">#</td>
+																				<td width="110" style="background-color:#A8A9AB; font-weight:bold;">C&oacute;digo&nbsp;producto</td>
+																				<td width="380" style="background-color:#A8A9AB; font-weight:bold;">Descripci&oacute;n&nbsp;del&nbsp;error</td>
+																				<td width="10"></td>
+																			</tr>
+																			<tr>
+																				<td width="10"></td>
+																				<td colspan="4"> 
+																					<div align="left" style="width:540px; height:90px; overflow:scroll; overflow-x:auto; overflow-y:auto; color:#d41000;">
+																						<table id="grid_warning" border="0" style="width:530px;"">
+																							<!-- Aqui se muestran los warning
+																							style="background-color:#e7e8ea;"
+																							-->
+																						</table>
+																					</div>
+																				</td>
+																			</tr>
+																		</table>
+																	</div>
+																</td>
 															</tr>
 														</tfoot>
 													</table>
 												</td>
 												<td width="10"></td>
-												<td width="515"></td>
+												<td width="515">
+													<!--Datos de la ruta seleccionada-->
+												
+												</td>
 												
 											</tr>
 											
@@ -613,7 +685,7 @@
 							<table width="100%" border="0">
 								<thead>
 									<tr>
-										<td colspan="8" height="50" valign="top"><div class="titulo_productos" width="100%"><strong>Buscador de productos</strong></div></td>
+										<td colspan="8" height="50" valign="top"><div class="titulo_productos" width="100%"><strong>Buscador de Servicios Adicionales</strong></div></td>
 									</tr>
 								</thead>
 								
@@ -631,7 +703,7 @@
 													<td width="70">C&oacute;digo&nbsp;</td>
 													<td width="120"><INPUT TYPE="text" name="campo_sku" style="width:120px;"></td>
 													<td width="25"></td>
-													<td width="90">Tipo&nbsp;de&nbsp;Producto</td>
+													<td width="90"></td>
 													<td width="200">
 														<SELECT NAME="tipo_producto" style="width:180px;">
 															<OPTION value="0" selected="yes">[--Seleccionar Tipo--]</OPTION>
