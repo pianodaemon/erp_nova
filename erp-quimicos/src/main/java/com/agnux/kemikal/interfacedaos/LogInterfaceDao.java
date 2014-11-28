@@ -86,8 +86,8 @@ public interface LogInterfaceDao {
     //Catalogo de servicios adicionales
     public ArrayList<HashMap<String, Object>> getServAdic_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
     public ArrayList<HashMap<String, Object>> getServAdic_Datos(Integer id);
-    public ArrayList<HashMap<String, Object>> getBuscadorProductos(String sku, String tipo, String descripcion, Integer id_empresa);
-    public ArrayList<HashMap<String, Object>> getDataProductBySku(String codigo, String tipo, Integer id_empresa);
+    public ArrayList<HashMap<String, Object>> getBuscadorProductos(String no_cliente, String sku, String tipo, String descripcion, Integer id_empresa);
+    public ArrayList<HashMap<String, Object>> getDataProductBySku(String no_cliente, String codigo, String tipo, Integer id_empresa);
     public ArrayList<HashMap<String, Object>> getProducto_Tipos();
     
     //Metodos para el catalogo de Vehiculo Marca
@@ -111,6 +111,7 @@ public interface LogInterfaceDao {
     public ArrayList<HashMap<String, Object>> getLogRegCarga_Datos(Integer id);
     public ArrayList<HashMap<String, Object>> getLogRegCarga_DatosGrid(Integer id);
     public ArrayList<HashMap<String, Object>> tratar_datos_grid(ArrayList<HashMap<String, Object>> partidas);
+    public HashMap<String, Object> getLogRegCarga_VerificaStatusPartida(Integer id_reg);
     
     public ArrayList<HashMap<String, Object>> getLogPar(Integer id_emp, Integer id_suc);
     public ArrayList<HashMap<String, Object>> getBuscadorDestinatarios(String cadena, Integer filtro, Integer cliente_id, Integer id_empresa, Integer id_sucursal);

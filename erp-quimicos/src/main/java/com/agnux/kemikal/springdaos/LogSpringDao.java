@@ -1577,12 +1577,15 @@ public class LogSpringDao implements LogInterfaceDao{
             + "log_vehiculos.numero_economico as no_eco,"
             + "(case when log_vehiculo_marca.id is null then '' else log_vehiculo_marca.titulo end) as marca,"
             + "(case when log_vehiculo_clase.id is null then '' else log_vehiculo_clase.titulo end) as clase_unidad,"
+            + "(case when log_vehiculo_tipo.id is null then 0 else log_vehiculo_tipo.id end) as t_unidad_id,"
+            + "(case when log_vehiculo_tipo.id is null then '' else log_vehiculo_tipo.titulo end) as tipo_unidad,"
             + "log_vehiculos.placa,"
             + "log_vehiculos.cap_volumen,"
             + "log_vehiculos.cap_peso,"
             + "(case when log_choferes.id is null then '' else log_choferes.clave end) AS no_operador,"
             + "(case when log_choferes.id is null then '' else ((case when log_choferes.nombre is null then '' else log_choferes.nombre||' ' end)||(case when log_choferes.apellido_paterno is null then '' else log_choferes.apellido_paterno||' ' end)||(case when log_choferes.apellido_materno is null then '' else log_choferes.apellido_materno end)) end) AS operador "
         + "from log_vehiculos "
+        + "join log_vehiculo_tipo on log_vehiculo_tipo.id=log_vehiculos.log_vehiculo_tipo_id "
         + "left join log_vehiculo_marca on (log_vehiculo_marca.id=log_vehiculos.log_vehiculo_marca_id  and log_vehiculo_marca.titulo ilike ?) "
         + "left join log_vehiculo_clase on log_vehiculo_clase.id=log_vehiculos.log_vehiculo_clase_id "
         + "left join log_choferes on log_choferes.id=log_vehiculos.log_chofer_id "
@@ -1600,6 +1603,8 @@ public class LogSpringDao implements LogInterfaceDao{
                     row.put("no_eco",rs.getString("no_eco"));
                     row.put("marca",rs.getString("marca"));
                     row.put("clase_unidad",rs.getString("clase_unidad"));
+                    row.put("t_unidad_id",String.valueOf(rs.getInt("t_unidad_id")));
+                    row.put("tipo_unidad",rs.getString("tipo_unidad"));
                     row.put("placa",rs.getString("placa"));
                     row.put("cap_volumen",StringHelper.roundDouble(rs.getString("cap_volumen"),3));
                     row.put("cap_peso",StringHelper.roundDouble(rs.getString("cap_peso"),3));
@@ -1629,12 +1634,15 @@ public class LogSpringDao implements LogInterfaceDao{
             + "log_vehiculos.numero_economico as no_eco,"
             + "(case when log_vehiculo_marca.id is null then '' else log_vehiculo_marca.titulo end) as marca,"
             + "(case when log_vehiculo_clase.id is null then '' else log_vehiculo_clase.titulo end) as clase_unidad,"
+            + "(case when log_vehiculo_tipo.id is null then 0 else log_vehiculo_tipo.id end) as t_unidad_id,"
+            + "(case when log_vehiculo_tipo.id is null then '' else log_vehiculo_tipo.titulo end) as tipo_unidad,"
             + "log_vehiculos.placa,"
             + "log_vehiculos.cap_volumen,"
             + "log_vehiculos.cap_peso,"
             + "(case when log_choferes.id is null then '' else log_choferes.clave end) AS no_operador,"
             + "(case when log_choferes.id is null then '' else ((case when log_choferes.nombre is null then '' else log_choferes.nombre||' ' end)||(case when log_choferes.apellido_paterno is null then '' else log_choferes.apellido_paterno||' ' end)||(case when log_choferes.apellido_materno is null then '' else log_choferes.apellido_materno end)) end) AS operador "
         + "from log_vehiculos "
+        + "join log_vehiculo_tipo on log_vehiculo_tipo.id=log_vehiculos.log_vehiculo_tipo_id "
         + "left join log_vehiculo_marca on log_vehiculo_marca.id=log_vehiculos.log_vehiculo_marca_id "
         + "left join log_vehiculo_clase on log_vehiculo_clase.id=log_vehiculos.log_vehiculo_clase_id "
         + "left join log_choferes on log_choferes.id=log_vehiculos.log_chofer_id "
@@ -1652,6 +1660,8 @@ public class LogSpringDao implements LogInterfaceDao{
                     row.put("no_eco",rs.getString("no_eco"));
                     row.put("marca",rs.getString("marca"));
                     row.put("clase_unidad",rs.getString("clase_unidad"));
+                    row.put("t_unidad_id",String.valueOf(rs.getInt("t_unidad_id")));
+                    row.put("tipo_unidad",rs.getString("tipo_unidad"));
                     row.put("placa",rs.getString("placa"));
                     row.put("cap_volumen",StringHelper.roundDouble(rs.getString("cap_volumen"),3));
                     row.put("cap_peso",StringHelper.roundDouble(rs.getString("cap_peso"),3));
@@ -1776,9 +1786,12 @@ public class LogSpringDao implements LogInterfaceDao{
     public ArrayList<HashMap<String, Object>> getLogAdmViaje_DetallePedido(Integer id_ped) {
         String sql_to_query = ""
         + "SELECT "
+            + "log_doc_ped_det.id as id_det, "
+            + "(case when inv_prod.id is null then 0 else inv_prod.id end) as id_prod,"
             + "inv_prod.sku AS codigo_prod,"
             + "inv_prod.descripcion AS titulo_prod,"
             + "log_doc_ped_det.cantidad,"
+            + "(case when inv_prod_unidades.id is null then 0 else inv_prod_unidades.id end) AS unidad_id,"
             + "(case when inv_prod_unidades.id is null then '' else inv_prod_unidades.titulo_abr end) AS unidad,"
             + "log_doc_ped_det.peso,"
             + "log_doc_ped_det.volumen,"
@@ -1794,13 +1807,16 @@ public class LogSpringDao implements LogInterfaceDao{
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id_det",rs.getInt("id_det"));
+                    row.put("id_prod",rs.getInt("id_prod"));
                     row.put("codigo_prod",rs.getString("codigo_prod"));
                     row.put("titulo_prod",rs.getString("titulo_prod"));
                     row.put("cantidad",StringHelper.roundDouble(rs.getString("cantidad"),2));
+                    row.put("unidad_id",rs.getInt("unidad_id"));
                     row.put("unidad",rs.getString("unidad"));
                     row.put("peso",StringHelper.roundDouble(rs.getString("peso"),3));
                     row.put("volumen",StringHelper.roundDouble(rs.getString("volumen"),3));
-                    row.put("estatus",rs.getString("estatus"));
+                    row.put("estatus",rs.getInt("estatus"));
                     return row;
                 }
             }
@@ -1868,6 +1884,8 @@ public class LogSpringDao implements LogInterfaceDao{
             + "log_viaje.log_vehiculo_id AS vehiculo_id,"
             + "log_vehiculos.folio AS no_unidad, "
             + "(case when log_vehiculo_marca.id is null then '' else log_vehiculo_marca.titulo end) as unidad, "
+            + "(case when log_vehiculo_tipo.id is null then 0 else log_vehiculo_tipo.id end) as t_unidad_id,"
+            + "(case when log_vehiculo_tipo.id is null then '' else log_vehiculo_tipo.titulo end) as tipo_unidad,"
             + "log_viaje.no_economico, "
             + "log_viaje.placas, "
             + "log_vehiculos.cap_volumen,"
@@ -1880,6 +1898,7 @@ public class LogSpringDao implements LogInterfaceDao{
         + "from log_viaje "
         + "left join log_choferes on log_choferes.id=log_viaje.log_chofer_id "
         + "join log_vehiculos on log_vehiculos.id=log_viaje.log_vehiculo_id "
+        + "left join log_vehiculo_tipo on log_vehiculo_tipo.id=log_vehiculos.log_vehiculo_tipo_id "
         + "left join log_vehiculo_marca on log_vehiculo_marca.id=log_vehiculos.log_vehiculo_marca_id "
         + "left join log_vehiculo_clase on log_vehiculo_clase.id=log_viaje.log_vehiculo_clase_id " 
         + "where log_viaje.id=? order by log_viaje.id;";
@@ -1898,6 +1917,8 @@ public class LogSpringDao implements LogInterfaceDao{
                     row.put("vehiculo_id",rs.getInt("vehiculo_id"));
                     row.put("no_unidad",rs.getString("no_unidad"));
                     row.put("unidad",rs.getString("unidad"));
+                    row.put("t_unidad_id",String.valueOf(rs.getInt("t_unidad_id")));
+                    row.put("tipo_unidad",rs.getString("tipo_unidad"));
                     row.put("no_economico",rs.getString("no_economico"));
                     row.put("placas",rs.getString("placas"));
                     row.put("clase",rs.getString("clase"));
@@ -2237,7 +2258,7 @@ public class LogSpringDao implements LogInterfaceDao{
     
     
     @Override
-    public ArrayList<HashMap<String, Object>> getBuscadorProductos(String sku, String tipo, String descripcion, Integer id_empresa) {
+    public ArrayList<HashMap<String, Object>> getBuscadorProductos(String no_cliente, String sku, String tipo, String descripcion, Integer id_empresa) {
         String where = "";
 	if(!sku.equals("")){
             where=" and inv_prod.sku ilike '%"+sku+"%'";
@@ -2249,6 +2270,10 @@ public class LogSpringDao implements LogInterfaceDao{
         
 	if(!descripcion.equals("")){
             where +=" and inv_prod.descripcion ilike '%"+descripcion+"%'";
+	}
+        
+	if(!no_cliente.equals("")){
+            where +=" and upper(trim(inv_prod.no_clie))='"+no_cliente.trim().toUpperCase()+"'";
 	}
         
         String sql_to_query = ""
@@ -2292,11 +2317,15 @@ public class LogSpringDao implements LogInterfaceDao{
 
     //Busca datos de un producto en especifico a partir del codigo
     @Override
-    public ArrayList<HashMap<String, Object>> getDataProductBySku(String codigo, String tipo, Integer id_empresa) {
+    public ArrayList<HashMap<String, Object>> getDataProductBySku(String no_cliente, String codigo, String tipo, Integer id_empresa) {
         String where = "";
         
 	if(!tipo.equals("0")){
             where +=" and inv_prod.tipo_de_producto_id="+tipo;
+	}
+        
+	if(!no_cliente.equals("")){
+            where +=" and upper(trim(inv_prod.no_clie))='"+no_cliente.trim().toUpperCase()+"'";
 	}
         
         String sql_to_query = ""
@@ -2768,6 +2797,7 @@ public class LogSpringDao implements LogInterfaceDao{
         + "select "
             + "log_doc_ped.id as id_ped,"
             + "log_doc_ped.no_pedido,"
+            + "(case when log_doc_ped_fac.id is null then 0 else log_doc_ped_fac.id end) as id_ped_fac,"
             + "(case when log_doc_ped_fac.no_facura is null then '' else log_doc_ped_fac.no_facura end) as no_facura,"
             + "cxc_destinatarios.id as id_dest,"
             + "cxc_destinatarios.folio as no_dest,"
@@ -2775,20 +2805,20 @@ public class LogSpringDao implements LogInterfaceDao{
             + "(case when gral_mun.id is null then '' else gral_mun.titulo end) as poblacion,"
             + "log_doc_ped.estatus as status_id,"
             + "(case when log_doc_ped.estatus=0 then '' when log_doc_ped.estatus=1 then 'Enviado' else '' end) as status_ped,"
-            + "sum(log_doc_ped_det.cantidad) as cant_uni, "
-            + "sum(log_doc_ped_det.peso) AS peso,"
-            + "sum(log_doc_ped_det.volumen) AS volumen "
+            + "sum((case when log_doc_ped_det.cantidad is null then 0 else log_doc_ped_det.cantidad end)) as cant_uni, "
+            + "sum((case when log_doc_ped_det.peso is null then 0 else log_doc_ped_det.peso end)) AS peso,"
+            + "sum((case when log_doc_ped_det.volumen is null then 0 else log_doc_ped_det.volumen end)) AS volumen "
         + "from log_doc_ped "
         + "left join log_doc_ped_det on log_doc_ped_det.log_doc_ped_id=log_doc_ped.id "
         + "left join log_doc_ped_fac on log_doc_ped_fac.log_doc_ped_id=log_doc_ped.id "
         + "join cxc_destinatarios on cxc_destinatarios.id=log_doc_ped.cxc_dest_id "
         + "left join gral_mun on gral_mun.id=cxc_destinatarios.gral_mun_id "
         + "where log_doc_ped.log_doc_carga_id=? "
-        + "group by log_doc_ped.id, log_doc_ped.no_pedido, log_doc_ped_fac.no_facura, cxc_destinatarios.id, cxc_destinatarios.folio, cxc_destinatarios.razon_social, gral_mun.id, log_doc_ped.estatus "
+        + "group by log_doc_ped.id, log_doc_ped.no_pedido, log_doc_ped_fac.id, log_doc_ped_fac.no_facura, cxc_destinatarios.id, cxc_destinatarios.folio, cxc_destinatarios.razon_social, gral_mun.id, log_doc_ped.estatus "
         + "order by log_doc_ped.id;";
         
         //System.out.println("DatosGrid: "+sql_to_query);
-        
+        //System.out.println("id: "+id);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{ new Integer(id)}, new RowMapper(){
@@ -2797,6 +2827,7 @@ public class LogSpringDao implements LogInterfaceDao{
                     HashMap<String, Object> row = new HashMap<String, Object>();
                     row.put("id_ped",rs.getInt("id_ped"));
                     row.put("no_pedido",rs.getString("no_pedido"));
+                    row.put("id_ped_fac",rs.getInt("id_ped_fac"));
                     row.put("no_facura",rs.getString("no_facura"));
                     row.put("id_dest",rs.getInt("id_dest"));
                     row.put("no_dest",rs.getString("no_dest"));
@@ -2831,6 +2862,7 @@ public class LogSpringDao implements LogInterfaceDao{
                 fila.put("tipo","PAR");
                 fila.put("id_ped",id_ped_actual);
                 fila.put("no_pedido",i.get("no_pedido").toString());
+                fila.put("id_ped_fac",i.get("id_ped_fac"));
                 fila.put("no_facura",i.get("no_facura").toString());
                 fila.put("id_dest",Integer.parseInt(i.get("id_dest").toString()));
                 fila.put("no_dest",i.get("no_dest").toString());
@@ -2845,6 +2877,7 @@ public class LogSpringDao implements LogInterfaceDao{
                 fila.put("tipo","FAC");
                 fila.put("id_ped",id_ped_actual);
                 fila.put("no_pedido","");
+                fila.put("id_ped_fac",i.get("id_ped_fac"));
                 fila.put("no_facura",i.get("no_facura").toString());
                 fila.put("id_dest",Integer.parseInt(i.get("id_dest").toString()));
                 fila.put("no_dest","");
@@ -2866,6 +2899,29 @@ public class LogSpringDao implements LogInterfaceDao{
     
     
     
+    
+    @Override
+    public HashMap<String, Object> getLogRegCarga_VerificaStatusPartida(Integer id_reg) {
+        String sql_to_query = "SELECT count(id) as count FROM log_doc_ped_det WHERE id=? and estatus>0;";
+        //System.out.println("Validacion:"+sql_to_query);
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        
+        HashMap<String, Object> hm = (HashMap<String, Object>) this.jdbcTemplate.queryForObject(
+            sql_to_query, 
+            new Object[]{new Integer(id_reg)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("count",rs.getInt("count"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+        
     
     
     //Obtiene todos los pedidos de la carga seleccionada

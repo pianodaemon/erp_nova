@@ -116,7 +116,7 @@ public class LogServAdicController {
         HashMap<String,String> has_busqueda = StringHelper.convert2hash(StringHelper.ascii2string(cadena_busqueda));
         
         //Catalogo de Servicios Adicionales(LOG)
-        Integer app_selected = 184;
+        Integer app_selected = 185;
         
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
@@ -233,13 +233,16 @@ public class LogServAdicController {
         HashMap<String, ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String, ArrayList<HashMap<String, Object>>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
         
-        //decodificar id de usuario
+        //Decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
         userDat = this.getHomeDao().getUserById(id_usuario);
         
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         
-        jsonretorno.put("Productos", this.getLogDao().getBuscadorProductos(sku,tipo ,descripcion, id_empresa));
+        //Se pasa vacio el numero de cliente para que aplique el filtro
+        String no_clie = "";
+        
+        jsonretorno.put("Productos", this.getLogDao().getBuscadorProductos(no_clie, sku,tipo ,descripcion, id_empresa));
         
         return jsonretorno;
     }
@@ -265,9 +268,12 @@ public class LogServAdicController {
         
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         
+        //Solo busca productos tipo Servicios
         String tipo = "4";
+        //Se pasa vacio el numero de cliente para que aplique el filtro
+        String no_clie = "";
         
-        jsonretorno.put("Producto", this.getLogDao().getDataProductBySku(codigo, tipo, id_empresa));
+        jsonretorno.put("Producto", this.getLogDao().getDataProductBySku(no_clie, codigo, tipo, id_empresa));
         
         return jsonretorno;
     }
@@ -290,7 +296,7 @@ public class LogServAdicController {
         HashMap<String, String> succes = new HashMap<String, String>();
         
         //Catalogo de Servicios Adicionales(LOG)
-        Integer app_selected = 184;
+        Integer app_selected = 185;
         String command_selected = "new";
         //Decodificar id de usuario
         Integer id_usuario = user.getUserId();
@@ -346,7 +352,7 @@ public class LogServAdicController {
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
         
         //Catalogo de Servicios Adicionales(LOG)
-        Integer app_selected = 184;
+        Integer app_selected = 185;
         String command_selected = "delete";
         String extra_data_array = "'sin datos'";
         String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id;
