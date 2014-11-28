@@ -966,6 +966,27 @@ $(function() {
                                 
                             }
                         }
+							
+						html_ventasnetas +='<tr>';
+						html_ventasnetas +='<td align="left"  id="sin_borde" width="80px" height="2"><input type="text" name="col1" style="width:80px; height:0px; border-color:transparent; background:transparent;"></td>';
+						html_ventasnetas +='<td align="left"  id="sin_borde" width="200px"><input type="text" name="col1" style="width:200px; height:0px; border-color:transparent; background:transparent;"></td>';
+						html_ventasnetas +='<td align="right" id="sin_borde" width="70px"><input type="text" name="col1" style="width:70px; height:0px; border-color:transparent; background:transparent;"></td>';
+						html_ventasnetas +='<td align="right" id="sin_borde" width="80px"><input type="text" name="col1" style="width:80px; height:0px; border-color:transparent; background:transparent;"></td>';
+						html_ventasnetas +='<td align="right" id="sin_borde" width="80px"><input type="text" name="col1" style="width:80px; height:0px; border-color:transparent; background:transparent;"></td>';
+						html_ventasnetas +='<td align="right" id="sin_borde" width="80px"><input type="text" name="col1" style="width:80px; height:0px; border-color:transparent; background:transparent;"></td>';
+						html_ventasnetas +='<td align="right" id="sin_borde" width="25px"><input type="text" name="col1" style="width:25px; height:0px; border-color:transparent; background:transparent;"></td>';
+						html_ventasnetas +='<td align="right" id="sin_borde" width="80px"><input type="text" name="col1" style="width:80px; height:0px; border-color:transparent; background:transparent;"></td>';
+						html_ventasnetas +='<td align="right" id="sin_borde" width="25px"><input type="text" name="col1" style="width:25px; height:0px; border-color:transparent; background:transparent;"></td>';
+						html_ventasnetas +='<td align="right" id="sin_borde" width="80px"><input type="text" name="col1" style="width:80px; height:0px; border-color:transparent; background:transparent;"></td>';
+						html_ventasnetas +='<td align="right" id="sin_borde" width="40px"><input type="text" name="col1" style="width:40px; height:0px; border-color:transparent; background:transparent;"></td>';
+						html_ventasnetas +='<td align="right" id="sin_borde" width="80px"><input type="text" name="col1" style="width:80px; height:0px; border-color:transparent; background:transparent;"></td>';
+						html_ventasnetas +='<td align="right" id="sin_borde" width="25px"><input type="text" name="col1" style="width:25px; height:0px; border-color:transparent; background:transparent;"></td>';
+						html_ventasnetas +='<td align="right" id="sin_borde" width="80px"><input type="text" name="col1" style="width:80px; height:0px; border-color:transparent; background:transparent;"></td>';
+						html_ventasnetas +='<td align="right" id="sin_borde" width="80px"><input type="text" name="col1" style="width:80px; height:0px; border-color:transparent; background:transparent;"></td>';
+						html_ventasnetas +='<td align="right" id="sin_borde" width="80px"><input type="text" name="col1" style="width:80px; height:0px; border-color:transparent; background:transparent;"></td>';
+						html_ventasnetas +='<td align="right" id="sin_borde" width="80px"><input type="text" name="col1" style="width:80px; height:0px; border-color:transparent; background:transparent;"></td>';
+						html_ventasnetas +='</tr>';
+						
 						/*
                         html_footer +='<tr>';
                         html_footer +='<td align="right" colspan="8" ><strong>'+"TOTAL GENERAL:"+'</strong></td>';
@@ -1357,11 +1378,7 @@ $(function() {
 
 
 
-        ////////////////////// VENTAS NETAS SUMARIZADO POR PRODUCTO
-
-
-
-
+        /***VENTAS NETAS SUMARIZADO POR PRODUCTO***/
         if ($select_tipo_reporte.val() == 3 ){
             $div_ventas_netas_productofactura.children().remove();
             //producto ,  unidad, cantidad , $ ,precio_promedio,$ ,venta_neta
@@ -1404,108 +1421,110 @@ $(function() {
                 $.post(restful_json_service,arreglo_parametros,function(entry){
 
                     var header_tabla = {
-                        Producto  :'Producto',
-                        Unidad : 'Unidad',
-                        Total : 'Total',
+                        Producto  	:'Producto',
+                        Unidad		:'Unidad',
+                        Total 		:'Total',
                         Monedapu    :"",
-                        Precio_unitario : 'P.Promedio',
+                        Precio_unitario :'P.&nbsp;Promedio',
                         Monedavn    :"",
-                        Venta_Neta : 'V.Total',
-                        Costo          :'Costo',
-                        Ponderacion    : 'POND',
-                        Tipo_MOP       :'MOP',
-                        Medi_MOP       :'M_MOP'
+                        Venta_Neta 	:'V.&nbsp;Total',
+                        moneda_costo:"",
+                        Costo 		:'Costo',
+                        Ponderacion	:'POND',
+                        Tipo_MOP	:'MOP',
+                        Medi_MOP	:'M_MOP'
                     };
 
 
-                    var html_ventasnetas = '<table id="ventas" width="100%" >';
+                    var html_ventasnetas = '<table id="ventas" >';
                     html_ventasnetas +='<thead> <tr>';
                     for(var key in header_tabla){
                         var attrValue = header_tabla[key];
                         if(attrValue == "Producto"){
-                            html_ventasnetas +='<td  width="50px" align="left" >'+attrValue+'</td>';
+                            html_ventasnetas +='<td  width="300" align="center" >'+attrValue+'</td>';
                         }
                         if(attrValue == "Unidad"){
-                            html_ventasnetas +='<td  align="right" >'+attrValue+'</td>';
+                            html_ventasnetas +='<td  align="center" widht="50">'+attrValue+'</td>';
                         }
                         if(attrValue == "Total"){
-                            html_ventasnetas +='<td  align="right" >'+attrValue+'</td>';
+                            html_ventasnetas +='<td  align="center" widht="80">'+attrValue+'</td>';
                         }
 
                         if(attrValue == ""){
-                            html_ventasnetas +='<td width="8px" align="right" >'+attrValue+'</td>';
+                            html_ventasnetas +='<td width="15" align="center" >'+attrValue+'</td>';
                         }
-                        if(attrValue == "P.Promedio"){
-                            html_ventasnetas +='<td   align="right" >'+attrValue+'</td>';
+                        
+                        if(attrValue == "P.&nbsp;Promedio"){
+                            html_ventasnetas +='<td   align="center" widht="100">'+attrValue+'</td>';
                         }
 
-                        if(attrValue == "V.Total"){
-                            html_ventasnetas +='<td  align="right" >'+attrValue+'</td>';
+                        if(attrValue == "V.&nbsp;Total"){
+                            html_ventasnetas +='<td  align="center" widht="100">'+attrValue+'</td>';
                         }
                         //nuevo de aqui para abajo
                         if(attrValue == "Costo"){
-                            html_ventasnetas +='<td align="right"  >'+attrValue+'</td>';
+                            html_ventasnetas +='<td align="center" widht="100">'+attrValue+'</td>';
                         }
                         if(attrValue == "POND"){
-                            html_ventasnetas +='<td width="50px" align="right"  >'+attrValue+'</td>';
+                            html_ventasnetas +='<td width="80" align="center"  >'+attrValue+'</td>';
                         }
                         if(attrValue == "MOP"){
-                            html_ventasnetas +='<td width="50px" align="right"  >'+attrValue+'</td>';
+                            html_ventasnetas +='<td width="80" align="center"  >'+attrValue+'</td>';
                         }
                         if(attrValue == "M_MOP"){
-                            html_ventasnetas +='<td width="50px" align="right"  >'+attrValue+'</td>';
+                            html_ventasnetas +='<td width="80" align="center"  >'+attrValue+'</td>';
                         }
                     }
-                    html_ventasnetas +='</tr> </thead>';
+                    html_ventasnetas +='</tr>';
+                    html_ventasnetas +='</thead>';
+                    
                     if(entry['datos_normales'].length > 0 ){
-
+						
                         for(var j=0; j<entry['datos_normales'].length; j++){
-
                             Tventageneral = Tventageneral + parseFloat(entry['datos_normales'][j]["venta_pesos"]);
                             Tcostogeneral = Tcostogeneral + parseFloat(entry['datos_normales'][j]["costo"]);
                         }
+                        
                         prod = entry['datos_normales'][0]["producto"];
                         totalventa=obtiene_total_venta($select_tipo_reporte.val(),entry['totales'],prod);
-
+						
+						var primer_registro=0;
+						
                         for(var i=0; i<entry['datos_normales'].length; i++){
                             if(prod == entry['datos_normales'][i]["producto"] ){
                                 if(entry['datos_normales'][i]["tipo"]=='REG'){
                                     html_ventasnetas +='<tr>';
 
-                                    cantidad=cantidad + parseFloat(entry['datos_normales'][i]["cantidad"]);
-                                    venta_neta= venta_neta+parseFloat(entry['datos_normales'][i]["venta_pesos"]);
+                                    cantidad = parseFloat(cantidad) + parseFloat(entry['datos_normales'][i]["cantidad"]);
+                                    venta_neta = parseFloat(venta_neta) + parseFloat(entry['datos_normales'][i]["venta_pesos"]);
 
-                                    prod=entry['datos_normales'][i]["producto"];
-                                    unidad=entry['datos_normales'][i]["unidad"];
-                                    costoxproducto=costoxproducto + parseFloat(entry['datos_normales'][i]["costo"]);
-                                    ventageneral=ventageneral+ parseFloat(entry['datos_normales'][i]["venta_pesos"]);
-                                    costogeneral=costogeneral+ parseFloat(entry['datos_normales'][i]["costo"]);
+                                    prod = entry['datos_normales'][i]["producto"];
+                                    unidad = entry['datos_normales'][i]["unidad"];
+                                    costoxproducto = parseFloat(costoxproducto) + parseFloat(entry['datos_normales'][i]["costo"]);
+                                    ventageneral = parseFloat(ventageneral) + parseFloat(entry['datos_normales'][i]["venta_pesos"]);
+                                    costogeneral = parseFloat(costogeneral) + parseFloat(entry['datos_normales'][i]["costo"]);
+                                    
+                                    totalcosto = parseFloat(totalcosto) + parseFloat(entry['datos_normales'][i]["costo"]);
 
-                                    totalcosto=totalcosto + parseFloat(entry['datos_normales'][i]["costo"]);
-
-                                    totalponderacion=(venta_neta/Tventageneral)*100;
-                                    totalmop=(((venta_neta-costoxproducto)/venta_neta)*100);
-                                    totalmediamop=((venta_neta / Tventageneral )*100)*(((venta_neta-costoxproducto)/venta_neta)*100);
-
-
-
+                                    totalponderacion=(parseFloat(venta_neta)/parseFloat(Tventageneral))*100;
+                                    totalmop=(((parseFloat(venta_neta)-parseFloat(costoxproducto))/parseFloat(venta_neta))*100);
+                                    totalmediamop=((parseFloat(venta_neta) / parseFloat(Tventageneral) )*100)*(((parseFloat(venta_neta)-parseFloat(costoxproducto))/parseFloat(venta_neta))*100);
+                                    
                                 }else{
-
-                                    html_ventasnetas +='<tr>';
-                                    html_ventasnetas +='<td width="300px" align="left" >'+prod+'</td>';
-                                    html_ventasnetas +='<td  align="right" >'+unidad+'</td>';
-                                    html_ventasnetas +='<td  align="right" >'+$(this).agregar_comas(parseFloat(cantidad).toFixed(2))+'</td>';
-                                    html_ventasnetas +='<td widht="5px" align="right">'+"$"+'</td>';
-                                    html_ventasnetas +='<td  align="right" >'+$(this).agregar_comas((parseFloat(venta_neta)/parseFloat(cantidad)).toFixed(2))+'</td>';
-                                    html_ventasnetas +='<td widht="5px" align="right">'+"$"+'</td>';
-                                    html_ventasnetas +='<td  align="right" >'+$(this).agregar_comas(parseFloat(venta_neta).toFixed(2))+'</td>';
-                                    html_ventasnetas +='<td widht="5px" align="right">'+"$"+'</td>';
-                                    html_ventasnetas +='<td align="right"  >'+$(this).agregar_comas(parseFloat(costoxproducto).toFixed(2))+'</td>';
-                                    html_ventasnetas +='<td align="right"  >'+$(this).agregar_comas(totalponderacion.toFixed(2) )+' %</td>';
-                                    html_ventasnetas +='<td align="right"  >'+$(this).agregar_comas(totalmop.toFixed(2) )+'</td>';
-                                    html_ventasnetas +='<td align="right"  >'+$(this).agregar_comas(totalmediamop.toFixed(2) )+'</td>';
-                                    html_ventasnetas +='</tr>';
-
+									html_ventasnetas +='<tr>';
+									html_ventasnetas +='<td width="300" align="left" >'+prod+'</td>';
+									html_ventasnetas +='<td  align="right" widht="50">'+unidad+'</td>';
+									html_ventasnetas +='<td  align="right" widht="80">'+$(this).agregar_comas(parseFloat(cantidad).toFixed(2))+'</td>';
+									html_ventasnetas +='<td widht="15" align="right">'+"$"+'</td>';
+									html_ventasnetas +='<td align="right" widht="100">'+$(this).agregar_comas((parseFloat(venta_neta)/parseFloat(cantidad)).toFixed(2))+'</td>';
+									html_ventasnetas +='<td widht="15" align="right">'+"$"+'</td>';
+									html_ventasnetas +='<td align="right" widht="100">'+$(this).agregar_comas(parseFloat(venta_neta).toFixed(2))+'</td>';
+									html_ventasnetas +='<td widht="15" align="right">'+"$"+'</td>';
+									html_ventasnetas +='<td align="right" widht="100">'+$(this).agregar_comas(parseFloat(costoxproducto).toFixed(2))+'</td>';
+									html_ventasnetas +='<td align="right" widht="80">'+$(this).agregar_comas(parseFloat(totalponderacion).toFixed(2) )+' %</td>';
+									html_ventasnetas +='<td align="right" widht="80">'+$(this).agregar_comas(parseFloat(totalmop).toFixed(2) )+'</td>';
+									html_ventasnetas +='<td align="right" widht="80">'+$(this).agregar_comas(parseFloat(totalmediamop).toFixed(2) )+'</td>';
+									html_ventasnetas +='</tr>';
                                 }
                             }else{
                                 prod = entry['datos_normales'][i]["producto"];
@@ -1524,59 +1543,76 @@ $(function() {
                                 totalmop=0.0;
                                 totalmediamop=0.0;
 
-                                cantidad=cantidad + parseFloat(entry['datos_normales'][i]["cantidad"]);
-                                venta_neta= venta_neta+parseFloat(entry['datos_normales'][i]["venta_pesos"]);
+                                cantidad = parseFloat(cantidad) + parseFloat(entry['datos_normales'][i]["cantidad"]);
+                                venta_neta = parseFloat(venta_neta) + parseFloat(entry['datos_normales'][i]["venta_pesos"]);
 
-                                prod=entry['datos_normales'][i]["producto"];
-                                unidad=entry['datos_normales'][i]["unidad"];
-                                costoxproducto=costoxproducto + entry['datos_normales'][i]["costo"];
-                                ventageneral=ventageneral+ parseFloat(entry['datos_normales'][i]["venta_pesos"]);
-                                costogeneral=costogeneral+ parseFloat(entry['datos_normales'][i]["costo"]);
+                                prod = entry['datos_normales'][i]["producto"];
+                                unidad = entry['datos_normales'][i]["unidad"];
+                                costoxproducto = parseFloat(costoxproducto) + entry['datos_normales'][i]["costo"];
+                                ventageneral = parseFloat(ventageneral) + parseFloat(entry['datos_normales'][i]["venta_pesos"]);
+                                costogeneral = parseFloat(costogeneral) + parseFloat(entry['datos_normales'][i]["costo"]);
 
-                                totalcosto=totalcosto + parseFloat(entry['datos_normales'][i]["costo"]);
+                                totalcosto = parseFloat(totalcosto) + parseFloat(entry['datos_normales'][i]["costo"]);
 
-                                totalponderacion=(venta_neta/Tventageneral)*100;
-                                totalmop=(((venta_neta-costoxproducto)/venta_neta)*100);
-                                totalmediamop=((venta_neta / Tventageneral )*100)*(((venta_neta-costoxproducto)/venta_neta)*100);
-
-
+                                totalponderacion = (parseFloat(venta_neta)/parseFloat(Tventageneral))*100;
+                                totalmop = (((parseFloat(venta_neta)-parseFloat(costoxproducto))/parseFloat(venta_neta))*100);
+                                totalmediamop = ((parseFloat(venta_neta) / parseFloat(Tventageneral) )*100)*(((parseFloat(venta_neta)-parseFloat(costoxproducto))/parseFloat(venta_neta))*100);
                             }
                         }
-                        //total general
+                        
+                        //Total general
                         html_footer +='<tr>';
-                        html_footer +='<td  align="right" colspan="5">TOTAL GENERAL:</td>';
-                        html_footer +='<td widht="5px" align="right">'+"$"+'</td>';
-                        html_footer +='<td  align="right" >'+$(this).agregar_comas(parseFloat(ventageneral).toFixed(2))+'</td>';
-                        html_footer +='<td widht="5px" align="right">'+"$"+'</td>';
-                        html_footer +='<td align="right"  >'+$(this).agregar_comas(parseFloat(costogeneral).toFixed(2))+'</td>';
-                        html_footer +='<td align="right"  >'+$(this).agregar_comas(((ventageneral/ventageneral)*100).toFixed(2) )+' %</td>';
-                        html_footer +='<td align="right"  >'+$(this).agregar_comas((((ventageneral-costogeneral)/ventageneral)*100).toFixed(2) )+'</td>';
-                        html_footer +='<td align="right"  >'+$(this).agregar_comas((ventageneral/ventageneral)*(((ventageneral-costogeneral)/ventageneral)*100).toFixed(2) )+'</td>';
+						html_footer +='<td width="300" align="right">TOTAL GENERAL:</td>';
+						html_footer +='<td align="right" widht="50"></td>';
+						html_footer +='<td align="right" widht="80"></td>';
+                        html_footer +='<td widht="15" align="right">'+"$"+'</td>';
+						html_footer +='<td align="right" widht="100"></td>';
+                        html_footer +='<td widht="15" align="right">'+"$"+'</td>';
+                        html_footer +='<td align="right" widht="100">'+$(this).agregar_comas(parseFloat(ventageneral).toFixed(2))+'</td>';
+                        html_footer +='<td widht="15" align="right">'+"$"+'</td>';
+                        html_footer +='<td align="right" widht="100">'+$(this).agregar_comas(parseFloat(costogeneral).toFixed(2))+'</td>';
+                        html_footer +='<td align="right" widht="80">'+$(this).agregar_comas(((ventageneral/ventageneral)*100).toFixed(2) )+' %</td>';
+                        html_footer +='<td align="right" widht="80">'+$(this).agregar_comas((((ventageneral-costogeneral)/ventageneral)*100).toFixed(2) )+'</td>';
+                        html_footer +='<td align="right" widht="80">'+$(this).agregar_comas((ventageneral/ventageneral)*(((ventageneral-costogeneral)/ventageneral)*100).toFixed(2) )+'</td>';
                         html_footer +='</tr>';
-
-
                     }else{
                         jAlert("Esta consulta no genero ningun Resultado",'Atencion!!!');
                     }
+                    
+                    //Este tr es para poder alinear las columnas
+					html_ventasnetas +='<tr>';
+					html_ventasnetas +='<td width="300" height="0"><input type="text" name="col1" style="width:300px; height:0px; border-color:transparent; background:transparent;"></td>';
+					html_ventasnetas +='<td widht="50"><input type="text" name="col2" style="width:50px; height:0px; border-color:transparent; background:transparent;"></td>';
+					html_ventasnetas +='<td widht="80"><input type="text" name="col3" style="width:80px; height:0px; border-color:transparent; background:transparent;"></td>';
+					html_ventasnetas +='<td widht="15"><input type="text" name="col4" style="width:15px; height:0px; border-color:transparent; background:transparent;"></td>';
+					html_ventasnetas +='<td widht="100"><input type="text" name="col5" style="width:100px; height:0px; border-color:transparent; background:transparent;"></td>';
+					html_ventasnetas +='<td widht="15"><input type="text" name="col6" style="width:15px; height:0px; border-color:transparent; background:transparent;"></td>';
+					html_ventasnetas +='<td widht="100"><input type="text" name="col7" style="width:100px; height:0px; border-color:transparent; background:transparent;"></td>';
+					html_ventasnetas +='<td widht="15"><input type="text" name="col8" style="width:15px; height:0px; border-color:transparent; background:transparent;"></td>';
+					html_ventasnetas +='<td widht="100"><input type="text" name="col9" style="width:100px; height:0px; border-color:transparent; background:transparent;"></td>';
+					html_ventasnetas +='<td widht="80"><input type="text" name="col10" style="width:80px; height:0px; border-color:transparent; background:transparent;"></td>';
+					html_ventasnetas +='<td widht="80"><input type="text" name="col11" style="width:80px; height:0px; border-color:transparent; background:transparent;"></td>';
+					html_ventasnetas +='<td widht="80"><input type="text" name="col12" style="width:80px; height:0px; border-color:transparent; background:transparent;"></td>';
+					html_ventasnetas +='</tr>';
+					
+                    /*
                     html_ventasnetas +='<tr>';
-                            html_ventasnetas +='<td colspan="12">&nbsp;</td>';
+					html_ventasnetas +='<td colspan="12">&nbsp;</td>';
                     html_ventasnetas +='</tr>';
-
+                    */
                     html_ventasnetas +='<tfoot>';
-                             html_ventasnetas += html_footer;
+					html_ventasnetas += html_footer;
                     html_ventasnetas +='</tfoot>';
-
+                    
                     html_ventasnetas += '</table>';
-
-
-
+                    
                     $div_ventas_netas_productofactura.append(html_ventasnetas);
                     var height2 = $('#cuerpo').css('height');
                     var alto = parseInt(height2)-350;
                     var pix_alto=alto+'px';
                     $('#ventas').tableScroll({
                         height:parseInt(pix_alto)
-                        });
+					});
                 });
             }else{
 				jAlert('Debe elegir el rango la Fecha Inicial y su Fecha Final par la Busqueda.', 'Atencion!', function(r) { 
@@ -1586,13 +1622,12 @@ $(function() {
             }
         }//FIN DE LA VISTA DE PRODUCTO SUMARIZADO
 
-        ////////////////////////////////////// SUMARIZADO POR  CLIENTE
 
 
 
 
 
-
+        /*** SUMARIZADO POR  CLIENTE ***/
         if ($select_tipo_reporte.val() == 4 ){
             $div_ventas_netas_productofactura.children().remove();
             //cliene ,  unidad, cantidad , $ ,precio_promedio,$ ,venta_neta
@@ -1640,9 +1675,10 @@ $(function() {
                         Unidad : 'Unidad',
                         Total : 'Total',
                         Monedapu    :"",
-                        Precio_unitario : 'P.Promedio',
+                        Precio_unitario : 'P.&nbsp;Promedio',
                         Monedavn    :"",
-                        Venta_Neta : 'V.Total',
+                        Venta_Neta : 'V.&nbsp;Total',
+                        moneda_costo    :"",
                         Costo          :'Costo',
                         Ponderacion    : 'POND',
                         Tipo_MOP       :'MOP',
@@ -1650,49 +1686,50 @@ $(function() {
                     };
 
 
-                    var html_ventasnetas = '<table id="ventas" width="100%" >';
+                    var html_ventasnetas = '<table id="ventas">';
                     html_ventasnetas +='<thead> <tr>';
                     for(var key in header_tabla){
                         var attrValue = header_tabla[key];
-                        if(attrValue == "Producto"){
+                        if(attrValue == "Cliente"){
                             html_ventasnetas +='<td  width="50px" align="left" >'+attrValue+'</td>';
                         }
                         if(attrValue == "Unidad"){
-                            html_ventasnetas +='<td  align="right" >'+attrValue+'</td>';
+                            html_ventasnetas +='<td  align="center" widht="50">'+attrValue+'</td>';
                         }
                         if(attrValue == "Total"){
-                            html_ventasnetas +='<td  align="right" >'+attrValue+'</td>';
+                            html_ventasnetas +='<td  align="center" widht="80">'+attrValue+'</td>';
                         }
 
                         if(attrValue == ""){
-                            html_ventasnetas +='<td width="8px" align="right" >'+attrValue+'</td>';
+                            html_ventasnetas +='<td width="15" align="center" >'+attrValue+'</td>';
                         }
-                        if(attrValue == "P.Promedio"){
-                            html_ventasnetas +='<td   align="right" >'+attrValue+'</td>';
+                        
+                        if(attrValue == "P.&nbsp;Promedio"){
+                            html_ventasnetas +='<td   align="center" widht="100">'+attrValue+'</td>';
                         }
 
-                        if(attrValue == "V.Total"){
-                            html_ventasnetas +='<td  align="right" >'+attrValue+'</td>';
+                        if(attrValue == "V.&nbsp;Total"){
+                            html_ventasnetas +='<td  align="center" widht="100">'+attrValue+'</td>';
                         }
                         //nuevo de aqui para abajo
                         if(attrValue == "Costo"){
-                            html_ventasnetas +='<td align="right"  >'+attrValue+'</td>';
+                            html_ventasnetas +='<td align="center" widht="100">'+attrValue+'</td>';
                         }
                         if(attrValue == "POND"){
-                            html_ventasnetas +='<td width="50px" align="right"  >'+attrValue+'</td>';
+                            html_ventasnetas +='<td width="80" align="center"  >'+attrValue+'</td>';
                         }
                         if(attrValue == "MOP"){
-                            html_ventasnetas +='<td width="50px" align="right"  >'+attrValue+'</td>';
+                            html_ventasnetas +='<td width="80" align="center"  >'+attrValue+'</td>';
                         }
                         if(attrValue == "M_MOP"){
-                            html_ventasnetas +='<td width="50px" align="right"  >'+attrValue+'</td>';
+                            html_ventasnetas +='<td width="80" align="center"  >'+attrValue+'</td>';
                         }
                     }
+                    
                     html_ventasnetas +='</tr> </thead>';
                     if(entry['datos_normales'].length > 0 ){
 
                         for(var j=0; j<entry['datos_normales'].length; j++){
-
                             Tventageneral = Tventageneral + parseFloat(entry['datos_normales'][j]["venta_pesos"]);
                             Tcostogeneral = Tcostogeneral + parseFloat(entry['datos_normales'][j]["costo"]);
                         }
@@ -1704,39 +1741,37 @@ $(function() {
                                 if(entry['datos_normales'][i]["tipo"]=='REG'){
                                     html_ventasnetas +='<tr>';
 
-                                    cantidad=cantidad + parseFloat(entry['datos_normales'][i]["cantidad"]);
-                                    venta_neta= venta_neta+parseFloat(entry['datos_normales'][i]["venta_pesos"]);
+                                    cantidad= parseFloat(cantidad) + parseFloat(entry['datos_normales'][i]["cantidad"]);
+                                    venta_neta = parseFloat(venta_neta) +parseFloat(entry['datos_normales'][i]["venta_pesos"]);
 
                                     prod=entry['datos_normales'][i]["producto"];
                                     unidad=entry['datos_normales'][i]["unidad"];
-                                    costoxproducto=costoxproducto + parseFloat(entry['datos_normales'][i]["costo"]);
-                                    ventageneral=ventageneral+ parseFloat(entry['datos_normales'][i]["venta_pesos"]);
-                                    costogeneral=costogeneral+ parseFloat(entry['datos_normales'][i]["costo"]);
+                                    costoxproducto = parseFloat(costoxproducto) + parseFloat(entry['datos_normales'][i]["costo"]);
+                                    ventageneral = parseFloat(ventageneral) + parseFloat(entry['datos_normales'][i]["venta_pesos"]);
+                                    costogeneral = parseFloat(costogeneral) + parseFloat(entry['datos_normales'][i]["costo"]);
 
-                                    totalcosto=totalcosto + parseFloat(entry['datos_normales'][i]["costo"]);
-                                    totalponderacion=(parseFloat(venta_neta)/parseFloat(Tventageneral))*100;
-                                    totalmop=(((parseFloat(venta_neta)-parseFloat(costoxproducto))/venta_neta)*100);
-                                    totalmediamop=((parseFloat(venta_neta) / parseFloat(Tventageneral) )*100)*(((parseFloat(venta_neta)-parseFloat(costoxproducto))/venta_neta)*100);
+                                    totalcosto = parseFloat(totalcosto) + parseFloat(entry['datos_normales'][i]["costo"]);
+                                    totalponderacion = (parseFloat(venta_neta)/parseFloat(Tventageneral))*100;
+                                    totalmop = (((parseFloat(venta_neta)-parseFloat(costoxproducto))/parseFloat(venta_neta))*100);
+                                    totalmediamop = ((parseFloat(venta_neta) / parseFloat(Tventageneral) )*100)*(((parseFloat(venta_neta)-parseFloat(costoxproducto))/parseFloat(venta_neta))*100);
 
 
 
                                 }else{
-
-                                    html_ventasnetas +='<tr>';
-                                    html_ventasnetas +='<td width="300px" align="left" >'+clie+'</td>';
-                                    html_ventasnetas +='<td  align="right" >'+unidad+'</td>';
-                                    html_ventasnetas +='<td  align="right" >'+$(this).agregar_comas(parseFloat(cantidad).toFixed(2))+'</td>';
-                                    html_ventasnetas +='<td widht="5px" align="right">'+"$"+'</td>';
-                                    html_ventasnetas +='<td  align="right" >'+$(this).agregar_comas((parseFloat(venta_neta)/parseFloat(cantidad)).toFixed(2))+'</td>';
-                                    html_ventasnetas +='<td widht="5px" align="right">'+"$"+'</td>';
-                                    html_ventasnetas +='<td  align="right" >'+$(this).agregar_comas(parseFloat(venta_neta).toFixed(2))+'</td>';
-                                    html_ventasnetas +='<td widht="5px" align="right">'+"$"+'</td>';
-                                    html_ventasnetas +='<td align="right"  >'+$(this).agregar_comas(parseFloat(costoxproducto).toFixed(2))+'</td>';
-                                    html_ventasnetas +='<td align="right"  >'+$(this).agregar_comas(totalponderacion.toFixed(2) )+' %</td>';
-                                    html_ventasnetas +='<td align="right"  >'+$(this).agregar_comas(totalmop.toFixed(2) )+'</td>';
-                                    html_ventasnetas +='<td align="right"  >'+$(this).agregar_comas(totalmediamop.toFixed(2) )+'</td>';
-                                    html_ventasnetas +='</tr>';
-
+									html_ventasnetas +='<tr>';
+									html_ventasnetas +='<td width="300" align="left" >'+prod+'</td>';
+									html_ventasnetas +='<td  align="right" widht="50">'+unidad+'</td>';
+									html_ventasnetas +='<td  align="right" widht="80">'+$(this).agregar_comas(parseFloat(cantidad).toFixed(2))+'</td>';
+									html_ventasnetas +='<td widht="15" align="right">'+"$"+'</td>';
+									html_ventasnetas +='<td align="right" widht="100">'+$(this).agregar_comas((parseFloat(venta_neta)/parseFloat(cantidad)).toFixed(2))+'</td>';
+									html_ventasnetas +='<td widht="15" align="right">'+"$"+'</td>';
+									html_ventasnetas +='<td align="right" widht="100">'+$(this).agregar_comas(parseFloat(venta_neta).toFixed(2))+'</td>';
+									html_ventasnetas +='<td widht="15" align="right">'+"$"+'</td>';
+									html_ventasnetas +='<td align="right" widht="100">'+$(this).agregar_comas(parseFloat(costoxproducto).toFixed(2))+'</td>';
+									html_ventasnetas +='<td align="right" widht="80">'+$(this).agregar_comas(parseFloat(totalponderacion).toFixed(2) )+' %</td>';
+									html_ventasnetas +='<td align="right" widht="80">'+$(this).agregar_comas(parseFloat(totalmop).toFixed(2) )+'</td>';
+									html_ventasnetas +='<td align="right" widht="80">'+$(this).agregar_comas(parseFloat(totalmediamop).toFixed(2) )+'</td>';
+									html_ventasnetas +='</tr>';
                                 }
                             }else{
                                 clie = entry['datos_normales'][i]["producto"];
@@ -1753,25 +1788,23 @@ $(function() {
                                 totalmop=0.0;
                                 totalmediamop=0.0;
 
-                                cantidad=cantidad + parseFloat(entry['datos_normales'][i]["cantidad"]);
-                                venta_neta= venta_neta+parseFloat(entry['datos_normales'][i]["venta_pesos"]);
+                                cantidad = parseFloat(cantidad) + parseFloat(entry['datos_normales'][i]["cantidad"]);
+                                venta_neta = parseFloat(venta_neta) + parseFloat(entry['datos_normales'][i]["venta_pesos"]);
 
                                 clie=entry['datos_normales'][i]["razon_social"];
                                 unidad=entry['datos_normales'][i]["unidad"];
-                                costoxproducto=costoxproducto + parseFloat( entry['datos_normales'][i]["costo"]);
-                                ventageneral=ventageneral+ parseFloat(entry['datos_normales'][i]["venta_pesos"]);
-                                costogeneral=costogeneral+ parseFloat(entry['datos_normales'][i]["costo"]);
+                                costoxproducto = parseFloat(costoxproducto) + parseFloat( entry['datos_normales'][i]["costo"]);
+                                ventageneral = parseFloat(ventageneral) + parseFloat(entry['datos_normales'][i]["venta_pesos"]);
+                                costogeneral = parseFloat(costogeneral) + parseFloat(entry['datos_normales'][i]["costo"]);
 
-                                totalcosto=totalcosto + parseFloat(entry['datos_normales'][i]["costo"]);
+                                totalcosto = parseFloat(totalcosto) + parseFloat(entry['datos_normales'][i]["costo"]);
 
                                 totalponderacion=(parseFloat(venta_neta)/parseFloat(Tventageneral))*100;
                                 totalmop=(((parseFloat(venta_neta)-parseFloat(costoxproducto))/parseFloat(venta_neta))*100);
                                 totalmediamop=((parseFloat(venta_neta) / parseFloat(Tventageneral ))*100)*(((parseFloat(venta_neta)-parseFloat(costoxproducto))/parseFloat(venta_neta))*100);
-
-
                             }
                         }
-
+						/*
                         //total general
                         html_footer +='<tr>';
                         html_footer +='<td  align="right" colspan="5">TOTAL GENERAL:</td>';
@@ -1783,15 +1816,46 @@ $(function() {
                         html_footer +='<td align="right"  >'+$(this).agregar_comas((((ventageneral-costogeneral)/ventageneral)*100).toFixed(2) )+'</td>';
                         html_footer +='<td align="right"  >'+$(this).agregar_comas((ventageneral/ventageneral)*(((ventageneral-costogeneral)/ventageneral)*100).toFixed(2) )+'</td>';
                         html_footer +='</tr>';
+                        */
+                        //Total general
+                        html_footer +='<tr>';
+						html_footer +='<td width="300" align="right">TOTAL GENERAL:</td>';
+						html_footer +='<td align="right" widht="50"></td>';
+						html_footer +='<td align="right" widht="80"></td>';
+                        html_footer +='<td widht="15" align="right">'+"$"+'</td>';
+						html_footer +='<td align="right" widht="100"></td>';
+                        html_footer +='<td widht="15" align="right">'+"$"+'</td>';
+                        html_footer +='<td align="right" widht="100">'+$(this).agregar_comas(parseFloat(ventageneral).toFixed(2))+'</td>';
+                        html_footer +='<td widht="15" align="right">'+"$"+'</td>';
+                        html_footer +='<td align="right" widht="100">'+$(this).agregar_comas(parseFloat(costogeneral).toFixed(2))+'</td>';
+                        html_footer +='<td align="right" widht="80">'+$(this).agregar_comas(((ventageneral/ventageneral)*100).toFixed(2) )+' %</td>';
+                        html_footer +='<td align="right" widht="80">'+$(this).agregar_comas((((ventageneral-costogeneral)/ventageneral)*100).toFixed(2) )+'</td>';
+                        html_footer +='<td align="right" widht="80">'+$(this).agregar_comas((ventageneral/ventageneral)*(((ventageneral-costogeneral)/ventageneral)*100).toFixed(2) )+'</td>';
+                        html_footer +='</tr>';
                     }else{
                         jAlert("Esta consulta no genero ningun Resultado",'Atencion!!!');
                     }
-                    html_ventasnetas +='<tr>';
-                            html_ventasnetas +='<td colspan="12">&nbsp;</td>';
-                    html_ventasnetas +='</tr>';
+                    
+                    //Este tr es para poder alinear las columnas
+					html_ventasnetas +='<tr>';
+					html_ventasnetas +='<td width="300" height="0"><input type="text" name="col1" style="width:300px; height:0px; border-color:transparent; background:transparent;"></td>';
+					html_ventasnetas +='<td widht="50"><input type="text" name="col2" style="width:50px; height:0px; border-color:transparent; background:transparent;"></td>';
+					html_ventasnetas +='<td widht="80"><input type="text" name="col3" style="width:80px; height:0px; border-color:transparent; background:transparent;"></td>';
+					html_ventasnetas +='<td widht="15"><input type="text" name="col4" style="width:15px; height:0px; border-color:transparent; background:transparent;"></td>';
+					html_ventasnetas +='<td widht="100"><input type="text" name="col5" style="width:100px; height:0px; border-color:transparent; background:transparent;"></td>';
+					html_ventasnetas +='<td widht="15"><input type="text" name="col6" style="width:15px; height:0px; border-color:transparent; background:transparent;"></td>';
+					html_ventasnetas +='<td widht="100"><input type="text" name="col7" style="width:100px; height:0px; border-color:transparent; background:transparent;"></td>';
+					html_ventasnetas +='<td widht="15"><input type="text" name="col8" style="width:15px; height:0px; border-color:transparent; background:transparent;"></td>';
+					html_ventasnetas +='<td widht="100"><input type="text" name="col9" style="width:100px; height:0px; border-color:transparent; background:transparent;"></td>';
+					html_ventasnetas +='<td widht="80"><input type="text" name="col10" style="width:80px; height:0px; border-color:transparent; background:transparent;"></td>';
+					html_ventasnetas +='<td widht="80"><input type="text" name="col11" style="width:80px; height:0px; border-color:transparent; background:transparent;"></td>';
+					html_ventasnetas +='<td widht="80"><input type="text" name="col12" style="width:80px; height:0px; border-color:transparent; background:transparent;"></td>';
+					html_ventasnetas +='</tr>';
+					
+                    
                     html_ventasnetas +='<tfoot>';
-                                        html_ventasnetas += html_footer;
-                                html_ventasnetas +='</tfoot>';
+					html_ventasnetas += html_footer;
+					html_ventasnetas +='</tfoot>';
                     html_ventasnetas += '</table>';
 
 
