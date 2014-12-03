@@ -146,7 +146,8 @@ xmlns:beans="http://www.springframework.org/schema/beans"
         ROLE_COM_REP_BACKORDER,
         ROLE_CARGA_INV_FISICO,
         ROLE_CXC_IEPS_COBRADO,
-        ROLE_CXP_IEPS_PAGADO" />
+        ROLE_CXP_IEPS_PAGADO,
+        ROLE_CXP_REP_PAGO_DIARIO" />
         
         <intercept-url pattern="/controllers/productos/startup.agnux" access="ROLE_ADMIN,ROLE_ALTA_PRODUCTO" />
         <intercept-url pattern="/controllers/proveedores/startup.agnux" access="ROLE_ADMIN,ROLE_ALTA_PROVEEDOR" />
