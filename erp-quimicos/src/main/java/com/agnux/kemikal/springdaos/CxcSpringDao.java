@@ -3738,7 +3738,7 @@ return subfamilias;
                         +" gra_mon_pago.id as id_moneda_pago, "
                         +" gra_mon_pago.simbolo AS simbolo_moneda_pago, "
                         +" gra_mon_pago.descripcion_abr AS moneda_pago, "
-                        +" (CASE WHEN erp_h_facturas.moneda_id=1 AND erp_pagos.moneda_id=2 THEN erp_pagos_detalles.cantidad "
+                        +" (CASE WHEN erp_h_facturas.moneda_id=1 AND erp_pagos.moneda_id=1 THEN erp_pagos_detalles.cantidad "
                         +" WHEN erp_h_facturas.moneda_id=2 AND erp_pagos.moneda_id=2 THEN erp_pagos_detalles.cantidad "
                         +" WHEN erp_h_facturas.moneda_id=1 AND erp_pagos.moneda_id=2 THEN erp_pagos_detalles.cantidad/erp_pagos.tipo_cambio "
                         +" WHEN erp_h_facturas.moneda_id=2 AND erp_pagos.moneda_id=1 THEN erp_pagos_detalles.cantidad*erp_pagos.tipo_cambio "
@@ -3755,7 +3755,7 @@ return subfamilias;
                     +" AND (to_char(erp_pagos.fecha_deposito,'yyyymmdd')::integer BETWEEN to_char('"+fecha_inicial+"'::timestamp with time zone,'yyyymmdd')::integer AND to_char('"+fecha_final+"'::timestamp with time zone,'yyyymmdd')::integer) "
                     +" ORDER BY cxc_clie.razon_social, erp_pagos.fecha_deposito;";
 
-        System.out.println("getCobranzaDiaria:"+ sql_to_query);
+        //System.out.println("getCobranzaDiaria:"+ sql_to_query);
 
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
                 sql_to_query,

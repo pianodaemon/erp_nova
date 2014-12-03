@@ -81,7 +81,10 @@ public interface LogInterfaceDao {
     public ArrayList<HashMap<String, String>> getLoAdmViaje_ListaPdf(Integer id_);
     public ArrayList<HashMap<String, Object>> getBuscadorServiciosAdicionales(String sku, String descripcion, Integer id_empresa);
     public ArrayList<HashMap<String, Object>> getDataServicioAdicional(String codigo, Integer id_empresa);
- 
+    public ArrayList<HashMap<String, Object>> getBuscadorRutas(String no_ruta, String nombre_ruta, String poblacion, Integer tipo_unidad, Integer id_empresa, Integer id_sucursal);
+    public ArrayList<HashMap<String, Object>> getDatosRuta_x_NoRuta(String no_ruta, Integer tipo_unidad, Integer id_empresa, Integer id_sucursal);
+    public ArrayList<HashMap<String, Object>> getDatosRuta_Poblaciones(Integer id_ruta);
+    
     
     //Catalogo de servicios adicionales
     public ArrayList<HashMap<String, Object>> getServAdic_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
@@ -116,5 +119,19 @@ public interface LogInterfaceDao {
     public ArrayList<HashMap<String, Object>> getLogPar(Integer id_emp, Integer id_suc);
     public ArrayList<HashMap<String, Object>> getBuscadorDestinatarios(String cadena, Integer filtro, Integer cliente_id, Integer id_empresa, Integer id_sucursal);
     public ArrayList<HashMap<String, Object>> getDatosByNoDestinatario(String no_control, Integer cliente_id, Integer id_empresa, Integer id_sucursal);
+    
+    
+    //METODOS DEL TARIFARIO
+    public ArrayList<HashMap<String, Object>> getPaises();
+    public ArrayList<HashMap<String, Object>> getEntidadesForThisPais(String id_pais);
+    public ArrayList<HashMap<String, Object>> getLocalidadesForThisEntidad(String id_pais,String id_entidad);
+    public ArrayList<HashMap<String, Object>> getEntidades();
+    public ArrayList<HashMap<String, Object>> getLocalidades();
+    public ArrayList<HashMap<String, Object>> getRutaTipo(Integer id_empresa);
+    public ArrayList<HashMap<String, Object>> getDatosRuta_editar_header(Integer id);
+    public ArrayList<HashMap<String, Object>> getRuta_PaginaGrid(String data_string, int offset, int pageSize, String orderBy , String asc);
+    public ArrayList<HashMap<String, Object>> getRutaTipoUnidades(Integer id_empresa);
+    public ArrayList<HashMap<String, Object>> Datos_editar_minigridpoblaciones(Integer id);
+    public ArrayList<HashMap<String, Object>> Datos_editar_minigridtiposunidad(Integer id);
     
 }

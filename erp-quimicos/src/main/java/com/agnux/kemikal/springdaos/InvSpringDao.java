@@ -480,8 +480,7 @@ public class InvSpringDao implements InvInterfaceDao{
 
     @Override
     public ArrayList<HashMap<String, String>> getAllTiposMovimientoInventario(Integer id_empresa) {
-        //String sql_to_query = "SELECT DISTINCT cve_pais ,pais_ent FROM municipios;";
-        String sql_to_query = "SELECT id,titulo FROM inv_mov_tipos;";
+        String sql_to_query = "SELECT id, titulo FROM inv_mov_tipos order by titulo;";;
 
         ArrayList<HashMap<String, String>> pais = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -813,7 +812,7 @@ public class InvSpringDao implements InvInterfaceDao{
     //obtiene lineas de productos
     @Override
     public ArrayList<HashMap<String, String>> getProducto_Lineas(Integer id_empresa) {
-	String sql_query = "select id,titulo from inv_prod_lineas where borrado_logico=false AND gral_emp_id="+id_empresa;
+	String sql_query = "select id,titulo from inv_prod_lineas where borrado_logico=false AND gral_emp_id="+ id_empresa +" order by titulo;";
         //System.out.println("Buscando lineas:"+sql_query);
 
         ArrayList<HashMap<String, String>> hm_lineas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
@@ -837,7 +836,7 @@ public class InvSpringDao implements InvInterfaceDao{
     //obtiene marcas de productos
     @Override
     public ArrayList<HashMap<String, String>> getProducto_Marcas(Integer id_empresa) {
-	String sql_query = "SELECT id, titulo FROM inv_mar WHERE borrado_logico=false AND gral_emp_id="+id_empresa;
+	String sql_query = "SELECT id, titulo FROM inv_mar WHERE borrado_logico=false AND gral_emp_id="+ id_empresa +" order by titulo;";
 
         ArrayList<HashMap<String, String>> hm_lineas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
@@ -859,7 +858,7 @@ public class InvSpringDao implements InvInterfaceDao{
     //obtiene grupos de productos
     @Override
     public ArrayList<HashMap<String, String>> getProducto_Grupos(Integer id_empresa) {
-	String sql_query = "SELECT id, titulo FROM inv_prod_grupos WHERE borrado_logico=false AND gral_emp_id="+id_empresa;
+	String sql_query = "SELECT id, titulo FROM inv_prod_grupos WHERE borrado_logico=false AND gral_emp_id="+ id_empresa +" order by titulo;";
 
         ArrayList<HashMap<String, String>> hm_lineas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
@@ -880,7 +879,7 @@ public class InvSpringDao implements InvInterfaceDao{
     //Obtener todas las subfamilias, para select de catalogo de productos
     @Override
     public ArrayList<HashMap<String, String>> getProducto_Subfamilias(Integer id_empresa) {
-        String sql_query = "SELECT  id, titulo, descripcion FROM inv_prod_familias WHERE borrado_logico=FALSE AND id != identificador_familia_padre AND gral_emp_id="+id_empresa;
+        String sql_query = "SELECT id, titulo, descripcion FROM inv_prod_familias WHERE borrado_logico=FALSE AND id != identificador_familia_padre AND gral_emp_id="+id_empresa +" order by titulo;";
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
             new Object[]{}, new RowMapper() {
@@ -902,7 +901,7 @@ public class InvSpringDao implements InvInterfaceDao{
     //Obtener todas las clasificaciones stock para el catalogo de productos
     @Override
     public ArrayList<HashMap<String, String>> getProducto_ClasificacionStock(Integer id_empresa) {
-        String sql_query = "SELECT  id, titulo FROM inv_stock_clasificaciones WHERE borrado_logico=FALSE AND gral_emp_id="+id_empresa;
+        String sql_query = "SELECT id, titulo FROM inv_stock_clasificaciones WHERE borrado_logico=FALSE AND gral_emp_id="+id_empresa +" order by titulo;";
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
             new Object[]{}, new RowMapper() {
@@ -924,7 +923,7 @@ public class InvSpringDao implements InvInterfaceDao{
     //Obtener todas las Clases para el catalogo de productos
     @Override
     public ArrayList<HashMap<String, String>> getProducto_Clases(Integer id_empresa) {
-        String sql_query = "SELECT  id, titulo FROM inv_clas WHERE borrado_logico=FALSE AND gral_emp_id="+id_empresa;
+        String sql_query = "SELECT id, titulo FROM inv_clas WHERE borrado_logico=FALSE AND gral_emp_id="+id_empresa +" order by titulo;";
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
             new Object[]{}, new RowMapper() {
@@ -1021,7 +1020,7 @@ public class InvSpringDao implements InvInterfaceDao{
     //obtiene las unidades
     @Override
     public ArrayList<HashMap<String, String>> getProducto_Unidades() {
-	String sql_query = "SELECT id,titulo,decimales from inv_prod_unidades where borrado_logico=false";
+	String sql_query = "SELECT id,titulo,decimales from inv_prod_unidades where borrado_logico=false order by titulo;";
 
         ArrayList<HashMap<String, String>> hm_unidades = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
