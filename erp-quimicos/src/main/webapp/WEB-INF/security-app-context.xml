@@ -353,7 +353,7 @@ xmlns:beans="http://www.springframework.org/schema/beans"
         <intercept-url pattern="/controllers/gralconfigperiodospago/startup.agnux" access="ROLE_ADMIN,ROLE_GRAL_CONFIG_PERIODOS_PAGO" /><!--Federico-->
         
         
-        
+        <intercept-url pattern="/controllers/reppagosdiaria/startup.agnux" access="ROLE_ADMIN,ROLE_CXP_REP_PAGO_DIARIO" /><!--Federico-->
         
         
         <form-login 
