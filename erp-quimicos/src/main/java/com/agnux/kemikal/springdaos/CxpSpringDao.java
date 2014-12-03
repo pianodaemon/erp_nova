@@ -3358,4 +3358,74 @@ public class CxpSpringDao implements CxpInterfaceDao{
         return arraydata;
     }
     
+    
+    
+    //Reporte de Pagos Diarios
+    @Override
+    public ArrayList<HashMap<String, String>> getPagosDiaria(String fecha_inicial, String fecha_final,Integer proveedor,Integer id_empresa) {
+        String where="";
+
+        if(proveedor!=0){
+            where = "  and cxp_pagos.cxp_prov_id=" +proveedor;
+        }
+
+        String sql_to_query = ""
+                
+                + "SELECT "  
+                    +" cxp_facturas.serie_folio AS factura, "
+                    +" to_char(cxp_facturas.fecha_factura,'dd/mm/yyyy') AS fecha_factura," 
+                    +" cxp_pagos.cxp_prov_id AS id_proveedor, " 
+                    +" cxp_prov.razon_social AS proveedor, "
+                    +" gral_mon_fac.id as id_moneda_fac, "
+                    +" gral_mon_fac.simbolo AS simbolo_moneda_fac, " 
+                    +" gral_mon_fac.descripcion_abr AS moneda_fac, "
+                    +" cxp_facturas.monto_total AS monto_factura, " 
+                    +" gral_mon_fac.simbolo AS simbolo_moneda_aplicado, "   
+                    +" cxp_pagos_detalles.cantidad AS pago_aplicado, "
+                    +" to_char(cxp_pagos.fecha_pago,'dd/mm/yyyy') AS fecha_pago, "
+                    +" gral_mon_pago.id as id_moneda_pago, "
+                    +" gral_mon_pago.simbolo AS simbolo_moneda_pago, "  
+                    +" gral_mon_pago.descripcion_abr AS moneda_pago,"
+                    +" (case when cxp_facturas.moneda_id=cxp_pagos.moneda_id then cxp_pagos_detalles.cantidad else (case when cxp_facturas.moneda_id=1 then cxp_pagos_detalles.cantidad/cxp_pagos.tipo_cambio else cxp_pagos_detalles.cantidad*cxp_pagos.tipo_cambio end) end) AS monto_pago "
+                +" FROM cxp_pagos "
+                +" JOIN cxp_pagos_detalles ON cxp_pagos_detalles.cxp_pago_id=cxp_pagos.id "
+                +" JOIN cxp_facturas ON (cxp_facturas.serie_folio=cxp_pagos_detalles.serie_folio AND cxp_facturas.cxc_prov_id=cxp_pagos.cxp_prov_id) "
+                +" jOIN cxp_prov  ON cxp_prov.id=cxp_pagos.cxp_prov_id "
+                +" JOIN gral_mon as gral_mon_fac ON gral_mon_fac.id=cxp_facturas.moneda_id "
+                +" JOIN gral_mon AS gral_mon_pago ON gral_mon_pago.id=cxp_pagos.moneda_id "
+                +" WHERE cxp_pagos.gral_emp_id=" +id_empresa + " "
+                +" AND cxp_pagos_detalles.cancelacion=FALSE "+where
+                +" AND (to_char(cxp_pagos.fecha_pago,'yyyymmdd')::integer BETWEEN to_char('"+fecha_inicial+"'::timestamp with time zone,'yyyymmdd')::integer AND to_char('"+fecha_final+"'::timestamp with time zone,'yyyymmdd')::integer) "
+                +" ORDER BY cxp_prov.razon_social, cxp_pagos.fecha_pago;";
+
+        System.out.println("getPagosDiaria:"+ sql_to_query);
+
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+                sql_to_query,
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("factura",rs.getString("factura"));
+                    row.put("fecha_factura",rs.getString("fecha_factura"));
+                    row.put("id_proveedor",String.valueOf(rs.getInt("id_proveedor")));
+                    row.put("proveedor",rs.getString("proveedor"));
+                    row.put("id_moneda_fac",String.valueOf(rs.getInt("id_moneda_fac")));
+                    row.put("simbolo_moneda_fac",rs.getString("simbolo_moneda_fac"));
+                    row.put("moneda_fac",rs.getString("moneda_fac"));
+                    row.put("monto_factura", StringHelper.roundDouble(rs.getString("monto_factura"), 2));
+                    row.put("simbolo_moneda_aplicado",rs.getString("simbolo_moneda_aplicado"));
+                    row.put("pago_aplicado", StringHelper.roundDouble(rs.getString("pago_aplicado"), 2));
+                    row.put("fecha_pago",rs.getString("fecha_pago"));
+                    row.put("id_moneda_pago",String.valueOf(rs.getInt("id_moneda_pago")));
+                    row.put("simbolo_moneda_pago",rs.getString("simbolo_moneda_pago"));
+                    row.put("moneda_pago",rs.getString("moneda_pago"));
+                    row.put("monto_pago", StringHelper.roundDouble(rs.getString("monto_pago"), 2));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+
 }
