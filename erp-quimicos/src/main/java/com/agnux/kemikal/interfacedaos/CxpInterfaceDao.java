@@ -139,4 +139,7 @@ public interface CxpInterfaceDao {
     
     public ArrayList<HashMap<String, String>> getDatosReporteIepsPagado(ArrayList<HashMap<String, String>> listaIeps, String ciente, String finicial, String ffinal, Integer id_empresa);
     public ArrayList<HashMap<String, String>> getListaIeps(Integer id_empresa);
+    
+    //Metodos para Reporte Pagos Diarios
+    public ArrayList<HashMap<String, String>> getPagosDiaria(String fecha_inicial, String fecha_final,Integer cliente, Integer id_empresa);
 }
