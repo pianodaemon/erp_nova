@@ -490,6 +490,7 @@
 													<li><a href="../logvehiculomarca/startup.agnux">Marca</a></li>
 													<li><a href="../logvehiculotiporodada/startup.agnux">Tipo Rodada</a></li>
 													<li><a href="../logvehiculotipocaja/startup.agnux">Tipo Caja</a></li>
+													<li><a href="../logtarifario/startup.agnux">Tarifario</a></li>
 												</ul>
 											</li>
 											
