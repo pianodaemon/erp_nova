@@ -32,29 +32,23 @@ public class PdfReportePagosDiaria {
                 Double suma_pesos_monto_total = 0.0;
                 Double suma_pesos_monto_pago = 0.0;
                 Double suma_pesos_total = 0.0;
+                
                 Double suma_dolares_monto_total = 0.0;
                 Double suma_dolares_monto_pago = 0.0;
                 Double suma_dolares_total = 0.0;
+                
+                Double suma_euros_monto_total = 0.0;
+                Double suma_euros_monto_pago = 0.0;
+                Double suma_euros_total = 0.0;
 
-                Double suma_subtotal_mn = 0.0;
-                Double suma_impuesto_mn = 0.0;
-                Double suma_total_mn = 0.0;
               
                try {
            
                     Font fontCols = new Font(Font.FontFamily.HELVETICA, 9,Font.NORMAL);
                     Font smallFont = new Font(Font.FontFamily.HELVETICA,8,Font.NORMAL,BaseColor.BLACK);
                     Font smallBoldFont = new Font(Font.getFamily("ARIAL"),8,Font.BOLD,BaseColor.WHITE);
-                    //double suma_monto_total = 0.0;
-                    double suma_monto_pago = 0.0;
-                    //double suma_saldo = 0.0;
 
-                    // aqui ba header foother
 
-                    //          SimpleDateFormat formato = new SimpleDateFormat("'a las' HH:mm:ss 'hrs.'");
-                    //          String hora_generacion = formato.format(new Date());
-
-                    //////String nombre_mes = datos.get("nombre_mes");
                     String[] fi = datos.get("fecha_inicial").split("-");
                     String[] ff = datos.get("fecha_final").split("-");
 
@@ -78,8 +72,8 @@ public class PdfReportePagosDiaria {
                     writer.setPageEvent(event);
      
                     doc.open();
-                    //String[] columnas = {"No.Control","Nombre","No.Factura","Cliente","","Valor","% Comision","","Total Comision"};
-                    float [] widths = {0.8f,0.8f,3.3f,0.3f,1,0.3f,1,1,0.3f,1};//Tamaño de las Columnas.
+                    //String[] columnas = {"No.Control","Nombre","No.Factura","Proveedor","","Valor","% Comision","","Total Comision"};
+                    float [] widths = {0.9f,0.8f,3.3f,0.3f,1,0.3f,1,1,0.3f,1};//Tamaño de las Columnas.
                     PdfPTable tabla = new PdfPTable(widths);
                     PdfPCell cell;
                     tabla.setKeepTogether(false);
@@ -96,10 +90,8 @@ public class PdfReportePagosDiaria {
                     java.util.List<String>  lista_columnas = (java.util.List<String>) Arrays.asList(titulos); //añadiendo e arreglo a la lista
             
             for ( String columna_titulo : lista_columnas){
-            //for(int i=0; i<titulos.length; i++ ){
                 PdfPCell celda = null;
                  
-               //cell = new PdfPCell(new Paragraph(titulos[i],smallBoldFont));
                celda = new PdfPCell(new Paragraph(columna_titulo,smallBoldFont)); 
                celda.setUseAscender(true);
                
@@ -132,9 +124,6 @@ public class PdfReportePagosDiaria {
                    celda.setHorizontalAlignment(Element.ALIGN_CENTER);
                 }
                 
-                //if (columna_titulo.equals("")){
-                //celda.setHorizontalAlignment(Element.ALIGN_CENTER);
-                //}
                 if (columna_titulo.equals("")){
                    celda.setHorizontalAlignment(Element.ALIGN_CENTER);
                 }
@@ -158,6 +147,10 @@ public class PdfReportePagosDiaria {
                 if(registro.get("id_moneda_fac").equals("2")){
                     suma_dolares_monto_total += Double.parseDouble(registro.get("pago_aplicado"));
                 }
+                
+                 if(registro.get("id_moneda_fac").equals("3")){
+                    suma_euros_monto_total += Double.parseDouble(registro.get("pago_aplicado"));
+                }
 
                 //sumar pagos aplicados en la moneda del pago
                 if(registro.get("id_moneda_pago").equals("1")){
@@ -166,6 +159,10 @@ public class PdfReportePagosDiaria {
 
                 if(registro.get("id_moneda_pago").equals("2")){
                     suma_dolares_monto_pago += Double.parseDouble(registro.get("monto_pago"));
+                }
+                
+                 if(registro.get("id_moneda_pago").equals("3")){
+                    suma_euros_monto_pago += Double.parseDouble(registro.get("monto_pago"));
                 }
                 
                 //1  
@@ -232,14 +229,7 @@ public class PdfReportePagosDiaria {
                 cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                 cell.setBorder(0);
                 tabla.addCell(cell);
-                //8
-                //                              cell = new PdfPCell(new Paragraph(registro.get("moneda_pago").toString(),smallFont));
-                //                              cell.setUseAscender(true);
-                //                              cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                //                              cell.setUseDescender(true);
-                //                              cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                //                              cell.setBorder(0);
-                //                              tabla.addCell(cell);
+
                 //9
                 cell = new PdfPCell(new Paragraph(registro.get("simbolo_moneda_pago").toString(),smallFont));
                 cell.setUseAscender(true);
@@ -258,10 +248,14 @@ public class PdfReportePagosDiaria {
                 tabla.addCell(cell);    
             }
             
-            //esto es para los totales.
+
+
+            if((suma_pesos_monto_total)  > 0 || (suma_pesos_monto_pago) > 0){	
+      
               //1
               cell = new PdfPCell(new Paragraph("",smallFont));
-              cell.setBorder(1);cell.setColspan(2);
+              cell.setBorder(1);
+              cell.setColspan(2);
               tabla.addCell(cell);
               //3
               cell = new PdfPCell(new Paragraph("TOTAL M.N.",smallFont));
@@ -270,8 +264,19 @@ public class PdfReportePagosDiaria {
               cell.setUseDescender(true);
               cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
               cell.setBorder(1);
+              cell.setColspan(2);
               tabla.addCell(cell);
-              //4
+              
+              //5
+              cell = new PdfPCell(new Paragraph("",smallFont));
+              cell.setUseAscender(true);
+              cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+              cell.setUseDescender(true);
+              cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+              cell.setBorder(1);
+              tabla.addCell(cell);
+              
+              //6
               cell = new PdfPCell(new Paragraph("$",smallFont));
               cell.setUseAscender(true);
               cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
@@ -279,7 +284,7 @@ public class PdfReportePagosDiaria {
               cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
               cell.setBorder(1);
               tabla.addCell(cell);
-              //5
+              //7
               cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(suma_pesos_monto_total,2)),smallFont));
               cell.setUseAscender(true);
               cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
@@ -287,9 +292,10 @@ public class PdfReportePagosDiaria {
               cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
               cell.setBorder(1);
               tabla.addCell(cell);
-              //6
+              //8
               cell = new PdfPCell(new Paragraph("",smallFont));
-              cell.setBorder(1);cell.setColspan(3);
+              cell.setBorder(1);
+              cell.setColspan(1);
               tabla.addCell(cell);
               //9
               cell = new PdfPCell(new Paragraph("$",smallFont));
@@ -307,11 +313,14 @@ public class PdfReportePagosDiaria {
               cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
               cell.setBorder(1);
               tabla.addCell(cell);
-
-
+            }
+            
+            
+            if((suma_dolares_monto_total)  > 0 || (suma_dolares_monto_pago) > 0){
               //1
               cell = new PdfPCell(new Paragraph("",smallFont));
-              cell.setBorder(0);cell.setColspan(2);
+              cell.setBorder(0);
+              cell.setColspan(2);
               tabla.addCell(cell);
               //3
               cell = new PdfPCell(new Paragraph("TOTAL USD",smallFont));
@@ -320,17 +329,11 @@ public class PdfReportePagosDiaria {
               cell.setUseDescender(true);
               cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
               cell.setBorder(0);
+              cell.setColspan(2);
               tabla.addCell(cell);
-              //4
-              cell = new PdfPCell(new Paragraph("USD",smallFont));
-              cell.setUseAscender(true);
-              cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-              cell.setUseDescender(true);
-              cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-              cell.setBorder(0);
-              tabla.addCell(cell);
+              
               //5
-              cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(suma_dolares_monto_total,2)),smallFont));
+              cell = new PdfPCell(new Paragraph("",smallFont));
               cell.setUseAscender(true);
               cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
               cell.setUseDescender(true);
@@ -338,8 +341,25 @@ public class PdfReportePagosDiaria {
               cell.setBorder(0);
               tabla.addCell(cell);
               //6
+              cell = new PdfPCell(new Paragraph("USD",smallFont));
+              cell.setUseAscender(true);
+              cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+              cell.setUseDescender(true);
+              cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+              cell.setBorder(0);
+              tabla.addCell(cell);
+              //7
+              cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(suma_dolares_monto_total,2)),smallFont));
+              cell.setUseAscender(true);
+              cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+              cell.setUseDescender(true);
+              cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+              cell.setBorder(0);
+              tabla.addCell(cell);
+              //8
               cell = new PdfPCell(new Paragraph("",smallFont));
-              cell.setBorder(0);cell.setColspan(3);
+              cell.setBorder(0);
+              cell.setColspan(1);
               tabla.addCell(cell);
               //9
               cell = new PdfPCell(new Paragraph("USD",smallFont));
@@ -357,6 +377,71 @@ public class PdfReportePagosDiaria {
               cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
               cell.setBorder(0);
               tabla.addCell(cell);
+            }
+            
+            if((suma_euros_monto_total) > 0 || (suma_dolares_monto_pago) > 0)  {
+              //1
+              cell = new PdfPCell(new Paragraph("",smallFont));
+              cell.setBorder(0);cell.setColspan(2);
+              tabla.addCell(cell);
+              //3
+              cell = new PdfPCell(new Paragraph("TOTAL EUR",smallFont));
+              cell.setUseAscender(true);
+              cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+              cell.setUseDescender(true);
+              cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+              cell.setBorder(0);
+              cell.setColspan(2);
+              tabla.addCell(cell);
+              
+              //5
+              cell = new PdfPCell(new Paragraph("",smallFont));
+              cell.setUseAscender(true);
+              cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+              cell.setUseDescender(true);
+              cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+              cell.setBorder(0);
+              tabla.addCell(cell);
+              
+              //6
+              cell = new PdfPCell(new Paragraph("€",smallFont));
+              cell.setUseAscender(true);
+              cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+              cell.setUseDescender(true);
+              cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+              cell.setBorder(0);
+              tabla.addCell(cell);
+              //7
+              cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(suma_euros_monto_total,2)),smallFont));
+              cell.setUseAscender(true);
+              cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+              cell.setUseDescender(true);
+              cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+              cell.setBorder(0);
+              tabla.addCell(cell);
+              //8
+              cell = new PdfPCell(new Paragraph("",smallFont));
+              cell.setBorder(0);
+              cell.setColspan(1);
+              tabla.addCell(cell);
+              //9
+              cell = new PdfPCell(new Paragraph("€",smallFont));
+              cell.setUseAscender(true);
+              cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+              cell.setUseDescender(true);
+              cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+              cell.setBorder(0);
+              tabla.addCell(cell);
+              //10
+              cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(suma_euros_monto_pago,2)),smallFont));
+              cell.setUseAscender(true);
+              cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+              cell.setUseDescender(true);
+              cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+              cell.setBorder(0);
+              tabla.addCell(cell);
+            }
+              
                               
                               
             doc.add(tabla);
