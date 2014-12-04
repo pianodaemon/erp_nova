@@ -69,7 +69,7 @@ $(function() {
           var $Buscar_cobranzadiaria= $('#lienzo_recalculable').find('div.reppagosdiaria').find('table#busqueda tr td').find('input[value$=Buscar]');
           var $genera_reporte_cobranzadiaria= $('#lienzo_recalculable').find('div.reppagosdiaria').find('table#busqueda tr td').find('input[value$=Generar_PDF]');
 
-          var $div_cobranzadiaria= $('#reppagosdiaria');
+          var $div_pagosdiarios= $('#reppagosdiaria');
 
 
 
@@ -313,9 +313,9 @@ $(function() {
           $Buscar_cobranzadiaria.click(function(event){
                event.preventDefault();
                   
-               ///GENERA LA VISTA DE LA IMPRESION DEL REPORTE DE POR proveedor
+               ///GENERA LA VISTA DE LA IMPRESION DEL REPORTE DE POR PROVEEDOR
 
-                    $div_cobranzadiaria.children().remove();
+                    $div_pagosdiarios.children().remove();
 
 
 
@@ -344,13 +344,15 @@ $(function() {
 							};
 
 								
-                              var html_numero_kits = '<table id="ventas_diarias">';
+                              var html_numero_kits = '<table id="pagos_diarios">';
                               var porcentaje = 0.0;
                               var numero_control=0.0; 
                               var proveedor=0.0;  
                               var venta_neta=0.0; 
                               var porciento=0.0;
                               var tmp= 0;
+                              
+              
 								
                               html_numero_kits +='<thead> <tr>';
 
@@ -406,63 +408,73 @@ $(function() {
                                         html_numero_kits +='<td align="right"  width="10px" id="simbolo_moneda">'+body_tabla[i]["simbolo_moneda_pago"]+'</td>'; 
                                         html_numero_kits +='<td align="right"  width="100px" id="monto">'+$(this).agregar_comas(parseFloat(body_tabla[i]["monto_pago"]).toFixed(2))+'</td>';
                                    html_numero_kits +='</tr>';
+								
                               }
-                              
-                              //* // esto es para imprimir totales de suma en la vista START
+                             
                               html_numero_kits +='<tfoot>';
-                                        html_numero_kits +='<tr>';
-                                        html_numero_kits +='<td align="right"  width="100px"></td>'; 
-                                        html_numero_kits +='<td align="right"  width="90px"></td>'; 
-                                        html_numero_kits +='<td align="right"  width="450px">Total M.N.</td>';
-                                        html_numero_kits +='<td align="right"  width="10px" id="simbolo_moneda"></td>';
-                                        html_numero_kits +='<td align="right"  width="100px" id="monto"></td>'; 
-                                        html_numero_kits +='<td align="right"  width="10px" id="simbolo_moneda">$</td>';
-                                        html_numero_kits +='<td align="right"  width="100px" id="monto">'+$(this).agregar_comas(parseFloat(footer_tabla[0]["suma_pesos_monto_total"]).toFixed(2))+'</td>';  
-                                        html_numero_kits +='<td align="center"  width="90px"></td>'; 
-                                        html_numero_kits +='<td align="right"  width="10px" id="simbolo_moneda">$</td>';
-                                        html_numero_kits +='<td align="right"  width="100px" id="monto">'+$(this).agregar_comas(parseFloat(footer_tabla[0]["suma_pesos_monto_pago"]).toFixed(2))+'</td>';
-                                        html_numero_kits +='</tr>';
-					
-                                        html_numero_kits +='<tr>';
-                                        html_numero_kits +='<td align="right"  width="100px"></td>'; 
-                                        html_numero_kits +='<td align="right" width="90px"></td>'; 
-                                        html_numero_kits +='<td align="right"  width="450px">Total USD</td>';
-                                        html_numero_kits +='<td align="right"  width="10px" id="simbolo_moneda"></td>';
-                                        html_numero_kits +='<td align="right"  width="100px" id="monto"></td>'; 
-                                        html_numero_kits +='<td align="right"  width="10px" id="simbolo_moneda">USD</td>';
-                                        html_numero_kits +='<td align="right"  width="100px" id="monto">'+$(this).agregar_comas(parseFloat(footer_tabla[0]["suma_dolares_monto_total"]).toFixed(2))+'</td>';  
-                                        html_numero_kits +='<td align="center"  width="90px"></td>'; 
-                                        html_numero_kits +='<td align="right"  width="10px" id="simbolo_moneda">USD</td>';
-                                        html_numero_kits +='<td align="right"  width="100px" id="monto">'+$(this).agregar_comas(parseFloat(footer_tabla[0]["suma_dolares_monto_pago"]).toFixed(2))+'</td>';
-                                        html_numero_kits +='</tr>';
-                                        
-                                        html_numero_kits +='<tr>';
-                                        html_numero_kits +='<td align="right"  width="100px"></td>'; 
-                                        html_numero_kits +='<td align="right" width="90px"></td>'; 
-                                        html_numero_kits +='<td align="right"  width="450px">Total EUR</td>';
-                                        html_numero_kits +='<td align="right"  width="10px" id="simbolo_moneda"></td>';
-                                        html_numero_kits +='<td align="right"  width="100px" id="monto"></td>'; 
-                                        html_numero_kits +='<td align="right"  width="10px" id="simbolo_moneda">&#8364;</td>';
-                                        html_numero_kits +='<td align="right"  width="100px" id="monto">'+$(this).agregar_comas(parseFloat(footer_tabla[0]["suma_euros_monto_total"]).toFixed(2))+'</td>';  
-                                        html_numero_kits +='<td align="center"  width="90px"></td>'; 
-                                        html_numero_kits +='<td align="right"  width="10px" id="simbolo_moneda">&#8364;</td>';
-                                        html_numero_kits +='<td align="right"  width="100px" id="monto">'+$(this).agregar_comas(parseFloat(footer_tabla[0]["suma_euros_monto_pago"]).toFixed(2))+'</td>';
-                                        html_numero_kits +='</tr>';						
-								html_numero_kits +='</tfoot>';
-                              //*/ //End sum of display
-                              
-                              
-                              
+							 //esto es para imprimir totales de suma en la vista START
+			
+							if(parseFloat(footer_tabla[0]["suma_pesos_monto_total"])  > 0 || parseFloat(footer_tabla[0]["suma_pesos_monto_pago"]) > 0){	
 
+											html_numero_kits +='<tr>';
+											html_numero_kits +='<td align="right"  width="100px"></td>'; 
+											html_numero_kits +='<td align="right"  width="90px"></td>'; 
+											html_numero_kits +='<td align="right"  width="450px">Total M.N.</td>';
+											html_numero_kits +='<td align="right"  width="10px" id="simbolo_moneda"></td>';
+											html_numero_kits +='<td align="right"  width="100px" id="monto"></td>'; 
+											html_numero_kits +='<td align="right"  width="10px" id="simbolo_moneda">$</td>';
+											html_numero_kits +='<td align="right"  width="100px" id="monto">'+$(this).agregar_comas(parseFloat(footer_tabla[0]["suma_pesos_monto_total"]).toFixed(2))+'</td>';  
+											html_numero_kits +='<td align="center"  width="90px"></td>'; 
+											html_numero_kits +='<td align="right"  width="10px" id="simbolo_moneda">$</td>';
+											html_numero_kits +='<td align="right"  width="100px" id="monto">'+$(this).agregar_comas(parseFloat(footer_tabla[0]["suma_pesos_monto_pago"]).toFixed(2))+'</td>';  
+											html_numero_kits +='</tr>';
+											
+							}
+							
+							if(parseFloat(footer_tabla[0]["suma_dolares_monto_total"])  > 0 || parseFloat(footer_tabla[0]["suma_dolares_monto_pago"]) > 0){	
+								
+											html_numero_kits +='<tr>';
+											html_numero_kits +='<td align="right"  width="100px"></td>'; 
+											html_numero_kits +='<td align="right" width="90px"></td>'; 
+											html_numero_kits +='<td align="right"  width="450px">Total USD</td>';
+											html_numero_kits +='<td align="right"  width="10px" id="simbolo_moneda"></td>';
+											html_numero_kits +='<td align="right"  width="100px" id="monto"></td>'; 
+											html_numero_kits +='<td align="right"  width="10px" id="simbolo_moneda">USD</td>';
+											html_numero_kits +='<td align="right"  width="100px" id="monto">'+$(this).agregar_comas(parseFloat(footer_tabla[0]["suma_dolares_monto_total"]).toFixed(2))+'</td>';  
+											html_numero_kits +='<td align="center"  width="90px"></td>'; 
+											html_numero_kits +='<td align="right"  width="10px" id="simbolo_moneda">USD</td>';
+											html_numero_kits +='<td align="right"  width="100px" id="monto">'+$(this).agregar_comas(parseFloat(footer_tabla[0]["suma_dolares_monto_pago"]).toFixed(2))+'</td>';
+											html_numero_kits +='</tr>';
+											
+							
+											
+							}
+							
+							if(parseFloat(footer_tabla[0]["suma_euros_monto_total"])  > 0 || parseFloat(footer_tabla[0]["suma_euros_monto_pago"]) > 0){	
+											html_numero_kits +='<tr>';
+											html_numero_kits +='<td align="right"  width="100px"></td>'; 
+											html_numero_kits +='<td align="right" width="90px"></td>'; 
+											html_numero_kits +='<td align="right"  width="450px">Total EUR</td>';
+											html_numero_kits +='<td align="right"  width="10px" id="simbolo_moneda"></td>';
+											html_numero_kits +='<td align="right"  width="100px" id="monto"></td>'; 
+											html_numero_kits +='<td align="right"  width="10px" id="simbolo_moneda">&#8364;</td>';
+											html_numero_kits +='<td align="right"  width="100px" id="monto">'+$(this).agregar_comas(parseFloat(footer_tabla[0]["suma_euros_monto_total"]).toFixed(2))+'</td>';  
+											html_numero_kits +='<td align="center"  width="90px"></td>'; 
+											html_numero_kits +='<td align="right"  width="10px" id="simbolo_moneda">&#8364;</td>';
+											html_numero_kits +='<td align="right"  width="100px" id="monto">'+$(this).agregar_comas(parseFloat(footer_tabla[0]["suma_euros_monto_pago"]).toFixed(2))+'</td>';
+											html_numero_kits +='</tr>';
+											
+							}
+										
                               html_numero_kits += '</table>';
 								
-                              $div_cobranzadiaria.append(html_numero_kits); 
+                              $div_pagosdiarios.append(html_numero_kits); 
                               var height2 = $('#cuerpo').css('height');
-                              var alto = parseInt(height2)-275;
+                              var alto = parseInt(height2)-310;
                               var pix_alto=alto+'px';
 
 
-                              $('#ventas_diarias').tableScroll({height:parseInt(pix_alto)});
+                              $('#pagos_diarios').tableScroll({height:parseInt(pix_alto)});
 
                          });
                }else{
