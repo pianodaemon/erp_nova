@@ -432,6 +432,7 @@ $(function() {
 		var $check_firma = $('#forma-clientsdest-window').find('input[name=check_firma]');
 		var $check_sello = $('#forma-clientsdest-window').find('input[name=check_sello]');
 		var $check_efectivo = $('#forma-clientsdest-window').find('input[name=check_efectivo]');
+		var $check_cheque = $('#forma-clientsdest-window').find('input[name=check_cheque]');
 		
 		var $razon_cliente = $('#forma-clientsdest-window').find('input[name=razon_cliente]');
 		var $id_cliente = $('#forma-clientsdest-window').find('input[name=id_cliente]');
@@ -684,6 +685,7 @@ $(function() {
 			var $check_firma = $('#forma-clientsdest-window').find('input[name=check_firma]');
 			var $check_sello = $('#forma-clientsdest-window').find('input[name=check_sello]');
 			var $check_efectivo = $('#forma-clientsdest-window').find('input[name=check_efectivo]');
+			var $check_cheque = $('#forma-clientsdest-window').find('input[name=check_cheque]');
 			
 			var $razon_cliente = $('#forma-clientsdest-window').find('input[name=razon_cliente]');
 			var $id_cliente = $('#forma-clientsdest-window').find('input[name=id_cliente]');
@@ -757,6 +759,7 @@ $(function() {
 					$check_firma.attr('checked', (entry['Datos'][0]['sfirma']==true)? true:false );
 					$check_sello.attr('checked', (entry['Datos'][0]['ssello']==true)? true:false );
 					$check_efectivo.attr('checked', (entry['Datos'][0]['sefectivo']==true)? true:false );
+					$check_cheque.attr('checked', (entry['Datos'][0]['scheque']==true)? true:false );
 					
 					$razon_cliente.attr({'value' : entry['Datos'][0]['cliente']});
 					$id_cliente.attr({'value' : entry['Datos'][0]['cliente_id']});
