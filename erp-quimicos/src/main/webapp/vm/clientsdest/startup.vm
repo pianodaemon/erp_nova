@@ -279,6 +279,9 @@
 															<td width="28"></td>
 															<td width="90">Solicitar&nbsp;efectivo</td>
 															<td><input type="checkbox" name="check_efectivo"></td>
+															<td width="50"></td>
+															<td width="90">Solicitar&nbsp;Cheque</td>
+															<td><input type="checkbox" name="check_cheque"></td>
 															<td width="25"></td>
 														</tr>
 													</table>
