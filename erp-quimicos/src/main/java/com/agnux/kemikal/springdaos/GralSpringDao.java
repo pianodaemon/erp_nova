@@ -2880,12 +2880,12 @@ public class GralSpringDao implements GralInterfaceDao{
     
      //Alimenta select de tipo de Tipos Periodicidad
     @Override
-    public ArrayList<HashMap<String, Object>> getPeriodicidad_Tipos(Integer id_empresa) {
+    public ArrayList<HashMap<String, Object>> getPeriodicidad_Tipos(Integer id_empresa, Integer id_sucursal) {
 
-        String sql_to_query = "select id,titulo, no_periodos from nom_periodicidad_pago WHERE nom_periodicidad_pago.activo=true and nom_periodicidad_pago.borrado_logico=false order by titulo ";
+        String sql_to_query = "select id,titulo, no_periodos from nom_periodicidad_pago WHERE gral_emp_id=? and gral_suc_id=? and nom_periodicidad_pago.activo=true and nom_periodicidad_pago.borrado_logico=false order by titulo ";
         ArrayList<HashMap<String, Object>> percepciones = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
-            new Object[]{}, new RowMapper(){
+            new Object[]{new Integer(id_empresa), new Integer(id_sucursal)}, new RowMapper(){
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, Object> row = new HashMap<String, Object>();
@@ -2932,7 +2932,7 @@ public class GralSpringDao implements GralInterfaceDao{
             +"FROM nom_periodos_conf_det "
             +"LEFT JOIN  nom_periodos_conf on nom_periodos_conf.id =nom_periodos_conf_det.nom_periodos_conf_id "
             +"WHERE nom_periodos_conf_det.nom_periodos_conf_id=?"
-            +"ORDER BY nom_periodos_conf.id;";
+            +"ORDER BY nom_periodos_conf_det.id;";
       
        ArrayList<HashMap<String,Object>>hm=(ArrayList<HashMap<String,Object>>)this.jdbcTemplate.query(
             sql_to_query,
@@ -2943,7 +2943,7 @@ public class GralSpringDao implements GralInterfaceDao{
                     row.put("id_reg",String.valueOf(rs.getInt("id_reg")));
                     row.put("id_periodo",String.valueOf(rs.getInt("id_periodo")));
                     row.put("tipo_periodo",rs.getString("tipo_periodo"));
-                    row.put("folio",String.valueOf(rs.getInt("folio")));
+                    row.put("folio",String.valueOf(rs.getString("folio")));
                     row.put("tituloperiodo",rs.getString("tituloperiodo"));
                     row.put("fecha_inicial",rs.getString("fecha_inicial"));
                     row.put("fecha_final",rs.getString("fecha_final"));

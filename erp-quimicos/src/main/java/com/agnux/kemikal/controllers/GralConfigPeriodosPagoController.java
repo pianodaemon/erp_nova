@@ -137,17 +137,16 @@ public class GralConfigPeriodosPagoController {
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
         userDat = this.getHomeDao().getUserById(id_usuario);
-     
         
-        // Integer id = Integer.parseInt(userDat.get("id"));
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
        
         if( id != 0 ){
             datos = this.getGralDao().getConfigPeriodosPago_Datos(id);
             datosGrid = this.getGralDao().getConfigPeriodosPago_Grid(id);
         }
         
-        periodos=this.getGralDao().getPeriodicidad_Tipos(id_empresa);
+        periodos=this.getGralDao().getPeriodicidad_Tipos(id_empresa, id_sucursal);
 
        //datos ConfigPeriodosPago es lo que me trajo de la consulta y los pone en el json
        jsonretorno.put("ConfigPeriodosPago", datos);

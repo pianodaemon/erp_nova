@@ -8262,7 +8262,7 @@ public class InvSpringDao implements InvInterfaceDao{
             + "ORDER BY sbt.descripcion;";
         }
         
-        //System.out.println("costoProd: "+sql_to_query);
+        //mSystem.out.println("costoProd: "+sql_to_query);
         
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,

@@ -296,6 +296,7 @@ public class ClientsDestController {
         @RequestParam(value="check_firma", required=false) String check_firma,
         @RequestParam(value="check_sello", required=false) String check_sello,
         @RequestParam(value="check_efectivo", required=false) String check_efectivo,
+        @RequestParam(value="check_cheque", required=false) String check_cheque,
         @RequestParam(value="id_cliente", required=true) String id_cliente,
         Model model,@ModelAttribute("user") UserSessionData user
     ) {
@@ -328,6 +329,7 @@ public class ClientsDestController {
         check_firma = StringHelper.verificarCheckBox(check_firma);
         check_sello = StringHelper.verificarCheckBox(check_sello);
         check_efectivo = StringHelper.verificarCheckBox(check_efectivo);
+        check_cheque = StringHelper.verificarCheckBox(check_cheque);
 
         String data_string = 
         app_selected
@@ -353,7 +355,8 @@ public class ClientsDestController {
         +"___"+check_firma
         +"___"+check_sello
         +"___"+check_efectivo
-        +"___"+id_cliente;
+        +"___"+id_cliente
+        +"___"+check_cheque;
         
         //System.out.println("data_string: "+data_string);
         

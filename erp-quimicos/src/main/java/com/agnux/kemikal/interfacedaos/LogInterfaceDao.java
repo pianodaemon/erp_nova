@@ -72,11 +72,14 @@ public interface LogInterfaceDao {
     public ArrayList<HashMap<String, Object>> getSucursales(Integer idEmp);
     public ArrayList<HashMap<String, Object>> getTransportistas(Integer idEmp, Integer idSuc);
     public ArrayList<HashMap<String, Object>> getLogAdmViaje_CargasPendientes(Integer id_empresa, Integer id_suc_user, String no_clie, String no_carga, String no_ped, String no_dest, String dest, String poblacion);
+    public String getLogAdmViaje_CadenaFacturasDelPedido(Integer id_ped);
     public ArrayList<HashMap<String, Object>> getLogAdmViaje_DetallePedido(Integer id_ped);
     public ArrayList<HashMap<String, Object>> getLogAdmViaje_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
     public ArrayList<HashMap<String, Object>> getLoAdmViaje_Datos(Integer id);
     public ArrayList<HashMap<String, Object>> getLoAdmViaje_DatosGrid(Integer id);
     public ArrayList<HashMap<String, Object>> getLoAdmViaje_Adicionales(Integer id);
+    public ArrayList<HashMap<String, Object>> getLogAdmViaje_TiposDeRechazo(Integer id_empresa);
+    
     public HashMap<String, String> getLoAdmViaje_DatosPdf(Integer id);
     public ArrayList<HashMap<String, String>> getLoAdmViaje_ListaPdf(Integer id_);
     public ArrayList<HashMap<String, Object>> getBuscadorServiciosAdicionales(String sku, String descripcion, Integer id_empresa);
@@ -84,6 +87,9 @@ public interface LogInterfaceDao {
     public ArrayList<HashMap<String, Object>> getBuscadorRutas(String no_ruta, String nombre_ruta, String poblacion, Integer tipo_unidad, Integer id_empresa, Integer id_sucursal);
     public ArrayList<HashMap<String, Object>> getDatosRuta_x_NoRuta(String no_ruta, Integer tipo_unidad, Integer id_empresa, Integer id_sucursal);
     public ArrayList<HashMap<String, Object>> getDatosRuta_Poblaciones(Integer id_ruta);
+    
+    //Obtiene el detalle de un Viaje para el programa de evidencias
+    public ArrayList<HashMap<String, Object>> getLoEvidencias_DatosGrid(Integer id);
     
     
     //Catalogo de servicios adicionales
@@ -114,6 +120,8 @@ public interface LogInterfaceDao {
     public ArrayList<HashMap<String, Object>> getLogRegCarga_Datos(Integer id);
     public ArrayList<HashMap<String, Object>> getLogRegCarga_DatosGrid(Integer id);
     public ArrayList<HashMap<String, Object>> tratar_datos_grid(ArrayList<HashMap<String, Object>> partidas);
+    public ArrayList<HashMap<String, Object>> getLogRegCarga_DetallePedido(Integer id_ped);
+    public HashMap<String, Object> getLogRegCarga_VerificaStatusPedido(Integer id_ped);
     public HashMap<String, Object> getLogRegCarga_VerificaStatusPartida(Integer id_reg);
     
     public ArrayList<HashMap<String, Object>> getLogPar(Integer id_emp, Integer id_suc);
@@ -132,6 +140,14 @@ public interface LogInterfaceDao {
     public ArrayList<HashMap<String, Object>> getRuta_PaginaGrid(String data_string, int offset, int pageSize, String orderBy , String asc);
     public ArrayList<HashMap<String, Object>> getRutaTipoUnidades(Integer id_empresa);
     public ArrayList<HashMap<String, Object>> Datos_editar_minigridpoblaciones(Integer id);
-    public ArrayList<HashMap<String, Object>> Datos_editar_minigridtiposunidad(Integer id);
+    public ArrayList<HashMap<String, Object>> Datos_editar_minigridtiposunidad(Integer id_empresa, Integer id);
+    
+    //Metodos para el catalogo de Tipo de Rechazo
+    public ArrayList<HashMap<String, String>> getTipoRechazo_Datos(Integer id);
+    public ArrayList<HashMap<String, Object>> getTipoRechazo_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
+    
+    //Metodos para el Reporte de Viajes
+    public ArrayList<HashMap<String, String>> getRepLogAdmViajes(String fecha_inicial, String fecha_final, String cliente, String ruta, String poblacion, Integer id_empresa);
+    public ArrayList<HashMap<String, Object>> getBuscador_Rutas(String no_ruta, String nombre_ruta, String poblacion, Integer id_empresa, Integer id_sucursal);
     
 }

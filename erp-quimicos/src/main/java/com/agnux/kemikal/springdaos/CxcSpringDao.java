@@ -4262,7 +4262,7 @@ return subfamilias;
     @Override
     public ArrayList<HashMap<String, Object>> getClientsDest_Datos(Integer id) {
         String sql_query = ""
-        + "select cxc_destinatarios.id,cxc_destinatarios.folio, cxc_destinatarios.folio_ext,cxc_destinatarios.rfc,cxc_destinatarios.razon_social AS destinatario,cxc_destinatarios.tipo,cxc_destinatarios.calle, cxc_destinatarios.no_int, cxc_destinatarios.no_ext, cxc_destinatarios.colonia, cxc_destinatarios.gral_mun_id, cxc_destinatarios.gral_edo_id, cxc_destinatarios.gral_pais_id, cxc_destinatarios.cp,(CASE WHEN cxc_destinatarios.tel1 IS NULL THEN '' ELSE cxc_destinatarios.tel1 END) AS tel1,(CASE WHEN cxc_destinatarios.tel2 IS NULL THEN '' ELSE cxc_destinatarios.tel2 END) AS tel2, cxc_destinatarios.ext, cxc_destinatarios.email, cxc_destinatarios.solicitar_firma, cxc_destinatarios.solicitar_sello, cxc_destinatarios.solicitar_efectivo,"
+        + "select cxc_destinatarios.id,cxc_destinatarios.folio, cxc_destinatarios.folio_ext,cxc_destinatarios.rfc,cxc_destinatarios.razon_social AS destinatario,cxc_destinatarios.tipo,cxc_destinatarios.calle, cxc_destinatarios.no_int, cxc_destinatarios.no_ext, cxc_destinatarios.colonia, cxc_destinatarios.gral_mun_id, cxc_destinatarios.gral_edo_id, cxc_destinatarios.gral_pais_id, cxc_destinatarios.cp,(CASE WHEN cxc_destinatarios.tel1 IS NULL THEN '' ELSE cxc_destinatarios.tel1 END) AS tel1,(CASE WHEN cxc_destinatarios.tel2 IS NULL THEN '' ELSE cxc_destinatarios.tel2 END) AS tel2, cxc_destinatarios.ext, cxc_destinatarios.email, cxc_destinatarios.solicitar_firma, cxc_destinatarios.solicitar_sello, cxc_destinatarios.solicitar_efectivo, cxc_destinatarios.solicitar_cheque, "
                 + "(case when cxc_clie.id is null then 0 else cxc_clie.id end) as cliente_id,"
                 + "(case when cxc_clie.id is null then '' else cxc_clie.numero_control end) as no_control,"
                 + "(case when cxc_clie.id is null then '' else cxc_clie.razon_social end) as cliente "
@@ -4301,6 +4301,7 @@ return subfamilias;
                     row.put("sfirma",rs.getBoolean("solicitar_firma"));
                     row.put("ssello",rs.getBoolean("solicitar_sello"));
                     row.put("sefectivo",rs.getBoolean("solicitar_efectivo"));
+                    row.put("scheque",rs.getBoolean("solicitar_cheque"));
                     
                     row.put("cliente_id",rs.getInt("cliente_id"));
                     row.put("no_control",rs.getString("no_control"));
