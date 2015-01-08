@@ -99,7 +99,10 @@ public interface CtbInterfaceDao {
     public ArrayList<HashMap<String, Object>> getPolizasContables_CentrosCostos(Integer id_empresa, Integer id_sucursal);
     public ArrayList<HashMap<String, Object>> getPolizasContables_CuentasMayor(Integer id_empresa);
     public ArrayList<HashMap<String, String>> getPolizasContables_CuentasContables(Integer clase_cta_mayor, Integer clasificacion, Integer detalle, String clasifica, String cta, String scta, String sscta, String ssscta, String sssscta, String descripcion, Integer id_empresa);
-    public ArrayList<HashMap<String, Object>> getPolizasContables_Anios();
+    //Estos años se utilizan para crear y modificar polizas
+    public ArrayList<HashMap<String, Object>> getPolizasContables_Anios(Integer id_empresa);
+    //Estos años solo se utilizan para consulta de polizas
+    public ArrayList<HashMap<String, Object>> getPolizasContables_Anios2();
     public Integer getUserRolAdmin(Integer id_user);
     public ArrayList<HashMap<String, Object>> getPolizasContables_TiposDeMovimiento(Integer id_empresa);
     
@@ -111,4 +114,6 @@ public interface CtbInterfaceDao {
     public ArrayList<HashMap<String, Object>> getCtbPar_Datos(Integer id_factura);
     public ArrayList<HashMap<String, Object>> getCtbPar_Almacenes(Integer id_emp, Integer id_suc);
     
+    //Obtiene  parametros de contabilidad
+    public HashMap<String, Object> getCtb_Parametros(Integer id_emp, Integer id_suc);
 }

@@ -197,7 +197,7 @@ public class CtbPolizasContablesController {
         jsonretorno.put("CtaMay", this.getCtbDao().getPolizasContables_CuentasMayor(id_empresa));
         jsonretorno.put("Suc", this.getCtbDao().getCtb_Sucursales(id_empresa));
         jsonretorno.put("Data", data);
-        jsonretorno.put("Anios", this.getCtbDao().getPolizasContables_Anios());
+        jsonretorno.put("Anios", this.getCtbDao().getPolizasContables_Anios2());
         jsonretorno.put("TPol", this.getCtbDao().getPolizasContables_TiposPolizas(id_empresa));
         jsonretorno.put("Con", this.getCtbDao().getPolizasContables_Conceptos(id_empresa));
         jsonretorno.put("Tmov", this.getCtbDao().getPolizasContables_TiposDeMovimiento(id_empresa));
@@ -218,9 +218,10 @@ public class CtbPolizasContablesController {
         ArrayList<HashMap<String, Object>> datosPoliza = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> datosGrid = new ArrayList<HashMap<String, Object>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
-        ArrayList<HashMap<String, Object>> sucursales = new ArrayList<HashMap<String, Object>>();
+        //ArrayList<HashMap<String, Object>> sucursales = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> arrayExtra = new ArrayList<HashMap<String, Object>>();
         HashMap<String, Object> extra = new HashMap<String, Object>();
+        HashMap<String, Object> parametros = new HashMap<String, Object>();
         
         //Decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
@@ -234,10 +235,14 @@ public class CtbPolizasContablesController {
             idSucUser=0;
         }
         
+        parametros = this.getCtbDao().getCtb_Parametros(id_empresa, id_sucursal);
+        
         //Esta variable indica si la empresa incluye modulo de Contabilidad
         extra.put("incluye_contab", userDat.get("incluye_contab"));
         extra.put("nivel_cta", userDat.get("nivel_cta"));
         extra.put("fecha_actual", TimeHelper.getFechaActualYMD());
+        extra.put("mes_actual", parametros.get("mes_actual"));
+        extra.put("anio_actual", parametros.get("anio_actual"));
         
         arrayExtra.add(0,extra);
         
@@ -248,7 +253,7 @@ public class CtbPolizasContablesController {
         
         jsonretorno.put("Monedas", this.getCtbDao().getMonedas());
         jsonretorno.put("CC", this.getCtbDao().getPolizasContables_CentrosCostos(id_empresa, idSucUser));
-        jsonretorno.put("Anios", this.getCtbDao().getPolizasContables_Anios());
+        jsonretorno.put("Anios", this.getCtbDao().getPolizasContables_Anios(id_empresa));
         jsonretorno.put("Data", datosPoliza);
         jsonretorno.put("Grid", datosGrid);
         jsonretorno.put("Extras", arrayExtra);

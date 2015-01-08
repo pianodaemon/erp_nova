@@ -1227,19 +1227,19 @@ public class CtbSpringDao implements CtbInterfaceDao{
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
         
 	String sql_to_query = ""
-                + "select  "
-                    + "ctb_pol.id,"
-                    + "ctb_pol.poliza, "
-                    + "ctb_pol.tipo, "
-                    + "ctb_pol.concepto, "
-                    + "to_char(fecha_cap,'dd-mm-yyyy') as fecha, "
-                    + "ctb_pol.moneda, "
-                    //+ "ctb_pol.debe, "
-                    //+ "ctb_pol.haber, "
-                    + "(CASE WHEN ctb_pol.status=1 THEN 'No afectada' WHEN ctb_pol.status=2 THEN 'Afectada' WHEN ctb_pol.status=3 THEN 'Cancelada' ELSE '' END) AS status  "
-                + "from ctb_pol "
-                +"JOIN ("+sql_busqueda+") AS sbt ON sbt.id = ctb_pol.id "
-                +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
+        + "select  "
+            + "ctb_pol.id,"
+            + "ctb_pol.poliza, "
+            + "ctb_pol.tipo, "
+            + "ctb_pol.concepto, "
+            + "(case when ctb_pol.fecha is null then '' else to_char(ctb_pol.fecha,'dd-mm-yyyy') end) as fecha, "
+            + "ctb_pol.moneda, "
+            //+ "ctb_pol.debe, "
+            //+ "ctb_pol.haber, "
+            + "(CASE WHEN ctb_pol.status=1 THEN 'No afectada' WHEN ctb_pol.status=2 THEN 'Afectada' WHEN ctb_pol.status=3 THEN 'Cancelada' ELSE '' END) AS status  "
+        + "from ctb_pol "
+        +"JOIN ("+sql_busqueda+") AS sbt ON sbt.id = ctb_pol.id "
+        +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
 
         //System.out.println("Busqueda GetPage: "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
@@ -1284,7 +1284,7 @@ public class CtbSpringDao implements CtbInterfaceDao{
             + "ctb_pol.status, "
             + "ctb_pol.modulo_origen as mod_id, "
             + "ctb_pol.gral_usr_id_cap as user_cap_id, "
-            + "to_char(ctb_pol.fecha_cap,'yyyy-mm-dd') AS fecha,"
+            + "to_char(ctb_pol.fecha,'yyyy-mm-dd') AS fecha,"
             + "ctb_pol.observacion "
         + "FROM ctb_pol  "
         + "where ctb_pol.borrado_logico=false AND ctb_pol.id=?;";
@@ -1703,9 +1703,33 @@ public class CtbSpringDao implements CtbInterfaceDao{
     
     
 
-    //Calcular años a mostrar en Polizas contables
+    //Obtener los años activos para mostrar en Polizas contables
+    //Estos años se utilizan para crear y modificar polizas
     @Override
-    public ArrayList<HashMap<String, Object>>  getPolizasContables_Anios() {
+    public ArrayList<HashMap<String, Object>>  getPolizasContables_Anios(Integer id_empresa) {
+        String sql_query = "SELECT anio as valor FROM ctb_pol_anios WHERE gral_emp_id=? and cerrado=false;";
+        
+        ArrayList<HashMap<String, Object>> anios = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{new Integer(id_empresa)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("valor",rs.getInt("valor"));
+                    return row;
+                }
+            }
+        );
+        return anios;
+    }
+    
+    
+    /*
+    Calcular años a mostrar en Polizas contables
+    Estos años solo se utilizan para consulta de polizas
+    */
+    @Override
+    public ArrayList<HashMap<String, Object>>  getPolizasContables_Anios2() {
         ArrayList<HashMap<String, Object>> anios = new ArrayList<HashMap<String, Object>>();
         
         Calendar c1 = Calendar.getInstance();
@@ -1826,6 +1850,22 @@ public class CtbSpringDao implements CtbInterfaceDao{
             }
         );
         return hm_alm;
+    }
+    
+    
+    
+    @Override
+    public HashMap<String, Object> getCtb_Parametros(Integer id_emp, Integer id_suc) {
+        HashMap<String, Object> mapDatos = new HashMap<String, Object>();
+        String sql_query = "SELECT * FROM ctb_par WHERE gral_emp_id="+id_emp+" AND gral_suc_id="+id_suc+" and borrado_logico=false;";
+        
+        Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_query);
+
+        mapDatos.put("suc_id_cons", map.get("gral_suc_id_cons"));
+        mapDatos.put("mes_actual", map.get("mes_actual"));
+        mapDatos.put("anio_actual", map.get("anio_actual"));
+        
+        return mapDatos;
     }
     
     
