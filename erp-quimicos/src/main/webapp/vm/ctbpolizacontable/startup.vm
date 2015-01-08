@@ -111,6 +111,7 @@
                 
 					<input type="hidden" name="identificador">
 					<input type="hidden" name="accion" value="">
+					<input type="hidden" name="estatus" >
 					
                     <div id="div_two" title="" class="ctbpolizacontable_div_two">
                         <div class="columns on-2">
@@ -291,26 +292,40 @@
 													<table >
 														<thead>
 															<tr>
-																<!--<td height="30"><a href="new_item" class="tooltip"><div class="onmouseOutNewItem" id="nItem"></div><span>Crear Nuevo Pedido</span></a></td>-->
-																
 																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="30">&nbsp;#</td>
 																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="120">&nbsp;Tipo Mov.</td>
 																<td class="grid" style="background-color: rgb(180, 180, 180);" width="150">&nbsp;Cuenta</td>
 																<td class="grid" style="background-color: rgb(180, 180, 180);" width="250">&nbsp;Descripci&oacute;n</td>
 																<td class="grid" style="background-color: rgb(180, 180, 180);" width="120">&nbsp;Centro Costo</td>
-																
 																<td class="grid" style="background-color: rgb(180, 180, 180);" width="90">&nbsp;Debe</td>
 																<td class="grid" style="background-color: rgb(180, 180, 180);" width="120">&nbsp;Haber</td>
 															</tr>
 														</thead>
+														<tbody>
+															<tr>
+																<td colspan="7">
+																	<div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width:900; height: 150px; border:1px solid #C1DAD7 !important;">	
+																		<table>
+																			<tbody style="background-color: #FFFFFF;" valign="top" id="grid_cuentas">
+																				
+																			</tbody>
+																		</table>
+																	</div>
+																</td>
+															</tr>
+														</tbody>
+														<tfoot>
+															<tr>
+																<td class="grid2" width="30"></td>
+																<td class="grid2" width="120"></td>
+																<td class="grid2" width="150"></td>
+																<td class="grid2" width="250"></td>
+																<td class="grid2" width="120"></td>
+																<td class="grid2" width="90" id="suma_debe"></td>
+																<td class="grid" width="120" id="suma_haber"></td>
+															</tr>
+														</tfoot>
 													</table>
-													<div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width:900; height: 150px; border:1px solid #C1DAD7 !important;">	
-														<table>
-															<tbody style="background-color: #FFFFFF;" valign="top" id="grid_cuentas">
-																
-															</tbody>
-														</table>
-													</div>
 												</td>
 											</tr>
 											
@@ -367,7 +382,9 @@
 									<tr>
 										<td width="808"></td>
 										<td>
-											<input type="image" src="../../img/modalbox/btn1.png" id="submit" style="width:77px; height:24px;"/>
+											<input type="submit" value="Submit" id="submit">
+											<!--<input type="image" src="../../img/modalbox/btn1.png" id="submit" style="width:77px; height:24px;"/>-->
+											<div id="boton_actualizar" style="width:95px; height:24px; float:right; cursor:pointer; background-image:url('../../img/modalbox/btn1.png'); background-repeat:no-repeat;"></div>
 										</td>
 										<td width="30"></td>
 										<td><div id="boton_cancelar" style="width:77px; height:24px; float:right; cursor:pointer; background-image:url('../../img/modalbox/btn2.png'); background-repeat:no-repeat;"></div></td>
