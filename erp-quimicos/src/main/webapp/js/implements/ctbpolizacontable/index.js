@@ -796,9 +796,37 @@ $(function() {
 	}//termina buscador de Cuentas Contables
 
 
+	
+	
+	
+	
+	
+	
+	$sumatoria_asientos = function($grid_cuentas){
+		var suma_debe=0;
+		var suma_haber=0;
+		
+		//Busca si la cuenta ya se encuentra en el grid
+		$grid_cuentas.find('tr').each(function (index){
+			if($(this).find('input[name=debe]').val().trim()!=''){
+				suma_debe = suma_debe + parseFloat(quitar_comas($(this).find('input[name=debe]').val()));
+			}
+			
+			if($(this).find('input[name=haber]').val().trim()!=''){
+				suma_haber = suma_haber + parseFloat(quitar_comas($(this).find('input[name=haber]').val()));
+			}
+		});
+		
+		
+		$('#forma-ctbpolizacontable-window').find('#suma_debe').html($(this).agregar_comas(parseFloat(suma_debe).toFixed(2)));
+		$('#forma-ctbpolizacontable-window').find('#suma_haber').html($(this).agregar_comas(parseFloat(suma_haber).toFixed(2)));
+		
+	}
+	
+	
+	
 
-
-
+	
 	//generar tr para agregar al grid
 	$agrega_tr = function($grid_cuentas, id_det, id_tmov, id_cta, cta, descripcion, id_cc, debe, haber, readOnly, arrayTmov, arrayCentroCostos, status){
 		var noTr = $("tr", $grid_cuentas).size();
@@ -894,6 +922,8 @@ $(function() {
 						$(this).val(0);
 					}
 					$(this).val(parseFloat($(this).val()).toFixed(2));
+					
+					$sumatoria_asientos($grid_cuentas);
 				});
 				
 				$grid_cuentas.find('#haber'+noTr).blur(function(){
@@ -902,6 +932,8 @@ $(function() {
 						$(this).val(0);
 					}
 					$(this).val(parseFloat($(this).val()).toFixed(2));
+					
+					$sumatoria_asientos($grid_cuentas);
 				});
 				
 
@@ -926,6 +958,8 @@ $(function() {
 						//oculta la fila eliminada
 						$(this).parent().parent().hide();
 					}
+					
+					$sumatoria_asientos($grid_cuentas);
 				});
 				
 				
@@ -941,12 +975,20 @@ $(function() {
 				$grid_cuentas.find('a[href=#del'+ noTr +']').hide();
 			}
 			
-		
+			
+			//limpiar campos de busqueda
+			$('#forma-ctbpolizacontable-window').find('input[name=cuenta]').val('');
+			$('#forma-ctbpolizacontable-window').find('input[name=scuenta]').val('');
+			$('#forma-ctbpolizacontable-window').find('input[name=sscuenta]').val('');
+			$('#forma-ctbpolizacontable-window').find('input[name=ssscuenta]').val('');
+			$('#forma-ctbpolizacontable-window').find('input[name=sssscuenta]').val('');
 		}else{
 			jAlert('La cuenta: '+cta+' ya se encuentra en el listado, ingrese otro diferente.', 'Atencion!', function(r) { 
 				$('#forma-ctbpolizacontable-window').find('input[name=cuenta]').focus();
 			});
 		}
+		
+		$sumatoria_asientos($grid_cuentas);
 	}
 	
 	
@@ -1062,6 +1104,9 @@ $(function() {
 		var $cerrar_plugin = $('#forma-ctbpolizacontable-window').find('#close');
 		var $cancelar_plugin = $('#forma-ctbpolizacontable-window').find('#boton_cancelar');
 		var $submit_actualizar = $('#forma-ctbpolizacontable-window').find('#submit');
+		var $boton_actualizar = $('#forma-ctbpolizacontable-window').find('#boton_actualizar');
+		
+		$submit_actualizar.hide();
 		
 		$permitir_solo_numeros($cuenta);
 		$permitir_solo_numeros($scuenta);
@@ -1175,10 +1220,10 @@ $(function() {
 			
 			//mostrarFecha();
 			
-			var valor = fecha_actual.split('-');
+			//var valor = fecha_actual.split('-');
 			
 			//Cargar select con meses
-			var elemento_seleccionado = valor[1];
+			var elemento_seleccionado = entry['Extras'][0]['mes_actual'];
 			var mostrar_opciones = 'true';
 			$carga_select_con_arreglo_fijo($select_mes, array_meses, elemento_seleccionado, mostrar_opciones);
 			
@@ -1188,10 +1233,10 @@ $(function() {
 			$select_anio.children().remove();
 			var anio_html = '';
 			$.each(entry['Anios'],function(entryIndex,anio){
-				if(parseInt(anio['valor'])==parseInt(valor[0])){
+				if(parseInt(anio['valor'])==parseInt(entry['Extras'][0]['anio_actual'])){
 					anio_html += '<option value="' + anio['valor'] + '"  >'+ anio['valor'] + '</option>';
 				}else{
-					//anio_html += '<option value="' + anio['valor'] + '"  >'+ anio['valor'] + '</option>';
+					anio_html += '<option value="' + anio['valor'] + '"  >'+ anio['valor'] + '</option>';
 				}
 			});
 			$select_anio.append(anio_html);
@@ -1320,9 +1365,10 @@ $(function() {
 		$aplica_evento_keypress_input_cta($ssscuenta, $sscuenta, $sssscuenta, $descripcion_cuenta, true, true);
 		$aplica_evento_keypress_input_cta($sssscuenta, $ssscuenta, $sssscuenta, $descripcion_cuenta, true, false);
 		
-		
-		$submit_actualizar.bind('click',function(){
-			
+					
+							
+		//Este boton no es submit, se ejecuta $submit_actualizar.trigger('click') para enviar la peticion
+		$boton_actualizar.bind('click',function(){
 			var encontrado=0;
 			//Busca si hay algun registro en el grid
 			$grid_cuentas.find('tr').each(function (index){
@@ -1332,7 +1378,16 @@ $(function() {
 			});
 			
 			if(parseInt(encontrado) > 0){
-				return true;
+				if(parseFloat(quitar_comas($('#forma-ctbpolizacontable-window').find('#suma_debe').html()))!=parseFloat(quitar_comas($('#forma-ctbpolizacontable-window').find('#suma_haber').html()))){					
+					jConfirm('La suma de los asientos contables no cuadran. Es necesario cuadrar antes de contabilizar.<br>Desea guardar la poliza?', 'Dialogo de Confirmacion', function(r) {
+						// If they confirmed, manually trigger a form submission
+						if (r) {
+							$submit_actualizar.trigger('click');
+						}
+					});
+				}else{
+					$submit_actualizar.trigger('click');
+				}
 			}else{
 				jAlert('No hay datos para actualizar', 'Atencion!', function(r) { $cuenta.focus(); });
 				return false;
@@ -1397,6 +1452,8 @@ $(function() {
 			
 			var $accion = $('#forma-ctbpolizacontable-window').find('input[name=accion]');
 			var $identificador = $('#forma-ctbpolizacontable-window').find('input[name=identificador]');
+			var $estatus = $('#forma-ctbpolizacontable-window').find('input[name=estatus]');
+			
 			var $select_sucursal = $('#forma-ctbpolizacontable-window').find('select[name=select_sucursal]');
 			var $select_mes = $('#forma-ctbpolizacontable-window').find('select[name=select_mes]');
 			var $select_anio = $('#forma-ctbpolizacontable-window').find('select[name=select_anio]');
@@ -1431,6 +1488,9 @@ $(function() {
 			var $cerrar_plugin = $('#forma-ctbpolizacontable-window').find('#close');
 			var $cancelar_plugin = $('#forma-ctbpolizacontable-window').find('#boton_cancelar');
 			var $submit_actualizar = $('#forma-ctbpolizacontable-window').find('#submit');
+			var $boton_actualizar = $('#forma-ctbpolizacontable-window').find('#boton_actualizar');
+			
+			$submit_actualizar.hide();
 			
 			$permitir_solo_numeros($cuenta);
 			$permitir_solo_numeros($scuenta);
@@ -1452,6 +1512,8 @@ $(function() {
 			$fecha.attr("readonly", true);
 			//$no_poliza.css({'background' : '#F0F0F0'});
 			//$descripcion_cuenta.css({'background' : '#F0F0F0'});
+			
+			$estatus.val(0);
 			
 			$aplica_read_only_input_text($no_poliza);
 			$aplica_read_only_input_text($descripcion_cuenta);
@@ -1531,6 +1593,8 @@ $(function() {
 				
 				//Aqui se cargan los campos al editar
 				$.post(input_json,$arreglo,function(entry){
+					$estatus.val(entry['Data'][0]['status']);
+					
 					//status 1:"No afectana", 2:"Afectada", 3:"Cancelada"
 					if(parseInt(entry['Data'][0]['status'])==1){
 						$btn_contabilizar.show();
@@ -1552,7 +1616,7 @@ $(function() {
 					if(parseInt(entry['Extras'][0]['nivel_cta']) >=4 ){ $ssscuenta.show(); };
 					if(parseInt(entry['Extras'][0]['nivel_cta']) >=5 ){ $sssscuenta.show(); };
 					
-					var fecha_actual = entry['Extras'][0]['fecha_actual'];
+					//var fecha_actual = entry['Extras'][0]['fecha_actual'];
 					
 					$identificador.attr({ 'value' : entry['Data'][0]['id'] });
 					$no_poliza.attr({ 'value' : entry['Data'][0]['no_poliza'] });
@@ -1568,11 +1632,11 @@ $(function() {
 					
 					$observacion.text(entry['Data'][0]['observacion']);
 					
-					$fecha.val(fecha_actual);
+					$fecha.val(entry['Data'][0]['fecha']);
 					$select_sucursal.focus();
 
 				
-					var valor = entry['Data'][0]['fecha'].split('-');
+					//var valor = entry['Data'][0]['fecha'].split('-');
 					
 					//Cargar select con meses
 					var elemento_seleccionado = entry['Data'][0]['mes'];
@@ -1644,7 +1708,6 @@ $(function() {
 					$carga_campos_select($select_concepto, ArrayCon, elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem, option_fijo);
 					
 					
-					
 					if(parseInt(entry['Grid'].length)>0){
 						$.each(entry['Grid'],function(entryIndex,grid){
 							var id_det = grid['id_det'];
@@ -1688,8 +1751,8 @@ $(function() {
 							
 						$fecha.DatePicker({
 							format:'Y-m-d',
-							date: fecha_actual,
-							current: fecha_actual,
+							date: $fecha.val(),
+							current: $fecha.val(),
 							starts: 1,
 							position: 'bottom',
 							locale: {
@@ -1773,6 +1836,54 @@ $(function() {
 
 				
 				
+							
+				//Este boton no es submit, se ejecuta $submit_actualizar.trigger('click') para enviar la peticion
+				$boton_actualizar.bind('click',function(){
+					var encontrado=0;
+					//Busca si hay algun registro en el grid
+					$grid_cuentas.find('tr').each(function (index){
+						if(parseInt($(this).find('input[name=delete]').val())>0){
+							encontrado++;
+						}
+					});
+					
+					if(parseInt(encontrado) > 0){
+						if(parseFloat(quitar_comas($('#forma-ctbpolizacontable-window').find('#suma_debe').html()))!=parseFloat(quitar_comas($('#forma-ctbpolizacontable-window').find('#suma_haber').html()))){
+							
+							if(parseInt($estatus.val())==1){
+								jConfirm('La suma de los asientos contables no cuadran. Es necesario cuadrar antes de contabilizar.<br>Desea guardar la poliza?', 'Dialogo de Confirmacion', function(r) {
+									// If they confirmed, manually trigger a form submission
+									if (r) {
+										$submit_actualizar.trigger('click');
+									}
+								});
+							}
+							
+							if(parseInt($estatus.val())==2){
+								jAlert('La suma de los asientos contables no cuadran. No es posible guardar los cambios de esta poliza contabilizada.<br>Modifique los valores para cuadrar y guardar.', 'Atencion!', function(r) {
+									//$dest_no.focus(); 
+								});
+							}
+						}else{
+							if(parseInt($estatus.val())==2){
+								$accion.val("contabilizar");
+							}
+							
+							$submit_actualizar.trigger('click');
+						}
+					}else{
+						
+						jAlert('No hay datos para actualizar', 'Atencion!', function(r) { $cuenta.focus(); });
+						return false;
+					}
+				});
+				
+		
+		
+		
+		
+		
+				/*
 				$submit_actualizar.bind('click',function(){
 					var encontrado=0;
 					//Busca si hay algun registro en el grid
@@ -1789,6 +1900,7 @@ $(function() {
 						return false;
 					}
 				});
+				*/
 				
 		
 				//Ligamos el boton cancelar al evento click para eliminar la forma
@@ -1815,7 +1927,7 @@ $(function() {
         
         var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
         
-        $arreglo = {'orderby':'id','desc':'DESC','items_por_pag':10,'pag_start':1,'display_pag':10,'input_json':'/'+controller+'/getAllPolizas.json', 'cadena_busqueda':$cadena_busqueda, 'iu':iu}
+        $arreglo = {'orderby':'fecha','desc':'DESC','items_por_pag':10,'pag_start':1,'display_pag':10,'input_json':'/'+controller+'/getAllPolizas.json', 'cadena_busqueda':$cadena_busqueda, 'iu':iu}
         
         $.post(input_json,$arreglo,function(data){
             
