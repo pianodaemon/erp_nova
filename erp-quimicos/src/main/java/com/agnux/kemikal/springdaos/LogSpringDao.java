@@ -62,6 +62,8 @@ public class LogSpringDao implements LogInterfaceDao{
     public String selectFunctionForLogAdmProcesos(String campos_data, String extra_data_array) {
         String sql_to_query = "select * from log_adm_procesos('"+campos_data+"',array["+extra_data_array+"]);";
         
+        System.out.println("sql_to_query: "+sql_to_query);
+        
         String valor_retorno="";
         Map<String, Object> update = this.getJdbcTemplate().queryForMap(sql_to_query);
         valor_retorno = update.get("log_adm_procesos").toString();
@@ -1894,7 +1896,7 @@ public class LogSpringDao implements LogInterfaceDao{
         +"JOIN ("+sql_busqueda+") AS sbt on sbt.id=log_viaje.id "
         +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
         
-        System.out.println("Paginado Viajes: "+sql_to_query);
+        //System.out.println("Paginado Viajes: "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query, 
             new Object[]{data_string, new Integer(pageSize),new Integer(offset)}, new RowMapper() {
@@ -3903,7 +3905,8 @@ public class LogSpringDao implements LogInterfaceDao{
             + "(case when log_doc_ped_fac.id is null then false else log_doc_ped_fac.efectivo end) as evid_efectivo,"
             + "(case when log_doc_ped_fac.id is null then '' else log_doc_ped_fac.no_cheque end) as evid_noche,"
             + "(case when log_doc_ped_fac.id is null then 0 else log_doc_ped_fac.cantidad end) as evid_cant,"
-            + "(case when log_doc_ped_fac.id is null then 0 else 1 end) as status_id "
+            + "(case when log_doc_ped_fac.id is null then 0 else 1 end) as exis_fac, "
+            + "(case when log_doc_ped_fac.id is null then 0 else log_doc_ped_fac.log_status_id end) as status_id_fac "
         + "from log_viaje_det "
         + "join log_doc_carga on log_doc_carga.id=log_viaje_det.log_doc_carga_id "
         + "join log_doc_ped on log_doc_ped.id=log_viaje_det.log_doc_ped_id  "
@@ -3953,7 +3956,8 @@ public class LogSpringDao implements LogInterfaceDao{
                     row.put("evid_efectivo",rs.getBoolean("evid_efectivo"));
                     row.put("evid_noche",rs.getString("evid_noche"));
                     row.put("evid_cant",StringHelper.roundDouble(rs.getString("evid_cant"),2));
-                    row.put("status_id",rs.getInt("status_id"));
+                    row.put("exis_fac",rs.getInt("exis_fac"));
+                    row.put("status_id_fac",rs.getInt("status_id_fac"));
                     return row;
                 }
             }
