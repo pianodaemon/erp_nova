@@ -468,12 +468,18 @@
                                                             <tr>
                                                                 <td width="80"></td>
                                                                 <td width="60">Subtotal</td>
-                                                                <td width="120"><input type="text" name="subtotal" value="0" style="width:120px; text-align:right;" readOnly="true"></td>
+                                                                <td width="120">
+																	<input type="text" name="subtotal" value="0" style="width:120px; text-align:right;" readOnly="true">
+																	<input type="hidden" name="subtotal2" value="0">
+																</td>
                                                             </tr>
                                                             <tr>
                                                                 <td width="80"></td>
                                                                 <td width="60">Impuesto</td>
-                                                                <td width="120"><input type="text" name="impuesto" value="0" style="width:120px; text-align:right;" readOnly="true"></td>
+                                                                <td width="120">
+																	<input type="text" name="impuesto" value="0" style="width:120px; text-align:right;" readOnly="true">
+																	<input type="hidden" name="impuesto2" value="0">
+                                                                </td>
                                                             </tr>
                                                             <!--<tr>
                                                                 <td width="80"></td>
@@ -483,7 +489,10 @@
                                                             <tr>
                                                                 <td width="80"></td>
                                                                 <td width="60">Total</td>
-                                                                <td width="120"><input type="text" name="total" value="0" style="width:120px; text-align:right;" readOnly="true"></td>
+                                                                <td width="120">
+																	<input type="text" name="total" value="0" style="width:120px; text-align:right;" readOnly="true">
+																	<input type="hidden" name="total2" value="0">
+																</td>
                                                             </tr>
 
 
