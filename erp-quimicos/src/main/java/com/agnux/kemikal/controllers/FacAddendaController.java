@@ -3,14 +3,17 @@
  * and open the template in the editor.
  */
 package com.agnux.kemikal.controllers;
+
 import com.agnux.cfd.v2.ArchivoInformeMensual;
 import com.agnux.cfd.v2.Base64Coder;
 import com.agnux.cfd.v2.BeanFromCfdXml;
 import com.agnux.cfd.v2.CryptoEngine;
 import com.agnux.cfdi.BeanCancelaCfdi;
 import com.agnux.cfdi.BeanFromCfdiXml;
-import com.agnux.cfdi.adendas.AdendaCliente;
-import com.agnux.common.helpers.*;
+import com.agnux.common.helpers.FileHelper;
+import com.agnux.common.helpers.SendEmailWithFileHelper;
+import com.agnux.common.helpers.StringHelper;
+import com.agnux.common.helpers.XmlHelper;
 import com.agnux.common.obj.DataPost;
 import com.agnux.common.obj.ResourceProject;
 import com.agnux.common.obj.UserSessionData;
@@ -20,12 +23,10 @@ import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
 import com.agnux.kemikal.reportes.pdfCfd_CfdiTimbrado;
 import com.agnux.kemikal.reportes.pdfCfd_CfdiTimbradoFormato2;
 import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Image;
-import com.itextpdf.text.pdf.BaseFont;
-import com.itextpdf.text.pdf.PdfContentByte;
-import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.PdfStamper;
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,7 +36,6 @@ import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -45,18 +45,18 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- * @author gpmarsan@gmail.com
- * Noe Martinez 
- * 28/mayo/2013
- * En esta fecha se separo en dos aplicativos(antes solo era Consulta Cancelacion)
+ *
+ * @author Noe Martinez
+ * gpmarsan@gmail.com
+ * 09/enero/2015
+ * 
  */
 @Controller
 @SessionAttributes({"user"})
-@RequestMapping("/facconsultas/")
-public class FacConsultasController {
+@RequestMapping("/facaddenda/")
+public class FacAddendaController {
     ResourceProject resource = new ResourceProject();
-    private static final Logger log  = Logger.getLogger(FacConsultasController.class.getName());
-    
+    private static final Logger log  = Logger.getLogger(FacAddendaController.class.getName());
     
     @Autowired
     @Qualifier("daoGral")
@@ -95,9 +95,9 @@ public class FacConsultasController {
     @RequestMapping(value="/startup.agnux")
     public ModelAndView startUp(HttpServletRequest request, HttpServletResponse response, 
             @ModelAttribute("user") UserSessionData user
-            )throws ServletException, IOException {
+        )throws ServletException, IOException {
         
-        log.log(Level.INFO, "Ejecutando starUp de {0}", FacConsultasController.class.getName());
+        log.log(Level.INFO, "Ejecutando starUp de {0}", FacAddendaController.class.getName());
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
         
         infoConstruccionTabla.put("id", "Acciones:70");
@@ -112,7 +112,7 @@ public class FacConsultasController {
         infoConstruccionTabla.put("estado", "Estado:80");
         infoConstruccionTabla.put("fecha_pago","Fecha&nbsp;Pago:80");
         
-        ModelAndView x = new ModelAndView("facconsultas/startup", "title", "Consulta de Facturas");
+        ModelAndView x = new ModelAndView("facaddenda/startup", "title", "Addendas");
         
         x = x.addObject("layoutheader", resource.getLayoutheader());
         x = x.addObject("layoutmenu", resource.getLayoutmenu());
@@ -153,8 +153,8 @@ public class FacConsultasController {
         HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
         HashMap<String,String> has_busqueda = StringHelper.convert2hash(StringHelper.ascii2string(cadena_busqueda));
         
-        //aplicativo Consulta de Facturas
-        Integer app_selected = 142;
+        //Aplicativo Addendas
+        Integer app_selected = 193;
         
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
@@ -216,89 +216,55 @@ public class FacConsultasController {
     
     
     @RequestMapping(method = RequestMethod.POST, value="/getFactura.json")
-    public @ResponseBody HashMap<String, Object> getFacturaJson(
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getFacturaJson(
             @RequestParam(value="id_factura", required=true) String id_factura,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
         ) {
         
-        log.log(Level.INFO, "Ejecutando getFacturaJson de {0}", FacConsultasController.class.getName());
-        HashMap<String, Object> jsonretorno = new HashMap<String, Object>();
+        log.log(Level.INFO, "Ejecutando getFacturaJson de {0}", FacAddendaController.class.getName());
+        HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
         ArrayList<HashMap<String, Object>> datosFactura = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> datosGrid = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> valorIva = new ArrayList<HashMap<String, Object>>();
+        ArrayList<HashMap<String, Object>> monedas = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> tipoCambioActual = new ArrayList<HashMap<String, Object>>();
         HashMap<String, Object> tc = new HashMap<String, Object>();
+        ArrayList<HashMap<String, Object>> vendedores = new ArrayList<HashMap<String, Object>>();
+        ArrayList<HashMap<String, Object>> condiciones = new ArrayList<HashMap<String, Object>>();
+        ArrayList<HashMap<String, Object>> metodos_pago = new ArrayList<HashMap<String, Object>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
-        HashMap<String, String> parametros = new HashMap<String, String>();
-        ArrayList<HashMap<String, Object>> datosAdenda = new ArrayList<HashMap<String, Object>>();
         
-        //Decodificar id de usuario
+        //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        
         userDat = this.getHomeDao().getUserById(id_usuario);
         
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
-        boolean incluirAdenda=false;
         
-        parametros = this.getFacdao().getFac_Parametros(id_empresa, id_sucursal);
-        
-        if(!id_factura.equals("0")){
+        if( !id_factura.equals("0")  ){
             datosFactura = this.getFacdao().getFactura_Datos(Integer.parseInt(id_factura));
             datosGrid = this.getFacdao().getFactura_DatosGrid(Integer.parseInt(id_factura));
-            
-            //Verificar si hay que incluir adenda
-            if (parametros.get("incluye_adenda").equals("true")){
-                //Verificar si el cliente tiene asignada una adenda
-                if(Integer.parseInt(String.valueOf(datosFactura.get(0).get("t_adenda_id")))>0){
-                    
-                    //Obtener datos de la Adenda
-                    datosAdenda = this.getFacdao().getFactura_DatosAdenda(Integer.valueOf(id_factura));
-                    
-                    incluirAdenda=true;
-                }
-            }
-        }
-        
-        if(incluirAdenda){
-            if(datosAdenda.size()<=0){
-                /*
-                Si es nuevo, aun no se ha ingresado datos para la addenda.
-                Hay que cargar los datos conocidos que debe llevar la addenda
-                */
-                HashMap<String, Object> row = new HashMap<String, Object>();
-                row.put("id_adenda",0);
-                row.put("generado","false");
-                
-                if(Integer.parseInt(String.valueOf(datosFactura.get(0).get("t_adenda_id")))==3){
-                    row.put("valor1",datosFactura.get(0).get("orden_compra"));//Orden Compra
-                    row.put("valor2",this.getGralDao().geteMailPurchasingEmpresaEmisora(id_empresa));//Email-Emisor
-                    row.put("valor3",datosFactura.get(0).get("moneda_4217"));//Moneda
-                    row.put("valor4",(datosFactura.get(0).get("moneda_4217").equals("MXN"))?"1":datosFactura.get(0).get("tipo_cambio"));//Tipo de Cambio
-                    row.put("valor5",datosFactura.get(0).get("subtotal"));//Subtotal factura
-                    row.put("valor6",datosFactura.get(0).get("total"));//Total Factura
-                    row.put("valor7","");
-                    row.put("valor8","");
-                }
-                
-                datosAdenda.add(row);
-            }
         }
         
         valorIva= this.getFacdao().getValoriva(id_sucursal);
         tc.put("tipo_cambio", StringHelper.roundDouble(this.getFacdao().getTipoCambioActual(), 4)) ;
         tipoCambioActual.add(0,tc);
         
+        monedas = this.getFacdao().getFactura_Monedas();
+        vendedores = this.getFacdao().getFactura_Agentes(id_empresa, id_sucursal);
+        condiciones = this.getFacdao().getFactura_DiasDeCredito();
+        metodos_pago = this.getFacdao().getMetodosPago();
+        
         jsonretorno.put("datosFactura", datosFactura);
         jsonretorno.put("datosGrid", datosGrid);
-        jsonretorno.put("datosAdenda", datosAdenda);
-        jsonretorno.put("Addenda", incluirAdenda);
         jsonretorno.put("iva", valorIva);
+        jsonretorno.put("Monedas", monedas);
         jsonretorno.put("Tc", tipoCambioActual);
-        jsonretorno.put("Monedas", this.getFacdao().getFactura_Monedas());
-        jsonretorno.put("Vendedores", this.getFacdao().getFactura_Agentes(id_empresa, id_sucursal));
-        jsonretorno.put("Condiciones", this.getFacdao().getFactura_DiasDeCredito());
-        jsonretorno.put("MetodosPago", this.getFacdao().getMetodosPago());
+        jsonretorno.put("Vendedores", vendedores);
+        jsonretorno.put("Condiciones", condiciones);
+        jsonretorno.put("MetodosPago", metodos_pago);
         
         return jsonretorno;
     }
@@ -419,7 +385,7 @@ public class FacConsultasController {
             Model model
         ) {
         
-        log.log(Level.INFO, "Ejecutando getSendMailJson de {0}", FacConsultasController.class.getName());
+        log.log(Level.INFO, "Ejecutando getSendMailJson de {0}", FacAddendaController.class.getName());
         HashMap<String, String> jsonretorno = new HashMap<String,String>();
         HashMap<String, String> userDat = new HashMap<String, String>();
         ArrayList<HashMap<String, String>> email_envio = new ArrayList<HashMap<String, String>>();
@@ -617,7 +583,7 @@ public class FacConsultasController {
             Model model
             ) {
         
-        log.log(Level.INFO, "Ejecutando getVerificaArchivoGeneradoJson de {0}", FacConsultasController.class.getName());
+        log.log(Level.INFO, "Ejecutando getVerificaArchivoGeneradoJson de {0}", FacAddendaController.class.getName());
         HashMap<String, String> jsonretorno = new HashMap<String,String>();
         HashMap<String, String> userDat = new HashMap<String, String>();
         String existe ="false";
@@ -808,7 +774,7 @@ public class FacConsultasController {
             Model model
             ) {
         
-        log.log(Level.INFO, "Ejecutando getReconstruirPdfFacturaJson de {0}", FacConsultasController.class.getName());
+        log.log(Level.INFO, "Ejecutando getReconstruirPdfFacturaJson de {0}", FacAddendaController.class.getName());
         HashMap<String, String> jsonretorno = new HashMap<String,String>();
         HashMap<String, String> userDat = new HashMap<String, String>();
         ArrayList<LinkedHashMap<String,String>> conceptos = new ArrayList<LinkedHashMap<String,String>>();
@@ -905,7 +871,7 @@ public class FacConsultasController {
                 
                 generado ="true";
             } catch (Exception ex) {
-                Logger.getLogger(FacConsultasController.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(FacAddendaController.class.getName()).log(Level.SEVERE, null, ex);
             }
             
             
@@ -981,15 +947,23 @@ public class FacConsultasController {
                 generado ="true";
                 
             } catch (Exception ex) {
-                Logger.getLogger(FacConsultasController.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(FacAddendaController.class.getName()).log(Level.SEVERE, null, ex);
             }
             
+            
+            
         }
+        
+        
         
         
         if(tipo_facturacion.equals("cfdi")){
             dirSalidas = this.getGralDao().getCfdiSolicitudesDir() + "out/";
         }
+        
+
+        
+        
 
         jsonretorno.put("generado", generado);
         
@@ -1013,209 +987,4 @@ public class FacConsultasController {
         
         return valor_retorno;
     }
-    
-    
-    
-    //Reconstruir el pdf de la factura para CFD y CFDI con Tiembrado Fiscal
-    @RequestMapping(method = RequestMethod.POST, value="/getAddAddenda.json")
-    public @ResponseBody HashMap<String,String> getAddAddendaJson(
-            @RequestParam(value="id_fac", required=true) Integer id_fac_doc,
-            @RequestParam(value="t_addenda_id", required=true) Integer tipo_addenda_id,
-            @RequestParam(value="cadena_datos", required=true) String cadena_datos,
-            @RequestParam(value="iu", required=true) String id_user_cod,
-            Model model
-        ) {
-        
-        log.log(Level.INFO, "Ejecutando getAddAddendaJson de {0}", FacConsultasController.class.getName());
-        HashMap<String, String> jsonretorno = new HashMap<String,String>();
-        HashMap<String, String> userDat = new HashMap<String, String>();
-        HashMap<String, String> parametros = new HashMap<String, String>();
-        HashMap<String, String> succes = new HashMap<String, String>();
-        LinkedHashMap<String,Object> dataAdenda = new LinkedHashMap<String,Object>();
-        /*
-         dataFacturaCliente
-         * Este solo lo declaro porque es un objeto que necesita el metodo que obtiene los datos para la addenda,
-         * asi se declaro en las primeras addendas que se hicieron
-         */
-        HashMap<String,String> dataFacturaCliente = new HashMap<String,String>();
-        
-        //aplicativo Consulta de Facturas
-        Integer app_selected = 142;
-        String command_selected = "guardar_addenda";
-        String extra_data_array = "'sin datos'";
-        String data_string = "";
-        String actualizo="0";
-        String generado ="false";
-        String dirSalidas = "";
-        String msj = "";
-        
-        //Decodificar id de usuario
-        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
-        userDat = this.getHomeDao().getUserById(id_usuario);
-        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
-        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
-        String rfcEmpresa = this.getGralDao().getRfcEmpresaEmisora(id_empresa);
-        
-        //Obtener tipo de facturacion
-        String tipo_facturacion = this.getFacdao().getTipoFacturacion(id_empresa);
-        String serieFolio = this.getFacdao().getSerieFolioFactura(id_fac_doc, id_empresa);
-        String refId = this.getFacdao().getRefIdFactura(id_fac_doc, id_empresa);
-        //Integer id_prefactura = this.getFacdao().getIdPrefacturaByIdFactura(id_factura);
-        
-        //aqui se obtienen los parametros de la facturacion, nos intersa el tipo de formato para el pdf de la factura
-        parametros = this.getFacdao().getFac_Parametros(id_empresa, id_sucursal);
-        
-        
-        String fileout="";
-        File file;
-        
-        //Convertir en array los datos
-        String array_datos [] = cadena_datos.split("\\|");
-        
-        String adenda_campo1="";
-        String adenda_campo2="";
-        String adenda_campo3="";
-        String adenda_campo4="";
-        String adenda_campo5="";
-        String adenda_campo6="";
-        String adenda_campo7="";
-        String adenda_campo8="";
-        
-        //Guardar datos de la addenda
-        if(tipo_addenda_id==3){
-            //Verificar que los campos no vengan vacios(Si traen &&&&&, entonces se toma como vacio)
-            adenda_campo1 = (array_datos[0].equals("___"))?"":array_datos[0];//Orden de compra
-            adenda_campo2 = (array_datos[1].equals("___"))?"":array_datos[1];//Email-Emisor
-            adenda_campo3 = (array_datos[2].equals("___"))?"":array_datos[2];//Moneda
-            adenda_campo4 = (array_datos[3].equals("___"))?"":array_datos[3];//Tipo de Cambio
-            adenda_campo5 = (array_datos[4].equals("___"))?"":array_datos[4];//Subtotal factura
-            adenda_campo6 = (array_datos[5].equals("___"))?"":array_datos[5];//Total Factura
-        }
-        
-        //System.out.println("data_string: "+data_string);
-        data_string = app_selected +"___"+command_selected+"___"+id_usuario+"___"+id_fac_doc+"___"+tipo_addenda_id+"___"+adenda_campo1.toUpperCase()+"___"+adenda_campo2.toUpperCase()+"___"+adenda_campo3.toUpperCase()+"___"+adenda_campo4.toUpperCase()+"___"+adenda_campo5.toUpperCase()+"___"+adenda_campo6.toUpperCase()+"___"+adenda_campo7.toUpperCase()+"___"+adenda_campo8.toUpperCase();
-        System.out.println("data_string: "+data_string);
-        
-        //System.out.println(TimeHelper.getFechaActualYMDH()+"::::Inicia Validacion de la Prefactura::::::::::::::::::");
-        succes = this.getFacdao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
-        
-        log.log(Level.INFO, TimeHelper.getFechaActualYMDH()+"Despues de validacion {0}", String.valueOf(succes.get("success")));
-        
-        //System.out.println(TimeHelper.getFechaActualYMDH()+": Inicia actualizacion de datos de la prefactura");
-        if( String.valueOf(succes.get("success")).equals("true")){
-            actualizo = this.getFacdao().selectFunctionForFacAdmProcesos(data_string, extra_data_array);
-        }else{
-            jsonretorno.put("success", String.valueOf(succes.get("success")));
-        }
-        
-        
-        
-        if(actualizo.equals("1")){
-            if(tipo_facturacion.equals("cfditf")){
-                dirSalidas = this.getGralDao().getCfdiTimbreEmitidosDir() + rfcEmpresa;
-                fileout = dirSalidas +"/"+ refId +".pdf";
-                file = new File(fileout);
-                if (file.exists()){
-                    file.delete();
-                }
-                
-                //String cadena_xml = FileHelper.stringFromFile(dirSalidas+"/"+ refId +".xml");
-                //System.out.println("cadena_xml: "+cadena_xml);
-
-                try {
-
-                    /*
-                    String cadena_original ="";
-                    String sello_digital_emisor="";
-                    */
-                    //BeanFromCfdiXml pop2 = new BeanFromCfdiXml(dirSalidas+"/"+refId +".xml");
-
-
-                    //::::::INICIA AGREGAR ADENDA AL XML DEL CFDI::::::::::::::::::::::::::::::::::::::::::::::::::::::
-                    System.out.println("incluye_adenda: "+parametros.get("incluye_adenda")+"  |  dataFacturaClienteAdendaID: "+tipo_addenda_id);
-
-                    //Verificar si hay que incluir adenda
-                    if (parametros.get("incluye_adenda").equals("true")){
-
-                        Integer numAdenda = tipo_addenda_id;
-                        
-                        
-                        if(this.getFacdao().getStatusAdendaFactura(numAdenda, id_fac_doc)<=0){
-                        
-                            //Verificar si el cliente tiene asignada una adenda
-                            if(numAdenda>0){
-                                String path_file = new String();
-                                String xml_file_name = new String();
-
-                                //Tipo de DOCUMENTO(1=Factura, 2=Consignacion, 3=Retenciones(Honorarios, Arrendamientos, Fletes), 8=Nota de Cargo, 9=Nota de Credito)
-                                int tipoDocAdenda=1;
-
-
-                                path_file = this.getGralDao().getCfdiTimbreEmitidosDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa);
-                                xml_file_name = refId+".xml";
-
-
-                                if(numAdenda==1){
-                                    //Agregar estos datos para generar el objeto que contiene los datos de la Adenda
-                                    dataFacturaCliente.put("emailEmisor", this.getGralDao().getEmailSucursal(id_sucursal));
-                                }
-
-                                //1 indica que es Adenda de una factura
-                                dataAdenda = this.getFacdao().getDatosAdenda(tipoDocAdenda, numAdenda, dataFacturaCliente, id_fac_doc, serieFolio, id_empresa);
-
-                                //INICIA EJECUCION DE CLASE QUE AGREGA LA ADENDA
-                                AdendaCliente adenda = new AdendaCliente();
-                                adenda.createAdenda(numAdenda, dataAdenda, path_file, xml_file_name);
-                                //TERMINA EJECUCION DE CLASE QUE AGREGA LA ADENDA
-
-
-                                //::::Actualizar registro para indicar que la addenda se ha generado::::::
-                                command_selected = "actualizar_addenda";
-                                data_string = app_selected +"___"+command_selected+"___"+id_usuario+"___"+id_fac_doc+"___"+tipo_addenda_id;
-                                actualizo = this.getFacdao().selectFunctionForFacAdmProcesos(data_string, extra_data_array);
-                                //::::Actualizar registro para indicar que la addenda se ha generado::::::
-
-                                generado ="true";
-
-                                File file_xml_con_adenda = new File(path_file+"/"+xml_file_name);
-                                if(!file_xml_con_adenda.exists()){
-                                    //Si el archivo NO existe indica que NO se agregó bien la adenda y NO se creó el nuevo archivo xml
-                                    msj = "Hubo problemas al intentar crear el archivo xml["+xml_file_name+"].";
-                                }else{
-                                    msj = "La addenda se agreg&oacute; correctamente.";
-                                }
-                            }
-                        }else{
-                            msj = "La addenda ya fue generado anteriormente para la Factura "+serieFolio+".";
-                            
-                        }
-                        
-                    }
-                    //::::::TERMINA AGREGAR ADENDA AL XML DEL CFDI::::::::::::::::::::::::::::::::::::::::::::::::::::::
-
-                    
-
-                } catch (Exception ex) {
-                    //Logger.getLogger(FacConsultasController.class.getName()).log(Level.SEVERE, null, ex);
-                    System.out.println("ERROR: "+ ex.getMessage());
-                }
-
-            }
-            
-        }else{
-            //Falló a guardar datos.
-            msj = "Fall&oacute; al intentar guardar datos.";
-        }
-        
-        jsonretorno.put("success", String.valueOf(succes.get("success")));
-        jsonretorno.put("actualizo",String.valueOf(actualizo));
-        jsonretorno.put("generado", generado);
-        jsonretorno.put("msj", msj);
-        
-        System.out.println("success="+jsonretorno.get("success")+"  |  actualizo="+jsonretorno.get("actualizo")+" | generado="+jsonretorno.get("generado")+" | msj="+jsonretorno.get("msj"));
-        
-        return jsonretorno;
-    }
-    
-    
 }

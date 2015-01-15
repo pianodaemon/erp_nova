@@ -454,7 +454,7 @@ public class CompOrdenCompraController {
             
             for(int i=0; i<eliminado.length; i++) {
                 arreglo[i]= "'"+eliminado[i] +"___"+ iddetalle[i] +"___"+ idproducto[i] +"___"+ id_presentacion[i] +"___"+ id_impuesto[i] +"___"+ cantidad[i] +"___"+ costo[i] +"___"+ valor_imp[i] + "___"+ idreq[i] +"___"+ iddetreq[i] +"'";
-                System.out.println(arreglo[i]);
+                //System.out.println(arreglo[i]);
             }
             
             //serializar el arreglo
