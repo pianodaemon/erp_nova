@@ -15,7 +15,7 @@ $(function() {
 	$username.text($('#lienzo_recalculable').find('input[name=user]').val());
 	
 	var $contextpath = $('#lienzo_recalculable').find('input[name=contextpath]');
-	var controller = $contextpath.val()+"/controllers/facconsultas";
+	var controller = $contextpath.val()+"/controllers/facaddenda";
     
     //Barra para las acciones
     $('#barra_acciones').append($('#lienzo_recalculable').find('.table_acciones'));
@@ -170,7 +170,7 @@ $(function() {
 	var $tabla_reporte_facturacion = $('#barra_genera_informe').find('.tabla_genera_informe').find('.tabla_reporte_facturacion');
 	var $reporte_fecha_inicial = $('#barra_genera_informe').find('.tabla_genera_informe').find('input[name=fecha_inicial]');
 	var $reporte_fecha_final = $('#barra_genera_informe').find('.tabla_genera_informe').find('input[name=fecha_final]');
-	var $boton_generar_reporte_facconsultas = $('#barra_genera_informe').find('.tabla_genera_informe').find('#generar_reporte_facconsultas');
+	var $boton_generar_reporte_facaddenda = $('#barra_genera_informe').find('.tabla_genera_informe').find('#generar_reporte_facaddenda');
 	*/
 	//$tabla_reporte_facturacion.hide();
 	
@@ -338,7 +338,7 @@ $(function() {
 	//----------------------------------------------------------------
 	
 	/*
-	//fecha inicial para reporte de facconsultas
+	//fecha inicial para reporte de facaddenda
 	$reporte_fecha_inicial.val(mostrarFecha());
 	$reporte_fecha_inicial.click(function (s){
 		var a=$('div.datepicker');
@@ -370,7 +370,7 @@ $(function() {
 		}
 	});
 	
-	//fecha final para reporte de facconsultas
+	//fecha final para reporte de facaddenda
 	$reporte_fecha_final.val(mostrarFecha());
 	$reporte_fecha_final.click(function (s){
 		var a=$('div.datepicker');
@@ -431,7 +431,7 @@ $(function() {
 	
 	
 	/*
-	$boton_generar_reporte_facconsultas.click(function(event){
+	$boton_generar_reporte_facaddenda.click(function(event){
 		//$reporte_fecha_inicial
 		//$reporte_fecha_final
 		var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
@@ -520,39 +520,39 @@ $(function() {
         
 	
 	$tabs_li_funxionalidad = function(){
-            var $select_prod_tipo = $('#forma-facconsultas-window').find('select[name=prodtipo]');
-            $('#forma-facconsultas-window').find('#submit').mouseover(function(){
-                $('#forma-facconsultas-window').find('#submit').removeAttr("src").attr("src","../../img/modalbox/bt1.png");
-                //$('#forma-facconsultas-window').find('#submit').css({backgroundImage:"url(../../img/modalbox/bt1.png)"});
+            var $select_prod_tipo = $('#forma-facaddenda-window').find('select[name=prodtipo]');
+            $('#forma-facaddenda-window').find('#submit').mouseover(function(){
+                $('#forma-facaddenda-window').find('#submit').removeAttr("src").attr("src","../../img/modalbox/bt1.png");
+                //$('#forma-facaddenda-window').find('#submit').css({backgroundImage:"url(../../img/modalbox/bt1.png)"});
             })
-            $('#forma-facconsultas-window').find('#submit').mouseout(function(){
-                $('#forma-facconsultas-window').find('#submit').removeAttr("src").attr("src","../../img/modalbox/btn1.png");
-                //$('#forma-facconsultas-window').find('#submit').css({backgroundImage:"url(../../img/modalbox/btn1.png)"});
+            $('#forma-facaddenda-window').find('#submit').mouseout(function(){
+                $('#forma-facaddenda-window').find('#submit').removeAttr("src").attr("src","../../img/modalbox/btn1.png");
+                //$('#forma-facaddenda-window').find('#submit').css({backgroundImage:"url(../../img/modalbox/btn1.png)"});
             })
-            $('#forma-facconsultas-window').find('#boton_cancelar').mouseover(function(){
-                $('#forma-facconsultas-window').find('#boton_cancelar').css({backgroundImage:"url(../../img/modalbox/bt2.png)"});
+            $('#forma-facaddenda-window').find('#boton_cancelar').mouseover(function(){
+                $('#forma-facaddenda-window').find('#boton_cancelar').css({backgroundImage:"url(../../img/modalbox/bt2.png)"});
             })
-            $('#forma-facconsultas-window').find('#boton_cancelar').mouseout(function(){
-                $('#forma-facconsultas-window').find('#boton_cancelar').css({backgroundImage:"url(../../img/modalbox/btn2.png)"});
-            })
-            
-            $('#forma-facconsultas-window').find('#close').mouseover(function(){
-                $('#forma-facconsultas-window').find('#close').css({backgroundImage:"url(../../img/modalbox/close_over.png)"});
-            })
-            $('#forma-facconsultas-window').find('#close').mouseout(function(){
-                $('#forma-facconsultas-window').find('#close').css({backgroundImage:"url(../../img/modalbox/close.png)"});
+            $('#forma-facaddenda-window').find('#boton_cancelar').mouseout(function(){
+                $('#forma-facaddenda-window').find('#boton_cancelar').css({backgroundImage:"url(../../img/modalbox/btn2.png)"});
             })
             
-            $('#forma-facconsultas-window').find(".contenidoPes").hide(); //Hide all content
-            $('#forma-facconsultas-window').find("ul.pestanas li:first").addClass("active").show(); //Activate first tab
-            $('#forma-facconsultas-window').find(".contenidoPes:first").show(); //Show first tab content
+            $('#forma-facaddenda-window').find('#close').mouseover(function(){
+                $('#forma-facaddenda-window').find('#close').css({backgroundImage:"url(../../img/modalbox/close_over.png)"});
+            })
+            $('#forma-facaddenda-window').find('#close').mouseout(function(){
+                $('#forma-facaddenda-window').find('#close').css({backgroundImage:"url(../../img/modalbox/close.png)"});
+            })
+            
+            $('#forma-facaddenda-window').find(".contenidoPes").hide(); //Hide all content
+            $('#forma-facaddenda-window').find("ul.pestanas li:first").addClass("active").show(); //Activate first tab
+            $('#forma-facaddenda-window').find(".contenidoPes:first").show(); //Show first tab content
             
             //On Click Event
-            $('#forma-facconsultas-window').find("ul.pestanas li").click(function() {
-                $('#forma-facconsultas-window').find(".contenidoPes").hide();
-                $('#forma-facconsultas-window').find("ul.pestanas li").removeClass("active");
+            $('#forma-facaddenda-window').find("ul.pestanas li").click(function() {
+                $('#forma-facaddenda-window').find(".contenidoPes").hide();
+                $('#forma-facaddenda-window').find("ul.pestanas li").removeClass("active");
                 var activeTab = $(this).find("a").attr("href");
-                $('#forma-facconsultas-window').find( activeTab , "ul.pestanas li" ).fadeIn().show();
+                $('#forma-facaddenda-window').find( activeTab , "ul.pestanas li" ).fadeIn().show();
                 $(this).addClass("active");
                 return false;
             });
@@ -572,7 +572,7 @@ $(function() {
 		var sumaSubTotal = 0; //es la suma de todos los importes
 		var sumaImpuesto = 0; //valor del iva
 		var sumaTotal = 0; //suma del subtotal + totalImpuesto
-		var $moneda_original = $('#forma-facconsultas-window').find('input[name=moneda_original]');
+		var $moneda_original = $('#forma-facaddenda-window').find('input[name=moneda_original]');
 		//si  el campo tipo de cambio es null o vacio, se le asigna un 0
 		if( $valor_impuesto.val()== null || $valor_impuesto.val()== ''){
 			$valor_impuesto.val(0);
@@ -639,12 +639,12 @@ $(function() {
 	
 	//calcula totales(subtotal, impuesto, total)
 	$calcula_totales = function(){
-		var $campo_subtotal = $('#forma-facconsultas-window').find('input[name=subtotal]');
-		var $campo_impuesto = $('#forma-facconsultas-window').find('input[name=impuesto]');
-		var $campo_total = $('#forma-facconsultas-window').find('input[name=total]');
-		//var $campo_tc = $('#forma-facconsultas-window').find('input[name=tc]');
-		var $valor_impuesto = $('#forma-facconsultas-window').find('input[name=valorimpuesto]');
-		var $grid_productos = $('#forma-facconsultas-window').find('#grid_productos');
+		var $campo_subtotal = $('#forma-facaddenda-window').find('input[name=subtotal]');
+		var $campo_impuesto = $('#forma-facaddenda-window').find('input[name=impuesto]');
+		var $campo_total = $('#forma-facaddenda-window').find('input[name=total]');
+		//var $campo_tc = $('#forma-facaddenda-window').find('input[name=tc]');
+		var $valor_impuesto = $('#forma-facaddenda-window').find('input[name=valorimpuesto]');
+		var $grid_productos = $('#forma-facaddenda-window').find('#grid_productos');
 		
 		var sumaSubTotal = 0; //es la suma de todos los importes
 		var sumaImpuesto = 0; //valor del iva
@@ -690,7 +690,7 @@ $(function() {
 	
 
 	//ver detalles de una factura
-	var carga_formafacconsultas00_for_datagrid00Edit = function(id_to_show, accion_mode){
+	var carga_formafacaddenda00_for_datagrid00Edit = function(id_to_show, accion_mode){
 		//aqui entra para eliminar una prefactura
 		if(accion_mode == 'cancel'){
 			
@@ -713,19 +713,19 @@ $(function() {
 			
 		}else{
 			//aqui  entra para editar un registro
-			$('#forma-facconsultas-window').remove();
-			$('#forma-facconsultas-overlay').remove();
+			$('#forma-facaddenda-window').remove();
+			$('#forma-facaddenda-overlay').remove();
             
-			var form_to_show = 'formafacconsultas00';
+			var form_to_show = 'formafacaddenda00';
 			$('#' + form_to_show).each (function(){this.reset();});
 			var $forma_selected = $('#' + form_to_show).clone();
 			$forma_selected.attr({id : form_to_show + id_to_show});
 			
-			$(this).modalPanel_facconsultas();
+			$(this).modalPanel_facaddenda();
 			
-			$('#forma-facconsultas-window').css({"margin-left": -390, 	"margin-top": -290});
+			$('#forma-facaddenda-window').css({"margin-left": -390, 	"margin-top": -290});
 			
-			$forma_selected.prependTo('#forma-facconsultas-window');
+			$forma_selected.prependTo('#forma-facaddenda-window');
 			$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
 			
 			$tabs_li_funxionalidad();
@@ -740,90 +740,76 @@ $(function() {
 							'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
 							};
                                 
-				var $total_tr = $('#forma-facconsultas-window').find('input[name=total_tr]');
-				var $id_factura = $('#forma-facconsultas-window').find('input[name=id_factura]');
-				var $folio_pedido = $('#forma-facconsultas-window').find('input[name=folio_pedido]');
-				var $busca_cliente = $('#forma-facconsultas-window').find('a[href*=busca_cliente]');
-				var $id_cliente = $('#forma-facconsultas-window').find('input[name=id_cliente]');
-				var $rfc_cliente = $('#forma-facconsultas-window').find('input[name=rfccliente]');
-				var $razon_cliente = $('#forma-facconsultas-window').find('input[name=razoncliente]');
-				var $dir_cliente = $('#forma-facconsultas-window').find('input[name=dircliente]');
+				var $total_tr = $('#forma-facaddenda-window').find('input[name=total_tr]');
+				var $id_factura = $('#forma-facaddenda-window').find('input[name=id_factura]');
+				var $folio_pedido = $('#forma-facaddenda-window').find('input[name=folio_pedido]');
+				var $busca_cliente = $('#forma-facaddenda-window').find('a[href*=busca_cliente]');
+				var $id_cliente = $('#forma-facaddenda-window').find('input[name=id_cliente]');
+				var $rfc_cliente = $('#forma-facaddenda-window').find('input[name=rfccliente]');
+				var $razon_cliente = $('#forma-facaddenda-window').find('input[name=razoncliente]');
+				var $dir_cliente = $('#forma-facaddenda-window').find('input[name=dircliente]');
 				
 				
-				var $serie_folio = $('#forma-facconsultas-window').find('input[name=serie_folio]');
-				var $select_moneda = $('#forma-facconsultas-window').find('select[name=moneda]');
-				var $moneda_original = $('#forma-facconsultas-window').find('input[name=moneda_original]');
-				var $tipo_cambio = $('#forma-facconsultas-window').find('input[name=tipo_cambio]');
-				var $tipo_tipo_cambio_original = $('#forma-facconsultas-window').find('input[name=tipo_cambio_original]');
-				var $orden_compra = $('#forma-facconsultas-window').find('input[name=orden_compra]');
-				var	$orden_compra_original = $('#forma-facconsultas-window').find('input[name=orden_compra_original]');
+				var $serie_folio = $('#forma-facaddenda-window').find('input[name=serie_folio]');
+				var $select_moneda = $('#forma-facaddenda-window').find('select[name=moneda]');
+				var $moneda_original = $('#forma-facaddenda-window').find('input[name=moneda_original]');
+				var $tipo_cambio = $('#forma-facaddenda-window').find('input[name=tipo_cambio]');
+				var $tipo_tipo_cambio_original = $('#forma-facaddenda-window').find('input[name=tipo_cambio_original]');
+				var $orden_compra = $('#forma-facaddenda-window').find('input[name=orden_compra]');
+				var	$orden_compra_original = $('#forma-facaddenda-window').find('input[name=orden_compra_original]');
 				
-				//var $campo_tc = $('#forma-facconsultas-window').find('input[name=tc]');
-				var $id_impuesto = $('#forma-facconsultas-window').find('input[name=id_impuesto]');
-				var $valor_impuesto = $('#forma-facconsultas-window').find('input[name=valorimpuesto]');
+				//var $campo_tc = $('#forma-facaddenda-window').find('input[name=tc]');
+				var $id_impuesto = $('#forma-facaddenda-window').find('input[name=id_impuesto]');
+				var $valor_impuesto = $('#forma-facaddenda-window').find('input[name=valorimpuesto]');
 				
-				var $observaciones = $('#forma-facconsultas-window').find('textarea[name=observaciones]');
-				var $select_condiciones = $('#forma-facconsultas-window').find('select[name=condiciones]');
-				var $select_vendedor = $('#forma-facconsultas-window').find('select[name=vendedor]');
-				var $observaciones_original = $('#forma-facconsultas-window').find('textarea[name=observaciones_original]');
-				var $select_condiciones_original = $('#forma-facconsultas-window').find('select[name=condiciones_original]');
-				var $select_vendedor_original = $('#forma-facconsultas-window').find('select[name=vendedor_original]');
+				var $observaciones = $('#forma-facaddenda-window').find('textarea[name=observaciones]');
+				var $select_condiciones = $('#forma-facaddenda-window').find('select[name=condiciones]');
+				var $select_vendedor = $('#forma-facaddenda-window').find('select[name=vendedor]');
+				var $observaciones_original = $('#forma-facaddenda-window').find('textarea[name=observaciones_original]');
+				var $select_condiciones_original = $('#forma-facaddenda-window').find('select[name=condiciones_original]');
+				var $select_vendedor_original = $('#forma-facaddenda-window').find('select[name=vendedor_original]');
 				
-				var $select_metodo_pago = $('#forma-facconsultas-window').find('select[name=select_metodo_pago]');
-				var $etiqueta_digit = $('#forma-facconsultas-window').find('input[name=digit]');
-				var $digitos = $('#forma-facconsultas-window').find('input[name=digitos]');
-				var $no_cuenta = $('#forma-facconsultas-window').find('input[name=no_cuenta]');
+				var $select_metodo_pago = $('#forma-facaddenda-window').find('select[name=select_metodo_pago]');
+				var $etiqueta_digit = $('#forma-facaddenda-window').find('input[name=digit]');
+				var $digitos = $('#forma-facaddenda-window').find('input[name=digitos]');
+				var $no_cuenta = $('#forma-facaddenda-window').find('input[name=no_cuenta]');
 				
 				
 				//Variables para el envio del email
-				var $email_envio = $('#forma-facconsultas-window').find('input[name=email_envio]');
-				var $asunto_envio = $('#forma-facconsultas-window').find('input[name=asunto_envio]');
-				var $msj_envio = $('#forma-facconsultas-window').find('textarea[name=msj_envio]');
-				var $check_xml = $('#forma-facconsultas-window').find('input[name=check_xml]');
-				var $check_pdf = $('#forma-facconsultas-window').find('input[name=check_pdf]');
-				var $enviar_email = $('#forma-facconsultas-window').find('#enviar_email');
+				var $email_envio = $('#forma-facaddenda-window').find('input[name=email_envio]');
+				var $asunto_envio = $('#forma-facaddenda-window').find('input[name=asunto_envio]');
+				var $msj_envio = $('#forma-facaddenda-window').find('textarea[name=msj_envio]');
+				var $check_xml = $('#forma-facaddenda-window').find('input[name=check_xml]');
+				var $check_pdf = $('#forma-facaddenda-window').find('input[name=check_pdf]');
+				var $enviar_email = $('#forma-facaddenda-window').find('#enviar_email');
 				
 				
-				var $reconstruir_pdf = $('#forma-facconsultas-window').find('#reconstruir_pdf');
-				var $boton_descargarpdf = $('#forma-facconsultas-window').find('#descargarpdf');
-				//var $boton_cancelarfactura = $('#forma-facconsultas-window').find('#cancelarfactura');
-				var $boton_descargarxml = $('#forma-facconsultas-window').find('#descargarxml');
+				var $reconstruir_pdf = $('#forma-facaddenda-window').find('#reconstruir_pdf');
+				var $boton_descargarpdf = $('#forma-facaddenda-window').find('#descargarpdf');
+				//var $boton_cancelarfactura = $('#forma-facaddenda-window').find('#cancelarfactura');
+				var $boton_descargarxml = $('#forma-facaddenda-window').find('#descargarxml');
 				
 				//grid de productos
-				var $grid_productos = $('#forma-facconsultas-window').find('#grid_productos');
+				var $grid_productos = $('#forma-facaddenda-window').find('#grid_productos');
 				//grid de errores
-				var $grid_warning = $('#forma-facconsultas-window').find('#div_warning_grid').find('#grid_warning');
+				var $grid_warning = $('#forma-facaddenda-window').find('#div_warning_grid').find('#grid_warning');
 				
-				//var $flete = $('#forma-facconsultas-window').find('input[name=flete]');
-				var $subtotal = $('#forma-facconsultas-window').find('input[name=subtotal]');
-				var $campo_ieps = $('#forma-facconsultas-window').find('input[name=ieps]');
-				var $impuesto = $('#forma-facconsultas-window').find('input[name=impuesto]');
-				var $impuesto_retenido = $('#forma-facconsultas-window').find('input[name=impuesto_retenido]');
-				var $total = $('#forma-facconsultas-window').find('input[name=total]');
+				//var $flete = $('#forma-facaddenda-window').find('input[name=flete]');
+				var $subtotal = $('#forma-facaddenda-window').find('input[name=subtotal]');
+				var $campo_ieps = $('#forma-facaddenda-window').find('input[name=ieps]');
+				var $impuesto = $('#forma-facaddenda-window').find('input[name=impuesto]');
+				var $impuesto_retenido = $('#forma-facaddenda-window').find('input[name=impuesto_retenido]');
+				var $total = $('#forma-facaddenda-window').find('input[name=total]');
 				
-				var $importe_subtotal = $('#forma-facconsultas-window').find('input[name=importe_subtotal]');
-				var $monto_descuento = $('#forma-facconsultas-window').find('input[name=monto_descuento]');
-				var $etiqueta_motivo_descto = $('#forma-facconsultas-window').find('input[name=etiqueta_motivo_descto]');
-				var $motivo_descuento = $('#forma-facconsultas-window').find('input[name=motivo_descuento]');
-				
-				var $pestana_addenda = $('#forma-facconsultas-window').find('ul.pestanas').find('a[href=#tabx-2]');
-				
-				var $cerrar_plugin = $('#forma-facconsultas-window').find('#close');
-				var $cancelar_plugin = $('#forma-facconsultas-window').find('#boton_cancelar');
-				var $submit_actualizar = $('#forma-facconsultas-window').find('#submit');
+				var $importe_subtotal = $('#forma-facaddenda-window').find('input[name=importe_subtotal]');
+				var $monto_descuento = $('#forma-facaddenda-window').find('input[name=monto_descuento]');
+				var $etiqueta_motivo_descto = $('#forma-facaddenda-window').find('input[name=etiqueta_motivo_descto]');
+				var $motivo_descuento = $('#forma-facaddenda-window').find('input[name=motivo_descuento]');
 				
 				
-				
-				
-				//Campos para addendas
-				$pestana_addenda.parent().hide();
-				$('#forma-facconsultas-window').find('#adenda1').hide();
-				$('#forma-facconsultas-window').find('#adenda2').hide();
-				$('#forma-facconsultas-window').find('#adenda3').hide();
-				var $boton_agregar_addenda = $('#forma-facconsultas-window').find('#agregar_addenda');
-				$boton_agregar_addenda.hide();
-				//Termina campos para pestaña addendas
-				
+				var $cerrar_plugin = $('#forma-facaddenda-window').find('#close');
+				var $cancelar_plugin = $('#forma-facaddenda-window').find('#boton_cancelar');
+				var $submit_actualizar = $('#forma-facaddenda-window').find('#submit');
 				
 				$etiqueta_motivo_descto.hide();
 				$motivo_descuento.hide();
@@ -833,32 +819,31 @@ $(function() {
 				//$boton_cancelarfactura.hide();
 				$submit_actualizar.hide();
 				
-				
 				$digitos.attr('disabled','-1');
 				$etiqueta_digit.attr('disabled','-1');
 				$no_cuenta.hide();
 				var respuestaProcesada = function(data){
 					if ( data['success'] == "true" ){
-						$('#forma-facconsultas-window').find('div.interrogacion').css({'display':'none'});
+						$('#forma-facaddenda-window').find('div.interrogacion').css({'display':'none'});
 						jAlert("La prefactura se guard&oacute; con &eacute;xito", 'Atencion!');
 						/*
 						var remove = function() {$(this).remove();};
-						$('#forma-facconsultas-overlay').fadeOut(remove);
+						$('#forma-facaddenda-overlay').fadeOut(remove);
 						*/
 						//ocultar boton actualizar porque ya se actualizo, ya no se puede guardar cambios, hay que cerrar y volver a abrir
 						$submit_actualizar.hide();
 						$get_datos_grid();
 					}else{
 						// Desaparece todas las interrogaciones si es que existen
-						//$('#forma-facconsultas-window').find('.div_one').css({'height':'545px'});//sin errores
-						$('#forma-facconsultas-window').find('.facconsultas_div_one').css({'height':'575px'});//con errores
-						$('#forma-facconsultas-window').find('div.interrogacion').css({'display':'none'});
+						//$('#forma-facaddenda-window').find('.div_one').css({'height':'545px'});//sin errores
+						$('#forma-facaddenda-window').find('.facaddenda_div_one').css({'height':'575px'});//con errores
+						$('#forma-facaddenda-window').find('div.interrogacion').css({'display':'none'});
 						
 						$grid_productos.find('#cant').css({'background' : '#ffffff'});
 						$grid_productos.find('#cost').css({'background' : '#ffffff'});
 						
-						$('#forma-facconsultas-window').find('#div_warning_grid').css({'display':'none'});
-						$('#forma-facconsultas-window').find('#div_warning_grid').find('#grid_warning').children().remove();
+						$('#forma-facaddenda-window').find('#div_warning_grid').css({'display':'none'});
+						$('#forma-facaddenda-window').find('#div_warning_grid').find('#grid_warning').children().remove();
 						
 						var valor = data['success'].split('___');
 						//muestra las interrogaciones
@@ -867,7 +852,7 @@ $(function() {
 							longitud = tmp.split(':');
 
 							if( longitud.length > 1 ){
-								$('#forma-facconsultas-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
+								$('#forma-facaddenda-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
 								.parent()
 								.css({'display':'block'})
 								.easyTooltip({tooltipId: "easyTooltip2",content: tmp.split(':')[1]});
@@ -877,8 +862,8 @@ $(function() {
 								if(parseInt($("tr", $grid_productos).size())>0){
 									for (var i=1;i<=parseInt($("tr", $grid_productos).size());i++){
 										if((tmp.split(':')[0]=='cantidad'+i) || (tmp.split(':')[0]=='costo'+i)){
-											$('#forma-facconsultas-window').find('.facconsultas_div_one').css({'height':'575px'});
-											$('#forma-facconsultas-window').find('#div_warning_grid').css({'display':'block'});
+											$('#forma-facaddenda-window').find('.facaddenda_div_one').css({'height':'575px'});
+											$('#forma-facaddenda-window').find('#div_warning_grid').css({'display':'block'});
 											
 											if(tmp.split(':')[0].substring(0, 8) == 'cantidad'){
 												$grid_productos.find('input[name=cantidad]').eq(parseInt(i) - 1) .css({'background' : '#d41000'});
@@ -917,93 +902,8 @@ $(function() {
 				var options = {dataType :  'json', success : respuestaProcesada};
 				$forma_selected.ajaxForm(options);
 				
-				//Aqui se cargan los campos al editar
+				//aqui se cargan los campos al editar
 				$.post(input_json,$arreglo,function(entry){
-					
-					//alert(entry['Addenda']);
-					
-					if(entry['Addenda']){
-						$pestana_addenda.parent().show();
-						
-						//alert(entry['datosFactura'][0]['adenda_id']);
-						
-						if(parseInt(entry['datosFactura'][0]['t_adenda_id'])==1){
-							$('#forma-facconsultas-window').find('#adenda1').show();
-						}
-						
-						if(parseInt(entry['datosFactura'][0]['t_adenda_id'])==2){
-							$('#forma-facconsultas-window').find('#adenda2').show();
-						}
-						
-						if(parseInt(entry['datosFactura'][0]['t_adenda_id'])==3){
-							$('#forma-facconsultas-window').find('#adenda3').show();
-							
-							$('#forma-facconsultas-window').find('input[name=adenda3_campo1]').val(entry['datosAdenda'][0]['valor1']);
-							$('#forma-facconsultas-window').find('input[name=adenda3_campo2]').val(entry['datosAdenda'][0]['valor2']);
-							$('#forma-facconsultas-window').find('input[name=adenda3_campo3]').val(entry['datosAdenda'][0]['valor3']);
-							$('#forma-facconsultas-window').find('input[name=adenda3_campo4]').val(entry['datosAdenda'][0]['valor4']);
-							$('#forma-facconsultas-window').find('input[name=adenda3_campo5]').val(entry['datosAdenda'][0]['valor5']);
-							$('#forma-facconsultas-window').find('input[name=adenda3_campo6]').val(entry['datosAdenda'][0]['valor6']);							
-						}
-						
-						if(entry['datosAdenda'][0]['generado']=='false'){
-							$boton_agregar_addenda.show();
-						}
-						
-						
-						//Este boton ejecuta el submit para agregar addenda al xml de la factura.
-						$boton_agregar_addenda.click(function(event){
-							var cadena_datos = '';
-							
-							if(parseInt(entry['datosFactura'][0]['t_adenda_id'])==3){
-								var email_emisor = $('#forma-facconsultas-window').find('input[name=adenda3_campo2]').val();
-								var oc = $('#forma-facconsultas-window').find('input[name=adenda3_campo1]').val();
-								var moneda = $('#forma-facconsultas-window').find('input[name=adenda3_campo3]').val();
-								var tc = $('#forma-facconsultas-window').find('input[name=adenda3_campo4]').val();
-								var subtotal = $('#forma-facconsultas-window').find('input[name=adenda3_campo5]').val();
-								var total = $('#forma-facconsultas-window').find('input[name=adenda3_campo6]').val();
-								
-								email_emisor = (email_emisor.trim()!='')? email_emisor.trim():'___'; 
-								oc = (oc.trim()!='')? oc.trim():'___'; 
-								moneda = (moneda.trim()!='')? moneda.trim():'___'; 
-								tc = (tc.trim()!='')? tc.trim():'___'; 
-								subtotal = (subtotal.trim()!='')? subtotal.trim():'___'; 
-								total = (total.trim()!='')? total.trim():'___'; 
-								
-								cadena_datos = oc +"|"+ email_emisor +"|"+ moneda +"|"+ tc +"|"+ subtotal +"|"+ total;
-							}
-							
-							//alert(cadena_datos);
-							
-							var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAddAddenda.json';
-							$arreglo2 = {'id_fac':$id_factura.val(), 't_addenda_id':entry['datosFactura'][0]['t_adenda_id'], 'cadena_datos':cadena_datos,  'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
-							
-							$.post(input_json2,$arreglo2,function(entry2){
-								
-									jAlert(entry2['msj'], 'Atencion!', function(r) { 
-										//$dest_no.focus(); 
-									});
-									
-									if( entry2['generado']=='true' ){
-										//var dest_id = entry2['Dest'][0]['id'];
-										$boton_agregar_addenda.hide();
-										
-										$('#forma-facconsultas-window').find('input[name=adenda3_campo1]').attr("readonly", true);
-										$('#forma-facconsultas-window').find('input[name=adenda3_campo2]').attr("readonly", true);
-										$('#forma-facconsultas-window').find('input[name=adenda3_campo3]').attr("readonly", true);
-										$('#forma-facconsultas-window').find('input[name=adenda3_campo4]').attr("readonly", true);
-										$('#forma-facconsultas-window').find('input[name=adenda3_campo5]').attr("readonly", true);
-										$('#forma-facconsultas-window').find('input[name=adenda3_campo6]').attr("readonly", true);
-									}
-							},"json");//termina llamada json
-
-						});						
-						
-						
-					}
-					
-					
-					
 					$id_factura.val(entry['datosFactura'][0]['id']);
 					$folio_pedido.val(entry['datosFactura'][0]['folio_pedido']);
 					$id_cliente.val(entry['datosFactura'][0]['cliente_id']);
@@ -1034,34 +934,34 @@ $(function() {
 					var valorHeight=620;
 					
 					if(parseFloat(entry['datosFactura'][0]['monto_descto'])>0){
-						$('#forma-facconsultas-window').find('#tr_importe_subtotal').show();
-						$('#forma-facconsultas-window').find('#tr_descto').show();
-						$('#forma-facconsultas-window').find('input[name=etiqueta_motivo_descto]').show();
-						$('#forma-facconsultas-window').find('input[name=motivo_descuento]').show();
+						$('#forma-facaddenda-window').find('#tr_importe_subtotal').show();
+						$('#forma-facaddenda-window').find('#tr_descto').show();
+						$('#forma-facaddenda-window').find('input[name=etiqueta_motivo_descto]').show();
+						$('#forma-facaddenda-window').find('input[name=motivo_descuento]').show();
 						valorHeight = parseFloat(valorHeight) + 30;
 					}else{
-						$('#forma-facconsultas-window').find('#tr_importe_subtotal').hide();
-						$('#forma-facconsultas-window').find('#tr_descto').hide();
-						$('#forma-facconsultas-window').find('input[name=etiqueta_motivo_descto]').hide();
-						$('#forma-facconsultas-window').find('input[name=motivo_descuento]').hide();
+						$('#forma-facaddenda-window').find('#tr_importe_subtotal').hide();
+						$('#forma-facaddenda-window').find('#tr_descto').hide();
+						$('#forma-facaddenda-window').find('input[name=etiqueta_motivo_descto]').hide();
+						$('#forma-facaddenda-window').find('input[name=motivo_descuento]').hide();
 					}
 					
 					//Ocultar campos si tienen valor menor o igual a cero
 					if(parseFloat(sumaIeps)<=0){
-						$('#forma-facconsultas-window').find('#tr_ieps').hide();
+						$('#forma-facaddenda-window').find('#tr_ieps').hide();
 					}else{
-						$('#forma-facconsultas-window').find('#tr_ieps').show();
+						$('#forma-facaddenda-window').find('#tr_ieps').show();
 						valorHeight = parseFloat(valorHeight) + 15;
 					}
 					
 					if(parseFloat(impuestoRetenido)<=0){
-						$('#forma-facconsultas-window').find('#tr_retencion').hide();
+						$('#forma-facaddenda-window').find('#tr_retencion').hide();
 					}else{
-						$('#forma-facconsultas-window').find('#tr_retencion').show();
+						$('#forma-facaddenda-window').find('#tr_retencion').show();
 						valorHeight = parseFloat(valorHeight) + 15;
 					}
 					
-					$('#forma-facconsultas-window').find('.facconsultas_div_one').css({'height':valorHeight+'px'});
+					$('#forma-facaddenda-window').find('.facaddenda_div_one').css({'height':valorHeight+'px'});
 					
 					
 					
@@ -1078,12 +978,12 @@ $(function() {
 						$digitos.val('');
 						$digitos.hide();
 						
-						if(parseInt(entry['datosFactura'][0]['moneda_id'])==1){
+						if(parseInt(entry['datosFactura']['0']['moneda_id'])==1){
 							$etiqueta_digit.val('N&uacute;mero de Cuenta para pagos en Pesos');
 						}else{
 							$etiqueta_digit.val('N&uacute;mero de Cuenta para pagos en Dolares');
 						}
-						$no_cuenta.val(entry['datosFactura'][0]['no_cuenta']);
+						$no_cuenta.val(entry['datosFactura']['0']['no_cuenta']);
 					}
 					
 					
@@ -1215,8 +1115,8 @@ $(function() {
 					//$calcula_totales();//llamada a la funcion que calcula totales 
 					
 					
-					$tipo_cambio.val(entry['datosFactura'][0]['tipo_cambio']);
-					$tipo_tipo_cambio_original.val(entry['datosFactura'][0]['tipo_cambio']);
+					$tipo_cambio.val(entry['datosFactura']['0']['tipo_cambio']);
+					$tipo_tipo_cambio_original.val(entry['datosFactura']['0']['tipo_cambio']);
 					
 					$rfc_cliente.attr('disabled','-1'); //deshabilitar
 					$folio_pedido.attr('disabled','-1'); //deshabilitar
@@ -1383,12 +1283,12 @@ $(function() {
 				//Ligamos el boton cancelar al evento click para eliminar la forma
 				$cancelar_plugin.bind('click',function(){
 					var remove = function() {$(this).remove();};
-					$('#forma-facconsultas-overlay').fadeOut(remove);
+					$('#forma-facaddenda-overlay').fadeOut(remove);
 				});
 				
 				$cerrar_plugin.bind('click',function(){
 					var remove = function() {$(this).remove();};
-					$('#forma-facconsultas-overlay').fadeOut(remove);
+					$('#forma-facaddenda-overlay').fadeOut(remove);
 				});
 				
 			}
@@ -1408,7 +1308,7 @@ $(function() {
         $.post(input_json,$arreglo,function(data){
 			
             //pinta_grid
-            $.fn.tablaOrdenableEdit(data,$('#lienzo_recalculable').find('.tablesorter'),carga_formafacconsultas00_for_datagrid00Edit);
+            $.fn.tablaOrdenableEdit(data,$('#lienzo_recalculable').find('.tablesorter'),carga_formafacaddenda00_for_datagrid00Edit);
 
             //resetea elastic, despues de pintar el grid y el slider
             Elastic.reset(document.getElementById('lienzo_recalculable'));

@@ -3015,7 +3015,7 @@ $(function() {
 				var localidad_hmtl = '<option value="0" selected="yes" >[-Seleccionar Municipio-]</option>';
 				$select_municipio_origen.children().remove();
 				$select_municipio_origen.append(localidad_hmtl);
-		
+				
 				//Alimentar select pais destino
 				$select_pais_dest.children().remove();
 				$select_pais_dest.append(pais_hmtl);

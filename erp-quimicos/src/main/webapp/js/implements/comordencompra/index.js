@@ -871,6 +871,12 @@ $(function() {
 		var $campo_impuesto = $('#forma-comordencompra-window').find('input[name=impuesto]');
 		//var $campo_impuesto_retenido = $('#forma-comordencompra-window').find('input[name=impuesto_retenido]');
 		var $campo_total = $('#forma-comordencompra-window').find('input[name=total]');
+		
+		//En estos campos se guarda copia de los totales sin redondeo, necesarios para hacer recalculo de totales
+		var $subtotal2 = $('#forma-comordencompra-window').find('input[name=subtotal2]');
+		var $impuesto2 = $('#forma-comordencompra-window').find('input[name=impuesto2]');
+		var $total2 = $('#forma-comordencompra-window').find('input[name=total2]');
+		
 		//var $campo_tc = $('#forma-comordencompra-window').find('input[name=tc]');
 		var $valor_impuesto = $('#forma-comordencompra-window').find('input[name=valorimpuesto]');
 		var $grid_productos = $('#forma-comordencompra-window').find('#grid_productos');
@@ -896,11 +902,11 @@ $(function() {
 		}
 		
 		$grid_productos.find('tr').each(function (index){
-			if(( $(this).find('#cost').val() != ' ') && ( $(this).find('#cant').val() != ' ' )){
+			if(( $(this).find('#cost').val().trim()!='') && ( $(this).find('#cant').val().trim()!='' )){
 				//acumula los importes en la variable subtotal
 				sumaSubTotal = parseFloat(sumaSubTotal) + parseFloat(quitar_comas($(this).find('#import').val()));
 				//alert($(this).find('#import').val());
-				if($(this).find('#totimp').val() != ''){
+				if($(this).find('#totimp').val().trim()!=''){
 					sumaImpuesto =  parseFloat(sumaImpuesto) + parseFloat($(this).find('#totimp').val());
 				}
 			}
@@ -908,7 +914,7 @@ $(function() {
 		
 		//calcula el total sumando el subtotal y el impuesto menos la retencion
 		sumaTotal = parseFloat(sumaSubTotal) + parseFloat(sumaImpuesto);// - parseFloat(impuestoRetenido);
-
+		
 		//redondea a dos digitos el  subtotal y lo asigna  al campo subtotal
 		$campo_subtotal.val($(this).agregar_comas(  parseFloat(sumaSubTotal).toFixed(2)  ));
 		//redondea a dos digitos el impuesto y lo asigna al campo impuesto
@@ -917,7 +923,11 @@ $(function() {
 		//$campo_impuesto_retenido.val($(this).agregar_comas(  parseFloat(impuestoRetenido).toFixed(2)  ));
 		//redondea a dos digitos la suma  total y se asigna al campo total
 		$campo_total.val($(this).agregar_comas(  parseFloat(sumaTotal).toFixed(2)  ));
-
+		
+		//Guardar totales sin redondeo
+		$subtotal2.val(sumaSubTotal);
+		$impuesto2.val(sumaImpuesto);
+		$total2.val(sumaTotal);
 	}//termina calcular totales
 
 
@@ -927,6 +937,14 @@ $(function() {
 	//Agregar producto al grid
 	$agrega_producto_grid = function($grid_productos,id_prod,sku,titulo,unidad,id_pres,pres, cant_partida, prec_unitario,$select_moneda, id_moneda, $tipo_cambio,num_dec, id_req, iddet_req, folio_req, tipo_oc){
 		var $tipo_prov = $('#forma-comordencompra-window').find('input[name=tipo_prov]');
+		var $campo_subtotal = $('#forma-comordencompra-window').find('input[name=subtotal]');
+		var $campo_impuesto = $('#forma-comordencompra-window').find('input[name=impuesto]');
+		var $campo_total = $('#forma-comordencompra-window').find('input[name=total]');
+		
+		var $subtotal2 = $('#forma-comordencompra-window').find('input[name=subtotal2]');
+		var $impuesto2 = $('#forma-comordencompra-window').find('input[name=impuesto2]');
+		var $total2 = $('#forma-comordencompra-window').find('input[name=total2]');
+		
 		var $id_impuesto = $('#forma-comordencompra-window').find('input[name=id_impuesto]');
 		var $valor_impuesto = $('#forma-comordencompra-window').find('input[name=valorimpuesto]');
 		//si  el campo tipo de cambio es null o vacio, se le asigna un 0
@@ -945,6 +963,10 @@ $(function() {
 		$grid_productos.find('tr').each(function (index){
 			if(( $(this).find('#skuprod').val() == sku.toUpperCase() )  && (parseInt($(this).find('#idpres').val())== parseInt(id_pres) ) && (parseInt($(this).find('#elim').val())!=0)){
 				encontrado=1;//el producto ya esta en el grid
+				
+				$(this).find('#skuprod').css({'background' : '#d41000'});
+				$(this).find('#skuprod').focus();
+				//$(this).find('#skuprod').css({'background':'#ffffff'});
 			}
 		});
 		
@@ -969,44 +991,46 @@ $(function() {
 				trr += '</td>';
 				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="114">';
 					trr += '<input type="hidden" 	name="idproducto" id="idprod" value="'+ id_prod +'">';
-					trr += '<input TYPE="text" 		name="sku'+ tr +'" value="'+ sku +'" id="skuprod" class="borde_oculto" readOnly="true" style="width:110px;">';
+					trr += '<input type="text" 		name="sku'+ tr +'" value="'+ sku +'" id="skuprod" class="borde_oculto" readOnly="true" style="width:110px;">';
 				trr += '</td>';
 				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="202">';
-					trr += '<input TYPE="text" 		name="nombre'+ tr +'" 	value="'+ titulo +'" id="nom" class="borde_oculto" readOnly="true" style="width:198px;">';
+					trr += '<input type="text" 		name="nombre'+ tr +'" 	value="'+ titulo +'" id="nom" class="borde_oculto" readOnly="true" style="width:198px;">';
 				trr += '</td>';
 				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
-					trr += '<input TYPE="text" 	name="unidad'+ tr +'" 	value="'+ unidad +'" id="uni" class="borde_oculto" readOnly="true" style="width:86px;">';
+					trr += '<input type="text" 	name="unidad'+ tr +'" 	value="'+ unidad +'" id="uni" class="borde_oculto" readOnly="true" style="width:86px;">';
 				trr += '</td>';
 				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="100">';
 					trr += '<input type="hidden"    name="id_presentacion"      value="'+  id_pres +'" id="idpres">';
 					trr += '<input type="hidden"    name="numero_decimales"     value="'+  num_dec +'" id="numdec">';
-					trr += '<input TYPE="text" 	name="presentacion'+ tr +'" value="'+  pres +'" id="pres" class="borde_oculto" readOnly="true" style="width:96px;">';
+					trr += '<input type="text" 	name="presentacion'+ tr +'" value="'+  pres +'" id="pres" class="borde_oculto" readOnly="true" style="width:96px;">';
 				trr += '</td>';
 				
 				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
-					trr += '<input TYPE="text" 	name="cantidad" id="cant" value="'+ cant_partida +'" class="cant'+ tr +'" style="width:76px;">';
+					trr += '<input type="text" 	name="cantidad" id="cant" value="'+ cant_partida +'" class="cant'+ tr +'" style="width:76px;">';
+					trr += '<input type="hidden" 	name="cantidad_ant" id="cant_ant" value="'+ cant_partida +'" class="cant_ant'+ tr +'">';
 				trr += '</td>';
 				
 				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
-					trr += '<input TYPE="text" 	name="cant_rec" value="0.00" id="cant_rec" class="borde_oculto" style="width:76px; text-align:right;" readOnly="true">';
+					trr += '<input type="text" 	name="cant_rec" value="0.00" id="cant_rec" class="borde_oculto" style="width:76px; text-align:right;" readOnly="true">';
 				trr += '</td>';
 				
 				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
-					trr += '<input TYPE="text" 	name="cant_pen" value="0.00" id="cant_pen" class="borde_oculto" style="width:76px; text-align:right;" readOnly="true">';
+					trr += '<input type="text" 	name="cant_pen" value="0.00" id="cant_pen" class="borde_oculto" style="width:76px; text-align:right;" readOnly="true">';
 				trr += '</td>';
 				
 							
 				trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
-					trr += '<input TYPE="text" 	name="costo" 	value="'+ prec_unitario +'" id="cost" class="cost'+ tr +'" style="width:76px; text-align:right;">';
+					trr += '<input type="text" 	name="costo" 	value="'+ prec_unitario +'" id="cost" class="cost'+ tr +'" style="width:76px; text-align:right;">';
+					trr += '<input type="hidden" 	name="costo_ant" 	value="'+ prec_unitario +'" id="cost_ant" class="cost_ant'+ tr +'">';
 				trr += '</td>';
 				trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
-					trr += '<input TYPE="text"      name="importe'+ tr +'" 	 value="" id="import" class="borde_oculto"  style="width:86px; text-align:right;" readOnly="true">';
+					trr += '<input type="text"      name="importe'+ tr +'" 	 value="" id="import" class="borde_oculto"  style="width:86px; text-align:right;" readOnly="true">';
 					trr += '<input type="hidden"    name="id_imp_prod"    	 value="'+  $id_impuesto.val()    +'" id="idimppord">';
 					trr += '<input type="hidden"    name="valor_imp"     	 value="'+  $valor_impuesto.val() +'" id="ivalorimp">';
 					trr += '<input type="hidden" 	name="totimpuesto'+ tr +'"        id="totimp" value="0">';
 				trr += '</td>';
 				trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
-					trr += '<input TYPE="text" 	name="estatus'+ tr +'" 	value=" " 	id="estatus" class="borde_oculto" style="width:76px; text-align:left;" readOnly="true">';
+					trr += '<input type="text" 	name="estatus'+ tr +'" 	value=" " 	id="estatus" class="borde_oculto" style="width:76px; text-align:left;" readOnly="true">';
 				trr += '</td>';
 				
 			trr += '</tr>';
@@ -1020,6 +1044,11 @@ $(function() {
 			}
 			
 			
+			$grid_productos.find('input[name=sku'+ tr +']').focus(function(e){
+				//$(this).css({'background':'transparent'});
+				$(this).css({'background':'#ffffff'});
+			});
+			
 			//Al iniciar el campo tiene un  caracter en blanco, al obtener el foco se cambia el  espacio por comillas
 			$grid_productos.find('.cant'+ tr).focus(function(e){
 				if($(this).val().trim() != ''){
@@ -1031,56 +1060,76 @@ $(function() {
 			
 			//recalcula importe al perder enfoque el campo cantidad
 			$grid_productos.find('.cant'+ tr).blur(function(){
+				var $campo_cant_anterior = $(this).parent().find('input[name=cantidad_ant]');
+				var $campo_costo = $(this).parent().parent().find('input[name=costo]');
+				var $campo_import = $(this).parent().parent().find('#import');
+				var $campo_totimp = $(this).parent().parent().find('#totimp');
+				var $campo_ivalorimp = $(this).parent().parent().find('#ivalorimp');
+				/*
+				alert(
+					"campo_cant_anterior="+$campo_cant_anterior.val()+"\n"+
+					"campo_costo="+$campo_costo.val()+"\n"+
+					"campo_import="+$campo_import.val()+"\n"+
+					"campo_totimp="+$campo_totimp.val()+"\n"+
+					"campo_ivalorimp="+$campo_ivalorimp.val()
+				);
+				*/
 				if($(this).val().trim() == ''){
 					$(this).val(parseFloat(0).toFixed(2));
 				}
 				
-				if( ($(this).val().trim() != '') && ($(this).parent().parent().find('#cost').val().trim() != '') ){	
-					//calcula el importe
-					$(this).parent().parent().find('#import').val(parseFloat($(this).val()) * parseFloat($(this).parent().parent().find('#cost').val()));
-					//redondea el importe en dos decimales
-					//$(this).parent().parent().find('#import').val( Math.round(parseFloat($(this).parent().parent().find('#import').val())*100)/100 );
-					$(this).parent().parent().find('#import').val( parseFloat($(this).parent().parent().find('#import').val()).toFixed(4) );
-
-					//calcula el impuesto para este producto multiplicando el importe por el valor del iva
-
-					$(this).parent().parent().find('#totimp').val( parseFloat( $(this).parent().parent().find('#import').val() ) * parseFloat(  $(this).parent().parent().find('#ivalorimp').val()  ));
-				}else{
-					$(this).parent().parent().find('#import').val('');
-					$(this).parent().parent().find('#totimp').val('');
+				if($campo_costo.val().trim()==''){
+					$campo_costo.val(parseFloat(0).toFixed(2));
 				}
 				
-				var numero_decimales = $(this).parent().parent().find('#numdec').val();
-				var patron = /^-?[0-9]+([,\.][0-9]{0,0})?$/;
-				if(parseInt(numero_decimales)==1){
-					patron = /^-?[0-9]+([,\.][0-9]{0,1})?$/;
-				}
-				if(parseInt(numero_decimales)==2){
-					patron = /^-?[0-9]+([,\.][0-9]{0,2})?$/;
-				}
-				if(parseInt(numero_decimales)==3){
-					patron = /^-?[0-9]+([,\.][0-9]{0,3})?$/;
-				}
-				if(parseInt(numero_decimales)==4){
-					patron = /^-?[0-9]+([,\.][0-9]{0,4})?$/;
+				//Restar el valor anterior------------------------------
+				var valor_anterior = $campo_cant_anterior.val();
+				
+				if(valor_anterior.trim() == ''){
+					valor_anterior=0;
 				}
 				
-				/*
-				if(patron.test($(this).val())){
-					alert("Si valido"+$(this).val());
-				}else{
-					alert("El numero de decimales es incorrecto: "+$(this).val());
-					$(this).val('')
-				}
-				*/
+				var importe_anterior = parseFloat(valor_anterior) * parseFloat($campo_costo.val());
+				var impuesto_anterior = parseFloat(importe_anterior) * parseFloat($campo_ivalorimp.val());
 				
-				if(!patron.test($(this).val())){
-					//alert("Si valido"+$(this).val());
+				$subtotal2.val(parseFloat($subtotal2.val())-parseFloat(importe_anterior));
+				$impuesto2.val(parseFloat($impuesto2.val())-parseFloat(impuesto_anterior));
+				$total2.val(parseFloat($subtotal2.val())+parseFloat($impuesto2.val()));
+				//Termina restar valor anterior-------------------------
+				
+				
+				if( ($(this).val().trim()!='') && ( $campo_costo.val().trim()!='') ){
+					//Calcula el importe
+					$campo_import.val(parseFloat($(this).val()) * parseFloat($campo_costo.val()));
+					
+					//Redondea el importe en dos decimales
+					$campo_import.val( parseFloat($campo_import.val()).toFixed(4) );
+					
+					//Calcula el impuesto para este producto multiplicando el importe por el valor del iva
+					$campo_totimp.val(parseFloat($campo_import.val()) * parseFloat($campo_ivalorimp.val()));
 				}else{
-
+					$campo_import.val('');
+					$campo_totimp.val('');
 				}
-
-				$calcula_totales();//llamada a la funcion que calcula totales
+				
+				
+				//Calcular los nuevos totales---------------------------
+				$subtotal2.val(parseFloat($subtotal2.val()) + parseFloat(quitar_comas($campo_import.val())));
+				if($campo_totimp.val().trim() != ''){
+					$impuesto2.val(parseFloat($impuesto2.val()) + parseFloat($campo_totimp.val()));
+				}
+				$total2.val(parseFloat($subtotal2.val())+parseFloat($impuesto2.val()));
+				
+				
+				$campo_subtotal.val($(this).agregar_comas(parseFloat($subtotal2.val()).toFixed(2)));
+				$campo_impuesto.val($(this).agregar_comas(parseFloat($impuesto2.val()).toFixed(2)));
+				$campo_total.val($(this).agregar_comas(parseFloat($total2.val()).toFixed(2)));				
+				//Termina calculo de nuevos totales---------------------
+				
+				//Guardar nuevo valor
+				$campo_cant_anterior.val($(this).val());
+				
+				//$calcula_totales();//llamada a la funcion que calcula totales
 			});
 
 			//al iniciar el campo tiene un  caracter en blanco, al obtener el foco se elimina el  espacio por comillas
@@ -1089,7 +1138,79 @@ $(function() {
 					$(this).val('');
 				}
 			});
+			
+			
+			
 
+			//Recalcula importe al perder enfoque el campo cantidad
+			$grid_productos.find('.cost'+ tr).blur(function(){
+				var $campo_costo_ant = $(this).parent().find('input[name=costo_ant]');
+				var $campo_cantidad = $(this).parent().parent().find('input[name=cantidad]');
+				var $campo_import = $(this).parent().parent().find('#import');
+				var $campo_totimp = $(this).parent().parent().find('#totimp');
+				var $campo_ivalorimp = $(this).parent().parent().find('#ivalorimp');
+				
+				if($(this).val().trim() == ''){
+					$(this).val(parseFloat(0).toFixed(2));
+				}
+				
+				if($campo_cantidad.val().trim()==''){
+					$campo_cantidad.val(parseFloat(0).toFixed(2));
+				}
+				
+				//Restar el valor anterior------------------------------
+				var valor_anterior = $campo_costo_ant.val();
+				
+				if(valor_anterior.trim() == ''){
+					valor_anterior=0;
+				}
+				
+				
+				var importe_anterior = parseFloat(valor_anterior) * parseFloat($campo_cantidad.val());
+				var impuesto_anterior = parseFloat(importe_anterior) * parseFloat($campo_ivalorimp.val());
+				
+				$subtotal2.val(parseFloat($subtotal2.val())-parseFloat(importe_anterior));
+				$impuesto2.val(parseFloat($impuesto2.val())-parseFloat(impuesto_anterior));
+				$total2.val(parseFloat($subtotal2.val())+parseFloat($impuesto2.val()));
+				//Termina restar valor anterior-------------------------
+				
+				
+				if( ($(this).val().trim()!='') && ( $campo_cantidad.val().trim()!='') ){
+					//Calcula el importe
+					$campo_import.val(parseFloat($(this).val()) * parseFloat($campo_cantidad.val()));
+					
+					//Redondea el importe en dos decimales
+					$campo_import.val( parseFloat($campo_import.val()).toFixed(4) );
+					
+					//Calcula el impuesto para este producto multiplicando el importe por el valor del iva
+					$campo_totimp.val(parseFloat($campo_import.val()) * parseFloat($campo_ivalorimp.val()));
+				}else{
+					$campo_import.val('');
+					$campo_totimp.val('');
+				}
+				
+				
+				//Calcular los nuevos totales---------------------------
+				$subtotal2.val(parseFloat($subtotal2.val()) + parseFloat(quitar_comas($campo_import.val())));
+				if($campo_totimp.val().trim() != ''){
+					$impuesto2.val(parseFloat($impuesto2.val()) + parseFloat($campo_totimp.val()));
+				}
+				$total2.val(parseFloat($subtotal2.val())+parseFloat($impuesto2.val()));
+				
+				
+				$campo_subtotal.val($(this).agregar_comas(parseFloat($subtotal2.val()).toFixed(2)));
+				$campo_impuesto.val($(this).agregar_comas(parseFloat($impuesto2.val()).toFixed(2)));
+				$campo_total.val($(this).agregar_comas(parseFloat($total2.val()).toFixed(2)));				
+				//Termina calculo de nuevos totales---------------------
+				
+				//Guardar nuevo valor
+				$campo_costo_ant.val($(this).val());
+				
+				//$calcula_totales();//llamada a la funcion que calcula totales
+			});
+
+			
+			/*
 			//recalcula importe al perder enfoque el campo costo
 			$grid_productos.find('.cost'+ tr).blur(function(){
 				if ($(this).val() == ''){
@@ -1111,6 +1232,8 @@ $(function() {
 
 				$calcula_totales();//llamada a la funcion que calcula totales
 			});
+			*/
+			
 			
 			//validar campo costo, solo acepte numeros y punto
 			$permitir_solo_numeros( $grid_productos.find('.cost'+ tr) );
@@ -1121,6 +1244,28 @@ $(function() {
 				event.preventDefault();
 				if(parseInt($(this).parent().find('#elim').val()) != 0){
 					var iddetalle = $(this).parent().find('#idd').val();
+					var $campo_import = $(this).parent().parent().find('#import');
+					var $campo_totimp = $(this).parent().parent().find('#totimp');
+					
+					if($campo_import.val().trim()==''){
+						$campo_import.val(parseFloat(0).toFixed(2));
+					}
+					
+					if($campo_totimp.val().trim()==''){
+						$campo_totimp.val(parseFloat(0).toFixed(2));
+					}
+					
+					//Restar cantidades------------------------------
+					$subtotal2.val(parseFloat($subtotal2.val())-parseFloat($campo_import.val()));
+					$impuesto2.val(parseFloat($impuesto2.val())-parseFloat($campo_totimp.val()));
+					$total2.val(parseFloat($subtotal2.val())+parseFloat($impuesto2.val()));
+					//Termina restar valor anterior-------------------------
+					
+					//Asignar los nuevos totales
+					$campo_subtotal.val($(this).agregar_comas(parseFloat($subtotal2.val()).toFixed(2)));
+					$campo_impuesto.val($(this).agregar_comas(parseFloat($impuesto2.val()).toFixed(2)));
+					$campo_total.val($(this).agregar_comas(parseFloat($total2.val()).toFixed(2)));
+					
 					
 					//asigna espacios en blanco a todos los input de la fila eliminada
 					$(this).parent().parent().find('input').val(' ');
@@ -1229,7 +1374,7 @@ $(function() {
 		var $subtotal = $('#forma-comordencompra-window').find('input[name=subtotal]');
 		var $impuesto = $('#forma-comordencompra-window').find('input[name=impuesto]');
 		var $total = $('#forma-comordencompra-window').find('input[name=total]');
-
+		
 		var $cerrar_plugin = $('#forma-comordencompra-window').find('#close');
 		var $cancelar_plugin = $('#forma-comordencompra-window').find('#boton_cancelar');
 		var $submit_actualizar = $('#forma-comordencompra-window').find('#submit');
@@ -1685,13 +1830,24 @@ $(function() {
 			var $grid_productos = $('#forma-comordencompra-window').find('#grid_productos');
 			//grid de errores
 			var $grid_warning = $('#forma-comordencompra-window').find('#div_warning_grid').find('#grid_warning');
-
-		        //var $flete = $('#forma-comordencompra-window').find('input[name=flete]');
+			
+			/*
+			//var $flete = $('#forma-comordencompra-window').find('input[name=flete]');
 			var $subtotal = $('#forma-comordencompra-window').find('input[name=subtotal]');
 			var $impuesto = $('#forma-comordencompra-window').find('input[name=impuesto]');
 			//var $campo_impuesto_retenido = $('#forma-comordencompra-window').find('input[name=impuesto_retenido]');
 			var $total = $('#forma-comordencompra-window').find('input[name=total]');
-
+			*/
+		
+			var $campo_subtotal = $('#forma-comordencompra-window').find('input[name=subtotal]');
+			var $campo_impuesto = $('#forma-comordencompra-window').find('input[name=impuesto]');
+			var $campo_total = $('#forma-comordencompra-window').find('input[name=total]');
+			
+			//Campos para guardar totales sin redondeo, necesarios para calculos
+			var $subtotal2 = $('#forma-comordencompra-window').find('input[name=subtotal2]');
+			var $impuesto2 = $('#forma-comordencompra-window').find('input[name=impuesto2]');
+			var $total2 = $('#forma-comordencompra-window').find('input[name=total2]');
+			
 			var $cerrar_plugin = $('#forma-comordencompra-window').find('#close');
 			var $cancelar_plugin = $('#forma-comordencompra-window').find('#boton_cancelar');
 			var $submit_actualizar = $('#forma-comordencompra-window').find('#submit');
@@ -1943,7 +2099,8 @@ $(function() {
 									trr += '<input TYPE="text" 		name="presentacion'+ tr +'" 	value="'+  prod['presentacion'] +'" id="pres" class="borde_oculto" readOnly="true" style="width:96px;">';
 							trr += '</td>';
 							trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
-								trr += '<input TYPE="text" 	name="cantidad" value="'+  prod['cantidad'] +'" id="cant" style="width:76px;">';
+								trr += '<input TYPE="text" 	name="cantidad" id="cant" value="'+  prod['cantidad'] +'" class="cant'+ tr +'" style="width:76px;">';
+								trr += '<input type="hidden" name="cantidad_ant" id="cant_ant" value="'+ prod['cantidad'] +'" class="cant_ant'+ tr +'">';
 							trr += '</td>';
 							
 							trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
@@ -1955,15 +2112,15 @@ $(function() {
 							trr += '</td>';
 							
 							trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
-								trr += '<input TYPE="text" 	name="costo" 	value="'+  prod['precio_unitario'] +'" 	id="cost" style="width:76px; text-align:right;">';
+								trr += '<input TYPE="text" 	name="costo" 	value="'+ prod['precio_unitario'] +'" id="cost" class="cost'+ tr +'" style="width:76px; text-align:right;">';								
 								trr += '<input type="hidden" value="'+  prod['precio_unitario'] +'" id="costor">';
+								trr += '<input type="hidden" name="costo_ant" 	value="'+ prod['precio_unitario'] +'" id="cost_ant" class="cost_ant'+ tr +'">';
 							trr += '</td>';
+							
 							trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
 								trr += '<input TYPE="text" 	name="importe'+ tr +'" 	value="'+  prod['importe'] +'" 	id="import" class="borde_oculto" readOnly="true" style="width:86px; text-align:right;">';
-
-								trr += '<input type="hidden"    name="id_imp_prod"  value="'+  prod['gral_imp_id'] +'" 		id="idimppord">';
-								trr += '<input type="hidden"    name="valor_imp" 	value="'+  prod['valor_imp'] +'" 	id="ivalorimp">';
-								
+								trr += '<input type="hidden"    name="id_imp_prod"  value="'+  prod['gral_imp_id'] +'" id="idimppord">';
+								trr += '<input type="hidden"    name="valor_imp" 	value="'+  prod['valor_imp'] +'" id="ivalorimp">';
 								trr += '<input type="hidden" name="totimpuesto'+ tr +'" id="totimp" value="'+parseFloat(prod['importe']) * parseFloat( prod['valor_imp'] )+'">';
 							trr += '</td>';
 							
@@ -1980,20 +2137,97 @@ $(function() {
 								$grid_productos.find('#delete'+ tr).hide();
 							}
 							
+							$grid_productos.find('input[name=sku'+ tr +']').dblclick(function(e){
+								$(this).css({'background':'transparent'});
+								//$(this).css({'background':'#ffffff'});
+							});
+							
 							//al iniciar el campo tiene un  caracter en blanco, al obtener el foco se elimina el  espacio por comillas
-							$grid_productos.find('#cant').focus(function(e){
+							$grid_productos.find('.cant'+ tr).focus(function(e){
 								if($(this).val() == ' '){
 									$(this).val('');
 								}
 							});
+							
+							
+							//Recalcula importe al perder enfoque el campo cantidad
+							$grid_productos.find('.cant'+ tr).blur(function(){
+								var $campo_cant_anterior = $(this).parent().find('input[name=cantidad_ant]');
+								var $campo_costo = $(this).parent().parent().find('input[name=costo]');
+								var $campo_import = $(this).parent().parent().find('#import');
+								var $campo_totimp = $(this).parent().parent().find('#totimp');
+								var $campo_ivalorimp = $(this).parent().parent().find('#ivalorimp');
+								
+								if($(this).val().trim() == ''){
+									$(this).val(parseFloat(0).toFixed(2));
+								}
+								
+								if($campo_costo.val().trim()==''){
+									$campo_costo.val(parseFloat(0).toFixed(2));
+								}
+								
+								//Restar el valor anterior------------------------------
+								var valor_anterior = $campo_cant_anterior.val();
+								
+								if(valor_anterior.trim() == ''){
+									valor_anterior=0;
+								}
+								
+								
+								//alert("cant="+$(this).val()+"  costo="+$campo_costo.val());
+								var importe_anterior = parseFloat(valor_anterior) * parseFloat($campo_costo.val());
+								var impuesto_anterior = parseFloat(importe_anterior) * parseFloat($campo_ivalorimp.val());
+								
+								$subtotal2.val(parseFloat($subtotal2.val())-parseFloat(importe_anterior));
+								$impuesto2.val(parseFloat($impuesto2.val())-parseFloat(impuesto_anterior));
+								$total2.val(parseFloat($subtotal2.val())+parseFloat($impuesto2.val()));
+								//Termina restar valor anterior-------------------------
+								
+								
+								if( ($(this).val().trim()!='') && ( $campo_costo.val().trim()!='') ){
+									//Calcula el importe
+									$campo_import.val(parseFloat($(this).val()) * parseFloat($campo_costo.val()));
+									
+									//Redondea el importe en dos decimales
+									$campo_import.val( parseFloat($campo_import.val()).toFixed(4) );
+									
+									//Calcula el impuesto para este producto multiplicando el importe por el valor del iva
+									$campo_totimp.val(parseFloat($campo_import.val()) * parseFloat($campo_ivalorimp.val()));
+								}else{
+									$campo_import.val('');
+									$campo_totimp.val('');
+								}
+								
+								
+								//Calcular los nuevos totales---------------------------
+								$subtotal2.val(parseFloat($subtotal2.val()) + parseFloat(quitar_comas($campo_import.val())));
+								if($campo_totimp.val().trim() != ''){
+									$impuesto2.val(parseFloat($impuesto2.val()) + parseFloat($campo_totimp.val()));
+								}
+								$total2.val(parseFloat($subtotal2.val())+parseFloat($impuesto2.val()));
+								
+								
+								$campo_subtotal.val($(this).agregar_comas(parseFloat($subtotal2.val()).toFixed(2)));
+								$campo_impuesto.val($(this).agregar_comas(parseFloat($impuesto2.val()).toFixed(2)));
+								$campo_total.val($(this).agregar_comas(parseFloat($total2.val()).toFixed(2)));				
+								//Termina calculo de nuevos totales---------------------
+								
+								//Guardar nuevo valor
+								$campo_cant_anterior.val($(this).val());
+								
+								//$calcula_totales();//llamada a la funcion que calcula totales
+							});
 
+
+
+/*
 							//recalcula importe al perder enfoque el campo cantidad
 							$grid_productos.find('#cant').blur(function(){
-								if ($(this).val() == ''){
+								if ($(this).val().trim() == ''){
 									$(this).val(' ');
 								}
-								if( ($(this).val() != ' ') && ($(this).parent().parent().find('#cost').val() != ' ') )
-								{   //calcula el importe
+								if( ($(this).val().trim() != '') && ($(this).parent().parent().find('#cost').val().trim() != '') ){   
+									//calcula el importe
 									$(this).parent().parent().find('#import').val(parseFloat($(this).val()) * parseFloat($(this).parent().parent().find('#cost').val()));
 									//redondea el importe en dos decimales
 									//$(this).parent().parent().find('#import').val( Math.round(parseFloat($(this).parent().parent().find('#import').val())*100)/100 );
@@ -2008,21 +2242,94 @@ $(function() {
 								}
 								$calcula_totales();//llamada a la funcion que calcula totales
 							});
+*/
+
 
 							//al iniciar el campo tiene un  caracter en blanco, al obtener el foco se elimina el  espacio por comillas
-							$grid_productos.find('#cost').focus(function(e){
-								if($(this).val() == ' '){
+							$grid_productos.find('.cost'+ tr).focus(function(e){
+								if($(this).val().trim() == ''){
 									$(this).val('');
 								}
 							});
+							
+							
 
+							//Recalcula importe al perder enfoque el campo cantidad
+							$grid_productos.find('.cost'+ tr).blur(function(){
+								var $campo_costo_ant = $(this).parent().find('input[name=costo_ant]');
+								var $campo_cantidad = $(this).parent().parent().find('input[name=cantidad]');
+								var $campo_import = $(this).parent().parent().find('#import');
+								var $campo_totimp = $(this).parent().parent().find('#totimp');
+								var $campo_ivalorimp = $(this).parent().parent().find('#ivalorimp');
+								
+								if($(this).val().trim() == ''){
+									$(this).val(parseFloat(0).toFixed(2));
+								}
+								
+								if($campo_cantidad.val().trim()==''){
+									$campo_cantidad.val(parseFloat(0).toFixed(2));
+								}
+								
+								//Restar el valor anterior------------------------------
+								var valor_anterior = $campo_costo_ant.val();
+								
+								if(valor_anterior.trim() == ''){
+									valor_anterior=0;
+								}
+								
+								
+								var importe_anterior = parseFloat(valor_anterior) * parseFloat($campo_cantidad.val());
+								var impuesto_anterior = parseFloat(importe_anterior) * parseFloat($campo_ivalorimp.val());
+								
+								$subtotal2.val(parseFloat($subtotal2.val())-parseFloat(importe_anterior));
+								$impuesto2.val(parseFloat($impuesto2.val())-parseFloat(impuesto_anterior));
+								$total2.val(parseFloat($subtotal2.val())+parseFloat($impuesto2.val()));
+								//Termina restar valor anterior-------------------------
+								
+								
+								if( ($(this).val().trim()!='') && ( $campo_cantidad.val().trim()!='') ){
+									//Calcula el importe
+									$campo_import.val(parseFloat($(this).val()) * parseFloat($campo_cantidad.val()));
+									
+									//Redondea el importe en dos decimales
+									$campo_import.val( parseFloat($campo_import.val()).toFixed(4) );
+									
+									//Calcula el impuesto para este producto multiplicando el importe por el valor del iva
+									$campo_totimp.val(parseFloat($campo_import.val()) * parseFloat($campo_ivalorimp.val()));
+								}else{
+									$campo_import.val('');
+									$campo_totimp.val('');
+								}
+								
+								
+								//Calcular los nuevos totales---------------------------
+								$subtotal2.val(parseFloat($subtotal2.val()) + parseFloat(quitar_comas($campo_import.val())));
+								if($campo_totimp.val().trim() != ''){
+									$impuesto2.val(parseFloat($impuesto2.val()) + parseFloat($campo_totimp.val()));
+								}
+								$total2.val(parseFloat($subtotal2.val())+parseFloat($impuesto2.val()));
+								
+								
+								$campo_subtotal.val($(this).agregar_comas(parseFloat($subtotal2.val()).toFixed(2)));
+								$campo_impuesto.val($(this).agregar_comas(parseFloat($impuesto2.val()).toFixed(2)));
+								$campo_total.val($(this).agregar_comas(parseFloat($total2.val()).toFixed(2)));				
+								//Termina calculo de nuevos totales---------------------
+								
+								//Guardar nuevo valor
+								$campo_costo_ant.val($(this).val());
+								
+								//$calcula_totales();//llamada a la funcion que calcula totales
+							});
+
+							
+							/*
 							//recalcula importe al perder enfoque el campo costo
 							$grid_productos.find('#cost').blur(function(){
-								if ($(this).val() == ''){
+								if ($(this).val().trim() == ''){
 									$(this).val(' ');
 								}
-								if( ($(this).val() != ' ') && ($(this).parent().parent().find('#cant').val() != ' ') )
-								{	//calcula el importe
+								if( ($(this).val().trim() != '') && ($(this).parent().parent().find('#cant').val().trim()!='') ){	
+									//calcula el importe
 									$(this).parent().parent().find('#import').val(parseFloat($(this).val()) * parseFloat($(this).parent().parent().find('#cant').val()));
 									//redondea el importe en dos decimales
 									//$(this).parent().parent().find('#import').val(Math.round(parseFloat($(this).parent().parent().find('#import').val())*100)/100);
@@ -2036,17 +2343,43 @@ $(function() {
 								}
 								$calcula_totales();//llamada a la funcion que calcula totales
 							});
-
+							*/
+							
+							
+							
+							
 							//validar campo costo, solo acepte numeros y punto
-							$permitir_solo_numeros( $grid_productos.find('#cost') );
-							$permitir_solo_numeros( $grid_productos.find('#cant') );
+							$permitir_solo_numeros( $grid_productos.find('.cost'+ tr) );
+							$permitir_solo_numeros( $grid_productos.find('.cant'+ tr) );
 
 							//Elimina un producto del grid
 							$grid_productos.find('#delete'+ tr).bind('click',function(event){
 								event.preventDefault();
 								if(parseInt($(this).parent().find('#elim').val()) != 0){
 									var iddetalle = $(this).parent().find('#idd').val();
-
+									var $campo_import = $(this).parent().parent().find('#import');
+									var $campo_totimp = $(this).parent().parent().find('#totimp');
+									
+									if($campo_import.val().trim()==''){
+										$campo_import.val(parseFloat(0).toFixed(2));
+									}
+									
+									if($campo_totimp.val().trim()==''){
+										$campo_totimp.val(parseFloat(0).toFixed(2));
+									}
+									
+									//Restar cantidades------------------------------
+									$subtotal2.val(parseFloat($subtotal2.val())-parseFloat($campo_import.val()));
+									$impuesto2.val(parseFloat($impuesto2.val())-parseFloat($campo_totimp.val()));
+									$total2.val(parseFloat($subtotal2.val())+parseFloat($impuesto2.val()));
+									//Termina restar valor anterior-------------------------
+									
+									//Asignar los nuevos totales
+									$campo_subtotal.val($(this).agregar_comas(parseFloat($subtotal2.val()).toFixed(2)));
+									$campo_impuesto.val($(this).agregar_comas(parseFloat($impuesto2.val()).toFixed(2)));
+									$campo_total.val($(this).agregar_comas(parseFloat($total2.val()).toFixed(2)));
+									
+									
 									//asigna espacios en blanco a todos los input de la fila eliminada
 									$(this).parent().parent().find('input').val(' ');
 
@@ -2136,9 +2469,9 @@ $(function() {
 						//$grid_productos.find('#import').attr('disabled','-1'); //deshabilitar campos importe del grid
 						$grid_productos.find('input').attr('disabled','-1'); //deshabilitar campos importe del grid
 
-						$subtotal.attr('disabled','-1'); //deshabilitar
-						$impuesto.attr('disabled','-1'); //deshabilitar
-						$total.attr('disabled','-1'); //deshabilitar
+						$campo_subtotal.attr('disabled','-1'); //deshabilitar
+						$campo_impuesto.attr('disabled','-1'); //deshabilitar
+						$campo_total.attr('disabled','-1'); //deshabilitar
 						
 					}else{
 			
@@ -2260,8 +2593,7 @@ $(function() {
 						$grid_productos.find('tr').each(function (index){
 							$(this).find('#cost').val(quitar_comas( $(this).find('#cost').val() ));
 						});
-
-                                                return true;
+						return true;
 					}else{
 						jAlert("No hay datos para actualizar", 'Atencion!');
 						return false;
@@ -2282,26 +2614,8 @@ $(function() {
 			}
 		}
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	
+	
     $get_datos_grid = function(){
         var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAllOrdenCompra.json';
 
@@ -2318,8 +2632,6 @@ $(function() {
             Elastic.reset(document.getElementById('lienzo_recalculable'));
         },"json");
     }
-
+    
     $get_datos_grid();
-
-
 });
