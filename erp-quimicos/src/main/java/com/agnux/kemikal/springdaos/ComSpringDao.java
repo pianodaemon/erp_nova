@@ -341,7 +341,7 @@ public class ComSpringDao  implements ComInterfaceDao {
                 + "WHERE com_orden_compra_detalle.com_orden_compra_id="+id_orden_compra;
         //0=Sin Estatus, 1=Parcial(Surtido Parcial), 2=Surtido(Surtido Completo), 3=Cancelado
         
-        System.out.println("Obtiene datos grid OC: "+sql_query);
+        //System.out.println("Obtiene datos grid OC: "+sql_query);
         ArrayList<HashMap<String, String>> hm_grid = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
             new Object[]{}, new RowMapper() {
