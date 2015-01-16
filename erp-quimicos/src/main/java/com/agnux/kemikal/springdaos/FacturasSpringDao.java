@@ -120,6 +120,9 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     }
     
     
+
+    
+    
     @Override
     public HashMap<String, String> selectFunctionValidateAaplicativo(String data, Integer idApp, String string_array) {
         String sql_to_query = "select erp_fn_validaciones_por_aplicativo from erp_fn_validaciones_por_aplicativo('"+data+"',"+idApp+",array["+string_array+"]);";
@@ -161,7 +164,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     @Override
     public HashMap<String, String> getFac_Parametros(Integer id_emp, Integer id_suc) {
         HashMap<String, String> mapDatos = new HashMap<String, String>();
-        String sql_query = "SELECT * FROM fac_par WHERE gral_emp_id="+id_emp+" AND gral_suc_id="+id_suc+";";
+        String sql_query = "SELECT * FROM fac_par WHERE gral_emp_id="+id_emp+" AND gral_suc_id="+id_suc+" limit 1;";
         //System.out.println("sql_query: "+sql_query);
         
         Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_query);
@@ -182,7 +185,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         mapDatos.put("incluye_adenda", String.valueOf(map.get("incluye_adenda")).toLowerCase());
         return mapDatos;
     }
-
+    
     
     @Override
     public ArrayList<HashMap<String, Object>> getFacturas_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
@@ -252,6 +255,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
             +"fac_docs.folio_pedido,"
             +"fac_docs.serie_folio,"
             +"fac_docs.moneda_id,"
+            + "(case when gral_mon.id is null then '' else gral_mon.iso_4217 end) as moneda_iso_4217, "
             +"fac_docs.observaciones,"
             +"cxc_clie.id AS cliente_id,"
             +"cxc_clie.rfc,"
@@ -263,6 +267,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
             + "ELSE "
                 + "cxc_clie.calle||' '||cxc_clie.numero||', '||cxc_clie.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo||' C.P. '||cxc_clie.cp "
             + "END ) AS direccion,"
+            +"cxc_clie.cxc_clie_tipo_adenda_id as t_adenda_id,"
             +"fac_docs.subtotal,"
             +"fac_docs.monto_ieps,"
             +"fac_docs.impuesto,"
@@ -280,7 +285,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
             + "fac_docs.monto_descto, "
             + "(CASE WHEN fac_docs.subtotal_sin_descto IS NULL THEN 0 ELSE fac_docs.subtotal_sin_descto END) AS subtotal_sin_descto, "
             + "(CASE WHEN fac_docs.monto_descto>0 THEN fac_docs.motivo_descto ELSE '' END) AS motivo_descto  "
-        +"FROM fac_docs   "
+        +"FROM fac_docs "
         +"JOIN erp_h_facturas ON erp_h_facturas.serie_folio=fac_docs.serie_folio "
         +"LEFT JOIN cxc_clie ON cxc_clie.id=fac_docs.cxc_clie_id "
         +"LEFT JOIN gral_mon ON gral_mon.id = fac_docs.moneda_id "
@@ -300,29 +305,30 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     row.put("id",rs.getInt("id"));
                     row.put("serie_folio",rs.getString("serie_folio"));
                     row.put("folio_pedido",rs.getString("folio_pedido"));
-                    row.put("moneda_id",rs.getString("moneda_id"));
+                    row.put("moneda_id",rs.getInt("moneda_id"));
+                    row.put("moneda_4217",rs.getString("moneda_iso_4217"));
                     row.put("observaciones",rs.getString("observaciones"));
-                    row.put("cliente_id",rs.getString("cliente_id"));
+                    row.put("cliente_id",rs.getInt("cliente_id"));
                     row.put("rfc",rs.getString("rfc"));
                     row.put("razon_social",rs.getString("razon_social"));
                     row.put("email",rs.getString("email"));
                     row.put("df_id",rs.getInt("cxc_clie_df_id"));
                     row.put("direccion",rs.getString("direccion"));
+                    row.put("t_adenda_id",rs.getInt("t_adenda_id"));
                     row.put("subtotal",StringHelper.roundDouble(rs.getDouble("subtotal"),2));
                     row.put("impuesto",StringHelper.roundDouble(rs.getDouble("impuesto"),2));
                     row.put("monto_retencion",StringHelper.roundDouble(rs.getDouble("monto_retencion"),2));
                     row.put("total",StringHelper.roundDouble(rs.getDouble("total"),2));
                     row.put("tipo_cambio",StringHelper.roundDouble(rs.getDouble("tipo_cambio"),4));
                     row.put("estado",rs.getString("estado"));
-                    row.put("cxc_agen_id",rs.getString("cxc_agen_id"));
-                    row.put("terminos_id",rs.getString("terminos_id"));
+                    row.put("cxc_agen_id",rs.getInt("cxc_agen_id"));
+                    row.put("terminos_id",rs.getInt("terminos_id"));
                     row.put("orden_compra",rs.getString("orden_compra"));
                     row.put("fac_metodos_pago_id",String.valueOf(rs.getInt("fac_metodos_pago_id")));
                     row.put("no_cuenta",rs.getString("no_cuenta"));
                     row.put("tasa_ret_immex",StringHelper.roundDouble(rs.getDouble("tasa_ret_immex"),2));
                     row.put("saldo_fac",StringHelper.roundDouble(rs.getDouble("saldo_factura"),2));
                     row.put("monto_ieps",StringHelper.roundDouble(rs.getDouble("monto_ieps"),2));
-                    
                     row.put("monto_descto",StringHelper.roundDouble(rs.getDouble("monto_descto"),2));
                     row.put("subtotal_sin_descto",StringHelper.roundDouble(rs.getDouble("subtotal_sin_descto"),2));
                     row.put("motivo_descto",rs.getString("motivo_descto"));
@@ -383,6 +389,37 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     row.put("id_ieps",String.valueOf(rs.getInt("id_ieps")));
                     row.put("tasa_ieps",StringHelper.roundDouble(rs.getDouble("tasa_ieps"),2) );
                     row.put("importe_ieps",StringHelper.roundDouble(rs.getDouble("importe_ieps"),4) );
+                    return row;
+                }
+            }
+        );
+        return hm_grid;
+    }
+    
+    
+    
+    //Obtener datos para la Adenda
+    @Override
+    public ArrayList<HashMap<String, Object>> getFactura_DatosAdenda(Integer id_factura) {
+        String sql_query = "SELECT * FROM fac_docs_adenda WHERE fac_docs_id="+id_factura+";";
+        
+        //System.out.println("Obtiene datos grid prefactura: "+sql_query);
+        ArrayList<HashMap<String, Object>> hm_grid = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query, 
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id_adenda",rs.getInt("id"));
+                    row.put("generado",rs.getString("generado"));
+                    row.put("valor1",rs.getString("valor1"));
+                    row.put("valor2",rs.getString("valor2"));
+                    row.put("valor3",rs.getString("valor3").toLowerCase());
+                    row.put("valor4",rs.getString("valor4"));
+                    row.put("valor5",rs.getString("valor5"));
+                    row.put("valor6",rs.getString("valor6"));
+                    row.put("valor7",rs.getString("valor7"));
+                    row.put("valor8",rs.getString("valor8"));
                     return row;
                 }
             }
@@ -3407,7 +3444,6 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         
         //Addenda SUNCHEMICAL SA DE CV
         if(noAdenda==2){
-            
             //Factura
             if(tipoDoc==1){
                 sql_datos_adenda = "SELECT fac_docs_adenda.* FROM fac_docs_adenda JOIN fac_docs ON fac_docs.id=fac_docs_adenda.fac_docs_id  WHERE fac_docs.serie_folio='"+serieFolio+"' AND fac_docs_adenda.prefactura_id="+identificador+" LIMIT 1;";
@@ -3429,9 +3465,55 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
             data.put("PO_NUMBER", String.valueOf(map.get("valor1")));
         }
         
+        //Addenda COMEX
+        if(noAdenda==3){
+            //Factura
+            if(tipoDoc==1){
+                sql_datos_adenda = "SELECT fac_docs_adenda.* FROM fac_docs_adenda WHERE fac_docs_adenda.fac_docs_id="+identificador+" and generado=false LIMIT 1;";
+                //Tipo Adenda=3(valor1=Orden Compra, valor2=Email-Emisor, valor3=Moneda, valor4=TC, valor5=Subtotal, valor6=Total).
+            }
+            
+            //Nota de credito
+            if(tipoDoc==9){
+                sql_datos_adenda = ""
+                        + "SELECT fac_docs_adenda.* FROM fac_docs_adenda "
+                        + "JOIN fac_docs ON fac_docs.id=fac_docs_adenda.fac_docs_id "
+                        + "JOIN fac_nota_credito ON (fac_nota_credito.serie_folio_factura=fac_docs.serie_folio AND fac_nota_credito.cxc_clie_id=fac_docs.cxc_clie_id) "
+                        + "WHERE fac_nota_credito.serie_folio='"+serieFolio+"' AND fac_nota_credito.id="+identificador+" LIMIT 1;";
+            }
+            
+            //System.out.println("sql_datos_adenda: "+sql_datos_adenda);
+            //Obtener datos de la Adenda
+            Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_datos_adenda);
+            
+            data.put("type", "");
+            data.put("contentVersion", "");
+            data.put("documentStructureVersion", "");
+            data.put("documentStatus", "");
+            data.put("DeliveryDate", "");
+            data.put("referenceIdentification", map.get("valor1"));
+            data.put("email_emisor", map.get("valor2"));
+            data.put("currencyISOCode", map.get("valor3"));
+            data.put("rateOfChange", map.get("valor4"));
+            data.put("baseAmount", map.get("valor5"));
+            data.put("payableAmount", map.get("valor6"));
+        }
         
         
         return data;
+    }
+    
+    
+    //Verificar si la factura ligada a la Nota de Credito Incluye Adenda
+    @Override
+    public int getStatusAdendaFactura(Integer id_tipo_addenda, Integer id_fac) {
+        String sql_to_query = "SELECT count(id) FROM fac_docs_adenda where fac_docs_id="+id_fac+" and cxc_clie_adenda_tipo_id="+id_tipo_addenda+" and generado=true;";
+        
+        System.out.println("sql_to_query: "+sql_to_query);
+        
+        int rowCount = this.getJdbcTemplate().queryForInt(sql_to_query);
+        
+        return rowCount;
     }
     
     

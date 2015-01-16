@@ -930,45 +930,52 @@ public class PrefacturasController {
                                     
                                     //Verificar si el cliente tiene asignada una adenda
                                     if(numAdenda>0){
-                                        String path_file = new String();
-                                        String xml_file_name = new String();
-                                        
-                                        //Tipo de DOCUMENTO(1=Factura, 2=Consignacion, 3=Retenciones(Honorarios, Arrendamientos, Fletes), 8=Nota de Cargo, 9=Nota de Credito)
-                                        int tipoDocAdenda=1;
-                                        if(campo_adenda3.toLowerCase().equals("true")){
-                                            //2=Consignacion
-                                            tipoDocAdenda=2;
-                                        }
-                                        
-                                        
-                                        path_file = this.getGralDao().getCfdiTimbreEmitidosDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa);
-                                        xml_file_name = refId+".xml";
-                                        
-                                        
-                                        if(numAdenda==1){
-                                            //Agregar estos datos para generar el objeto que contiene los datos de la Adenda
-                                            dataFacturaCliente.put("emailEmisor", this.getGralDao().getEmailSucursal(id_sucursal));
-                                        }
                                         
                                         /*
-                                        if(this.getBfCfdiTf().getTotalRetenciones().doubleValue()>0){
-                                            //Cambiar a tipo 3=Retencion
-                                            tipoDocAdenda=3;
-                                        }
+                                         * Cambios 15 enero 2015
+                                         * Desde aqui solo se generan los tipos de addenda 1 y 2, el tipo 3 se genera desde consulta de facturas
                                          */
-                                        
-                                        //1 indica que es Adenda de una factura
-                                        dataAdenda = this.getFacdao().getDatosAdenda(tipoDocAdenda, Integer.parseInt(dataFacturaCliente.get("adenda_id")), dataFacturaCliente, id_prefactura, serieFolio, id_empresa);
-                                        
-                                        //INICIA EJECUCION DE CLASE QUE AGREGA LA ADENDA
-                                        AdendaCliente adenda = new AdendaCliente();
-                                        adenda.createAdenda(numAdenda, dataAdenda, path_file, xml_file_name);
-                                        //TERMINA EJECUCION DE CLASE QUE AGREGA LA ADENDA
-                                        
-                                        File file_xml_con_adenda = new File(path_file+"/"+xml_file_name);
-                                        if(!file_xml_con_adenda.exists()){
-                                            //Si el archivo existe indica que se agregó bien la adenda y se creó el nuevo archivo xml
-                                            procesoAdendaCorrecto=false;
+                                        if(numAdenda<3){
+                                            String path_file = new String();
+                                            String xml_file_name = new String();
+
+                                            //Tipo de DOCUMENTO(1=Factura, 2=Consignacion, 3=Retenciones(Honorarios, Arrendamientos, Fletes), 8=Nota de Cargo, 9=Nota de Credito)
+                                            int tipoDocAdenda=1;
+                                            if(campo_adenda3.toLowerCase().equals("true")){
+                                                //2=Consignacion
+                                                tipoDocAdenda=2;
+                                            }
+
+
+                                            path_file = this.getGralDao().getCfdiTimbreEmitidosDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa);
+                                            xml_file_name = refId+".xml";
+
+
+                                            if(numAdenda==1){
+                                                //Agregar estos datos para generar el objeto que contiene los datos de la Adenda
+                                                dataFacturaCliente.put("emailEmisor", this.getGralDao().getEmailSucursal(id_sucursal));
+                                            }
+
+                                            /*
+                                            if(this.getBfCfdiTf().getTotalRetenciones().doubleValue()>0){
+                                                //Cambiar a tipo 3=Retencion
+                                                tipoDocAdenda=3;
+                                            }
+                                            */
+
+                                            //1 indica que es Adenda de una factura
+                                            dataAdenda = this.getFacdao().getDatosAdenda(tipoDocAdenda, Integer.parseInt(dataFacturaCliente.get("adenda_id")), dataFacturaCliente, id_prefactura, serieFolio, id_empresa);
+
+                                            //INICIA EJECUCION DE CLASE QUE AGREGA LA ADENDA
+                                            AdendaCliente adenda = new AdendaCliente();
+                                            adenda.createAdenda(numAdenda, dataAdenda, path_file, xml_file_name);
+                                            //TERMINA EJECUCION DE CLASE QUE AGREGA LA ADENDA
+
+                                            File file_xml_con_adenda = new File(path_file+"/"+xml_file_name);
+                                            if(!file_xml_con_adenda.exists()){
+                                                //Si el archivo existe indica que se agregó bien la adenda y se creó el nuevo archivo xml
+                                                procesoAdendaCorrecto=false;
+                                            }
                                         }
                                     }
                                 }

@@ -21,6 +21,7 @@ public interface FacturasInterfaceDao {
     public ArrayList<HashMap<String, Object>> getFacturas_PaginaGrid(String data_string,int offset, int pageSize, String orderBy , String asc);
     public ArrayList<HashMap<String, Object>> getFactura_Datos(Integer id_factura);
     public ArrayList<HashMap<String, Object>> getFactura_DatosGrid(Integer id_factura);
+    public ArrayList<HashMap<String, Object>> getFactura_DatosAdenda(Integer id_factura);
     public ArrayList<HashMap<String, Object>> getFactura_Monedas();
     public ArrayList<HashMap<String, Object>> getFactura_Agentes(Integer id_empresa, Integer id_sucursal);
     public ArrayList<HashMap<String, Object>> getFactura_DiasDeCredito();
@@ -163,6 +164,7 @@ public interface FacturasInterfaceDao {
     
     public LinkedHashMap<String, Object> getDatosAdenda(Integer tipoDoc, Integer noAdenda, HashMap<String,String> dataFactura, Integer identificador, String serieFolio, Integer id_emp);
     public int buscarAdendaFactura(Integer idNotaCredito);
+    public int getStatusAdendaFactura(Integer id_tipo_addenda, Integer id_fac);
     
     public ArrayList<HashMap<String, String>> getIeps(Integer idEmp);
     public ArrayList<HashMap<String, String>> getIvas();

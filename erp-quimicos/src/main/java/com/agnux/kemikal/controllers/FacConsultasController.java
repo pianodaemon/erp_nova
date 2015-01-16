@@ -1085,7 +1085,7 @@ public class FacConsultasController {
         if(tipo_addenda_id==3){
             //Verificar que los campos no vengan vacios(Si traen &&&&&, entonces se toma como vacio)
             adenda_campo1 = (array_datos[0].equals("___"))?"":array_datos[0];//Orden de compra
-            adenda_campo2 = (array_datos[1].equals("___"))?"":array_datos[1];//Email-Emisor
+            adenda_campo2 = (array_datos[1].equals("___"))?"":array_datos[1].toLowerCase();//Email-Emisor
             adenda_campo3 = (array_datos[2].equals("___"))?"":array_datos[2];//Moneda
             adenda_campo4 = (array_datos[3].equals("___"))?"":array_datos[3];//Tipo de Cambio
             adenda_campo5 = (array_datos[4].equals("___"))?"":array_datos[4];//Subtotal factura
@@ -1093,7 +1093,7 @@ public class FacConsultasController {
         }
         
         //System.out.println("data_string: "+data_string);
-        data_string = app_selected +"___"+command_selected+"___"+id_usuario+"___"+id_fac_doc+"___"+tipo_addenda_id+"___"+adenda_campo1.toUpperCase()+"___"+adenda_campo2.toUpperCase()+"___"+adenda_campo3.toUpperCase()+"___"+adenda_campo4.toUpperCase()+"___"+adenda_campo5.toUpperCase()+"___"+adenda_campo6.toUpperCase()+"___"+adenda_campo7.toUpperCase()+"___"+adenda_campo8.toUpperCase();
+        data_string = app_selected +"___"+command_selected+"___"+id_usuario+"___"+id_fac_doc+"___"+tipo_addenda_id+"___"+adenda_campo1.toUpperCase()+"___"+adenda_campo2+"___"+adenda_campo3.toUpperCase()+"___"+adenda_campo4.toUpperCase()+"___"+adenda_campo5.toUpperCase()+"___"+adenda_campo6.toUpperCase()+"___"+adenda_campo7.toUpperCase()+"___"+adenda_campo8.toUpperCase();
         System.out.println("data_string: "+data_string);
         
         //System.out.println(TimeHelper.getFechaActualYMDH()+"::::Inicia Validacion de la Prefactura::::::::::::::::::");
