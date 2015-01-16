@@ -930,11 +930,11 @@ public class FacConsultasController {
                 String cadena_original = this.cadenaOriginalTimbre(cadena_xml, id_empresa, id_sucursal);
                 System.out.println("cadena_original: "+cadena_original);
                 
-                String ruta_fichero_llave = this.getGralDao().getSslDir() + rfcEmpresa + "/" + this.getGralDao().getFicheroLlavePrivada(id_empresa, id_sucursal);
-                System.out.println("ruta_fichero_llave: "+ruta_fichero_llave);
+                //String ruta_fichero_llave = this.getGralDao().getSslDir() + rfcEmpresa + "/" + this.getGralDao().getFicheroLlavePrivada(id_empresa, id_sucursal);
+                //System.out.println("ruta_fichero_llave: "+ruta_fichero_llave);
                 
-                String sello_digital_emisor = CryptoEngine.sign(ruta_fichero_llave, this.getGralDao().getPasswordLlavePrivada(id_empresa, id_sucursal), cadena_original);
-                System.out.println("sello_digital_emisor: "+sello_digital_emisor);
+                //String sello_digital_emisor = CryptoEngine.sign(ruta_fichero_llave, this.getGralDao().getPasswordLlavePrivada(id_empresa, id_sucursal), cadena_original);
+                //System.out.println("sello_digital_emisor: "+sello_digital_emisor);
                 /*
                 String cadena_original ="";
                 String sello_digital_emisor="";
@@ -943,6 +943,9 @@ public class FacConsultasController {
                 
                 //sacar la fecha del comprobante 
                 String fecha_comprobante=pop2.getFecha_comprobante();
+                
+                String sello_digital_emisor=pop2.getSelloCfd();
+                System.out.println("sello_digital_emisor: "+sello_digital_emisor);
                 
                 //este es el timbre fiscal, solo es para cfdi con timbre fiscal.
                 String sello_digital_sat = pop2.getSelloSat();
@@ -1112,12 +1115,14 @@ public class FacConsultasController {
         
         if(actualizo.equals("1")){
             if(tipo_facturacion.equals("cfditf")){
+                /*
                 dirSalidas = this.getGralDao().getCfdiTimbreEmitidosDir() + rfcEmpresa;
                 fileout = dirSalidas +"/"+ refId +".pdf";
                 file = new File(fileout);
                 if (file.exists()){
                     file.delete();
                 }
+                */
                 
                 //String cadena_xml = FileHelper.stringFromFile(dirSalidas+"/"+ refId +".xml");
                 //System.out.println("cadena_xml: "+cadena_xml);
