@@ -33,16 +33,16 @@ $(function() {
     
     //arreglo para select  de operacion para el calculo
     var array_operacion_calculo = {
-				1:"Porcentaje (%)", 
-				2:"Suma (+/-)", 
-				3:"Multiplicaci&oacute;n (*)",
-				4:"Divisi&oacute;n (/)"
+				1:"Porcentaje (%)"
+				//2:"Suma (+/-)", 
+				//3:"Multiplicaci&oacute;n (*)",
+				//4:"Divisi&oacute;n (/)"
 			};
     
-    //arreglo para select  de Forma de calculo
+    //Arreglo para select  de Forma de calculo
     var array_forma_calculo = {
 				1:"Autom&aacute;tico (En l&iacute;nea)", 
-				2:"Semiautom&aacute;tico (Proceso)", 
+				//2:"Semiautom&aacute;tico (Proceso)", 
 				3:"Manual (Captura Directa)"
 			};
 
