@@ -8123,7 +8123,7 @@ public class InvSpringDao implements InvInterfaceDao{
         //System.out.println("data_string: "+data_string);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
-            new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+            new Object[]{data_string,new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, Object> row = new HashMap<String, Object>();
