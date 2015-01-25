@@ -260,24 +260,7 @@ public class InvSpringDao implements InvInterfaceDao{
 
         //este es para el Reporte de Existencias en Inventario
         if(id_app==133){
-            sql_to_query = "select * from inv_reporte('"+campos_data+"')as foo("
-                                        + "id integer,"
-                                        +"valor_minimo double precision, "
-                                        +"valor_maximo double precision,"
-                                        +"punto_reorden double precision, "
-                                        +"almacen character varying, "
-					+"familia character varying, "
-					+"grupo character varying, "
-					+"linea character varying, "
-					+"codigo_producto character varying, "
-					+"descripcion character varying, "
-					+"unidad_medida character varying, "
-					+"existencias double precision, "
-					+"costo_unitario double precision, "
-					+"costo_total double precision, "
-                                        +"moneda_id integer,"
-                                        +"simbolo_moneda character varying "
-                                    +") ORDER BY descripcion ASC;";
+            sql_to_query = "select * from inv_reporte('"+campos_data+"')as foo(id integer, valor_minimo double precision, valor_maximo double precision, punto_reorden double precision, almacen character varying, familia character varying, grupo character varying, linea character varying, codigo_producto character varying, descripcion character varying, unidad_medida character varying, existencias double precision, costo_unitario double precision, costo_total double precision, moneda_id integer,simbolo_moneda character varying ) ORDER BY descripcion ASC;";
             //System.out.println("InvReporte: "+sql_to_query);
 
             ArrayList<HashMap<String, String>> hm133 = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
@@ -310,16 +293,7 @@ public class InvSpringDao implements InvInterfaceDao{
 
         //Reporte de Existencias por Presentaciones
         if(id_app==139){
-            sql_to_query = "select * from inv_reporte('"+campos_data+"')as foo("
-					+"codigo character varying, "
-					+"descripcion character varying, "
-					+"unidad character varying, "
-                                        +"no_dec integer, "
-                                        +"idpres integer, "
-					+"presentacion character varying, "
-					+"exis_pres double precision, "
-					+"exis_uni double precision "
-                                    +") ORDER BY descripcion ASC;";
+            sql_to_query = "select * from inv_reporte('"+campos_data+"')as foo(codigo character varying, descripcion character varying, unidad character varying, no_dec integer, idpres integer, presentacion character varying, exis_pres double precision, exis_uni double precision ) ORDER BY descripcion ASC;";
             //System.out.println("InvExiPres: "+sql_to_query);
 
             ArrayList<HashMap<String, String>> hm139 = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
@@ -437,16 +411,8 @@ public class InvSpringDao implements InvInterfaceDao{
                 );
                 data=hm178;
             }
-                
-            
-            
-            
-            
         }
 
-        
-        
-        
         
         
         return data;
