@@ -161,15 +161,14 @@ public class ClientsDestController {
         log.log(Level.INFO, "Ejecutando getDestinatarioJson de {0}", ClientsDestController.class.getName());
         HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
-        ArrayList<HashMap<String, Object>> paises = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> estados = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> municipios = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> datos = new ArrayList<HashMap<String, Object>>();
 
-        
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
         userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         
         if( id != 0  ){
             datos = this.getCxcDao().getClientsDest_Datos(id);
@@ -177,12 +176,13 @@ public class ClientsDestController {
             municipios = this.getCxcDao().getLocalidadesForThisEntidad(datos.get(0).get("pais_id").toString(), datos.get(0).get("estado_id").toString());
         }
         
-        paises = this.getCxcDao().getPaises();
         
         jsonretorno.put("Datos", datos);
-        jsonretorno.put("Paises", paises);
+        jsonretorno.put("Paises", this.getCxcDao().getPaises());
         jsonretorno.put("Estados", estados);
         jsonretorno.put("Municipios", municipios);
+        //Los parametros sku y descripcion se pasan vacios para que no aplique filtro y obtenga todos los servicios adicionales
+        jsonretorno.put("Servicios", this.getCxcDao().getBuscadorServiciosAdicionales("" ,"", id_empresa));
         return jsonretorno;
     }
     
@@ -298,6 +298,8 @@ public class ClientsDestController {
         @RequestParam(value="check_efectivo", required=false) String check_efectivo,
         @RequestParam(value="check_cheque", required=false) String check_cheque,
         @RequestParam(value="id_cliente", required=true) String id_cliente,
+        @RequestParam(value="select_serv", required=true) String select_serv,
+        @RequestParam(value="costo_serv", required=true) String costo_serv,
         Model model,@ModelAttribute("user") UserSessionData user
     ) {
         
@@ -356,7 +358,9 @@ public class ClientsDestController {
         +"___"+check_sello
         +"___"+check_efectivo
         +"___"+id_cliente
-        +"___"+check_cheque;
+        +"___"+check_cheque
+        +"___"+select_serv
+        +"___"+costo_serv;
         
         //System.out.println("data_string: "+data_string);
         
