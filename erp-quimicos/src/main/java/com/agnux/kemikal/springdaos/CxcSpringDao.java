@@ -4265,7 +4265,9 @@ return subfamilias;
         + "select cxc_destinatarios.id,cxc_destinatarios.folio, cxc_destinatarios.folio_ext,cxc_destinatarios.rfc,cxc_destinatarios.razon_social AS destinatario,cxc_destinatarios.tipo,cxc_destinatarios.calle, cxc_destinatarios.no_int, cxc_destinatarios.no_ext, cxc_destinatarios.colonia, cxc_destinatarios.gral_mun_id, cxc_destinatarios.gral_edo_id, cxc_destinatarios.gral_pais_id, cxc_destinatarios.cp,(CASE WHEN cxc_destinatarios.tel1 IS NULL THEN '' ELSE cxc_destinatarios.tel1 END) AS tel1,(CASE WHEN cxc_destinatarios.tel2 IS NULL THEN '' ELSE cxc_destinatarios.tel2 END) AS tel2, cxc_destinatarios.ext, cxc_destinatarios.email, cxc_destinatarios.solicitar_firma, cxc_destinatarios.solicitar_sello, cxc_destinatarios.solicitar_efectivo, cxc_destinatarios.solicitar_cheque, "
                 + "(case when cxc_clie.id is null then 0 else cxc_clie.id end) as cliente_id,"
                 + "(case when cxc_clie.id is null then '' else cxc_clie.numero_control end) as no_control,"
-                + "(case when cxc_clie.id is null then '' else cxc_clie.razon_social end) as cliente "
+                + "(case when cxc_clie.id is null then '' else cxc_clie.razon_social end) as cliente,"
+                + "cxc_destinatarios.inv_prod_id as serv_id,"
+                + "cxc_destinatarios.costo_serv as serv_costo "
         + "from cxc_destinatarios "
         + "left join cxc_clie_dest on cxc_clie_dest.cxc_destinatario_id=cxc_destinatarios.id "
         + "left join cxc_clie on cxc_clie.id=cxc_clie_dest.cxc_clie_id "
@@ -4306,6 +4308,8 @@ return subfamilias;
                     row.put("cliente_id",rs.getInt("cliente_id"));
                     row.put("no_control",rs.getString("no_control"));
                     row.put("cliente",rs.getString("cliente"));
+                    row.put("serv_id",rs.getInt("serv_id"));
+                    row.put("serv_costo",StringHelper.roundDouble(rs.getString("serv_costo"),2));
                     return row;
                 }
             }
