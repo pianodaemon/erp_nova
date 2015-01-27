@@ -169,6 +169,7 @@ public interface CxcInterfaceDao {
     //Catalogo de Destinatarios
     public ArrayList<HashMap<String, Object>> getClientsDest_PaginaGrid(String data_string, int offset, int pageSize, String orderBy , String asc);
     public ArrayList<HashMap<String, Object>> getClientsDest_Datos(Integer id);
+    public ArrayList<HashMap<String, Object>> getBuscadorServiciosAdicionales(String sku, String descripcion, Integer id_empresa);
     
     //Catalogo de Agentes Aduanales
     public ArrayList<HashMap<String, Object>> getClientsAgenAduanal_PaginaGrid(String data_string, int offset, int pageSize, String orderBy , String asc);
