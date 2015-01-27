@@ -4312,6 +4312,58 @@ return subfamilias;
         );
         return df;
     }
+    
+    
+    //Buscador de Servicios Adicionales
+    @Override
+    public ArrayList<HashMap<String, Object>> getBuscadorServiciosAdicionales(String sku, String descripcion, Integer id_empresa) {
+        String where = "";
+	if(!sku.equals("")){
+            where=" and inv_prod.sku ilike '%"+sku+"%'";
+	}
+        
+	if(!descripcion.equals("")){
+            where +=" and inv_prod.descripcion ilike '%"+descripcion+"%'";
+	}
+        
+        String sql_to_query = ""
+        + "select "
+            +"inv_prod.id,"
+            +"inv_prod.sku,"
+            +"inv_prod.descripcion, "
+            + "inv_prod.unidad_id, "
+            + "inv_prod_unidades.titulo AS unidad, "
+            +"inv_prod_tipos.titulo AS tipo,"
+            + "inv_prod_unidades.decimales "
+        +"from log_serv_adic "
+        + "join inv_prod on inv_prod.id=log_serv_adic.inv_prod_id "
+        + "left join inv_prod_tipos on inv_prod_tipos.id=inv_prod.tipo_de_producto_id "
+        + "left join inv_prod_unidades on inv_prod_unidades.id=inv_prod.unidad_id "
+        + "where inv_prod.empresa_id=? and inv_prod.borrado_logico=false "+where+" order by inv_prod.descripcion;";
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        
+        //System.out.println("sql_to_query: "+sql_to_query);
+
+        ArrayList<HashMap<String, Object>> hm_datos_productos = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(id_empresa)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("sku",rs.getString("sku"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("unidad_id",rs.getInt("unidad_id"));
+                    row.put("unidad",rs.getString("unidad"));
+                    row.put("tipo",rs.getString("tipo"));
+                    row.put("decimales",rs.getInt("decimales"));
+                    return row;
+                }
+            }
+        );
+        return hm_datos_productos;
+    }
+    
     //AQUI TERMINA METODOS PARA CATALOGO DE DESTINATARIOS
     //**********************************************************************************************************************
     
