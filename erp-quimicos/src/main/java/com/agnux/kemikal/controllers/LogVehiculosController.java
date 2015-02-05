@@ -72,7 +72,7 @@ public class LogVehiculosController {
         infoConstruccionTabla.put("anio", "A&ntilde;o:50");
         infoConstruccionTabla.put("clase", "Clase:70");
         infoConstruccionTabla.put("cap_volumen", "Cap. m&#179;:70");
-        infoConstruccionTabla.put("cap_peso", "Cap. Ton.:70");
+        infoConstruccionTabla.put("cap_peso", "Cap. Kg.:70");
         infoConstruccionTabla.put("tipo_caja", "Tipo Caja:150");
         infoConstruccionTabla.put("transportista", "Transportista:230");
         
