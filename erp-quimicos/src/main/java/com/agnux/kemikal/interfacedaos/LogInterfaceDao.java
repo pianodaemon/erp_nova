@@ -19,7 +19,7 @@ public interface LogInterfaceDao {
     public String selectFunctionForLogAdmProcesos(String campos_data, String extra_data_array);
     public int countAll(String data_string);
     
-    //catalogo de asignacion de rutas
+    //Catalogo de asignacion de rutas
     public ArrayList<HashMap<String, Object>> getRutas_PaginaGrid(String data_string, int offset, int pageSize, String orderBy , String asc);
     //public ArrayList<HashMap<String, String>> getFolioRuta(Integer id_empresa, Integer id_sucursal );
     public ArrayList<HashMap<String, String>> getFacturas_entrega_mercancia(Integer id_empresa, String fecha_inicial, String fecha_final, String factura, Integer tipo_busqueda);
@@ -56,12 +56,17 @@ public interface LogInterfaceDao {
     public ArrayList<HashMap<String, Object>> getOperadores_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
     
     //Carga de Documentos
+    public ArrayList<HashMap<String, Object>> getLogCargaDoc_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
+    public ArrayList<HashMap<String, Object>> getLogCargaDoc_Datos(Integer id);
+    public ArrayList<HashMap<String, Object>> getLogCargaDoc_UnidadesRutas(Integer id);
+    public HashMap<String, String> getLogCargaDoc_DatosViajePdf(Integer id, Integer id_vehiculo);
+    public ArrayList<HashMap<String, String>> getLogCargaDoc_ListaPdf(Integer id);
     public ArrayList<HashMap<String, Object>> getBuscadorClientes(String cadena, Integer filtro, Integer id_empresa, Integer id_sucursal);
     public ArrayList<HashMap<String, Object>> getDatosClienteByNoCliente(String no_control, Integer id_empresa, Integer id_sucursal);
     public ArrayList<HashMap<String, String>> getAlmacenesSucursal(Integer id_empresa, Integer id_sucursal);
     public int getDeleteFromLogCargaDocTmp(Integer id_emp, Integer suc);
     public HashMap<String, String> getInsertLogCargaDocTmp(String data_string);
-    public String getUpdateDocInvExi(Integer usuario_id, Integer empresa_id, Integer sucursal_id, Integer id_cliente);
+    public String getUpdateDocInvExi(String campos_data, String extra_data_array);
     public int getVerificarDocumento(Integer id_emp, Integer id_clie, String no_carga);
     
     
@@ -71,7 +76,7 @@ public interface LogInterfaceDao {
     public ArrayList<HashMap<String, Object>> getDatosUnidadByNoUnidad(String no_unidad, Integer id_empresa, Integer id_sucursal);
     public ArrayList<HashMap<String, Object>> getSucursales(Integer idEmp);
     public ArrayList<HashMap<String, Object>> getTransportistas(Integer idEmp, Integer idSuc);
-    public ArrayList<HashMap<String, Object>> getLogAdmViaje_CargasPendientes(Integer id_empresa, Integer id_suc_user, String no_clie, String no_carga, String no_ped, String no_dest, String dest, String poblacion);
+    public ArrayList<HashMap<String, Object>> getLogAdmViaje_CargasPendientes(Integer id_empresa, Integer id_suc_user, String no_clie, String fecha_carga, String no_carga, String no_ped, String no_dest, String dest, String poblacion);
     public String getLogAdmViaje_CadenaFacturasDelPedido(Integer id_ped);
     public ArrayList<HashMap<String, Object>> getLogAdmViaje_DetallePedido(Integer id_ped);
     public ArrayList<HashMap<String, Object>> getLogAdmViaje_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
@@ -147,7 +152,7 @@ public interface LogInterfaceDao {
     public ArrayList<HashMap<String, Object>> getTipoRechazo_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
     
     //Metodos para el Reporte de Viajes
-    public ArrayList<HashMap<String, String>> getRepLogAdmViajes(String fecha_inicial, String fecha_final, String cliente, String ruta, String poblacion, Integer id_empresa);
+    public ArrayList<HashMap<String, String>> getRepLogAdmViajes(String fecha_inicial, String fecha_final, String cliente, String ruta, String clase, Integer id_empresa);
     public ArrayList<HashMap<String, Object>> getBuscador_Rutas(String no_ruta, String nombre_ruta, String poblacion, Integer id_empresa, Integer id_sucursal);
     
 }
