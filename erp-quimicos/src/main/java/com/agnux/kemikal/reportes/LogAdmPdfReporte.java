@@ -730,8 +730,7 @@ public class LogAdmPdfReporte {
              PdfPTable tabla = new PdfPTable(widths);
              //PdfPCell celda;
              tabla.setKeepTogether(false);
-             //tabla.setHeaderRows(3);
- 
+             tabla.setHeaderRows(1);
              
              //AQUI VA EL ENCABEZADO 2 DEL DOCUMENTO
              //1
@@ -883,6 +882,7 @@ public class LogAdmPdfReporte {
              
              Integer nopedidos=0;
              Integer nofacturas=0;
+             Double total_unidades=0.0;
              Double total_peso=0.0;
              Double total_volumen=0.0;
              
@@ -988,7 +988,7 @@ public class LogAdmPdfReporte {
                  tabla.addCell(celda);*/
                  
                  //11
-                 celda = new PdfPCell(new Paragraph(registro.get("no_facura"),fuenteCont));
+                 celda = new PdfPCell(new Paragraph(registro.get("no_fac"),fuenteCont));
                  celda.setUseAscender(true);
                  celda.setHorizontalAlignment(Element.ALIGN_CENTER);
                  celda.setUseDescender(true);
@@ -1030,10 +1030,10 @@ public class LogAdmPdfReporte {
       
                  //16
                  celda = new PdfPCell(new Paragraph(registro.get("efectivo"),fuenteCont));
-                 celda.setUseAscender(true);
                  celda.setHorizontalAlignment(Element.ALIGN_CENTER);
+                 celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
                  celda.setUseDescender(true);
-                 celda.setVerticalAlignment(Element.ALIGN_MIDDLE);     
+                 celda.setUseAscender(true);
                  tabla.addCell(celda);
                  
                  
@@ -1043,228 +1043,123 @@ public class LogAdmPdfReporte {
                  
                  //Contar facturas
                  nofacturas = nofacturas + Integer.parseInt(registro.get("nofacturas"));
-
-                 Double peso = Double.parseDouble(registro.get("peso"));
-                 total_peso = total_peso + peso;
-                 
-                 Double volumen = Double.parseDouble(registro.get("volumen"));
-                 total_volumen = total_volumen + volumen;
-                
+                 total_unidades = total_unidades + Double.parseDouble(registro.get("cant_uni"));
+                 total_peso = total_peso + Double.parseDouble(registro.get("peso"));
+                 total_volumen = total_volumen + Double.parseDouble(registro.get("volumen"));
             }
-
-            //ESTO ABARCA DE LA COLUMNA 1 A LA 6
-            celda = new PdfPCell(new Paragraph(""));
-            celda.setColspan(6);
+             
+            //ESTO ABARCA DE LA COLUMNA 1 A LA 5
+            celda = new PdfPCell(new Paragraph("No. Pedidos: "+StringHelper.AgregaComas(StringHelper.roundDouble(nopedidos, 0)) +"     No. de Facturas: "+StringHelper.AgregaComas(StringHelper.roundDouble(nofacturas, 0)),fuenteCont));
+            celda.setColspan(5);
+            celda.setHorizontalAlignment(Element.ALIGN_LEFT);
+            celda.setBorder(0);
+            tabla.addCell(celda);
+            
+            //COLUMNA 6
+            celda = new PdfPCell(new Paragraph("TOTAL",fuenteCont));
+            celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
             celda.setBorder(0);
             tabla.addCell(celda);
             
             //COLUMNA 7
-            celda = new PdfPCell(new Paragraph("TOTAL",fuenteCont));
+            celda = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(total_unidades, 2)),fuenteCont));
             celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
             celda.setVerticalAlignment(Element.ALIGN_MIDDLE);    
-            celda.setBorderWidthBottom(0);
-            celda.setBorderWidthTop(0);
-            celda.setBorderWidthRight(0);
-            celda.setBorderWidthLeft(0);
+            celda.setUseAscender(true);
+            celda.setUseDescender(true);
             tabla.addCell(celda);
 
             //COLUMNA 8
             celda = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(total_peso, 2)),fuenteCont));
             celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
             celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            celda.setBorderWidthBottom(1);
-            celda.setBorderWidthTop(0);
-            celda.setBorderWidthRight(0);
-            celda.setBorderWidthLeft(0);
+            celda.setUseAscender(true);
+            celda.setUseDescender(true);
             tabla.addCell(celda);
              
             //COLUMNA 9
             celda = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(total_volumen, 2)),fuenteCont));
             celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
             celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            celda.setBorderWidthBottom(1);
-            celda.setBorderWidthTop(0);
-            celda.setBorderWidthRight(0);
-            celda.setBorderWidthLeft(0);
+            celda.setUseAscender(true);
+            celda.setUseDescender(true);
             tabla.addCell(celda);
             
              //columna 10-16 ultima fila
-            celda = new PdfPCell(new Paragraph("",fuenteCont2));
-            celda.setBorderWidthBottom(0);
-            celda.setBorderWidthTop(0);
-            celda.setBorderWidthRight(0);
-            celda.setBorderWidthLeft(0);
+            celda = new PdfPCell(new Paragraph(" ",fuenteCont2));
+            celda.setBorder(0);
             celda.setColspan(7);
+            tabla.addCell(celda);
+            
+             //fila vacia 1-16
+            celda = new PdfPCell(new Paragraph(" ",fuenteCont2));
+            celda.setBorder(0);
+            celda.setColspan(16);
+            celda.setFixedHeight(15);
             tabla.addCell(celda);
             
             reporte.add(tabla);
             
-            float [] widthsdoc = {1.5F,1F,2F,0.5F,12F};//Tamaño de las Columnas.
-             PdfPTable tabladoc = new PdfPTable(widthsdoc);
-             //PdfPCell celda;
-             tabladoc.setKeepTogether(false);
-
-
-            //COLUMNA 1
-            celda = new PdfPCell(new Paragraph("No. Pedidos",fuenteCont));
-            celda.setHorizontalAlignment(Element.ALIGN_LEFT);
-            celda.setVerticalAlignment(Element.ALIGN_MIDDLE);    
-            celda.setBorderWidthBottom(0);
-            celda.setBorderWidthTop(0);
-            celda.setBorderWidthRight(0);
-            celda.setBorderWidthLeft(0);
-            tabladoc.addCell(celda);   
-
-            //COLUMNA 2
-            celda = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(nopedidos, 0)),fuenteCont));
-            celda.setHorizontalAlignment(Element.ALIGN_LEFT);
-            celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            celda.setBorderWidthBottom(0);
-            celda.setBorderWidthTop(0);
-            celda.setBorderWidthRight(0);
-            celda.setBorderWidthLeft(0);
-            tabladoc.addCell(celda);
-            
-      
-             //COLUMNA 3
-            celda = new PdfPCell(new Paragraph("No. de Facturas",fuenteCont));
-            celda.setHorizontalAlignment(Element.ALIGN_LEFT);
-            celda.setVerticalAlignment(Element.ALIGN_MIDDLE);    
-            celda.setBorderWidthBottom(0);
-            celda.setBorderWidthTop(0);
-            celda.setBorderWidthRight(0);
-            celda.setBorderWidthLeft(0);
-            tabladoc.addCell(celda);
-
-            //COLUMNA 4
-            celda = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(nofacturas, 0)),fuenteCont));
-            celda.setHorizontalAlignment(Element.ALIGN_LEFT);
-            celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            celda.setBorderWidthBottom(0);
-            celda.setBorderWidthTop(0);
-            celda.setBorderWidthRight(0);
-            celda.setBorderWidthLeft(0);
-            tabladoc.addCell(celda);
-             
-            
-             //columna 5-16 ultima fila
-            celda = new PdfPCell(new Paragraph("",fuenteCont2));
-            celda.setBorderWidthBottom(0);
-            celda.setBorderWidthTop(0);
-            celda.setBorderWidthRight(0);
-            celda.setBorderWidthLeft(0);
-            tabladoc.addCell(celda);
-            
-            reporte.add(tabladoc);
-           
             
             
- 
-            float [] widths1 = {2.5F,5.5F,1F,1.5F,12F};//Tamaño de las Columnas.
-            PdfPTable tablaservadic = new PdfPTable(widths1);
-            tablaservadic.setKeepTogether(false);
             
+            
+            //Verificar si existen servicios adicionales
             if(serv_adic.size() > 0){
-            //COLUMNA 1-4
-            celda = new PdfPCell(new Paragraph("SERVICIOS ADICIONALES",fuenteCont2));
-            celda.setHorizontalAlignment(Element.ALIGN_LEFT);
-            celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            celda.setBorderWidthBottom(0);
-            celda.setBorderWidthTop(0);
-            celda.setBorderWidthRight(0);
-            celda.setBorderWidthLeft(0);
-            celda.setColspan(5);
-            tablaservadic.addCell(celda);
-
-            //COLUMNA 1
-            celda = new PdfPCell(new Paragraph("CODIGO",smallBoldFont));
-            celda.setUseAscender(true);
-            celda.setHorizontalAlignment(Element.ALIGN_CENTER);
-            celda.setUseDescender(true);
-            celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            celda.setBackgroundColor(BaseColor.BLACK);
-            //celda.setColspan(2);
-            tablaservadic.addCell(celda);
-            
-            //COLUMNA 2
-            celda = new PdfPCell(new Paragraph("DESCRIPCIÓN",smallBoldFont));
-            celda.setUseAscender(true);
-            celda.setHorizontalAlignment(Element.ALIGN_LEFT);
-            celda.setUseDescender(true);
-            celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            celda.setBackgroundColor(BaseColor.BLACK);
-            //celda.setColspan(3);
-            tablaservadic.addCell(celda);
-             
-            //COLUMNA 3
-            celda = new PdfPCell(new Paragraph("",smallBoldFont));
-            celda.setUseAscender(true);
-            celda.setHorizontalAlignment(Element.ALIGN_CENTER);
-            celda.setUseDescender(true);
-            celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            celda.setBackgroundColor(BaseColor.BLACK);
-            tablaservadic.addCell(celda);
-
-            //COLUMNA 4
-            celda = new PdfPCell(new Paragraph("IMPORTE",smallBoldFont));
-            celda.setUseAscender(true);
-            celda.setHorizontalAlignment(Element.ALIGN_CENTER);
-            celda.setUseDescender(true);
-            celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            celda.setBackgroundColor(BaseColor.BLACK);
-            tablaservadic.addCell(celda);
-            
-            //columna 5
-            celda = new PdfPCell(new Paragraph("",fuenteCont2));
-            celda.setBorderWidthBottom(0);
-            celda.setBorderWidthTop(0);
-            celda.setBorderWidthRight(0);
-            celda.setBorderWidthLeft(0);
-            tablaservadic.addCell(celda); 
-
-            
-            Double total_serv_adic=0.0;
-   
-             for (int j=0;j<serv_adic.size();j++){
-                 HashMap<String,Object> registro = serv_adic.get(j);
-         
-                //COLUMNA 1
-                celda = new PdfPCell(new Paragraph((String) registro.get("codigo"),fuenteCont));
-                celda.setUseAscender(true);
-                celda.setHorizontalAlignment(Element.ALIGN_CENTER);
-                celda.setUseDescender(true);
-                celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                tablaservadic.addCell(celda);
+                float [] widths1 = {2.5F,5.5F,1F,1.5F,12F};//Tamaño de las Columnas.
+                PdfPTable tablaservadic = new PdfPTable(widths1);
+                tablaservadic.setKeepTogether(false);
+                tablaservadic.setHeaderRows(2);
                 
-                //COLUMNA 2
-                celda = new PdfPCell(new Paragraph((String) registro.get("descripcion"),fuenteCont));
-                celda.setUseAscender(true);
-                celda.setHorizontalAlignment(Element.ALIGN_CENTER);
-                celda.setUseDescender(true);
-                celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                tablaservadic.addCell(celda);
-                 
-                 //COLUMNA 3
-                celda = new PdfPCell(new Paragraph("$",fuenteCont));
-                celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                //celda.setUseDescender(true);
+                //COLUMNA 1-5
+                celda = new PdfPCell(new Paragraph("SERVICIOS ADICIONALES",fuenteCont2));
+                celda.setHorizontalAlignment(Element.ALIGN_LEFT);
                 celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
                 celda.setBorderWidthBottom(0);
-                //celda.setBorderWidthTop(1);
+                celda.setBorderWidthTop(0);
                 celda.setBorderWidthRight(0);
-                //celda.setBorderWidthLeft(1);
+                celda.setBorderWidthLeft(0);
+                celda.setColspan(5);
                 tablaservadic.addCell(celda);
-                 
-                //COLUMNA 4
-                celda = new PdfPCell(new Paragraph((String) registro.get("precio"),fuenteCont));
+
+                //COLUMNA 1
+                celda = new PdfPCell(new Paragraph("CODIGO",smallBoldFont));
                 celda.setUseAscender(true);
-                celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                celda.setUseDescender(true);
+                celda.setHorizontalAlignment(Element.ALIGN_CENTER);
+                celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                celda.setBackgroundColor(BaseColor.BLACK);
+                //celda.setColspan(2);
+                tablaservadic.addCell(celda);
+
+                //COLUMNA 2
+                celda = new PdfPCell(new Paragraph("DESCRIPCIÓN",smallBoldFont));
+                celda.setUseAscender(true);
+                celda.setHorizontalAlignment(Element.ALIGN_LEFT);
                 celda.setUseDescender(true);
                 celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                celda.setBorderWidthLeft(0);
-                celda.setBorderWidthBottom(0);
+                celda.setBackgroundColor(BaseColor.BLACK);
+                //celda.setColspan(3);
                 tablaservadic.addCell(celda);
-                
+
+                //COLUMNA 3
+                celda = new PdfPCell(new Paragraph("",smallBoldFont));
+                celda.setUseAscender(true);
+                celda.setHorizontalAlignment(Element.ALIGN_CENTER);
+                celda.setUseDescender(true);
+                celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                celda.setBackgroundColor(BaseColor.BLACK);
+                tablaservadic.addCell(celda);
+
+                //COLUMNA 4
+                celda = new PdfPCell(new Paragraph("IMPORTE",smallBoldFont));
+                celda.setUseAscender(true);
+                celda.setHorizontalAlignment(Element.ALIGN_CENTER);
+                celda.setUseDescender(true);
+                celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                celda.setBackgroundColor(BaseColor.BLACK);
+                tablaservadic.addCell(celda);
+
                 //columna 5
                 celda = new PdfPCell(new Paragraph("",fuenteCont2));
                 celda.setBorderWidthBottom(0);
@@ -1272,11 +1167,61 @@ public class LogAdmPdfReporte {
                 celda.setBorderWidthRight(0);
                 celda.setBorderWidthLeft(0);
                 tablaservadic.addCell(celda); 
-                
-                Double total = Double.parseDouble((String) registro.get("precio"));
-                total_serv_adic = total_serv_adic + total;
-                
-            }
+
+
+                Double total_serv_adic=0.0;
+
+                for (int j=0;j<serv_adic.size();j++){
+                    HashMap<String,Object> registro = serv_adic.get(j);
+
+                    //COLUMNA 1
+                    celda = new PdfPCell(new Paragraph((String) registro.get("codigo"),fuenteCont));
+                    celda.setUseAscender(true);
+                    celda.setHorizontalAlignment(Element.ALIGN_LEFT);
+                    celda.setUseDescender(true);
+                    celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                    tablaservadic.addCell(celda);
+
+                    //COLUMNA 2
+                    celda = new PdfPCell(new Paragraph((String) registro.get("descripcion"),fuenteCont));
+                    celda.setUseAscender(true);
+                    celda.setHorizontalAlignment(Element.ALIGN_LEFT);
+                    celda.setUseDescender(true);
+                    celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                    tablaservadic.addCell(celda);
+
+                    //COLUMNA 3
+                    celda = new PdfPCell(new Paragraph("$",fuenteCont));
+                    celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                    //celda.setUseDescender(true);
+                    celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                    celda.setBorderWidthBottom(0);
+                    //celda.setBorderWidthTop(1);
+                    celda.setBorderWidthRight(0);
+                    //celda.setBorderWidthLeft(1);
+                    tablaservadic.addCell(celda);
+
+                    //COLUMNA 4
+                    celda = new PdfPCell(new Paragraph((String) registro.get("precio"),fuenteCont));
+                    celda.setUseAscender(true);
+                    celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                    celda.setUseDescender(true);
+                    celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                    celda.setBorderWidthLeft(0);
+                    celda.setBorderWidthBottom(0);
+                    tablaservadic.addCell(celda);
+
+                    //columna 5
+                    celda = new PdfPCell(new Paragraph("",fuenteCont2));
+                    celda.setBorderWidthBottom(0);
+                    celda.setBorderWidthTop(0);
+                    celda.setBorderWidthRight(0);
+                    celda.setBorderWidthLeft(0);
+                    tablaservadic.addCell(celda); 
+
+                    Double total = Double.parseDouble((String) registro.get("precio"));
+                    total_serv_adic = total_serv_adic + total;
+                }
              
                 //COLUMNA 1-2
                 celda = new PdfPCell(new Paragraph("TOTAL",fuenteCont));
@@ -1304,71 +1249,65 @@ public class LogAdmPdfReporte {
                 celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
                 celda.setBorderWidthLeft(0);
                 tablaservadic.addCell(celda);
-
+                
                 //columna 5
                 celda = new PdfPCell(new Paragraph("",fuenteCont2));
-                celda.setBorderWidthBottom(0);
-                celda.setBorderWidthTop(0);
-                celda.setBorderWidthRight(0);
-                celda.setBorderWidthLeft(0);
-                tablaservadic.addCell(celda); 
-            
-            
-            }else{
-                celda= new PdfPCell(new Paragraph(""));
-                celda.setHorizontalAlignment (Element.ALIGN_LEFT);
                 celda.setBorder(0);
-                celda.setColspan(4);
-                celda.setFixedHeight(12);
-                tablaservadic.addCell(celda);
+                tablaservadic.addCell(celda); 
+                
+                
+                //Fila vacia
+                celda = new PdfPCell(new Paragraph("",fuenteCont2));
+                celda.setBorder(0);
+                celda.setColspan(5);
+                celda.setFixedHeight(15);
+                tablaservadic.addCell(celda); 
+                
+                reporte.add(tablaservadic);
             }
             
-            reporte.add(tablaservadic);
+            
+            
+            if (!datos.get("observaciones").isEmpty()){
+                float [] widths2 = {1};//Tamaño de las Columnas.
+                PdfPTable tabla_obser = new PdfPTable(widths2);
+                tabla_obser.setKeepTogether(false);
+                
+                //columna1 
+                celda = new PdfPCell(new Paragraph("OBSERVACIONES",fuenteCont2));
+                celda.setHorizontalAlignment(Element.ALIGN_LEFT);
+                celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                celda.setBorder(0);
+                tabla_obser.addCell(celda);
+
+                //columna2-5 
+                celda = new PdfPCell(new Paragraph(datos.get("observaciones"),fuenteCont));
+                celda.setHorizontalAlignment(Element.ALIGN_LEFT);
+                celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                celda.setUseAscender(true);
+                celda.setUseDescender(true);
+                celda.setColspan(5);
+                tabla_obser.addCell(celda);
+                
+                //fila en blanco
+                celda = new PdfPCell(new Paragraph("",fuenteCont2));
+                celda.setBorder(0);
+                celda.setFixedHeight(20);
+                tabla_obser.addCell(celda);
+                
+                reporte.add(tabla_obser);
+            }
+            
+
+            
+            
+            
             
             
             float [] widths2 = {2.5F,5.5F,1F,1.5F,2F,10F};//Tamaño de las Columnas.
             PdfPTable tabla3 = new PdfPTable(widths2);
             tabla3.setKeepTogether(false);
              //tabla3.setHeaderRows(2);
-             
-            //ESTO ES PARA DEJAR UNA FILA EN BLANCO
-            celda = new PdfPCell(new Paragraph(""));
-            celda.setFixedHeight(15);
-            celda.setColspan(6);
-            celda.setBorder(0);
-            tabla3.addCell(celda);
-            
-            
-            if (!datos.get("observaciones").isEmpty()){
-            //columna1 
-            celda = new PdfPCell(new Paragraph("Observaciones:",fuenteCont2));
-            celda.setHorizontalAlignment(Element.ALIGN_LEFT);
-            celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            celda.setBorderWidthBottom(0);
-            celda.setBorderWidthTop(0);
-            celda.setBorderWidthRight(0);
-            celda.setBorderWidthLeft(0);
-            tabla3.addCell(celda);
-            
-            //columna2-5 
-            celda = new PdfPCell(new Paragraph(datos.get("observaciones"),fuenteCont2));
-            celda.setHorizontalAlignment(Element.ALIGN_LEFT);
-            celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            celda.setBorderWidthBottom(1);
-            celda.setBorderWidthTop(0);
-            celda.setBorderWidthRight(0);
-            celda.setBorderWidthLeft(0);
-            celda.setColspan(5);
-            tabla3.addCell(celda);
-            
-            }
-            
-            //ESTO ES PARA DEJAR UNA FILA EN BLANCO
-            celda = new PdfPCell(new Paragraph(""));
-            celda.setFixedHeight(15);
-            celda.setColspan(6);
-            celda.setBorder(0);
-            tabla3.addCell(celda);
             
             //columna 1-6
             celda = new PdfPCell(new Paragraph(datos.get("operador"),fuenteCont2));
@@ -1423,9 +1362,8 @@ public class LogAdmPdfReporte {
             
 
             
-            
             //columna1-5 
-            celda = new PdfPCell(new Paragraph("A LAS ________ HORAS DEL DIA ________ DEL MES DE ________________ DE 20______, RECIBI DE:",fuenteCont2));
+            celda = new PdfPCell(new Paragraph("A LAS ________ HORAS DEL DIA ________ DEL MES DE ________________ DE 20______, RECIBI DE:",fuenteCont));
             celda.setHorizontalAlignment(Element.ALIGN_LEFT);
             celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
             celda.setBorderWidthBottom(0);
@@ -1436,7 +1374,7 @@ public class LogAdmPdfReporte {
             tabla3.addCell(celda);
             
             //columna 6
-            celda = new PdfPCell(new Paragraph(datosEncabezadoPie.get("nombre_empresa_emisora"),fuenteCont2));
+            celda = new PdfPCell(new Paragraph(datosEncabezadoPie.get("nombre_empresa_emisora"),fuenteCont));
             celda.setHorizontalAlignment(Element.ALIGN_LEFT);
             celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
             celda.setBorderWidthBottom(0);
@@ -1447,7 +1385,7 @@ public class LogAdmPdfReporte {
             
             //columna 1-6
             celda = new PdfPCell(new Paragraph("LAS FACTURAS ORIGINALES ASI COMO LOS PRODUCTOS Y MERCANCIAS QUE AMPARAN A DICHAS FACTURAS Y LAS CUALES SE DETALLAN Y ESPECIFICAN EN LA PRESENTE RELACION DE REPARTOS  A EFECTO DE QUE, EN CUMPLIMIENTO DE MI TRABAJO"
-                    + ", HAGA ENTREGA A LOS DESTINATARIOS QUE SE INDICAN LOS PRODUCTOS Y MERCANCIAS  A QUE SE HA HECHO ALUSION, OBLIGANDOME A DEVOLVER DEBIDAMENTE FIRMADAS Y SELLADAS POR EL DESTINATARIO LAS FACTURAS ORIGINALES A:",fuenteCont2));
+                    + ", HAGA ENTREGA A LOS DESTINATARIOS QUE SE INDICAN LOS PRODUCTOS Y MERCANCIAS  A QUE SE HA HECHO ALUSION, OBLIGANDOME A DEVOLVER DEBIDAMENTE FIRMADAS Y SELLADAS POR EL DESTINATARIO LAS FACTURAS ORIGINALES A:",fuenteCont));
             celda.setHorizontalAlignment(Element.ALIGN_JUSTIFIED);
             celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
             celda.setBorderWidthBottom(0);
@@ -1458,7 +1396,7 @@ public class LogAdmPdfReporte {
             tabla3.addCell(celda);
             
             //columna1-6
-            celda = new PdfPCell(new Paragraph(datosEncabezadoPie.get("nombre_empresa_emisora"),fuenteCont2));
+            celda = new PdfPCell(new Paragraph(datosEncabezadoPie.get("nombre_empresa_emisora"),fuenteCont));
             celda.setHorizontalAlignment(Element.ALIGN_LEFT);
             celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
             celda.setBorderWidthBottom(0);
