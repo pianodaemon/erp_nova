@@ -44,39 +44,9 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping("/reppagosdiaria/")
 public class CxpRepPagosDiariaController {
     
-     private static final Logger log  = Logger.getLogger(CxpRepPagosDiariaController.class.getName());
+    private static final Logger log  = Logger.getLogger(CxpRepPagosDiariaController.class.getName());
     ResourceProject resource = new ResourceProject();
-    
-    
-    /*@Autowired
-    @Qualifier("daoHome")
-    private HomeInterfaceDao HomeDao;
-    
-    @Autowired
-    @Qualifier("daoGral")
-    private GralInterfaceDao gralDao;
-    
-    @Autowired
-    @Qualifier("daoCxc")
-    private CxcInterfaceDao cxcDao;
 
-    public CxcInterfaceDao getCxcDao() {
-        return cxcDao;
-    }
-
-    public void setCxcDao(CxcInterfaceDao cxcDao) {
-        this.cxcDao = cxcDao;
-    }
-    
-    public HomeInterfaceDao getHomeDao() {
-        return HomeDao;
-    }
-    
-    
-    public GralInterfaceDao getGralDao() {
-        return gralDao;
-    }*/
-    
     @Autowired
     @Qualifier("daoCxp")
     private CxpInterfaceDao cxpDao;
@@ -308,7 +278,7 @@ public class CxpRepPagosDiariaController {
         lista_PagosDiaria = this.getCxpDao().getPagosDiaria( arreglo[1], arreglo[2],idproveedor,  id_empresa);
         
         //instancia a la clase que construye el pdf de Cobranza Diaria
-        PdfReportePagosDiaria x = new PdfReportePagosDiaria(datosEncabezadoPie, fileout,lista_PagosDiaria,datos);
+        CxpPdfReportePagosDiaria x = new CxpPdfReportePagosDiaria(datosEncabezadoPie, fileout,lista_PagosDiaria,datos);
         
         System.out.println("Recuperando archivo: " + fileout);
         File file = new File(fileout);
