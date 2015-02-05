@@ -5,6 +5,7 @@
 package com.agnux.kemikal.controllers;
 
 import com.agnux.cfd.v2.Base64Coder;
+import com.agnux.common.helpers.FileHelper;
 import com.agnux.common.helpers.TimeHelper;
 import com.agnux.common.obj.ResourceProject;
 import com.agnux.common.obj.UserSessionData;
@@ -173,7 +174,7 @@ public class CxpRepProveedoresController {
                 HttpServletRequest request,
                 HttpServletResponse response,
                 Model model)
-        throws ServletException, IOException, URISyntaxException, DocumentException {
+        throws ServletException, IOException, URISyntaxException, DocumentException, Exception {
 
         HashMap<String, String> userDat = new HashMap<String, String>();
         HashMap<String, String> datosEncabezadoPie= new HashMap<String, String>();
@@ -242,10 +243,12 @@ public class CxpRepProveedoresController {
         response.setBufferSize(size);
         response.setContentLength(size);
         response.setContentType("application/pdf");
-        response.setHeader("Content-Disposition","attachment; filename=\"" + file.getCanonicalPath() +"\"");
+        response.setHeader("Content-Disposition","attachment; filename=\"" + file.getName() +"\"");
         FileCopyUtils.copy(bis, response.getOutputStream());
         response.flushBuffer();
-
+        if(file.exists()){
+            FileHelper.delete(fileout);
+        }
         return null;
     }
 }

@@ -304,7 +304,9 @@ public class CxcRepSaldoMesController {
         FileCopyUtils.copy(bis, response.getOutputStream());  	
         response.flushBuffer();
         
-        FileHelper.delete(fileout);
+        if(file.exists()){
+            FileHelper.delete(fileout);
+        }
         
         return null;
     }

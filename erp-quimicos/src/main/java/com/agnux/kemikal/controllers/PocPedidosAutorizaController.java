@@ -403,11 +403,13 @@ public class PocPedidosAutorizaController {
         response.setBufferSize(size);
         response.setContentLength(size);
         response.setContentType("application/pdf");
-        response.setHeader("Content-Disposition","attachment; filename=\"" + file.getCanonicalPath() +"\"");
+        response.setHeader("Content-Disposition","attachment; filename=\"" + file.getName() +"\"");
         FileCopyUtils.copy(bis, response.getOutputStream());          
         response.flushBuffer();
         
-        FileHelper.delete(fileout);
+        if(file.exists()){
+            FileHelper.delete(fileout);
+        }
         
         return null;
 

@@ -249,7 +249,7 @@ public class CxpRepPagosDiariaController {
         
         userDat = this.getHomeDao().getUserById(id_usuario);
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
-        String rfc_empresa=this.getGralDao().getRfcEmpresaEmisora(id_empresa);
+        //String rfc_empresa=this.getGralDao().getRfcEmpresaEmisora(id_empresa);
         String razon_social_empresa = this.getGralDao().getRazonSocialEmpresaEmisora(id_empresa);
         
         String titulo_reporte ="Pagos Diarios";
@@ -276,7 +276,7 @@ public class CxpRepPagosDiariaController {
         response.setBufferSize(size);
         response.setContentLength(size);
         response.setContentType("application/pdf");
-        response.setHeader("Content-Disposition","attachment; filename=\"" + file.getCanonicalPath() +"\"");
+        response.setHeader("Content-Disposition","attachment; filename=\"" + file.getName() +"\"");
         FileCopyUtils.copy(bis, response.getOutputStream());          
         response.flushBuffer();
         

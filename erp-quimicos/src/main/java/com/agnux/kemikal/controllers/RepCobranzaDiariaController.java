@@ -4,6 +4,7 @@
  */
 package com.agnux.kemikal.controllers;
 import com.agnux.cfd.v2.Base64Coder;
+import com.agnux.common.helpers.FileHelper;
 import com.agnux.common.helpers.StringHelper;
 import com.agnux.common.obj.ResourceProject;
 import com.agnux.common.obj.UserSessionData;
@@ -262,7 +263,7 @@ public class RepCobranzaDiariaController {
                                                             HttpServletResponse response, 
                                                             Model model
                                                        )   
-     throws ServletException, IOException, URISyntaxException, DocumentException {
+     throws ServletException, IOException, URISyntaxException, DocumentException, Exception {
         String arreglo[];
         arreglo = cadena.split("___");
         //arreglo[0]    cliente
@@ -320,9 +321,13 @@ public class RepCobranzaDiariaController {
         response.setBufferSize(size);
         response.setContentLength(size);
         response.setContentType("application/pdf");
-        response.setHeader("Content-Disposition","attachment; filename=\"" + file.getCanonicalPath() +"\"");
+        response.setHeader("Content-Disposition","attachment; filename=\"" + file.getName() +"\"");
         FileCopyUtils.copy(bis, response.getOutputStream());          
         response.flushBuffer();
+        
+        if(file.exists()){
+            FileHelper.delete(fileout);
+        }
         
         return null;
         
