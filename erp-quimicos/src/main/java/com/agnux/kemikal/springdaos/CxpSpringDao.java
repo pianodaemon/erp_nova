@@ -61,7 +61,7 @@ public class CxpSpringDao implements CxpInterfaceDao{
         
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query, 
-            new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+            new Object[]{data_string,new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, Object> row = new HashMap<String, Object>();
@@ -1104,6 +1104,7 @@ public class CxpSpringDao implements CxpInterfaceDao{
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
         String sql_to_query = "SELECT cxp_facturas.id, "
                                 + "cxp_facturas.serie_folio AS factura, "
+                                + "(case when cxp_facturas.tipo_factura_proveedor=1 then 'COMPRAS' when cxp_facturas.tipo_factura_proveedor=2 then 'SERVICIOS U HONORARIOS' when cxp_facturas.tipo_factura_proveedor=3 then 'OTROS INSUMOS' when cxp_facturas.tipo_factura_proveedor=4 then 'FLETES' else '' end) as tipo,"
                                 + "cxp_prov.razon_social AS proveedor, "
                                 + "gral_mon.descripcion_abr AS moneda, "
                                 + "cxp_facturas.monto_total AS total, "
@@ -1119,12 +1120,13 @@ public class CxpSpringDao implements CxpInterfaceDao{
         
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query, 
-            new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+            new Object[]{data_string,new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, Object> row = new HashMap<String, Object>();
                     row.put("id",String.valueOf(rs.getInt("id")));
                     row.put("factura",rs.getString("factura"));
+                    row.put("tipo",rs.getString("tipo"));
                     row.put("proveedor",rs.getString("proveedor"));
                     row.put("moneda",rs.getString("moneda"));
                     row.put("total",StringHelper.AgregaComas(StringHelper.roundDouble(rs.getString("total"),2)));
@@ -3362,43 +3364,54 @@ public class CxpSpringDao implements CxpInterfaceDao{
     
     //Reporte de Pagos Diarios
     @Override
-    public ArrayList<HashMap<String, String>> getPagosDiaria(String fecha_inicial, String fecha_final,Integer proveedor,Integer id_empresa) {
+    public ArrayList<HashMap<String, String>> getPagosDiaria(String fecha_inicial, String fecha_final,String proveedor, Integer tipo_prov, Integer id_empresa) {
         String where="";
 
-        if(proveedor!=0){
-            where = "  and cxp_pagos.cxp_prov_id=" +proveedor;
+        if(!proveedor.trim().equals("")){
+            where = " and cxp_prov.razon_social ilike '%"+ proveedor +"%'";
         }
-
+        
+        if(tipo_prov>0){
+            if(tipo_prov==1){
+                //Filtro para facturas de compras(Materias primas)
+                where = " and cxp_facturas.tipo_factura_proveedor="+tipo_prov+" ";
+            }else{
+                if(tipo_prov==2){
+                    //Filtro para proveedores de Otros servicios diferentes a compras de materias primas
+                    where = " and cxp_facturas.tipo_factura_proveedor!=1 ";
+                }
+            }
+        }
+        
         String sql_to_query = ""
-                
-                + "SELECT "  
-                    +" cxp_facturas.serie_folio AS factura, "
-                    +" to_char(cxp_facturas.fecha_factura,'dd/mm/yyyy') AS fecha_factura," 
-                    +" cxp_pagos.cxp_prov_id AS id_proveedor, " 
-                    +" cxp_prov.razon_social AS proveedor, "
-                    +" gral_mon_fac.id as id_moneda_fac, "
-                    +" gral_mon_fac.simbolo AS simbolo_moneda_fac, " 
-                    +" gral_mon_fac.descripcion_abr AS moneda_fac, "
-                    +" cxp_facturas.monto_total AS monto_factura, " 
-                    +" gral_mon_fac.simbolo AS simbolo_moneda_aplicado, "   
-                    +" cxp_pagos_detalles.cantidad AS pago_aplicado, "
-                    +" to_char(cxp_pagos.fecha_pago,'dd/mm/yyyy') AS fecha_pago, "
-                    +" gral_mon_pago.id as id_moneda_pago, "
-                    +" gral_mon_pago.simbolo AS simbolo_moneda_pago, "  
-                    +" gral_mon_pago.descripcion_abr AS moneda_pago,"
-                    +" (case when cxp_facturas.moneda_id=cxp_pagos.moneda_id then cxp_pagos_detalles.cantidad else (case when cxp_facturas.moneda_id=1 then cxp_pagos_detalles.cantidad/cxp_pagos.tipo_cambio else cxp_pagos_detalles.cantidad*cxp_pagos.tipo_cambio end) end) AS monto_pago "
-                +" FROM cxp_pagos "
-                +" JOIN cxp_pagos_detalles ON cxp_pagos_detalles.cxp_pago_id=cxp_pagos.id "
-                +" JOIN cxp_facturas ON (cxp_facturas.serie_folio=cxp_pagos_detalles.serie_folio AND cxp_facturas.cxc_prov_id=cxp_pagos.cxp_prov_id) "
-                +" jOIN cxp_prov  ON cxp_prov.id=cxp_pagos.cxp_prov_id "
-                +" JOIN gral_mon as gral_mon_fac ON gral_mon_fac.id=cxp_facturas.moneda_id "
-                +" JOIN gral_mon AS gral_mon_pago ON gral_mon_pago.id=cxp_pagos.moneda_id "
-                +" WHERE cxp_pagos.gral_emp_id=" +id_empresa + " "
-                +" AND cxp_pagos_detalles.cancelacion=FALSE "+where
-                +" AND (to_char(cxp_pagos.fecha_pago,'yyyymmdd')::integer BETWEEN to_char('"+fecha_inicial+"'::timestamp with time zone,'yyyymmdd')::integer AND to_char('"+fecha_final+"'::timestamp with time zone,'yyyymmdd')::integer) "
-                +" ORDER BY cxp_prov.razon_social, cxp_pagos.fecha_pago;";
-
-        System.out.println("getPagosDiaria:"+ sql_to_query);
+        + "SELECT "  
+            +" cxp_facturas.serie_folio AS factura, "
+            +" to_char(cxp_facturas.fecha_factura,'dd/mm/yyyy') AS fecha_factura," 
+            +" cxp_pagos.cxp_prov_id AS id_proveedor, " 
+            +" cxp_prov.razon_social AS proveedor, "
+            +" gral_mon_fac.id as id_moneda_fac, "
+            +" gral_mon_fac.simbolo AS simbolo_moneda_fac, " 
+            +" gral_mon_fac.descripcion_abr AS moneda_fac, "
+            +" cxp_facturas.monto_total AS monto_factura, " 
+            +" gral_mon_fac.simbolo AS simbolo_moneda_aplicado, "   
+            +" cxp_pagos_detalles.cantidad AS pago_aplicado, "
+            +" to_char(cxp_pagos.fecha_pago,'dd/mm/yyyy') AS fecha_pago, "
+            +" gral_mon_pago.id as id_moneda_pago, "
+            +" gral_mon_pago.simbolo AS simbolo_moneda_pago, "  
+            +" gral_mon_pago.descripcion_abr AS moneda_pago,"
+            +" (case when cxp_facturas.moneda_id=cxp_pagos.moneda_id then cxp_pagos_detalles.cantidad else (case when cxp_facturas.moneda_id=1 then cxp_pagos_detalles.cantidad/cxp_pagos.tipo_cambio else cxp_pagos_detalles.cantidad*cxp_pagos.tipo_cambio end) end) AS monto_pago "
+        +" FROM cxp_pagos "
+        +" JOIN cxp_pagos_detalles ON cxp_pagos_detalles.cxp_pago_id=cxp_pagos.id "
+        +" JOIN cxp_facturas ON (cxp_facturas.serie_folio=cxp_pagos_detalles.serie_folio AND cxp_facturas.cxc_prov_id=cxp_pagos.cxp_prov_id) "
+        +" jOIN cxp_prov  ON cxp_prov.id=cxp_pagos.cxp_prov_id "
+        +" JOIN gral_mon as gral_mon_fac ON gral_mon_fac.id=cxp_facturas.moneda_id "
+        +" JOIN gral_mon AS gral_mon_pago ON gral_mon_pago.id=cxp_pagos.moneda_id "
+        +" WHERE cxp_pagos.gral_emp_id=" +id_empresa + " "
+        +" AND cxp_pagos_detalles.cancelacion=FALSE "+where
+        +" AND (to_char(cxp_pagos.fecha_pago,'yyyymmdd')::integer BETWEEN to_char('"+fecha_inicial+"'::timestamp with time zone,'yyyymmdd')::integer AND to_char('"+fecha_final+"'::timestamp with time zone,'yyyymmdd')::integer) "
+        +" ORDER BY cxp_prov.razon_social, cxp_pagos.fecha_pago;";
+        
+        //System.out.println("getPagosDiaria:"+ sql_to_query);
 
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
                 sql_to_query,

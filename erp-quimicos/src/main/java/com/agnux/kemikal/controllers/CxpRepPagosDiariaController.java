@@ -137,7 +137,8 @@ public class CxpRepPagosDiariaController {
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getPagosDiariaJson(
             @RequestParam(value="fecha_inicial", required=true) String fecha_inicial, 
             @RequestParam(value="fecha_final", required=true) String fecha_final,
-            @RequestParam(value="proveedor", required=true) Integer proveedor,
+            @RequestParam(value="proveedor", required=true) String proveedor,
+            @RequestParam(value="tipo_prov", required=true) Integer tipo_prov,
             @RequestParam(value="iu", required=true) String id_user_cod,
             Model model
             ) {
@@ -150,21 +151,18 @@ public class CxpRepPagosDiariaController {
         
         Double suma_pesos_monto_total = 0.0;
         Double suma_pesos_monto_pago = 0.0;
-        
         Double suma_dolares_monto_total= 0.0;
         Double suma_dolares_monto_pago = 0.0;
-         
         Double suma_euros_monto_total= 0.0;
         Double suma_euros_monto_pago = 0.0;
         
-        //decodificar id de usuario
+        //Decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
-        
         userDat = this.getHomeDao().getUserById(id_usuario);
-        
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        proveedor = (proveedor.trim().equals("0"))?"":proveedor.trim();
         
-        pagos = this.getCxpDao().getPagosDiaria( fecha_inicial, fecha_final, proveedor,  id_empresa);
+        pagos = this.getCxpDao().getPagosDiaria( fecha_inicial, fecha_final, proveedor,  tipo_prov, id_empresa);
         
         for (int x=0; x<=pagos.size()-1;x++){
             HashMap<String,String> registro = pagos.get(x);
@@ -178,11 +176,10 @@ public class CxpRepPagosDiariaController {
                 suma_dolares_monto_total += Double.parseDouble(registro.get("pago_aplicado"));
             }
             
-              if(registro.get("id_moneda_fac").equals("3")){
+            if(registro.get("id_moneda_fac").equals("3")){
                 suma_euros_monto_total += Double.parseDouble(registro.get("pago_aplicado"));
             }
-
-            
+              
             //sumar pagos aplicados en la moneda del pago
             if(registro.get("id_moneda_pago").equals("1")){
                 suma_pesos_monto_pago += Double.parseDouble(registro.get("monto_pago"));
@@ -195,15 +192,8 @@ public class CxpRepPagosDiariaController {
             if(registro.get("id_moneda_pago").equals("3")){
                 suma_euros_monto_pago += Double.parseDouble(registro.get("monto_pago"));
             }
-            
-            
-            
-          
-            
-
-            
         }
-         
+        
         total.put("suma_pesos_monto_total", StringHelper.roundDouble(suma_pesos_monto_total,2));
         total.put("suma_pesos_monto_pago", StringHelper.roundDouble(suma_pesos_monto_pago,2));
         total.put("suma_dolares_monto_total", StringHelper.roundDouble(suma_dolares_monto_total,2));
@@ -216,7 +206,6 @@ public class CxpRepPagosDiariaController {
         jsonretorno.put("Totales", totales);
         
         return jsonretorno;
-         
     }
 
     
@@ -232,11 +221,12 @@ public class CxpRepPagosDiariaController {
      throws ServletException, IOException, URISyntaxException, DocumentException {
         String arreglo[];
         arreglo = cadena.split("___");
-        //arreglo[0]    proveedor
-        //arreglo[1]   fecha inicial
-        //arreglo[2]  fecha final
-        //arreglo[3] usuari0
-                
+        //arreglo[0] proveedor
+        //arreglo[1] fecha_inicial
+        //arreglo[2] fecha_final
+        //arreglo[3] usuario
+        //arreglo[4] tipo_prov
+        
         HashMap<String, String> userDat = new HashMap<String, String>();
         
         System.out.println("Generando Reporte de Pagos Diarios");
@@ -270,12 +260,11 @@ public class CxpRepPagosDiariaController {
         datos.put("fecha_inicial",arreglo[1]);
         datos.put("fecha_final",arreglo[2]);
         
-        //obtiene los depositos del periodo indicado
-        String codigo="";
-        String descripcion="";
-        Integer idproveedor = Integer.parseInt(arreglo[0]);
-       
-        lista_PagosDiaria = this.getCxpDao().getPagosDiaria( arreglo[1], arreglo[2],idproveedor,  id_empresa);
+        //Obtiene los depositos del periodo indicado
+        String proveedor = (arreglo[0].trim().equals("0"))?"":arreglo[0].trim();
+        Integer tipo_prov = Integer.parseInt(arreglo[4]);
+        
+        lista_PagosDiaria = this.getCxpDao().getPagosDiaria( arreglo[1], arreglo[2], proveedor, tipo_prov, id_empresa);
         
         //instancia a la clase que construye el pdf de Cobranza Diaria
         CxpPdfReportePagosDiaria x = new CxpPdfReportePagosDiaria(datosEncabezadoPie, fileout,lista_PagosDiaria,datos);

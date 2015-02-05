@@ -308,7 +308,7 @@ public class ProveedoresDireccionesController {
             Model model
             ) {
         
-        log.log(Level.INFO, "Ejecutando getBuacadorProveedores de {0}", ProvFacturasController.class.getName());
+        log.log(Level.INFO, "Ejecutando getBuacadorProveedores de {0}", CxpProvFacturasController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         ArrayList<HashMap<String, String>> proveedores = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
