@@ -114,7 +114,15 @@ $(function() {
 			 $('#barra_buscador').animate({height:'0px'}, 500);
 			 $('#cuerpo').css({'height': pix_alto});
 		};
+		$busqueda_factura.focus();
 	});
+	
+	//Aplicar evento Keypress para que al pulsar enter ejecute la busqueda
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_factura, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_proveedor, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_fecha_inicial, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_fecha_final, $buscar);
+	
 	
 	//----------------------------------------------------------------
 	//valida la fecha seleccionada

@@ -43,85 +43,96 @@ $(function() {
                 
           };
   
+			//valida la fecha seleccionada
+			function mayor(fecha, fecha2){
+				var xMes=fecha.substring(5, 7);
+				var xDia=fecha.substring(8, 10);
+				var xAnio=fecha.substring(0,4);
+				var yMes=fecha2.substring(5, 7);
+				var yDia=fecha2.substring(8, 10);
+				var yAnio=fecha2.substring(0,4);
 
-          $('#header').find('#header1').find('span.emp').text(config.getEmpresa());
-          $('#header').find('#header1').find('span.suc').text(config.getSucursal());
-          $('#header').find('#header1').find('span.username').text(config.getUserName());
-
-          var $username = $('#header').find('#header1').find('span.username');
-          $username.text($('#lienzo_recalculable').find('input[name=user]').val());
-
-          //aqui va el titulo del catalogo
-          $('#barra_titulo').find('#td_titulo').append(config.getTituloApp());
-          $('#barra_acciones').hide();
-
-          //barra para el buscador 
-          $('#barra_buscador').hide();
-          
-		  
-
-		  
-		  var $proveedor = $('#lienzo_recalculable').find('div.reppagosdiaria').find('table#busqueda tr td').find('input[name=proveedor]');
-		  var $buscar_proveedor= $('#lienzo_recalculable').find('div.reppagosdiaria').find('table#busqueda tr td').find('a[href*=buscar_proveedor]');
-		  var $id_proveedor= $('#lienzo_recalculable').find('input[name=id_proveedor]');
-          var $fecha_inicial = $('#lienzo_recalculable').find('input[name=fecha_inicial]');
-          var $fecha_final = $('#lienzo_recalculable').find('input[name=fecha_final]');
-          var $Buscar_cobranzadiaria= $('#lienzo_recalculable').find('div.reppagosdiaria').find('table#busqueda tr td').find('input[value$=Buscar]');
-          var $genera_reporte_cobranzadiaria= $('#lienzo_recalculable').find('div.reppagosdiaria').find('table#busqueda tr td').find('input[value$=Generar_PDF]');
-
-          var $div_pagosdiarios= $('#reppagosdiaria');
-
-
-
-          $fecha_inicial.attr({'readOnly':true});
-          $fecha_final.attr({'readOnly':true});
-          $proveedor.attr({'readOnly':true});
-                   
-          //valida la fecha seleccionada
-          function mayor(fecha, fecha2){
-                    var xMes=fecha.substring(5, 7);
-                    var xDia=fecha.substring(8, 10);
-                    var xAnio=fecha.substring(0,4);
-                    var yMes=fecha2.substring(5, 7);
-                    var yDia=fecha2.substring(8, 10);
-                    var yAnio=fecha2.substring(0,4);
-
-                    if (xAnio > yAnio){
-                              return(true);
-                    }else{
-                              if (xAnio == yAnio){
-                                   if (xMes > yMes){
-                                             return(true);
-                                   }
-                                   if (xMes == yMes){
-                                             if (xDia > yDia){
-                                                  return(true);
-                                             }else{
-                                                  return(false);
-                                             }
-                                   }else{
-                                             return(false);
-                                   }
-                              }else{
-                                   return(false);
-                              }
-                    }
-          }
+				if (xAnio > yAnio){
+						  return(true);
+				}else{
+						  if (xAnio == yAnio){
+							   if (xMes > yMes){
+										 return(true);
+							   }
+							   if (xMes == yMes){
+										 if (xDia > yDia){
+											  return(true);
+										 }else{
+											  return(false);
+										 }
+							   }else{
+										 return(false);
+							   }
+						  }else{
+							   return(false);
+						  }
+				}
+			}
 	
-          //muestra la fecha actual
-          var mostrarFecha = function mostrarFecha(){
-                    var ahora = new Date();
-                    var anoActual = ahora.getFullYear();
-                    var mesActual = ahora.getMonth();
-                    mesActual = mesActual+1;
-                    mesActual = (mesActual <= 9)?"0" + mesActual : mesActual;
-                    var diaActual = ahora.getDate();
-                    diaActual = (diaActual <= 9)?"0" + diaActual : diaActual;
-                    var Fecha = anoActual + "-" + mesActual + "-" + diaActual;		
-                    return Fecha;
-          }
-          //----------------------------------------------------------------
-        
+			//muestra la fecha actual
+			var mostrarFecha = function mostrarFecha(){
+				var ahora = new Date();
+				var anoActual = ahora.getFullYear();
+				var mesActual = ahora.getMonth();
+				mesActual = mesActual+1;
+				mesActual = (mesActual <= 9)?"0" + mesActual : mesActual;
+				var diaActual = ahora.getDate();
+				diaActual = (diaActual <= 9)?"0" + diaActual : diaActual;
+				var Fecha = anoActual + "-" + mesActual + "-" + diaActual;		
+				return Fecha;
+			}
+			//----------------------------------------------------------------
+          
+			$('#header').find('#header1').find('span.emp').text(config.getEmpresa());
+			$('#header').find('#header1').find('span.suc').text(config.getSucursal());
+			$('#header').find('#header1').find('span.username').text(config.getUserName());
+
+			var $username = $('#header').find('#header1').find('span.username');
+			$username.text($('#lienzo_recalculable').find('input[name=user]').val());
+
+			//aqui va el titulo del catalogo
+			$('#barra_titulo').find('#td_titulo').append(config.getTituloApp());
+			$('#barra_acciones').hide();
+
+			//barra para el buscador 
+			$('#barra_buscador').hide();
+
+
+
+			var $select_tipo = $('#lienzo_recalculable').find('div.reppagosdiaria').find('table#busqueda tr td').find('select[name=select_tipo]');
+			var $proveedor = $('#lienzo_recalculable').find('div.reppagosdiaria').find('table#busqueda tr td').find('input[name=proveedor]');
+			var $buscar_proveedor= $('#lienzo_recalculable').find('div.reppagosdiaria').find('table#busqueda tr td').find('a[href*=buscar_proveedor]');
+			var $id_proveedor= $('#lienzo_recalculable').find('input[name=id_proveedor]');
+			var $fecha_inicial = $('#lienzo_recalculable').find('input[name=fecha_inicial]');
+			var $fecha_final = $('#lienzo_recalculable').find('input[name=fecha_final]');
+			var $Buscar_Pagos= $('#lienzo_recalculable').find('div.reppagosdiaria').find('table#busqueda tr td').find('input[value$=Buscar]');
+			var $genera_reporte_cobranzadiaria= $('#lienzo_recalculable').find('div.reppagosdiaria').find('table#busqueda tr td').find('input[value$=PDF]');
+			var $div_pagosdiarios= $('#reppagosdiaria');
+			
+			
+			//Aplicar evento Keypress para que al pulsar enter ejecute la busqueda
+			$(this).aplicarEventoKeypressEjecutaTrigger($select_tipo, $Buscar_Pagos);
+			$(this).aplicarEventoKeypressEjecutaTrigger($proveedor, $Buscar_Pagos);
+			$(this).aplicarEventoKeypressEjecutaTrigger($fecha_inicial, $Buscar_Pagos);
+			$(this).aplicarEventoKeypressEjecutaTrigger($fecha_final, $Buscar_Pagos);
+			
+			$fecha_inicial.attr({'readOnly':true});
+			$fecha_final.attr({'readOnly':true});
+			//$proveedor.attr({'readOnly':true});
+			
+			var tipo_prov_html='<option value="0" selected="yes">Todos</option>';
+			tipo_prov_html += '<option value="1">Proveedores de Materia Prima</option>';
+			tipo_prov_html += '<option value="2">Proveedores Otros</option>';
+			$select_tipo.children().remove();
+			$select_tipo.append(tipo_prov_html);
+			
+	
+			
           $fecha_inicial.DatePicker({
                     format:'Y-m-d',
                     date: $(this).val(),
@@ -310,7 +321,7 @@ $(function() {
           
 
          
-          $Buscar_cobranzadiaria.click(function(event){
+          $Buscar_Pagos.click(function(event){
                event.preventDefault();
                   
                ///GENERA LA VISTA DE LA IMPRESION DEL REPORTE DE POR PROVEEDOR
@@ -321,8 +332,8 @@ $(function() {
 
                     var usuario = config.getUi();
                     
-                    if($fecha_inicial.val() != "" && $fecha_final.val() != ""){ 
-                         var arreglo_parametros = {fecha_inicial : $fecha_inicial.val() , fecha_final : $fecha_final.val(),proveedor : $id_proveedor.val() , iu:config.getUi()};
+                    if($fecha_inicial.val().trim() != "" && $fecha_final.val().trim() != ""){ 
+                         var arreglo_parametros = {fecha_inicial : $fecha_inicial.val(), fecha_final:$fecha_final.val(), proveedor:$proveedor.val(), tipo_prov:$select_tipo.val(), iu:config.getUi()};
                          var restful_json_service = config.getUrlForGetAndPost() + '/getPagosDiaria/out.json';
                          var proveedor="";
                          var producto="";
@@ -355,7 +366,6 @@ $(function() {
               
 								
                               html_numero_kits +='<thead> <tr>';
-
                                    for(var key in header_tabla){
                                         var attrValue = header_tabla[key];
                                         if(attrValue == "Factura"){
@@ -389,13 +399,11 @@ $(function() {
                                         if(attrValue == "Monto Pago"){
 											html_numero_kits +='<td  align="center"  width="100px" id="monto">'+attrValue+'</td>'; 
                                         }
-                                        
                                    }
 
                               html_numero_kits +='</tr> </thead>';
 								
                               for(var i=0; i<body_tabla.length; i++){
-                                   
                                    html_numero_kits +='<tr>';
                                         html_numero_kits +='<td align="center"  width="100px">'+body_tabla[i]["factura"]+'</td>'; 
                                         html_numero_kits +='<td align="center" width="90px">'+body_tabla[i]["fecha_factura"]+'</td>'; 
@@ -408,62 +416,54 @@ $(function() {
                                         html_numero_kits +='<td align="right"  width="10px" id="simbolo_moneda">'+body_tabla[i]["simbolo_moneda_pago"]+'</td>'; 
                                         html_numero_kits +='<td align="right"  width="100px" id="monto">'+$(this).agregar_comas(parseFloat(body_tabla[i]["monto_pago"]).toFixed(2))+'</td>';
                                    html_numero_kits +='</tr>';
-								
                               }
                              
                               html_numero_kits +='<tfoot>';
 							 //esto es para imprimir totales de suma en la vista START
 			
 							if(parseFloat(footer_tabla[0]["suma_pesos_monto_total"])  > 0 || parseFloat(footer_tabla[0]["suma_pesos_monto_pago"]) > 0){	
-
-											html_numero_kits +='<tr>';
-											html_numero_kits +='<td align="right"  width="100px"></td>'; 
-											html_numero_kits +='<td align="right"  width="90px"></td>'; 
-											html_numero_kits +='<td align="right"  width="450px">Total M.N.</td>';
-											html_numero_kits +='<td align="right"  width="10px" id="simbolo_moneda"></td>';
-											html_numero_kits +='<td align="right"  width="100px" id="monto"></td>'; 
-											html_numero_kits +='<td align="right"  width="10px" id="simbolo_moneda">$</td>';
-											html_numero_kits +='<td align="right"  width="100px" id="monto">'+$(this).agregar_comas(parseFloat(footer_tabla[0]["suma_pesos_monto_total"]).toFixed(2))+'</td>';  
-											html_numero_kits +='<td align="center"  width="90px"></td>'; 
-											html_numero_kits +='<td align="right"  width="10px" id="simbolo_moneda">$</td>';
-											html_numero_kits +='<td align="right"  width="100px" id="monto">'+$(this).agregar_comas(parseFloat(footer_tabla[0]["suma_pesos_monto_pago"]).toFixed(2))+'</td>';  
-											html_numero_kits +='</tr>';
-											
+								html_numero_kits +='<tr>';
+								html_numero_kits +='<td align="right"  width="100px"></td>'; 
+								html_numero_kits +='<td align="right"  width="90px"></td>'; 
+								html_numero_kits +='<td align="right"  width="450px">Total M.N.</td>';
+								html_numero_kits +='<td align="right"  width="10px" id="simbolo_moneda"></td>';
+								html_numero_kits +='<td align="right"  width="100px" id="monto"></td>'; 
+								html_numero_kits +='<td align="right"  width="10px" id="simbolo_moneda">$</td>';
+								html_numero_kits +='<td align="right"  width="100px" id="monto">'+$(this).agregar_comas(parseFloat(footer_tabla[0]["suma_pesos_monto_total"]).toFixed(2))+'</td>';  
+								html_numero_kits +='<td align="center"  width="90px"></td>'; 
+								html_numero_kits +='<td align="right"  width="10px" id="simbolo_moneda">$</td>';
+								html_numero_kits +='<td align="right"  width="100px" id="monto">'+$(this).agregar_comas(parseFloat(footer_tabla[0]["suma_pesos_monto_pago"]).toFixed(2))+'</td>';  
+								html_numero_kits +='</tr>';
 							}
 							
 							if(parseFloat(footer_tabla[0]["suma_dolares_monto_total"])  > 0 || parseFloat(footer_tabla[0]["suma_dolares_monto_pago"]) > 0){	
-								
-											html_numero_kits +='<tr>';
-											html_numero_kits +='<td align="right"  width="100px"></td>'; 
-											html_numero_kits +='<td align="right" width="90px"></td>'; 
-											html_numero_kits +='<td align="right"  width="450px">Total USD</td>';
-											html_numero_kits +='<td align="right"  width="10px" id="simbolo_moneda"></td>';
-											html_numero_kits +='<td align="right"  width="100px" id="monto"></td>'; 
-											html_numero_kits +='<td align="right"  width="10px" id="simbolo_moneda">USD</td>';
-											html_numero_kits +='<td align="right"  width="100px" id="monto">'+$(this).agregar_comas(parseFloat(footer_tabla[0]["suma_dolares_monto_total"]).toFixed(2))+'</td>';  
-											html_numero_kits +='<td align="center"  width="90px"></td>'; 
-											html_numero_kits +='<td align="right"  width="10px" id="simbolo_moneda">USD</td>';
-											html_numero_kits +='<td align="right"  width="100px" id="monto">'+$(this).agregar_comas(parseFloat(footer_tabla[0]["suma_dolares_monto_pago"]).toFixed(2))+'</td>';
-											html_numero_kits +='</tr>';
-											
-							
-											
+								html_numero_kits +='<tr>';
+								html_numero_kits +='<td align="right"  width="100px"></td>'; 
+								html_numero_kits +='<td align="right" width="90px"></td>'; 
+								html_numero_kits +='<td align="right"  width="450px">Total USD</td>';
+								html_numero_kits +='<td align="right"  width="10px" id="simbolo_moneda"></td>';
+								html_numero_kits +='<td align="right"  width="100px" id="monto"></td>'; 
+								html_numero_kits +='<td align="right"  width="10px" id="simbolo_moneda">USD</td>';
+								html_numero_kits +='<td align="right"  width="100px" id="monto">'+$(this).agregar_comas(parseFloat(footer_tabla[0]["suma_dolares_monto_total"]).toFixed(2))+'</td>';  
+								html_numero_kits +='<td align="center"  width="90px"></td>'; 
+								html_numero_kits +='<td align="right"  width="10px" id="simbolo_moneda">USD</td>';
+								html_numero_kits +='<td align="right"  width="100px" id="monto">'+$(this).agregar_comas(parseFloat(footer_tabla[0]["suma_dolares_monto_pago"]).toFixed(2))+'</td>';
+								html_numero_kits +='</tr>';
 							}
 							
 							if(parseFloat(footer_tabla[0]["suma_euros_monto_total"])  > 0 || parseFloat(footer_tabla[0]["suma_euros_monto_pago"]) > 0){	
-											html_numero_kits +='<tr>';
-											html_numero_kits +='<td align="right"  width="100px"></td>'; 
-											html_numero_kits +='<td align="right" width="90px"></td>'; 
-											html_numero_kits +='<td align="right"  width="450px">Total EUR</td>';
-											html_numero_kits +='<td align="right"  width="10px" id="simbolo_moneda"></td>';
-											html_numero_kits +='<td align="right"  width="100px" id="monto"></td>'; 
-											html_numero_kits +='<td align="right"  width="10px" id="simbolo_moneda">&#8364;</td>';
-											html_numero_kits +='<td align="right"  width="100px" id="monto">'+$(this).agregar_comas(parseFloat(footer_tabla[0]["suma_euros_monto_total"]).toFixed(2))+'</td>';  
-											html_numero_kits +='<td align="center"  width="90px"></td>'; 
-											html_numero_kits +='<td align="right"  width="10px" id="simbolo_moneda">&#8364;</td>';
-											html_numero_kits +='<td align="right"  width="100px" id="monto">'+$(this).agregar_comas(parseFloat(footer_tabla[0]["suma_euros_monto_pago"]).toFixed(2))+'</td>';
-											html_numero_kits +='</tr>';
-											
+								html_numero_kits +='<tr>';
+								html_numero_kits +='<td align="right"  width="100px"></td>'; 
+								html_numero_kits +='<td align="right" width="90px"></td>'; 
+								html_numero_kits +='<td align="right"  width="450px">Total EUR</td>';
+								html_numero_kits +='<td align="right"  width="10px" id="simbolo_moneda"></td>';
+								html_numero_kits +='<td align="right"  width="100px" id="monto"></td>'; 
+								html_numero_kits +='<td align="right"  width="10px" id="simbolo_moneda">&#8364;</td>';
+								html_numero_kits +='<td align="right"  width="100px" id="monto">'+$(this).agregar_comas(parseFloat(footer_tabla[0]["suma_euros_monto_total"]).toFixed(2))+'</td>';  
+								html_numero_kits +='<td align="center"  width="90px"></td>'; 
+								html_numero_kits +='<td align="right"  width="10px" id="simbolo_moneda">&#8364;</td>';
+								html_numero_kits +='<td align="right"  width="100px" id="monto">'+$(this).agregar_comas(parseFloat(footer_tabla[0]["suma_euros_monto_pago"]).toFixed(2))+'</td>';
+								html_numero_kits +='</tr>';
 							}
 										
                               html_numero_kits += '</table>';
@@ -482,23 +482,23 @@ $(function() {
                }            
           }); 
           
-                    //click generar reporte de pronostico de Cobranza
-          $genera_reporte_cobranzadiaria.click(function(event){
-                    event.preventDefault();
+		//click generar reporte de pronostico de Cobranza
+		$genera_reporte_cobranzadiaria.click(function(event){
+			event.preventDefault();
+			var proveedor = ($proveedor.val()=='')? '0':$proveedor.val();
+			
+			var fecha_inicial = $fecha_inicial.val();//fecha inicial
+			var fecha_final = $fecha_final.val();//fecha final
+			var usuario=config.getUi();//usuario
+			
+			var cadena = proveedor+"___"+fecha_inicial+"___"+fecha_final+"___"+usuario+"___"+$select_tipo.val();//cadena que incluye los 5 parametros anteriores
 
-
-                    var proveedor=$id_proveedor.val();//nombre del proveedor
-                    var fecha_inicial = $fecha_inicial.val();//fecha inicial
-                    var fecha_final = $fecha_final.val();//fecha final
-                    var usuario=config.getUi();//usuario
-                    var cadena = proveedor+"___"+fecha_inicial+"___"+fecha_final+"___"+usuario //cadena que incluye los 4 parametros anteriores
-
-                    if(fecha_inicial != 0 && fecha_final !=0){
-						var input_json = config.getUrlForGetAndPost() + '/getPagosDiaria/'+cadena+'/out.json';
-						window.location.href=input_json;
-                    }else{
-						jAlert("Debe elegir el rango la fecha inicial y su fecha final par la busqueda","Atencion!!!")
-                    }
-          });
+			if(fecha_inicial!='' && fecha_final!=''){
+				var input_json = config.getUrlForGetAndPost() + '/getPagosDiaria/'+cadena+'/out.json';
+				window.location.href=input_json;
+			}else{
+				jAlert("Debe elegir el rango la fecha inicial y su fecha final par la busqueda","Atencion!!!")
+			}
+		});
           
 });
