@@ -40,18 +40,18 @@
                     <div class="reppagosdiaria" style="background-color:#ffffff;">
                         <table id="busqueda" border="0"  >
 							<tr>
-								<td colspan="11" height="10">&nbsp;</td>
+								<td colspan="13" height="10">&nbsp;</td>
 							</tr>
                             <tr>
-
                                 <td width="10"></td>
-                                
-                                <td width="90" >Fecha inicial</td>
+                                <td width="90" >Fecha&nbsp;inicial</td>
                                 <td width="20" ></td>
-                                <td width="90" >Fecha Final</td>
-
-                                <td width="10"> </td>
-                                <td width="300">Proveedor </td>
+                                <td width="90" >Fecha&nbsp;Final</td>
+                                <td width="20"></td>
+                                <td width="200">Tipo&nbsp;de&nbsp;factura</td>
+                                
+                                <td width="20"> </td>
+                                <td width="300">Proveedor</td>
                                 <td width="50"></td>
                                 <td width="20"></td>
                                 <td width="20"></td>
@@ -64,18 +64,21 @@
                                 <td width="90"><INPUT TYPE="text" name="fecha_inicial" style="width:90px;"></td>
                                 <td width="20" align ="center"> </td>
                                 <td width="90"><INPUT TYPE="text" name="fecha_final" style="width:90px;"></td>
-                                <td width="40"></td>
+                                <td width="20"></td>
+                                <td width="200"><select name="select_tipo" style="width:200px;" title="Seleccionar el tipo de Proveedor"></select></td>
+                                
+                                <td width="20"></td>
                                 <td width="300"><INPUT TYPE="text" name="proveedor" style="width:300px;"></td>
 								<td width="60"><a href="buscar_proveedor" value="" style="font-size:13px;">(Buscar)</a></td>
                                 
                                 <td width="50"></td>
-                                <td width="20"><INPUT TYPE="button"  value="Buscar"></td>
+                                <td width="20"><INPUT TYPE="button"  value="Buscar" style="width:60px;"></td>
                                 <td width="20"></td>
-                                <td width="20"><INPUT TYPE="button"  value="Generar_PDF"></td>
+                                <td width="20"><INPUT TYPE="button"  value="PDF" style="width:60px;"></td>
                                 <td width="10">&nbsp;</td>
                             </tr>
                             <tr>
-                                <td colspan="12" height="10">&nbsp;</td>
+                                <td colspan="13" height="10">&nbsp;</td>
                             </tr>
                             
                             
