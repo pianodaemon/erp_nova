@@ -7,6 +7,40 @@ $(function() {
 		return work.join(',');
 	};
 	
+	//funcion para hacer que un campo solo acepte numeros
+	$permitir_solo_numeros = function($campo){
+		//validar campo costo, solo acepte numeros y punto
+		$campo.keypress(function(e){
+			// Permitir  numeros, borrar, suprimir, TAB, puntos, comas
+			if (e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
+				return true;
+			}else {
+				return false;
+			}
+		});
+	}
+	
+	
+	$aplicar_evento_focus_input = function( $campo_input ){
+		$campo_input.focus(function(e){
+			if($(this).val() == ' ' || parseFloat($(this).val()) <= 0){
+				$(this).val('');
+			}
+		});
+	}
+	
+	$aplicar_evento_blur_input = function( $campo_input ){
+		//pone cero al perder el enfoque, cuando no se ingresa un valor o cuando el valor es igual a cero, si hay un valor mayor que cero no hace nada
+		$campo_input.blur(function(e){
+			if(parseFloat($campo_input.val())==0 || $campo_input.val()==""){
+				$campo_input.val(0);
+			}
+			$campo_input.val(parseFloat($campo_input.val()).toFixed(2))
+		});
+	}
+	
+	
+	
 	$('#header').find('#header1').find('span.emp').text($('#lienzo_recalculable').find('input[name=emp]').val());
 	$('#header').find('#header1').find('span.suc').text($('#lienzo_recalculable').find('input[name=suc]').val());
         
@@ -407,7 +441,7 @@ $(function() {
 		var $forma_selected = $('#' + form_to_show).clone();
 		$forma_selected.attr({id : form_to_show + id_to_show});
 		
-		$('#forma-clientsdest-window').css({"margin-left": -400, 	"margin-top": -265});
+		$('#forma-clientsdest-window').css({"margin-left": -410, 	"margin-top": -265});
 		$forma_selected.prependTo('#forma-clientsdest-window');
 		$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
 		$tabs_li_funxionalidad();		
@@ -433,6 +467,8 @@ $(function() {
 		var $check_sello = $('#forma-clientsdest-window').find('input[name=check_sello]');
 		var $check_efectivo = $('#forma-clientsdest-window').find('input[name=check_efectivo]');
 		var $check_cheque = $('#forma-clientsdest-window').find('input[name=check_cheque]');
+		var $select_serv = $('#forma-clientsdest-window').find('select[name=select_serv]');
+		var $costo_serv = $('#forma-clientsdest-window').find('input[name=costo_serv]');
 		
 		var $razon_cliente = $('#forma-clientsdest-window').find('input[name=razon_cliente]');
 		var $id_cliente = $('#forma-clientsdest-window').find('input[name=id_cliente]');
@@ -454,6 +490,11 @@ $(function() {
 		$folio.css({'background' : '#DDDDDD'});
 		//$rfc.css({'background' : '#DDDDDD'});
 		$identificador.attr({'value' : 0});
+		$permitir_solo_numeros($costo_serv);
+		$aplicar_evento_focus_input($costo_serv);
+		$aplicar_evento_blur_input($costo_serv);
+		$costo_serv.val(parseFloat(0).toFixed(2));
+		
 		var respuestaProcesada = function(data){
 			if ( data['success'] == "true" ){
 				jAlert("Los datos se guardaron  con &eacute;xito", 'Atencion!');
@@ -466,7 +507,7 @@ $(function() {
 				$('#forma-clientsdest-window').find('div.interrogacion').css({'display':'none'});
 				
 				var valor = data['success'].split('___');
-                                     
+				
 				//muestra las interrogaciones
 				for (var element in valor){
 					tmp = data['success'].split('___')[element];
@@ -493,6 +534,16 @@ $(function() {
 			var tipo_hmtl = '<option value="1" selected="yes">Nacional</option>';
 			tipo_hmtl += '<option value="2">Extranjero</option>';
 			$select_tipo.append(tipo_hmtl);
+			
+			
+			//Alimentando los campos select de las pais
+			$select_serv.children().remove();
+			var serv_hmtl = '<option value="0" selected="yes">[-Seleccionar Servicio-]</option>';
+			$.each(entry['Servicios'],function(entryIndex,serv){
+				serv_hmtl += '<option value="' + serv['id'] + '"  >' + serv['sku']+'-'+ serv['descripcion'] + '</option>';
+			});
+			$select_serv.append(serv_hmtl);
+			
 			
 			//Alimentando los campos select de las pais
 			$select_pais.children().remove();
@@ -603,11 +654,8 @@ $(function() {
 			}
 		});
 		
-        
-        
-        
-        
-        
+		
+		
         $cerrar_plugin.bind('click',function(){
 			var remove = function() {$(this).remove();};
 			$('#forma-clientsdest-overlay').fadeOut(remove);
@@ -657,7 +705,7 @@ $(function() {
 			$forma_selected.attr({id : form_to_show + id_to_show});
 			
 			$(this).modalPanel_clientsdest();
-			$('#forma-clientsdest-window').css({"margin-left": -400, 	"margin-top": -265});
+			$('#forma-clientsdest-window').css({"margin-left": -410, 	"margin-top": -265});
 			
 			$forma_selected.prependTo('#forma-clientsdest-window');
 			$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
@@ -687,6 +735,9 @@ $(function() {
 			var $check_efectivo = $('#forma-clientsdest-window').find('input[name=check_efectivo]');
 			var $check_cheque = $('#forma-clientsdest-window').find('input[name=check_cheque]');
 			
+			var $select_serv = $('#forma-clientsdest-window').find('select[name=select_serv]');
+			var $costo_serv = $('#forma-clientsdest-window').find('input[name=costo_serv]');
+			
 			var $razon_cliente = $('#forma-clientsdest-window').find('input[name=razon_cliente]');
 			var $id_cliente = $('#forma-clientsdest-window').find('input[name=id_cliente]');
 			var $no_cliente = $('#forma-clientsdest-window').find('input[name=no_cliente]');
@@ -703,6 +754,10 @@ $(function() {
 			
 			$folio.attr({ 'readOnly':true });
 			//$destinatario.attr({ 'readOnly':true });
+			$permitir_solo_numeros($costo_serv);
+			$aplicar_evento_focus_input($costo_serv);
+			$aplicar_evento_blur_input($costo_serv);
+			
 			
 			if(accion_mode == 'edit'){
 				
@@ -764,6 +819,20 @@ $(function() {
 					$razon_cliente.attr({'value' : entry['Datos'][0]['cliente']});
 					$id_cliente.attr({'value' : entry['Datos'][0]['cliente_id']});
 					$no_cliente.attr({'value' : entry['Datos'][0]['no_control']});
+					
+					$costo_serv.attr({'value' : entry['Datos'][0]['serv_costo']});
+					
+					//Alimentando los campos select de Servicios para maniobras
+					$select_serv.children().remove();
+					var serv_hmtl = '<option value="0">[-Seleccionar Servicio-]</option>';
+					$.each(entry['Servicios'],function(entryIndex,serv){
+						if(parseInt(entry['Datos'][0]['serv_id'])==parseInt(serv['id'])){
+							serv_hmtl += '<option value="' + serv['id'] + '" selected="yes">' + serv['sku']+'-'+ serv['descripcion'] + '</option>';
+						}else{
+							serv_hmtl += '<option value="' + serv['id'] + '">' + serv['sku']+'-'+ serv['descripcion'] + '</option>';	
+						}
+					});
+					$select_serv.append(serv_hmtl);
 					
 					
 					if(parseInt(entry['Datos'][0]['cliente'])>0){

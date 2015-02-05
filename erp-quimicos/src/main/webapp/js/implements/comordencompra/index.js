@@ -1425,15 +1425,15 @@ $(function() {
 				for (var element in valor){
 					tmp = data['success'].split('___')[element];
 					longitud = tmp.split(':');
-
+					
 					if( longitud.length > 1 ){
 						$('#forma-comordencompra-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
 						.parent()
 						.css({'display':'block'})
 						.easyTooltip({tooltipId: "easyTooltip2",content: tmp.split(':')[1]});
-
+						
 						//alert(tmp.split(':')[0]);
-
+						
 						if(parseInt($("tr", $grid_productos).size())>0){
 							for (var i=1;i<=parseInt($("tr", $grid_productos).size());i++){
 								if((tmp.split(':')[0]=='cantidad'+i) || (tmp.split(':')[0]=='costo'+i)){
@@ -1453,7 +1453,7 @@ $(function() {
 									
 									//$grid_productos.find('input[name=' + tmp.split(':')[0] + ']').css({'background' : '#d41000'});
 									//$grid_productos.find('select[name=' + tmp.split(':')[0] + ']').css({'background' : '#d41000'});
-
+									
 									var tr_warning = '<tr>';
 										tr_warning += '<td width="20"><div><IMG SRC="../../img/icono_advertencia.png" align="top" rel="warning_sku"></td>';
 										tr_warning += '<td width="120">';
