@@ -167,7 +167,7 @@
 												<td width="78">Tipo&nbsp;de&nbsp;rodada</td>
 												<td width="120"><select name="select_tipo_rodada" style="width:120px;"></select></td>
                                                 <td width="45"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_trodada"></div></td>
-                                                <td width="75">Tipo caja</td>
+                                                <td width="75">Tipo&nbsp;caja</td>
                                                 <td width="140"><select name="select_tipo_caja" style="width:140px;"></select></td>
                                                 <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_tcaja"></div></td>
                                             </tr>
@@ -180,7 +180,7 @@
                                                 <td width="85">Capacidad&nbsp;m&#179;</td>
                                                 <td width="110"><INPUT TYPE="text" name="cap_volumen" style="width:110px;"></td>
 												<td width="45"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_volumen"></div></td>
-												<td width="78">Capacidad Ton.</td>
+												<td width="78">Capacidad kg.</td>
 												<td width="120"><INPUT TYPE="text" name="cap_peso" style="width:120px;"></td>
                                                 <td width="45"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_peso"></div></td>
                                                 <td width="75">Clasificaci&oacute;n</td>

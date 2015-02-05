@@ -259,6 +259,7 @@
 												<a href="#" class="sub">Reportes &raquo;</a>
 												<ul>
 													<li class="topline"><a href="../repedoctaprov/startup.agnux">Estados de Cuenta</a></li>
+													<li class="topline"><a href="../reppagosdiaria/startup.agnux">Relacion de Pagos Diarios</a></li>
 													<li class="topline"><a href="../repprogramacionpagos/startup.agnux">Programaci&oacute;n de pagos</a></li>
 													<li class="topline"><a href="../cxprepantiguedadsaldos/startup.agnux">Antig&uuml;edad de Saldos</a></li>
 													<li class="topline"><a href="../cxprepsaldomes/startup.agnux">Saldo Mensual</a></li>
@@ -479,7 +480,7 @@
 									
 									
 									<li class="accessible">
-										<a href="http://jdsharp.us" class="accessible">Rutas &raquo;</a>
+										<a href="http://jdsharp.us" class="accessible">Log&iacute;stica &raquo;</a>
 										<ul>
 											<li>
 												<a href="#" class="sub">Cat&aacute;logos &raquo;</a>
@@ -491,6 +492,7 @@
 													<li><a href="../logvehiculomarca/startup.agnux">Marca</a></li>
 													<li><a href="../logvehiculotiporodada/startup.agnux">Tipo Rodada</a></li>
 													<li><a href="../logvehiculotipocaja/startup.agnux">Tipo Caja</a></li>
+													<li><a href="../logtiporechazo/startup.agnux">Tipo de Rechazo</a></li>
 													<li><a href="../logtarifario/startup.agnux">Tarifario</a></li>
 												</ul>
 											</li>
@@ -502,8 +504,16 @@
 													
 													
 													<li class="topline"><a href="../logadmviaje/startup.agnux">Viajes</a></li>
+													<li class="topline"><a href="../logevidencias/startup.agnux">Evidencias</a></li>
 													<li class="topline"><a href="../logcargadoc/startup.agnux">Carga de Documentos</a></li>
 													<li class="topline"><a href="../logregcarga/startup.agnux">Registro de Cargas</a></li>
+												</ul>
+											</li>
+											
+											<li>
+												<a href="#" class="sub">Reportes &raquo;</a>
+												<ul>
+													<li class="topline"><a href="../logreporteviajes/startup.agnux">Reporte de Viajes</a></li>
 												</ul>
 											</li>
 										</ul>
