@@ -42,9 +42,9 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 @SessionAttributes({"user"})
 @RequestMapping("/reppagosdiaria/")
-public class RepPagosDiariaController {
+public class CxpRepPagosDiariaController {
     
-     private static final Logger log  = Logger.getLogger(RepPagosDiariaController.class.getName());
+     private static final Logger log  = Logger.getLogger(CxpRepPagosDiariaController.class.getName());
     ResourceProject resource = new ResourceProject();
     
     
@@ -109,7 +109,7 @@ public class RepPagosDiariaController {
     throws ServletException, IOException {
         
        
-        log.log(Level.INFO, "Ejecutando starUp de {0}", RepPagosDiariaController.class.getName());
+        log.log(Level.INFO, "Ejecutando starUp de {0}", CxpRepPagosDiariaController.class.getName());
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
         
         
@@ -171,7 +171,7 @@ public class RepPagosDiariaController {
             @RequestParam(value="iu", required=true) String id_user_cod,
             Model model
             ) {
-        log.log(Level.INFO, "Ejecutando getPagosDiaria de {0}", RepPagosDiariaController.class.getName());
+        log.log(Level.INFO, "Ejecutando getPagosDiaria de {0}", CxpRepPagosDiariaController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
         ArrayList<HashMap<String, String>>  pagos = new ArrayList<HashMap<String, String>>();///* //mi ed 1 start
