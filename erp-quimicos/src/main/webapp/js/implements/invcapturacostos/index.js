@@ -384,7 +384,6 @@ $(function() {
 			$('#forma-buscaproducto-overlay').fadeOut(remove);
 			$('#forma-invcapturacostos-window').find('input[name=nombre_producto]').focus();
 		});
-		
 	}//termina buscador de productos
 	
     
@@ -442,9 +441,9 @@ $(function() {
 			if(captura_costo_ref=="true"){
 				//Calcular CIT y PMIN
 				$tr = $(this).parent().parent();
-				$tr.find('input[name=cit]').val( parseFloat($tr.find('input[name=costo_ultimo]').val()) + parseFloat($tr.find('input[name=ca]').val()) + (parseFloat($tr.find('input[name=costo_ultimo]').val())*(parseFloat($tr.find('input[name=igi]').val())/100)) + (parseFloat($tr.find('input[name=costo_ultimo]').val())*(parseFloat($tr.find('input[name=gi]').val())/100)) );
+				//$tr.find('input[name=cit]').val( parseFloat($tr.find('input[name=costo_ultimo]').val()) + parseFloat($tr.find('input[name=ca]').val()) + (parseFloat($tr.find('input[name=costo_ultimo]').val())*(parseFloat($tr.find('input[name=igi]').val())/100)) + (parseFloat($tr.find('input[name=costo_ultimo]').val())*(parseFloat($tr.find('input[name=gi]').val())/100)) );
+				$tr.find('input[name=cit]').val(parseFloat($tr.find('input[name=costo_ultimo]').val()) + parseFloat($tr.find('input[name=ca]').val()) + (parseFloat($tr.find('input[name=costo_ultimo]').val())*(parseFloat($tr.find('input[name=igi]').val())/100)) + ((parseFloat($tr.find('input[name=costo_ultimo]').val()) + (parseFloat($tr.find('input[name=costo_ultimo]').val())*(parseFloat($tr.find('input[name=igi]').val())/100)))*(parseFloat($tr.find('input[name=gi]').val())/100)));
 				$tr.find('input[name=pmin]').val(parseFloat($tr.find('input[name=cit]').val())/(1 - (parseFloat($tr.find('input[name=margen_pmin]').val())/100)));
-				
 				$tr.find('input[name=cit]').val(parseFloat($tr.find('input[name=cit]').val()).toFixed(2));
 				$tr.find('input[name=pmin]').val(parseFloat($tr.find('input[name=pmin]').val()).toFixed(2));
 			}
@@ -856,7 +855,6 @@ $(function() {
 		});
 		
 		
-				
 		
 		$submit_actualizar.bind('click',function(){
 			var trCount = $("tr", $grid_productos).size();

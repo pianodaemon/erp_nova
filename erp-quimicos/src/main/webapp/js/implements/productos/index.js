@@ -75,6 +75,7 @@ $(function() {
 		arrayTProd = data['prodTipos'];
 		arrayLineas = data['Lineas'];
 		arrayMarcas = data['Marcas'];
+		arrayMonedas = data['Monedas'];
 		
 		rolVendedor=data['Extra'][0]['rol_agente_venta'];
 		
@@ -1045,6 +1046,7 @@ $(function() {
 		var $select_clasifstock = $('#forma-product-window').find('select[name=select_clasifstock]');
 		var $select_iva = $('#forma-product-window').find('select[name=select_iva]');
 		var $select_ieps = $('#forma-product-window').find('select[name=select_ieps]');
+		var $select_moneda = $('#forma-product-window').find('select[name=select_moneda]');
 		
 		var $check_noserie = $('#forma-product-window').find('input[name=check_noserie]');
 		var $check_nom = $('#forma-product-window').find('input[name=check_nom]');
@@ -1385,6 +1387,7 @@ $(function() {
 				grupo_hmtl += '<option value="' + lin['id'] + '"  >' + lin['titulo'] + '</option>';
 			});
 			$select_grupo.append(grupo_hmtl);
+			
 			//ProdTipos
 			//carga select de tipos de producto
 			$select_prod_tipo.children().remove();
@@ -1454,6 +1457,15 @@ $(function() {
 				ieps_hmtl += '<option value="' + ieps['id'] + '"  >' + ieps['titulo'] + '</option>';
 			});
 			$select_ieps.append(ieps_hmtl);
+			
+			//Alimentando select de monedas
+			$select_moneda.children().remove();
+			var moneda_hmtl = '';
+			$.each(arrayMonedas,function(entryIndex,mon){
+				moneda_hmtl += '<option value="' + mon['id'] + '"  >' + mon['descripcion_abr'] + '</option>';
+			});
+			$select_moneda.append(moneda_hmtl);
+			
 			
 			//carga select de presentaciones disponibles
 			$select_disponibles.children().remove();
@@ -2016,6 +2028,7 @@ $(function() {
 				var $select_clasifstock = $('#forma-product-window').find('select[name=select_clasifstock]');
 				var $select_iva = $('#forma-product-window').find('select[name=select_iva]');
 				var $select_ieps = $('#forma-product-window').find('select[name=select_ieps]');
+				var $select_moneda = $('#forma-product-window').find('select[name=select_moneda]');
 				
 				var $check_noserie = $('#forma-product-window').find('input[name=check_noserie]');
 				var $check_nom = $('#forma-product-window').find('input[name=check_nom]');
@@ -2606,6 +2619,20 @@ $(function() {
 					});
 					$select_ieps.append(ieps_hmtl);
 					
+					
+					$select_moneda.children().remove();
+					var moneda_hmtl = '';
+					if(parseInt(entry['Producto'][0]['mon_id'])==0){
+						moneda_hmtl = '<option value="0" selected="yes">[ - - - ]</option>';
+					}
+					$.each(arrayMonedas,function(entryIndex,mon){
+						if(parseInt(entry['Producto'][0]['mon_id'])==parseInt(mon['id'])){
+							moneda_hmtl += '<option value="' + mon['id'] + '" selected="yes">' + mon['descripcion_abr'] + '</option>';
+						}else{
+							moneda_hmtl += '<option value="' + mon['id'] + '">' + mon['descripcion_abr'] + '</option>';
+						}
+					});
+					$select_moneda.append(moneda_hmtl);
 					
 					
 					//carga select de presentaciones disponibles
