@@ -651,7 +651,7 @@ public class PdfReporteComOrdenDeCompraFormatoDos {
                 
                 double total_importe = 0;
                 
-                float [] tam_tamBody = {2,4,1.5f,1.5f,1,2,1,2};//Tamaño de las Columnas.
+                float [] tam_tamBody = {2,4.5f,1.5f,1.5f,0.5f,1.8f,0.5f,2};//Tamaño de las Columnas.
                 PdfPTable tablaBody = new PdfPTable(tam_tamBody);
                 PdfPCell celdaBody;
                 tablaBody.setKeepTogether(false);
