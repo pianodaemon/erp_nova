@@ -314,7 +314,7 @@
 																	<td><input type="text" name="sku_minigrid" style="width:100px;"></td>
 																	<td></td>
 																	<td>&nbsp;&nbsp;&nbsp;<a href="agregar_produ_minigrid">(Agregar)</a></td>
-																	<td width=65px></td>
+																	<td width="65"></td>
 																	<td>Descripcion&nbsp;&nbsp;</td>
 																	<td><input type="text" name="descr_prod_minigrid" style="width:250px;"></td>
 																	<td></td>
@@ -385,7 +385,7 @@
 												<td width="5">&nbsp;</td>
 												<td width="110">Clasificaci&oacute;n&nbsp;Stock</td>
 												<td width="5"></td>
-												<td width="190" colspan="4"><select name="select_clasifstock" style="width:190px;"></select></td>
+												<td width="195" colspan="4"><select name="select_clasifstock" style="width:195px;"></select></td>
 												<td width="50"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_stock"></div></td>
 												<td width="375" colspan="3" align="center" style="background-color:#e7e8ea;">Seleccionar presentaciones del producto</td>
 												<!--
@@ -399,10 +399,10 @@
 												<td width="5">&nbsp;</td>
 												<td width="110"></td>
 												<td width="5"></td>
-												<td width="40"></td>
+												<td width="45"></td>
 												<td width="50"></td>
-												<td width="60"></td>
-												<td width="40"></td>
+												<td width="50"></td>
+												<td width="50"></td>
 												<td width="50"></td>
 												<td width="180" align="center" style="background-color:#A8A9AB;">Disponibles</td>
 												<td width="15"></td>
@@ -416,10 +416,10 @@
 												<td width="5" height="10"></td>
 												<td width="110">Tiempo&nbsp;de&nbsp;Entrega</td>
 												<td width="5"></td>
-												<td width="50"><input type="text" name="tentrega" value="0" style="width:45px;"></td>
+												<td width="45"><input type="text" name="tentrega" value="0" style="width:45px;"></td>
 												<td width="50">&nbsp;d&iacute;as</td>
-												<td width="60"></td>
-												<td width="40"></td>
+												<td width="50">Moneda</td>
+												<td width="50"><select name="select_moneda" style="width:50px;"></select></td>
 												<td width="50"></td>
 												<td width="180" rowspan="8" valign="top">
 													<select name="disponibles" multiple="multiple" style="width: 180px; height:138px;"></select>
@@ -436,10 +436,10 @@
 												<td width="5">&nbsp;</td>
 												<td width="110"></td>
 												<td width="5"></td>
-												<td width="40"></td>
+												<td width="45"></td>
 												<td width="50"></td>
-												<td width="60"></td>
-												<td width="40"></td>
+												<td width="50"></td>
+												<td width="50"></td>
 												<td width="50"></td>
 												<!--<td width="180"></td>-->
 												<td width="15"></td>
@@ -451,9 +451,9 @@
 												<td width="5"></td>
 												<td width="110">Requiere&nbsp;No.&nbsp;de&nbsp;Serie</td>
 												<td width="5"></td>
-												<td width="40"><input type="checkbox" name="check_noserie"></td>
-												<td width="110" colspan="2">&nbsp;Requiere&nbsp;N.O.M.</td>
-												<td width="40"><input type="checkbox" name="check_nom"></td>
+												<td width="45"><input type="checkbox" name="check_noserie"></td>
+												<td width="100" colspan="2">&nbsp;Requiere&nbsp;N.O.M.</td>
+												<td width="50"><input type="checkbox" name="check_nom"></td>
 												<td width="50"></td>
 												<!--<td width="180"></td>-->
 												<td width="15"></td>
@@ -465,10 +465,10 @@
 												<td width="5">&nbsp;</td>
 												<td width="110"></td>
 												<td width="5"></td>
-												<td width="40"></td>
+												<td width="45"></td>
 												<td width="50"></td>
-												<td width="60"></td>
-												<td width="40"></td>
+												<td width="50"></td>
+												<td width="50"></td>
 												<td width="50"></td>
 												<!--<td width="180"></td>-->
 												<td width="15"></td>
@@ -480,7 +480,7 @@
 												<td width="5" height="10"></td>
 												<td width="110">Requiere&nbsp;No.&nbsp;de&nbsp;Lote</td>
 												<td width="5"></td>
-												<td width="50"><input type="checkbox" name="check_nolote"></td>
+												<td width="45"><input type="checkbox" name="check_nolote"></td>
 												<td width="50">&nbsp;IVA</td>
 												<td width="100" colspan="2">
 													<select name="select_iva" style="width:100px;"></select>
@@ -498,10 +498,10 @@
 												<td width="5">&nbsp;</td>
 												<td width="110"></td>
 												<td width="5"></td>
+												<td width="45"></td>
 												<td width="50"></td>
 												<td width="50"></td>
-												<td width="60"></td>
-												<td width="40"></td>
+												<td width="50"></td>
 												<td width="50"></td>
 												<!--<td width="180"></td>-->
 												<td width="15"></td>
@@ -514,7 +514,7 @@
 												<td width="5" height="10"></td>
 												<td width="110">Requiere&nbsp;Pedimento</td>
 												<td width="5"></td>
-												<td width="50"><input type="checkbox" name="check_pedimento"></td>
+												<td width="45"><input type="checkbox" name="check_pedimento"></td>
 												<td width="50">&nbsp;IEPS</td>
 												<td width="100" colspan="2"><select name="select_ieps" style="width:100px;"></select></td>
 												<td width="50"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_ieps"></div></td>
@@ -528,10 +528,10 @@
 												<td width="5">&nbsp;</td>
 												<td width="110"></td>
 												<td width="5"></td>
-												<td width="40"></td>
+												<td width="45"></td>
 												<td width="50"></td>
-												<td width="60"></td>
-												<td width="40"></td>
+												<td width="50"></td>
+												<td width="50"></td>
 												<td width="50"></td>
 												<!--<td width="180"></td>-->
 												<td width="15"></td>
@@ -543,10 +543,10 @@
 												<td width="5" height="10"></td>
 												<td width="110">Permitir&nbsp;Stock</td>
 												<td width="5"></td>
-												<td width="50"><input type="checkbox" name="check_stock"></td>
+												<td width="45"><input type="checkbox" name="check_stock"></td>
 												<td width="50">&nbsp;Densidad</td>
-												<td width="60"><input type="text" name="densidad" value="1" style="width:60px;" maxlength="8"></td>
-												<td width="40"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_densidad"></div></td>
+												<td width="50"><input type="text" name="densidad" value="1" style="width:50px;" maxlength="8"></td>
+												<td width="50"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_densidad"></div></td>
 												<td width="50"></td>
 												<td width="180" align="center"><a  href="agregar_pres">Agregar >></a></td>
 												<td width="15"></td>
@@ -561,10 +561,10 @@
 												<td width="5" height="10"></td>
 												<td width="110">Punto&nbsp;de&nbsp;Reorden</td>
 												<td width="5"></td>
-												<td width="50"><input type="text" name="punto_reorden" value="0" style="width:45px;" maxlength="10"></td>
+												<td width="45"><input type="text" name="punto_reorden" value="0" style="width:45px;" maxlength="10"></td>
 												<td width="50" align="right">Flete&nbsp;&nbsp;</td>
-												<td width="60"><input type="checkbox" name="check_flete"></td>
-												<td width="40"></td>
+												<td width="50"><input type="checkbox" name="check_flete"></td>
+												<td width="50"></td>
 												<td width="50"></td>
 												<td width="195" colspan="2">Seleccionar presentaci&oacute;n default</td>
 												<td width="180"><select name="select_pres_default" style="width:180px;"></select></td>
@@ -578,10 +578,10 @@
 												<td width="5" height="10"></td>
 												<td width="110">Valor&nbsp;M&aacute;ximo</td>
 												<td width="5"></td>
-												<td width="50"><input type="text" name="valor_maximo" value="0" style="width:45px;" maxlength="10"></td>
+												<td width="45"><input type="text" name="valor_maximo" value="0" style="width:45px;" maxlength="10"></td>
 												<td width="50"></td>
-												<td width="60"></td>
-												<td width="40"></td>
+												<td width="50"></td>
+												<td width="50"></td>
 												<td width="50"></td>
 												<td width="195" colspan="2">Permitir&nbsp;Venta&nbsp;en&nbsp;moneda&nbsp;Extranjera</td>
 												<td width="180"><input type="checkbox" name="check_ventaext"></td>
@@ -596,10 +596,10 @@
 												<td width="5" height="10"></td>
 												<td width="110">Valor&nbsp;M&iacute;nimo</td>
 												<td width="5"></td>
-												<td width="50"><input type="text" name="valor_minimo" value="0" style="width:45px;" maxlength="10"></td>
+												<td width="45"><input type="text" name="valor_minimo" value="0" style="width:45px;" maxlength="10"></td>
 												<td width="50">&nbsp;</td>
-												<td width="60"></td>
-												<td width="40"></td>
+												<td width="50"></td>
+												<td width="50"></td>
 												<td width="50"></td>
 												<td width="195" colspan="2">Permitir&nbsp;Compra&nbsp;en&nbsp;moneda&nbsp;Extranjera</td>
 												<td width="180"><input type="checkbox" name="check_compraext"></td>
