@@ -277,7 +277,7 @@ $(function() {
 		var $forma_selected = $('#' + form_to_show).clone();
 		$forma_selected.attr({ id : form_to_show + id_to_show });
 		
-		$('#forma-cuentascontables-window').css({ "margin-left": -350, 	"margin-top": -200 });
+		$('#forma-cuentascontables-window').css({ "margin-left": -375, 	"margin-top": -200 });
 		$forma_selected.prependTo('#forma-cuentascontables-window');
 		$forma_selected.find('.panelcito_modal').attr({ id : 'panelcito_modal' + id_to_show , style:'display:table'});
 		$tabs_li_funxionalidad();
@@ -292,6 +292,10 @@ $(function() {
 		
 		var $select_centro_costo = $('#forma-cuentascontables-window').find('select[name=select_centro_costo]');
 		var $select_sucursal = $('#forma-cuentascontables-window').find('select[name=select_sucursal]');
+		
+		var $select_nivel = $('#forma-cuentascontables-window').find('select[name=select_nivel]');
+		var $select_naturaleza = $('#forma-cuentascontables-window').find('select[name=select_naturaleza]');
+		var $select_tipo_cta = $('#forma-cuentascontables-window').find('select[name=select_tipo_cta]');
 		
 		var $descripcion = $('#forma-cuentascontables-window').find('input[name=descripcion]');
 		var $chk_cta_detalle = $('#forma-cuentascontables-window').find('input[name=chk_cta_detalle]');
@@ -376,7 +380,6 @@ $(function() {
 			$select_sucursal.append(suc_hmtl);
 			
 			
-			
 			//Carga select de cuentas de Mayor
 			$select_cuenta_mayor.children().remove();
 			var ctamay_hmtl = '';
@@ -404,6 +407,31 @@ $(function() {
 					}
 				});
 			});
+			
+			
+			//Carga select de niveles
+			$select_nivel.children().remove();
+			var nivel_hmtl = '';
+			$.each(Param['NivCta'],function(entryIndex,nivel){
+				nivel_hmtl += '<option value="' + nivel['index'] + '"  >'+ nivel['text'] + '</option>';
+			});
+			$select_nivel.append(nivel_hmtl);
+			
+			//Carga select de naturaleza de la cuenta
+			$select_naturaleza.children().remove();
+			var naturaleza_hmtl = '';
+			$.each(Param['NatCta'],function(entryIndex,nat){
+				naturaleza_hmtl += '<option value="' + nat['index'] + '"  >'+ nat['text'] + '</option>';
+			});
+			$select_naturaleza.append(naturaleza_hmtl);
+			
+			//Carga select de tipo de cuenta
+			$select_tipo_cta.children().remove();
+			var tipo_hmtl = '';
+			$.each(Param['TipoCta'],function(entryIndex,tipo){
+				tipo_hmtl += '<option value="' + tipo['index'] + '"  >'+ tipo['text'] + '</option>';
+			});
+			$select_tipo_cta.append(tipo_hmtl);
 			
 			
 			$cuenta.focus();
@@ -467,7 +495,7 @@ $(function() {
 			$forma_selected.attr({ id : form_to_show + id_to_show });
 			
 			$(this).modalPanel_cuentascontables();
-			$('#forma-cuentascontables-window').css({ "margin-left": -350, 	"margin-top": -200 });
+			$('#forma-cuentascontables-window').css({ "margin-left": -375, 	"margin-top": -200 });
 			
 			$forma_selected.prependTo('#forma-cuentascontables-window');
 			$forma_selected.find('.panelcito_modal').attr({ id : 'panelcito_modal' + id_to_show , style:'display:table'});
@@ -484,6 +512,10 @@ $(function() {
 			
 			var $select_centro_costo = $('#forma-cuentascontables-window').find('select[name=select_centro_costo]');
 			var $select_sucursal = $('#forma-cuentascontables-window').find('select[name=select_sucursal]');
+			
+			var $select_nivel = $('#forma-cuentascontables-window').find('select[name=select_nivel]');
+			var $select_naturaleza = $('#forma-cuentascontables-window').find('select[name=select_naturaleza]');
+			var $select_tipo_cta = $('#forma-cuentascontables-window').find('select[name=select_tipo_cta]');
 			
 			var $descripcion = $('#forma-cuentascontables-window').find('input[name=descripcion]');
 			var $chk_cta_detalle = $('#forma-cuentascontables-window').find('input[name=chk_cta_detalle]');
@@ -599,14 +631,62 @@ $(function() {
 					});
 					$select_cuenta_mayor.append(ctamay_hmtl);
 					
+					
+					
+					//Carga select de niveles
+					$select_nivel.children().remove();
+					var nivel_hmtl = '';
+					if(parseInt(entry['Cc'][0]['nivel'])==0){
+						nivel_hmtl = '<option value="0" selected="yes">[---------]</option>';
+					}
+					$.each(Param['NivCta'],function(entryIndex,nivel){
+						if(parseInt(entry['Cc'][0]['nivel'])==parseInt(nivel['index'])){
+							nivel_hmtl += '<option value="' + nivel['index'] + '" selected="yes">'+ nivel['text'] + '</option>';
+						}else{
+							nivel_hmtl += '<option value="' + nivel['index'] + '"  >'+ nivel['text'] + '</option>';
+						}
+					});
+					$select_nivel.append(nivel_hmtl);
+					
+					//Carga select de naturaleza de la cuenta
+					$select_naturaleza.children().remove();
+					var naturaleza_hmtl = '';
+					if(parseInt(entry['Cc'][0]['naturaleza'])==0){
+						naturaleza_hmtl = '<option value="0" selected="yes">[---------]</option>';
+					}
+					$.each(Param['NatCta'],function(entryIndex,nat){
+						if(parseInt(entry['Cc'][0]['naturaleza'])==parseInt(nat['index'])){
+							naturaleza_hmtl += '<option value="' + nat['index'] + '" selected="yes">'+ nat['text'] + '</option>';
+						}else{
+							naturaleza_hmtl += '<option value="' + nat['index'] + '" >'+ nat['text'] + '</option>';
+						}
+					});
+					$select_naturaleza.append(naturaleza_hmtl);
+					
+					//Carga select de tipo de cuenta
+					$select_tipo_cta.children().remove();
+					var tipo_hmtl = '';
+					if(parseInt(entry['Cc'][0]['tipo'])==0){
+						tipo_hmtl = '<option value="0" selected="yes">[---------]</option>';
+					}
+					$.each(Param['TipoCta'],function(entryIndex,tipo){
+						if(parseInt(entry['Cc'][0]['tipo'])==parseInt(tipo['index'])){
+							tipo_hmtl += '<option value="' + tipo['index'] + '" selected="yes">'+ tipo['text'] + '</option>';
+						}else{
+							tipo_hmtl += '<option value="' + tipo['index'] + '"  >'+ tipo['text'] + '</option>';
+						}
+					});
+					$select_tipo_cta.append(tipo_hmtl);
+					
+					
 					$chk_cta_detalle.attr('checked',  (entry['Cc'][0]['detalle'] == '1')? true:false );
 					
 					var estatus_hmtl = '';
-					if(entry['Cc']['0']['estatus']=='1'){
+					if(entry['Cc'][0]['estatus']=='1'){
 						estatus_hmtl += '<option value="1" selected="yes">Activada</option>';
 						estatus_hmtl += '<option value="2">Desactivada</option>';
 					}
-					if(entry['Cc']['0']['estatus']=='2'){
+					if(entry['Cc'][0]['estatus']=='2'){
 						estatus_hmtl += '<option value="1">Activada</option>';
 						estatus_hmtl += '<option value="2" selected="yes">Desactivada</option>';
 					}

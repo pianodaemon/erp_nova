@@ -19,7 +19,7 @@ $(function() {
                     getUserName: function(){
                         return this.userName;
                     },
-
+                    
                     getUi: function(){
                         return this.ui;
                     },
