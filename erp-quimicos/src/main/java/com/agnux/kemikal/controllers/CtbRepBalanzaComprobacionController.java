@@ -195,8 +195,8 @@ public class CtbRepBalanzaComprobacionController {
         HashMap<String, String> userDat = new HashMap<String, String>();
         ArrayList<HashMap<String, String>> datos = new ArrayList<HashMap<String, String>>();
         
-        //Reporte Auxiliar de Cuentas
-        Integer app_selected = 157;
+        //Reporte Balanza de Comprobacion
+        Integer app_selected = 158;
         String command_selected="reporte";
         String tipo_doc="nav";
         //Decodificar id de usuario
@@ -239,8 +239,8 @@ public class CtbRepBalanzaComprobacionController {
         
         System.out.println("Generando Reporte de Balanza de Comprobación");
         
-        //Reporte Auxiliar de Cuentas
-        Integer app_selected = 157;
+        //Reporte Balanza de Comprobacion
+        Integer app_selected = 158;
         String command_selected="reporte";
         String tipo_doc="pdf";
         

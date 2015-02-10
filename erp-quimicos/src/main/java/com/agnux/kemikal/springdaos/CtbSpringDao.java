@@ -385,7 +385,7 @@ public class CtbSpringDao implements CtbInterfaceDao{
         //System.out.println("Busqueda GetPage: "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query, 
-            new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+            new Object[]{data_string, new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, Object> row = new HashMap<String, Object>();
@@ -427,7 +427,10 @@ public class CtbSpringDao implements CtbInterfaceDao{
                     + "consolida, "
                     + "estatus,"
                     + "ctb_cc_id,"
-                    + "gral_suc_id  "
+                    + "gral_suc_id,"
+                    + "nivel,"
+                    + "tipo,"
+                    + "naturaleza "
                 + "FROM ctb_cta "
                 + "WHERE id=?;";
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
@@ -452,6 +455,9 @@ public class CtbSpringDao implements CtbInterfaceDao{
                     row.put("estatus",String.valueOf(rs.getInt("estatus")));
                     row.put("cc_id",String.valueOf(rs.getInt("ctb_cc_id")));
                     row.put("suc_id",String.valueOf(rs.getInt("gral_suc_id")));
+                    row.put("nivel",String.valueOf(rs.getInt("nivel")));
+                    row.put("tipo",String.valueOf(rs.getInt("tipo")));
+                    row.put("naturaleza",String.valueOf(rs.getInt("naturaleza")));
                     return row;
                 }
             }

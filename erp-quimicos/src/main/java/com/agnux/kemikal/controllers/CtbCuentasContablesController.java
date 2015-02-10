@@ -11,10 +11,11 @@ import com.agnux.common.obj.ResourceProject;
 import com.agnux.common.obj.UserSessionData;
 import com.agnux.kemikal.interfacedaos.CtbInterfaceDao;
 import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfPCell;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -170,6 +171,10 @@ public class CtbCuentasContablesController {
         HashMap<String,Object> jsonretorno = new HashMap<String,Object>();
         HashMap<String, String> userDat = new HashMap<String, String>();
         HashMap<String, Object> data = new HashMap<String, Object>();
+        ArrayList<HashMap<String, String>> nivel_cuenta = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> tipo_cuenta = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> naturaleza_cuenta = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> map = null;
         
         //Decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
@@ -188,6 +193,38 @@ public class CtbCuentasContablesController {
             data.put("versuc", false);
         }
         
+        
+        //Agregar opciones para Nivel de la Cuenta
+        String[] niveles = {"Auxiliar","Mayor"};
+        for (int i=0; i<niveles.length; i++){
+            map = new HashMap<String, String>();
+            map.put("index", String.valueOf(i+1));
+            map.put("text", niveles[i]);
+            nivel_cuenta.add(map);
+        }
+        
+        //Agregar tipo de cuenta
+        String[] tipos = {"Balance","Resultados","De orden"};
+        for (int i=0; i<tipos.length; i++){
+            map = new HashMap<String, String>();
+            map.put("index", String.valueOf(i+1));
+            map.put("text", tipos[i]);
+            tipo_cuenta.add(map);
+        }
+        
+        //Agregar naturaleza de la cuenta
+        String[] naturalezas = {"Deudora","Acreedora"};
+        for (int i=0; i<naturalezas.length; i++){
+            map = new HashMap<String, String>();
+            map.put("index", String.valueOf(i+1));
+            map.put("text", naturalezas[i]);
+            naturaleza_cuenta.add(map);
+        }
+        
+        data.put("NivCta", nivel_cuenta);
+        data.put("TipoCta", tipo_cuenta);
+        data.put("NatCta", naturaleza_cuenta);
+        
         jsonretorno.put("Suc", this.getCtbDao().getCtb_Sucursales(id_empresa));
         jsonretorno.put("CC", this.getCtbDao().getPolizasContables_CentrosCostos(id_empresa, idSucUser));
         jsonretorno.put("CtaMay", this.getCtbDao().getCuentasContables_CuentasMayor(id_empresa));
@@ -195,7 +232,6 @@ public class CtbCuentasContablesController {
         
         return jsonretorno;
     }
-    
     
     
     @RequestMapping(method = RequestMethod.POST, value="/getCuentaContable.json")
@@ -253,6 +289,10 @@ public class CtbCuentasContablesController {
             @RequestParam(value="descripcion_in", required=true) String descripcion_in,
             @RequestParam(value="descripcion_otro", required=true) String descripcion_otro,
             @RequestParam(value="select_sucursal", required=false) String select_sucursal,
+            
+            @RequestParam(value="select_nivel", required=false) String select_nivel,
+            @RequestParam(value="select_naturaleza", required=false) String select_naturaleza,
+            @RequestParam(value="select_tipo_cta", required=false) String select_tipo_cta,
             Model model,@ModelAttribute("user") UserSessionData user
         ) {
         
@@ -295,7 +335,10 @@ public class CtbCuentasContablesController {
                 descripcion_in.toUpperCase()+"___"+
                 descripcion_otro.toUpperCase()+"___"+
                 select_centro_costo+"___"+
-                select_sucursal;
+                select_sucursal+"___"+
+                select_nivel+"___"+
+                select_naturaleza+"___"+
+                select_tipo_cta;
         
         succes = this.getCtbDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
         
