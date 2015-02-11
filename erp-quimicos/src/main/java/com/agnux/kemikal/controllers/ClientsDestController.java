@@ -236,8 +236,10 @@ public class ClientsDestController {
         userDat = this.getHomeDao().getUserById(id_usuario);
         
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
-        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        //Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
         
+        //No aplicar filtro por sucursal
+        Integer id_sucursal=0;
         
         jsonretorno.put("Clientes", this.getCxcDao().getBuscadorClientes(cadena,filtro,id_empresa, id_sucursal));
         
@@ -263,8 +265,10 @@ public class ClientsDestController {
         userDat = this.getHomeDao().getUserById(id_usuario);
         
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
-        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        //Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
         
+        //No aplicar filtro por sucursal
+        Integer id_sucursal=0;
         
         jsonretorno.put("Cliente", this.getCxcDao().getDatosClienteByNoCliente(no_control, id_empresa, id_sucursal));
         

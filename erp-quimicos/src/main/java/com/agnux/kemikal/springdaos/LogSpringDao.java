@@ -1615,7 +1615,7 @@ public class LogSpringDao implements LogInterfaceDao{
                     //row.put("direccion",rs.getString("direccion"));
                     row.put("moneda_id",rs.getString("moneda_id"));
                     row.put("moneda",rs.getString("moneda"));
-
+                    
                     return row;
                 }
             }
@@ -2017,7 +2017,7 @@ public class LogSpringDao implements LogInterfaceDao{
     
     //Obtiene todas las cargas pendientes de entregar de acuerdo a los filtros indicados
     @Override
-    public ArrayList<HashMap<String, Object>> getLogAdmViaje_CargasPendientes(Integer id_empresa, Integer id_suc_user, String no_clie, String fecha_carga, String no_carga, String no_ped, String no_dest, String dest, String poblacion) {
+    public ArrayList<HashMap<String, Object>> getLogAdmViaje_CargasPendientes(Integer id_empresa, Integer id_suc_user, String no_clie, String fecha_carga, String no_carga, String no_ped, String no_dest, String dest, String poblacion, Integer id_alm) {
         String where="";
         if(id_suc_user!=0){
             where +=" and log_doc.gral_suc_id="+id_suc_user;
@@ -2051,6 +2051,11 @@ public class LogSpringDao implements LogInterfaceDao{
         if(!poblacion.trim().equals("")){
             where +=" and gral_mun.titulo ilike '%"+poblacion.toUpperCase()+"%'";
         }
+        
+        if(id_alm>0){
+            where +=" and log_doc.inv_alm_id="+id_alm;
+        }
+        
         
         String sql_to_query = ""
         + "select "
@@ -4470,7 +4475,7 @@ public class LogSpringDao implements LogInterfaceDao{
             + "left join log_vehiculo_tipo on log_vehiculo_tipo.id=log_vehiculos.log_vehiculo_tipo_id "
             + "left join log_ruta_tipo_unidad on (log_ruta_tipo_unidad.log_ruta_id=log_ruta.id and log_ruta_tipo_unidad.log_vehiculo_tipo_id=log_vehiculos.log_vehiculo_tipo_id) "
             + "left join cxp_prov on cxp_prov.id=log_vehiculos.cxp_prov_id  "
-            + "where log_doc.gral_emp_id=? "+ where +" "
+            + "where log_doc.gral_emp_id=? and log_doc.tipo in(1,2) "+ where +" "
             + "and (to_char(log_doc.fecha_carga,'yyyymmdd')::integer BETWEEN to_char('"+fecha_inicial+"'::timestamp with time zone,'yyyymmdd')::integer AND to_char('"+fecha_final+"'::timestamp with time zone,'yyyymmdd')::integer) "
             + "order by log_doc.fecha_carga"
         + ") as sbt2 "
