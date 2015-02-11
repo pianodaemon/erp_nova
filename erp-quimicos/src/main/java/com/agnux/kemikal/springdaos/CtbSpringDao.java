@@ -852,19 +852,19 @@ public class CtbSpringDao implements CtbInterfaceDao{
         
         String sql_to_query = "select * from ctb_reporte(?) as foo(cuenta character varying, descripcion character varying, saldo_inicial character varying, debe character varying, haber character varying, saldo_final character varying);"; 
         System.out.println("data_string: "+data_string);
-        System.out.println("Ctb_DatosRepAuxCtas:: "+sql_to_query);
+        System.out.println("CtbRepBalanzaComp:: "+sql_to_query);
         ArrayList<HashMap<String, String>> hm_facturas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
-            new Object[]{new String(data_string)}, new RowMapper(){
+            new Object[]{data_string}, new RowMapper(){
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, String> row = new HashMap<String, String>();
                     row.put("cuenta",rs.getString("cuenta"));
                     row.put("descripcion",rs.getString("descripcion"));
-                    row.put("saldo_inicial",rs.getString("saldo_inicial"));
-                    row.put("debe",rs.getString("debe"));
-                    row.put("haber",rs.getString("haber"));
-                    row.put("saldo_final",rs.getString("saldo_final"));
+                    row.put("saldo_inicial",StringHelper.roundDouble(rs.getString("saldo_inicial"),2));
+                    row.put("debe",StringHelper.roundDouble(rs.getString("debe"),2));
+                    row.put("haber",StringHelper.roundDouble(rs.getString("haber"),2));
+                    row.put("saldo_final",StringHelper.roundDouble(rs.getString("saldo_final"),2));
                     return row;
                 }
             }
