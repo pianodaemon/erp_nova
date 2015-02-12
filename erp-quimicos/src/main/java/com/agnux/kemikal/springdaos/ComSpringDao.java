@@ -252,7 +252,8 @@ public class ComSpringDao  implements ComInterfaceDao {
             + "com_orden_compra.total,"
             + "(CASE WHEN com_orden_compra.fecha_entrega IS NULL THEN '' ELSE to_char(com_orden_compra.fecha_entrega, 'yyyy-mm-dd') END) AS fecha_entrega, "
             + "com_orden_compra.anexa_documentos,"
-            + "com_orden_compra.tipo_orden_compra "
+            + "com_orden_compra.tipo_orden_compra,"
+            + "com_orden_compra.lab_destino as lab_dest "
         + "from com_orden_compra "
         + "join cxp_prov on cxp_prov.id=com_orden_compra.proveedor_id "
         + "join gral_mun on gral_mun.id=cxp_prov .municipio_id "
@@ -295,6 +296,7 @@ public class ComSpringDao  implements ComInterfaceDao {
                     row.put("fecha_entrega",rs.getString("fecha_entrega"));
                     row.put("anexar_doc",String.valueOf(rs.getBoolean("anexa_documentos")));
                     row.put("tipo_oc",String.valueOf(rs.getInt("tipo_orden_compra")));
+                    row.put("lab_dest",String.valueOf(rs.getBoolean("lab_dest")));
                     return row;
                 }
             }
@@ -1859,6 +1861,9 @@ public class ComSpringDao  implements ComInterfaceDao {
         mapDatos.put("gral_suc_id", String.valueOf(map.get("gral_suc_id")));
         mapDatos.put("inv_alm_id", String.valueOf(map.get("inv_alm_id")));
         mapDatos.put("formato_oc", String.valueOf(map.get("formato_oc")));
+        mapDatos.put("mostrar_lab", String.valueOf(map.get("mostrar_lab")));
+        mapDatos.put("texto_lab", String.valueOf(map.get("texto_lab")));
+        
         return mapDatos;
     }
     

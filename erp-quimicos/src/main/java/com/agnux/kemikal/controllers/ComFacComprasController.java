@@ -51,8 +51,8 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 @Controller
 @SessionAttributes({"user"})
 @RequestMapping("/entradamercancias/")
-public class EntradamercanciasController {
-    private static final Logger log  = Logger.getLogger(EntradamercanciasController.class.getName());
+public class ComFacComprasController {
+    private static final Logger log  = Logger.getLogger(ComFacComprasController.class.getName());
     ResourceProject resource = new ResourceProject();
     
     
@@ -86,7 +86,7 @@ public class EntradamercanciasController {
             @ModelAttribute("user") UserSessionData user)
             throws ServletException, IOException {
         
-        log.log(Level.INFO, "Ejecutando starUp de {0}", EntradamercanciasController.class.getName());
+        log.log(Level.INFO, "Ejecutando starUp de {0}", ComFacComprasController.class.getName());
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
         
         //infoConstruccionTabla.put("id", "Acciones:90");
@@ -191,7 +191,7 @@ public class EntradamercanciasController {
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         ArrayList<HashMap<String, String>> arrayTiposProducto = new ArrayList<HashMap<String, String>>();
         
-        //decodificar id de usuario
+        //Decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
         
         arrayTiposProducto=this.getInvDao().getProducto_Tipos();
@@ -210,7 +210,7 @@ public class EntradamercanciasController {
             Model model
             ) {
         
-        log.log(Level.INFO, "Ejecutando getDatosOrdenCompraJson de {0}", EntradamercanciasController.class.getName());
+        log.log(Level.INFO, "Ejecutando getDatosOrdenCompraJson de {0}", ComFacComprasController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         ArrayList<HashMap<String, String>> DatosOC = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> DetallesOC = new ArrayList<HashMap<String, String>>();
@@ -247,7 +247,7 @@ public class EntradamercanciasController {
             Model model
             ) {
         
-        log.log(Level.INFO, "Ejecutando get_datos_entrada_mercanciaJson de {0}", EntradamercanciasController.class.getName());
+        log.log(Level.INFO, "Ejecutando get_datos_entrada_mercanciaJson de {0}", ComFacComprasController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         
         ArrayList<HashMap<String, String>> monedas = new ArrayList<HashMap<String, String>>();
@@ -306,7 +306,7 @@ public class EntradamercanciasController {
             Model model
             ) {
         
-        log.log(Level.INFO, "Ejecutando getProveedoresJson de {0}", EntradamercanciasController.class.getName());
+        log.log(Level.INFO, "Ejecutando getProveedoresJson de {0}", ComFacComprasController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         ArrayList<HashMap<String, String>> proveedores = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
@@ -358,7 +358,7 @@ public class EntradamercanciasController {
             Model model
             ) {
         
-        log.log(Level.INFO, "Ejecutando getProductosJson de {0}", EntradamercanciasController.class.getName());
+        log.log(Level.INFO, "Ejecutando getProductosJson de {0}", ComFacComprasController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         ArrayList<HashMap<String, String>> productos = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
@@ -386,7 +386,7 @@ public class EntradamercanciasController {
             Model model
         ) {
         
-        log.log(Level.INFO, "Ejecutando getPresentacionesproductoJson de {0}", EntradamercanciasController.class.getName());
+        log.log(Level.INFO, "Ejecutando getPresentacionesproductoJson de {0}", ComFacComprasController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         ArrayList<HashMap<String, String>> Presentaciones = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
@@ -412,7 +412,7 @@ public class EntradamercanciasController {
             Model model
             ) {
         
-        log.log(Level.INFO, "Ejecutando getTipocambioJson de {0}", EntradamercanciasController.class.getName());
+        log.log(Level.INFO, "Ejecutando getTipocambioJson de {0}", ComFacComprasController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         ArrayList<HashMap<String, String>> tc = new ArrayList<HashMap<String, String>>();
         

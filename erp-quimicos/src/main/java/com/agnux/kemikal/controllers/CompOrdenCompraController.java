@@ -198,34 +198,46 @@ public class CompOrdenCompraController {
         ArrayList<HashMap<String, String>> valorIva = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> arrayExtra = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> extra = new HashMap<String, String>();
+        HashMap<String, String> parametros = new HashMap<String, String>();
         
         HashMap<String, String> userDat = new HashMap<String, String>();
         HashMap<String, String> dirEmp = new HashMap<String, String>();
         String consignado_a="";
         
-        //decodificar id de usuario
+        //Decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
         userDat = this.getHomeDao().getUserById(id_usuario);
         
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
         
+        //Aqui se obtienen los parametros de Compras, nos intersa el tipo de formato para el pdf de la Orden de Compra
+        parametros = this.getComDao().getCom_Parametros(id_empresa, id_sucursal);
+        
         if(!id_orden_compra.equals("0")){
             datosOrdenCompra = this.getComDao().getComOrdenCompra_Datos(Integer.parseInt(id_orden_compra));
             datosGrid = this.getComDao().getComOrdenCompra_DatosGrid(Integer.parseInt(id_orden_compra));
+            
+            extra.put("texto_lab", parametros.get("texto_lab"));
+            if(String.valueOf(datosOrdenCompra.get(0).get("lab_dest")).equals("true")){
+                
+            }
         }else{
             dirEmp =this.getGralDao().getEmisor_Datos(id_empresa);
             
-            consignado_a = 
-                    dirEmp.get("emp_razon_social")+"\n"+
-                    dirEmp.get("emp_calle")+" #"+dirEmp.get("emp_no_exterior")+", "+dirEmp.get("emp_colonia")+",\n"+
-                    dirEmp.get("emp_municipio")+", "+dirEmp.get("emp_estado")+", "+dirEmp.get("emp_pais")+" C.P. "+dirEmp.get("emp_cp")+"\n"+
-                    "R.F.C. "+dirEmp.get("emp_rfc");
+            consignado_a = dirEmp.get("emp_razon_social")+"\n"+dirEmp.get("emp_calle")+" #"+dirEmp.get("emp_no_exterior")+", "+dirEmp.get("emp_colonia")+",\n"+dirEmp.get("emp_municipio")+", "+dirEmp.get("emp_estado")+", "+dirEmp.get("emp_pais")+" C.P. "+dirEmp.get("emp_cp")+"\n"+"R.F.C. "+dirEmp.get("emp_rfc");
+            
+            if(String.valueOf(parametros.get("mostrar_lab")).equals("true")){
+                extra.put("texto_lab", parametros.get("texto_lab"));
+            }else{
+                //Envía vacio porque no se debe mostrar
+                extra.put("texto_lab", "");
+            }
         }
         
         valorIva= this.getComDao().getValoriva(id_sucursal);
         extra.put("tipo_cambio", StringHelper.roundDouble(this.getComDao().getTipoCambioActual(), 4)) ;
-        extra.put("cosignado_a", consignado_a) ;
+        extra.put("cosignado_a", consignado_a);
         arrayExtra.add(0,extra);
         
         jsonretorno.put("datosOrdenCompra", datosOrdenCompra);
@@ -423,6 +435,7 @@ public class CompOrdenCompraController {
             @RequestParam(value="fecha_entrega", required=true) String fecha_entrega,
             @RequestParam(value="check_anex_cert_hojas", required=false) String check_anex_cert_hojas,
             @RequestParam(value="tipo_oc", required=true) String tipo_oc,
+            @RequestParam(value="check_lab", required=false) String check_lab,
             
             @RequestParam(value="accion_proceso", required=true) String accion_proceso,
             @RequestParam(value="eliminado", required=false) String[] eliminado,
@@ -471,8 +484,9 @@ public class CompOrdenCompraController {
             }
             
             check_anex_cert_hojas = StringHelper.verificarCheckBox(check_anex_cert_hojas);
+            check_lab = StringHelper.verificarCheckBox(check_lab);
             
-            String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_orden_compra+"___"+id_proveedor+"___"+observaciones.toUpperCase()+"___"+select_moneda+"___"+tipo_cambio+"___"+grupo +"___"+select_condiciones+"___"+consigandoA+"___"+tipo_envarque_id+"___"+fecha_entrega+"___"+check_anex_cert_hojas+"___"+tipo_oc;
+            String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_orden_compra+"___"+id_proveedor+"___"+observaciones.toUpperCase()+"___"+select_moneda+"___"+tipo_cambio+"___"+grupo +"___"+select_condiciones+"___"+consigandoA+"___"+tipo_envarque_id+"___"+fecha_entrega+"___"+check_anex_cert_hojas+"___"+tipo_oc+"___"+check_lab;
             
             //System.out.println("data_string: "+data_string);
             
