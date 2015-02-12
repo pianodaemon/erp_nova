@@ -301,7 +301,7 @@
 																	<input type="text" name="fecha_entrega" style="width:100px;" readOnly="true">
                                                                 </td>
                                                                 <td width="25"><div class="interrogacion"><img SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_fentrega"></div></td>
-                                                                <td width="290" colspan="5">Anexar&nbsp;certificados&nbsp;de&nbsp;calidad&nbsp;y&nbsp;hojas&nbsp;de&nbsp;seguridad</td>
+                                                                <td width="290" colspan="5">Anexar&nbsp;&nbsp;certificados&nbsp;&nbsp;de&nbsp;&nbsp;calidad&nbsp;&nbsp;y&nbsp;&nbsp;hojas&nbsp;de&nbsp;seguridad</td>
                                                                 <!--
                                                                 <td width="70"></td>
                                                                 <td ></td>
@@ -334,12 +334,15 @@
 																	<input type="hidden" name="tipo_oc" value="0">
 																</td>
                                                                 <td width="25"><div class="interrogacion"><img SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_requisicion"></div></td>
-                                                                <td width="80" ></td>
+                                                                <td width="80"></td>
                                                                 <td width="70"></td>
-                                                                <td width="25"></td>
+                                                                
+                                                                <td width="115" colspan="3"><span id="txtlab"></span></td>
+                                                                <!--
                                                                 <td width="45"></td>
                                                                 <td width="45"></td>
-                                                                <td width="120"></td>
+                                                                -->
+                                                                <td width="120"><input type="checkbox" name="check_lab"></td>
                                                                 <td width="25"></td>
                                                             </tr>
                                                         </table>

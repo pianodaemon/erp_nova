@@ -93,9 +93,9 @@
 				
 				<td width="30">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 				<td><INPUT TYPE="button" value="Buscar"></td>
-				<td width=10>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 				<td ><INPUT TYPE="button" value="Limpiar"></td>
-				<td width=10>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			</tr>
 			
 			
@@ -147,16 +147,16 @@
                                 <div class="fixed column" class="content_x" >
 									
                                     <div id="tabx-1" class="contenidoPes" >
-											
+										
 										<table border="0" style="margin:0; padding:0;">
 											<tr>
-												<td valign="top" colspan="3" > 
+												<td width="680" valign="top"> 
 													
 													<table border="0" class="gral">
 														<tr>
 															<td width="10"></td>
-															<td>Tipo&nbsp;de&nbsp;documento</td>
-															<td></td>
+															<td width="100">Tipo&nbsp;de&nbsp;documento</td>
+															<td width="25"></td>
 															<td>No.&nbsp;Proveedor</td>
 															<td></td>
 															<td></td>
@@ -168,79 +168,101 @@
 														<tr>
 															<td width="10"></td>
 															<td>
-																<SELECT NAME="tipodoc" style="width:150px;">
+																<SELECT NAME="tipodoc" style="width:100px;">
 																	<option value="1" selected="yes">Factura</option>
 																	<option value="2">Remisi&oacute;n</option>
 																</SELECT>
 															</td>
-															<td width="130"></td>
-															<td>
+															<td width="25"></td>
+															<td width="100">
 																<input type="hidden" name="id_proveedor">
 																<input type="hidden" name="tipo_proveedor">
 																<input type="hidden" name="rfcproveedor" readOnly="true">
-																<input type="text" name="no_proveedor" value="" style="width:130px; border:1px solid #000;">
+																<input type="text" name="no_proveedor" value="" style="width:100px; border:1px solid #000;">
 																<input type="hidden" name="id_impuesto" value="0">
 																<input type="hidden" name="valorimpuesto" value="0">
 															</td>
 															<td width="20"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_noproveedor"></td>
 															<td width="40"><a  href="busca_proveedor">(Buscar)</a></td>
-															<td width="50"></td>
-															<td><INPUT TYPE="text" name="razon_proveedor" style="width:400px;"></td>
+															<td width="20"></td>
+															<td width="310"><INPUT TYPE="text" name="razon_proveedor" style="width:310px;"></td>
 															<td width="15"></td>
 															<!--<td><INPUT TYPE="text" name="dir_proveedor" style="width:350px;" readOnly="true"></td>-->
 														</tr>
 													</table>
-
+												</td>
+												<td width="10"></td>
+												<td>
+													<!--
+													<table border="1" class="gral" id="table_lab">
+														<tr>
+															<td width="10">&nbsp;</td>
+															<td >&nbsp;</td>
+															<td width="25"></td>
+														</tr>
+														<tr>
+															<td width="10"></td>
+															<td id="txtlab"></td>
+															<td width="25"><input type="checkbox" name="check_lab"></td>
+														</tr>
+													</table>
+													-->
 												</td>
 											</tr>
 											<tr>
 												<td colspan="3"></td>
 											</tr>
 											<tr>
-												<!--<td style="border: solid 1px #313E74;">-->
-												<td style="border: solid 1px #313E74;">
+												<td width="680" style="border:solid 1px #313E74;">
+													
 													<table border="0" class="gral">
 														<tr>
 															<td width="10"></td>
-															<td>Folio&nbsp;del&nbsp;documento</td>
+															<td width="100">Folio&nbsp;del&nbsp;documento</td>
 															<td width="25"></td>
-															<td>Expedida&nbsp;el</td>
+															<td width="100">Expedida&nbsp;el</td>
 															<td width="25"></td>
-															<td>Tipo&nbsp;de&nbsp;cambio</td>
+															<td width="100">Tipo&nbsp;de&nbsp;cambio</td>
 															<td width="25"></td>
-															<td>Denominaci&oacute;n</td>
+															<td width="100">Denominaci&oacute;n</td>
+															<td width="25"></td>
+															<td width="110"></td>
 															<td width="25"></td>
 														</tr>
 														<tr>
 															<td width="10"></td>
-															<td><INPUT TYPE="text" name="factura" style="width:100px;"></td>
+															<td width="100"><INPUT TYPE="text" name="factura" style="width:100px;"></td>
 															<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_factura"></div></td>
-															<td><INPUT TYPE="text" name="expedicion" style="width:100px;"></td>
+															<td width="100"><INPUT TYPE="text" name="expedicion" style="width:100px;"></td>
 															<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_expedicion"></div></td>
-															<td><INPUT TYPE="text" name="tc" style="width:100px;"></td>
+															<td width="100"><INPUT TYPE="text" name="tc" style="width:100px;"></td>
 															<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_tc"></div></td>
-															<td><SELECT NAME="denominacion" style="width:100px;"></SELECT></td>
+															<td width="100"><SELECT NAME="denominacion" style="width:100px;"></SELECT></td>
 															<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_denominacion"></div></td>
+															<td width="110"></td>
+															<td width="25"></td>
 														</tr>
 														<tr>
-															<td colspan="9" height="5"></td>
+															<td colspan="11" height="5"></td>
 														</tr>
 																												
 														<tr>
 															<td width="10"></td>
-															<td>Orden&nbsp;Compra</td>
+															<td width="100">Orden&nbsp;Compra</td>
 															<td width="25"></td>
-															<td>Numero&nbsp;Guia</td>
+															<td width="100">Numero&nbsp;Guia</td>
 															<td width="25"></td>
 															<td colspan="3">Compa&ntilde;ia&nbsp;fletera</td>
 															<!--<td width="25"></td>
 															<td></td>-->
 															<td width="25"></td>
+															<td width="110"></td>
+															<td width="25"></td>
 														</tr>
 														
 														<tr>
 															<td width="10"></td>
-															<td><INPUT TYPE="text" name="ordencompra" style="width:100px; border: 2px solid #000;"></td>
+															<td><INPUT TYPE="text" name="ordencompra" style="width:100px; border:2px solid #000;"></td>
 															<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_ordencompra"></div></td>
 															<td><INPUT TYPE="text" name="numeroguia" style="width:100px;"></td>
 															<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_numeroguia"></div></td>
@@ -248,6 +270,8 @@
 															<!--<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_tc"></div></td>
 															<td><SELECT NAME="denominacion" style="width:100px;"></SELECT></td>-->
 															<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_fletera"></div></td>
+															<td width="110"></td>
+															<td width="25"></td>
 														</tr>
 														
 													</table>
@@ -274,7 +298,6 @@
 												</td>
 											</tr>
 											<tr><td colspan="3" height="10"></td></tr>
-											
 											<tr>
 												<td colspan="3">
 													<table border="0" class="gral">
@@ -317,7 +340,7 @@
 											
 											<tr>
 												<!--<td colspan="3" align="left"  style="border: solid 1px #313E74;">-->
-												<td colspan="3" style="border-top: 1px solid #C1DAD7; border-bottom: 1px solid #C1DAD7; border-left: 1px solid #FFFFFF; border-right: 1px solid #FFFFFF;">
+												<td colspan="3" style="border-top:1px solid #C1DAD7; border-bottom:1px solid #C1DAD7; border-left:1px solid #FFFFFF; border-right:1px solid #FFFFFF;">
 													<table >
 														<thead>
 															<tr>
@@ -337,9 +360,9 @@
 															</tr>
 														</thead>
 													</table>
-													<div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width:1030; height: 115px; border:1px solid #C1DAD7 !important;">	
+													<div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width:1030; height: 115px; border:1px solid #C1DAD7 !important;">
 														<table>
-															<tbody style="background-color: #FFFFFF;" valign="top" id="grid_productos" class="gral">
+															<tbody style="background-color:#FFFFFF;" valign="top" id="grid_productos" class="gral">
 																
 															</tbody>
 														</table>
@@ -392,7 +415,7 @@
 														</tr>
 														<tr id="tr_ieps">
 															<td width="10"></td>
-															<td width="100" align="right" style="font-weight: bold;">IEPS</td>
+															<td width="100" align="right" style="font-weight: bold;">IEPS&nbsp;&nbsp;</td>
 															<td width="130"><input type="text" name="total_ieps" value="0" style="width:130px; text-align:right;" readOnly="true"></td>
 														</tr>
 														<tr>
