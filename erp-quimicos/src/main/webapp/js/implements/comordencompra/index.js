@@ -1347,6 +1347,9 @@ $(function() {
 		var $check_anex_cert_hojas = $('#forma-comordencompra-window').find('input[name=check_anex_cert_hojas]');
 		var $folio_requisicion = $('#forma-comordencompra-window').find('input[name=folio_requisicion]');
 		var $tipo_oc = $('#forma-comordencompra-window').find('input[name=tipo_oc]');
+		var $txtlab = $('#forma-comordencompra-window').find('#txtlab');
+		var $check_lab = $('#forma-comordencompra-window').find('input[name=check_lab]');
+		
 		
 		var $sku_producto = $('#forma-comordencompra-window').find('input[name=sku_producto]');
 		var $nombre_producto = $('#forma-comordencompra-window').find('input[name=nombre_producto]');
@@ -1387,7 +1390,7 @@ $(function() {
 		$folio.css({'background' : '#F0F0F0'});
 		$dir_proveedor.css({'background' : '#F0F0F0'});
 		$no_proveedor.focus();
-		
+		$check_lab.hide();
 		
 		//quitar enter a todos los campos input
 		$('#forma-comordencompra-window').find('input').keypress(function(e){
@@ -1485,13 +1488,17 @@ $(function() {
 		$.post(input_json,$arreglo,function(entry){
 			$id_impuesto_orig.val(entry['iva'][0]['id_impuesto']);
 			$valorimpuesto_orig.val(entry['iva'][0]['valor_impuesto']);
-			
 			$id_impuesto.val(entry['iva'][0]['id_impuesto']);
 			$valor_impuesto.val(entry['iva'][0]['valor_impuesto']);
-			
 			$tipo_cambio.val(entry['Extra'][0]['tipo_cambio']);
-			
 			$consigandoA.text(entry['Extra'][0]['cosignado_a']);
+			
+			
+			if(entry['Extra'][0]['texto_lab'].trim()!=''){
+				$txtlab.html(entry['Extra'][0]['texto_lab']);
+				$check_lab.show();
+			}
+			
 			
 			//carga select denominacion con todas las monedas
 			$select_moneda.children().remove();
@@ -1816,6 +1823,8 @@ $(function() {
 			var $check_anex_cert_hojas = $('#forma-comordencompra-window').find('input[name=check_anex_cert_hojas]');
 			var $folio_requisicion = $('#forma-comordencompra-window').find('input[name=folio_requisicion]');
 			var $tipo_oc = $('#forma-comordencompra-window').find('input[name=tipo_oc]');
+			var $txtlab = $('#forma-comordencompra-window').find('#txtlab');
+			var $check_lab = $('#forma-comordencompra-window').find('input[name=check_lab]');
 			
 			//buscar producto
 			var $busca_sku = $('#forma-comordencompra-window').find('a[href*=busca_sku]');
@@ -1860,6 +1869,7 @@ $(function() {
 			$tasa_ret_immex.val('0');
 			$busca_proveedor.hide();
 			$cancelado.hide();
+			$check_lab.hide();
 			
 			$folio.css({'background' : '#F0F0F0'});
 			$rfc_proveedor.css({'background' : '#F0F0F0'});
@@ -1996,6 +2006,14 @@ $(function() {
 					$fecha_entrega.val(entry['datosOrdenCompra'][0]['fecha_entrega']);
 					$check_anex_cert_hojas.attr('checked',  (entry['datosOrdenCompra'][0]['anexar_doc'] == 'true')? true:false );
 					$tipo_oc.val(entry['datosOrdenCompra'][0]['tipo_oc']);
+					
+					
+					$check_lab.attr('checked',(entry['datosOrdenCompra'][0]['lab_dest']=='true')? true:false );
+					if(entry['datosOrdenCompra'][0]['lab_dest']=='true'){
+						$txtlab.html(entry['Extra'][0]['texto_lab']);
+						$check_lab.show();
+					}
+					
 					
 					//carga select denominacion con todas las monedas
 					$select_moneda.children().remove();
