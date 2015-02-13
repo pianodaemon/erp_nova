@@ -2,7 +2,7 @@ $(function() {
 	String.prototype.toCharCode = function(){
 	    var str = this.split(''), len = str.length, work = new Array(len);
 	    for (var i = 0; i < len; ++i){
-		work[i] = this.charCodeAt(i);
+			work[i] = this.charCodeAt(i);
 	    }
 	    return work.join(',');
 	};
@@ -990,9 +990,7 @@ $(function() {
 		$tabs_li_funxionalidad();
 		
 		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/get_datos_entrada_mercancia.json';
-		$arreglo = {'id_entrada':id_to_show,
-					'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
-					};
+		$arreglo = {'id_entrada':id_to_show, 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
                 
                 
 		var $id_entrada = $('#forma-entradamercancias-window').find('input[name=id_entrada]');
@@ -1008,6 +1006,8 @@ $(function() {
 		var $campo_observaciones = $('#forma-entradamercancias-window').find('textarea[name=observaciones]');
 		var $select_almacen_destino = $('#forma-entradamercancias-window').find('select[name=almacen_destino]');
 		var $select_tipo_doc = $('#forma-entradamercancias-window').find('select[name=tipodoc]');
+		var $txtlab = $('#forma-entradamercancias-window').find('#txtlab');
+		var $check_lab = $('#forma-entradamercancias-window').find('input[name=check_lab]');
 		
 		//campos del proveedor
 		var $buscar_proveedor = $('#forma-entradamercancias-window').find('a[href*=busca_proveedor]');
@@ -1053,7 +1053,7 @@ $(function() {
 		//$campo_factura.css({'background' : '#ffffff'});
 		$cancelar_entrada.hide();
 		$pdf_entrada.hide();
-		
+		$check_lab.hide();
 		$no_proveedor.focus();
 		
 		var respuestaProcesada = function(data){
@@ -1178,6 +1178,11 @@ $(function() {
 			$tasa_fletes.attr({ 'value' : entry['tasaFletes']['0']['valor'] });
 			//alert(entry['tasaFletes']['0']['valor']);
 			
+			if(entry['Extra']['mostrar_lab']=='true'){
+				$txtlab.html(entry['Extra']['texto_lab']+'&nbsp;');
+				$check_lab.show();
+			}
+			
 			//carga select denominacion con todas las monedas
 			$select_denominacion.children().remove();
 			//var moneda_hmtl = '<option value="0" selected="yes">[--   --]</option>';
@@ -1261,6 +1266,7 @@ $(function() {
 								$hidden_tipo_proveedor.val(entry['DatosOC'][0]['proveedortipo_id']);
 								$no_proveedor.val(entry['DatosOC'][0]['no_proveedor']);
 								$campo_tc.val(entry['DatosOC'][0]['tc']);
+								$check_lab.attr('checked',(entry['DatosOC'][0]['lab_destino']=='true')? true:false );
 								
 								//carga select denominacion con todas las monedas
 								$select_denominacion.children().remove();
@@ -1705,6 +1711,8 @@ $(function() {
 				var $campo_tc = $('#forma-entradamercancias-window').find('input[name=tc]');
 				var $campo_observaciones = $('#forma-entradamercancias-window').find('textarea[name=observaciones]');
 				var $select_tipo_doc = $('#forma-entradamercancias-window').find('select[name=tipodoc]');
+				var $txtlab = $('#forma-entradamercancias-window').find('#txtlab');
+				var $check_lab = $('#forma-entradamercancias-window').find('input[name=check_lab]');
 				
 				//campos del proveedor
 				var $buscar_proveedor = $('#forma-entradamercancias-window').find('a[href*=busca_proveedor]');
@@ -1761,6 +1769,7 @@ $(function() {
 				$buscar_proveedor.hide();
 				$buscar_producto.hide();
 				$agregar_producto.hide();
+				$check_lab.hide();
 				
 				var respuestaProcesada = function(data){
 					if ( data['success'] == "true" ){
@@ -1840,14 +1849,20 @@ $(function() {
 					//Asignar los valores del IEPS al arreglo
 					arrayIeps=entry['Ieps'];
 					
-					$tasa_fletes.attr({ 'value' : entry['tasaFletes']['0']['valor'] });
-					$id_entrada.attr({ 'value' : entry['datosEntrada']['0']['id'] });
-					$campo_factura.attr({ 'value' : entry['datosEntrada']['0']['factura'] });
-					$campo_ordencompra.attr({ 'value' : entry['datosEntrada']['0']['orden_compra'] });
-					$campo_numeroguia.attr({ 'value' : entry['datosEntrada']['0']['numero_guia'] });
-					$campo_expedicion.attr({ 'value' : entry['datosEntrada']['0']['expedicion'] });
-					$campo_tc.attr({ 'value' : entry['datosEntrada']['0']['tipo_cambio'] });
-					$campo_observaciones.text(entry['datosEntrada']['0']['observaciones']);
+					$tasa_fletes.attr({ 'value' : entry['tasaFletes'][0]['valor'] });
+					$id_entrada.attr({ 'value' : entry['datosEntrada'][0]['id'] });
+					$campo_factura.attr({ 'value' : entry['datosEntrada'][0]['factura'] });
+					$campo_ordencompra.attr({ 'value' : entry['datosEntrada'][0]['orden_compra'] });
+					$campo_numeroguia.attr({ 'value' : entry['datosEntrada'][0]['numero_guia'] });
+					$campo_expedicion.attr({ 'value' : entry['datosEntrada'][0]['expedicion'] });
+					$campo_tc.attr({ 'value' : entry['datosEntrada'][0]['tipo_cambio'] });
+					$campo_observaciones.text(entry['datosEntrada'][0]['observaciones']);
+					
+					$check_lab.attr('checked',(entry['datosEntrada'][0]['lab_destino']=='true')? true:false );
+					if(entry['Extra']['mostrar_lab']=='true'){
+						$txtlab.html(entry['Extra']['texto_lab']+'&nbsp;');
+						$check_lab.show();
+					}
 					
 					
 					//carga select denominacion con todas las monedas
@@ -1855,7 +1870,7 @@ $(function() {
 					//var moneda_hmtl = '<option value="0">[--   --]</option>';
 					var moneda_hmtl = '';
 					$.each(entry['Monedas'],function(entryIndex,moneda){
-						if(parseInt(moneda['id']) == parseInt(entry['datosEntrada']['0']['moneda_id'])){
+						if(parseInt(moneda['id']) == parseInt(entry['datosEntrada'][0]['moneda_id'])){
 							moneda_hmtl += '<option value="' + moneda['id'] + '" selected="yes">' + moneda['descripcion'] + '</option>';
 						}else{
 							//moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
@@ -2141,6 +2156,8 @@ $(function() {
 						$grid_productos.find('#cad').attr('disabled','disabled'); 
 						$submit_actualizar.hide();
 					}
+					
+					$check_lab.attr('disabled','-1');
 				},"json");//termina llamada json
 				
 				
