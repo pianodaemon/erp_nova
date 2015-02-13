@@ -69,7 +69,7 @@ public class CtbPolizasContablesController {
         infoConstruccionTabla.put("id", "Acciones:90");
         infoConstruccionTabla.put("poliza", "P&oacute;liza:80");
         infoConstruccionTabla.put("tipo", "Tipo de P&oacute;liza:170");
-        infoConstruccionTabla.put("concepto","Concepto:100");
+        infoConstruccionTabla.put("concepto","Concepto:170");
         infoConstruccionTabla.put("fecha","Fecha:90");
         infoConstruccionTabla.put("moneda", "Moneda:70");
         infoConstruccionTabla.put("debe","Debe:90");

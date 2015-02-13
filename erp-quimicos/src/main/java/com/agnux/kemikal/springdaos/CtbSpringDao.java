@@ -1234,21 +1234,15 @@ public class CtbSpringDao implements CtbInterfaceDao{
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
         
 	String sql_to_query = ""
-        + "select  "
-            + "ctb_pol.id,"
-            + "ctb_pol.poliza, "
-            + "ctb_pol.tipo, "
-            + "ctb_pol.concepto, "
-            + "(case when ctb_pol.fecha is null then '' else to_char(ctb_pol.fecha,'dd-mm-yyyy') end) as fecha, "
-            + "ctb_pol.moneda, "
-            //+ "ctb_pol.debe, "
-            //+ "ctb_pol.haber, "
-            + "(CASE WHEN ctb_pol.status=1 THEN 'No afectada' WHEN ctb_pol.status=2 THEN 'Afectada' WHEN ctb_pol.status=3 THEN 'Cancelada' ELSE '' END) AS status  "
-        + "from ctb_pol "
-        +"JOIN ("+sql_busqueda+") AS sbt ON sbt.id = ctb_pol.id "
-        +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
-
-        //System.out.println("Busqueda GetPage: "+sql_to_query);
+        + "select sbt1.id, poliza,tipo,concepto, fecha, moneda, status,sum(debe) as debe, sum(haber) as haber "
+        + "from (select  ctb_pol.id,ctb_pol.poliza, ctb_pol.tipo, ctb_pol.concepto, (case when ctb_pol.fecha is null then '' else to_char(ctb_pol.fecha,'dd-mm-yyyy') end) as fecha, ctb_pol.moneda, (CASE WHEN ctb_pol.status=1 THEN 'No afectada' WHEN ctb_pol.status=2 THEN 'Afectada' WHEN ctb_pol.status=3 THEN 'Cancelada' ELSE '' END) AS status, (case when ctb_pol_mov.tipo=1 then ctb_pol_mov.cantidad else 0 end) as debe,(case when ctb_pol_mov.tipo=2 then ctb_pol_mov.cantidad else 0 end) as haber from ctb_pol join ctb_pol_mov on ctb_pol_mov.ctb_pol_id=ctb_pol.id ) as sbt1 "
+        + "JOIN ("+sql_busqueda+") AS sbt ON sbt.id = sbt1.id "
+        + "group by sbt1.id, sbt1.poliza,sbt1.tipo,sbt1.concepto, sbt1.fecha, sbt1.moneda, sbt1.status "
+        + "order by "+orderBy+" "+asc+" limit ? OFFSET ?";
+        
+        //System.out.println("data_string: "+data_string);
+        //System.out.println("sql_busqueda: "+sql_busqueda);
+        //System.out.println("sql_to_query: "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query, 
             new Object[]{data_string, new Integer(pageSize),new Integer(offset)}, new RowMapper() {
@@ -1261,8 +1255,8 @@ public class CtbSpringDao implements CtbInterfaceDao{
                     row.put("concepto",rs.getString("concepto"));
                     row.put("fecha",rs.getString("fecha"));
                     row.put("moneda",rs.getString("moneda"));
-                    row.put("debe",StringHelper.roundDouble("0",2));
-                    row.put("haber",StringHelper.roundDouble("0",2));
+                    row.put("debe",StringHelper.AgregaComas(StringHelper.roundDouble(rs.getString("debe"),2)));
+                    row.put("haber",StringHelper.AgregaComas(StringHelper.roundDouble(rs.getString("haber"),2)));
                     row.put("status",rs.getString("status"));
                     return row;
                 }

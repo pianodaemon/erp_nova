@@ -332,13 +332,10 @@ public class CtbRepBalanzaComprobacionController {
             }
         }
         
-        System.out.println("suma_saldo_inicial="+suma_saldo_inicial+"    suma_debe="+suma_debe+"      suma_haber="+suma_haber+"    suma_saldo_final="+suma_saldo_final);
-        
         total.put("suma_si", StringHelper.roundDouble(suma_saldo_inicial,2));
         total.put("suma_d", StringHelper.roundDouble(suma_debe,2));
         total.put("suma_h", StringHelper.roundDouble(suma_haber,2));
         total.put("suma_sf", StringHelper.roundDouble(suma_saldo_final,2));
-        
         
         CtbPdfReporteBalanzaComprobacion x = new CtbPdfReporteBalanzaComprobacion(fileout, datosEncabezadoPie, datosEmpresaEmisora, datos, total);
         
@@ -359,18 +356,5 @@ public class CtbRepBalanzaComprobacionController {
         
         return null;
     }
-    
-    
-    
-    
-   
-   
-   
-   
-    
-    
-    
-    
-    
     
 }
