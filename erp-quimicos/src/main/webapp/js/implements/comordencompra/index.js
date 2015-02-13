@@ -1483,8 +1483,7 @@ $(function() {
 
 		var options = {dataType :  'json', success : respuestaProcesada};
 		$forma_selected.ajaxForm(options);
-
-		//$.getJSON(json_string,function(entry){
+		
 		$.post(input_json,$arreglo,function(entry){
 			$id_impuesto_orig.val(entry['iva'][0]['id_impuesto']);
 			$valorimpuesto_orig.val(entry['iva'][0]['valor_impuesto']);
@@ -1493,12 +1492,10 @@ $(function() {
 			$tipo_cambio.val(entry['Extra'][0]['tipo_cambio']);
 			$consigandoA.text(entry['Extra'][0]['cosignado_a']);
 			
-			
-			if(entry['Extra'][0]['texto_lab'].trim()!=''){
+			if(entry['Extra'][0]['mostrar_lab']=='true'){
 				$txtlab.html(entry['Extra'][0]['texto_lab']);
 				$check_lab.show();
 			}
-			
 			
 			//carga select denominacion con todas las monedas
 			$select_moneda.children().remove();
@@ -2009,7 +2006,7 @@ $(function() {
 					
 					
 					$check_lab.attr('checked',(entry['datosOrdenCompra'][0]['lab_dest']=='true')? true:false );
-					if(entry['datosOrdenCompra'][0]['lab_dest']=='true'){
+					if(entry['Extra'][0]['mostrar_lab']=='true'){
 						$txtlab.html(entry['Extra'][0]['texto_lab']);
 						$check_lab.show();
 					}
@@ -2481,6 +2478,8 @@ $(function() {
 						$select_moneda.attr('disabled','-1'); //deshabilitar
 						$select_via_embarque.attr('disabled','-1'); //deshabilitar
 						$select_condiciones.attr('disabled','-1');
+						$check_lab.attr('disabled','-1');
+						$check_anex_cert_hojas.attr('disabled','-1');
 						
 						//$grid_productos.find('#cant').attr('disabled','-1'); //deshabilitar campos cantidad del grid
 						//$grid_productos.find('#cost').attr('disabled','-1'); //deshabilitar campos costo del grid
@@ -2492,11 +2491,13 @@ $(function() {
 						$campo_total.attr('disabled','-1'); //deshabilitar
 						
 					}else{
-			
+						
 						//1=Autorizado, 2=Cancelado, 3=Surtido Parcial, 4=Surtido Completo
 						if(entry['datosOrdenCompra'][0]['status']==1 || entry['datosOrdenCompra']['0']['status']==3 || entry['datosOrdenCompra']['0']['status']==4){
 							$('#forma-comordencompra-window').find('input').attr('readonly',true);
 							$('#forma-comordencompra-window').find('textarea').attr('readonly',true);
+							$check_lab.attr('disabled','-1');
+							$check_anex_cert_hojas.attr('disabled','-1');
 						}
 						
 						//0=Orden Generada

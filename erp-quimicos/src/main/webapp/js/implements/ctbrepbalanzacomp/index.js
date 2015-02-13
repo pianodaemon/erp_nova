@@ -410,6 +410,7 @@ $(function() {
 		var proveedoor="";
 		$.post(restful_json_service,arreglo_parametros,function(entry){
 			var body_tabla = entry['Data'];
+			
 			var header_tabla = {
 				cuenta			:'Cuenta',
 				descripcion		:'Descripci&oacute;n',
@@ -468,20 +469,30 @@ $(function() {
 					html_reporte +='<tr>';
 					html_reporte +='<td align="left">'+body_tabla[i]["cuenta"]+'</td>';
 					html_reporte +='<td align="left">'+body_tabla[i]["descripcion"]+'</td>';
-					html_reporte +='<td align="right">'+$(this).agregar_comas(body_tabla[i]["saldo_inicial"])+'</td>';
-					html_reporte +='<td align="right">'+$(this).agregar_comas(body_tabla[i]["debe"])+'</td>';
-					html_reporte +='<td align="right">'+$(this).agregar_comas(body_tabla[i]["haber"])+'</td>';
-					html_reporte +='<td align="right">'+$(this).agregar_comas(body_tabla[i]["saldo_final"])+'</td>';
+					html_reporte +='<td align="right">'+ ((body_tabla[i]["saldo_inicial"].trim()=='')? '':$(this).agregar_comas(body_tabla[i]["saldo_inicial"])) +'</td>';
+					html_reporte +='<td align="right">'+ ((body_tabla[i]["debe"].trim()=='')? '':$(this).agregar_comas(body_tabla[i]["debe"])) +'</td>';
+					html_reporte +='<td align="right">'+ ((body_tabla[i]["haber"].trim()=='')? '':$(this).agregar_comas(body_tabla[i]["haber"])) +'</td>';
+					html_reporte +='<td align="right">'+ ((body_tabla[i]["saldo_final"].trim()=='')? '':$(this).agregar_comas(body_tabla[i]["saldo_final"])) +'</td>';
 					html_reporte +='</tr>';
 				}
 				
 			}
 			
-			/*
+			
+			
+			
+			
+			
 			html_reporte +='<tfoot>';
-				html_reporte += html_footer;
+				html_reporte +='<tr>';
+				html_reporte +='<td align="left"></td>';
+				html_reporte +='<td align="left"></td>';
+				html_reporte +='<td align="right">'+$(this).agregar_comas(entry['Total']['suma_si'])+'</td>';
+				html_reporte +='<td align="right">'+$(this).agregar_comas(entry['Total']['suma_d'])+'</td>';
+				html_reporte +='<td align="right">'+$(this).agregar_comas(entry['Total']['suma_h'])+'</td>';
+				html_reporte +='<td align="right">'+$(this).agregar_comas(entry['Total']['suma_sf'])+'</td>';
+				html_reporte +='</tr>';
 			html_reporte +='</tfoot>';
-			*/
 			
 			
 			html_reporte += '</table>';

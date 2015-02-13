@@ -10,6 +10,33 @@ $(function() {
 	var ArraySuc;
 	var Param;
 	
+    //Arreglo para select de Nivel de cuenta
+    var array_nive_cta = {1:"Auxiliar", 2:"Mayor" };
+    //Arreglo para select de Naturaleza de la cuenta
+    var array_naturaleza_cta = {1:"Deudora", 2:"Acreedora" };
+    //Arreglo para select de Tipo de cuenta
+    var array_tipo_cta = {1:"Balance", 2:"Resultados", 3:"De orden" };
+    
+	//carga los campos select con los datos que recibe como parametro
+	$carga_select_con_arreglo_fijo = function($campo_select, arreglo_elementos, txt_elemento_cero, elemento_seleccionado, mostrar_opciones){
+		$campo_select.children().remove();
+		var select_html = '';
+		if(txt_elemento_cero.trim()!=''){
+			select_html = '<option value="0" selected="yes">'+ txt_elemento_cero +'</option>';
+		}
+		for(var i in arreglo_elementos){
+			if( parseInt(i) == parseInt(elemento_seleccionado) ){
+				select_html += '<option value="' + i + '" selected="yes">' + arreglo_elementos[i] + '</option>';
+			}else{
+				if (mostrar_opciones){
+					select_html += '<option value="' + i + '"  >' + arreglo_elementos[i] + '</option>';
+				}
+			}
+		}
+		$campo_select.append(select_html);
+	}
+	
+	
 	$('#header').find('#header1').find('span.emp').text($('#lienzo_recalculable').find('input[name=emp]').val());
 	$('#header').find('#header1').find('span.suc').text($('#lienzo_recalculable').find('input[name=suc]').val());
     var $username = $('#header').find('#header1').find('span.username');
@@ -409,6 +436,29 @@ $(function() {
 			});
 			
 			
+			
+					
+			//Carga select de niveles
+			var mostrar_opciones=true;
+			var elemento_seleccionado=0;
+			var txt_elemento_cero='';
+			$carga_select_con_arreglo_fijo($select_nivel, array_nive_cta, txt_elemento_cero, elemento_seleccionado, mostrar_opciones)
+			
+			//Carga select de naturaleza de la cuenta
+			mostrar_opciones=true;
+			elemento_seleccionado=0;
+			txt_elemento_cero='';
+			$carga_select_con_arreglo_fijo($select_naturaleza, array_naturaleza_cta, txt_elemento_cero, elemento_seleccionado, mostrar_opciones)
+			
+			
+			mostrar_opciones=true;
+			elemento_seleccionado=0;
+			txt_elemento_cero='';
+			$carga_select_con_arreglo_fijo($select_tipo_cta, array_tipo_cta, txt_elemento_cero, elemento_seleccionado, mostrar_opciones)
+			
+					
+					
+					/*
 			//Carga select de niveles
 			$select_nivel.children().remove();
 			var nivel_hmtl = '';
@@ -432,7 +482,7 @@ $(function() {
 				tipo_hmtl += '<option value="' + tipo['index'] + '"  >'+ tipo['text'] + '</option>';
 			});
 			$select_tipo_cta.append(tipo_hmtl);
-			
+			*/
 			
 			$cuenta.focus();
 		},"json");//termina llamada json
@@ -633,7 +683,40 @@ $(function() {
 					
 					
 					
+					//var array_nive_cta = {1:"Auxiliar", 2:"Mayor" };
+					//var array_naturaleza_cta = {1:"Deudora", 2:"Acreedora" };
+					//var array_tipo_cta = {1:"Balance", 2:"Resultados", 3:"De orden" };
+					
 					//Carga select de niveles
+					var mostrar_opciones=true;
+					var elemento_seleccionado=entry['Cc'][0]['nivel'];
+					var txt_elemento_cero='';
+					if(parseInt(entry['Cc'][0]['nivel'])==0){
+						txt_elemento_cero = '[---------]';
+					}
+					$carga_select_con_arreglo_fijo($select_nivel, array_nive_cta, txt_elemento_cero, elemento_seleccionado, mostrar_opciones)
+					
+					//Carga select de naturaleza de la cuenta
+					mostrar_opciones=true;
+					elemento_seleccionado=entry['Cc'][0]['naturaleza'];
+					txt_elemento_cero='';
+					if(parseInt(entry['Cc'][0]['naturaleza'])==0){
+						txt_elemento_cero = '[---------]';
+					}
+					$carga_select_con_arreglo_fijo($select_naturaleza, array_naturaleza_cta, txt_elemento_cero, elemento_seleccionado, mostrar_opciones)
+					
+					
+					mostrar_opciones=true;
+					elemento_seleccionado=entry['Cc'][0]['tipo'];
+					txt_elemento_cero='';
+					if(parseInt(entry['Cc'][0]['tipo'])==0){
+						txt_elemento_cero = '[---------]';
+					}
+					$carga_select_con_arreglo_fijo($select_tipo_cta, array_tipo_cta, txt_elemento_cero, elemento_seleccionado, mostrar_opciones)
+					
+					
+					
+					/*
 					$select_nivel.children().remove();
 					var nivel_hmtl = '';
 					if(parseInt(entry['Cc'][0]['nivel'])==0){
@@ -663,6 +746,7 @@ $(function() {
 					});
 					$select_naturaleza.append(naturaleza_hmtl);
 					
+					
 					//Carga select de tipo de cuenta
 					$select_tipo_cta.children().remove();
 					var tipo_hmtl = '';
@@ -677,6 +761,8 @@ $(function() {
 						}
 					});
 					$select_tipo_cta.append(tipo_hmtl);
+					*/
+					
 					
 					
 					$chk_cta_detalle.attr('checked',  (entry['Cc'][0]['detalle'] == '1')? true:false );
