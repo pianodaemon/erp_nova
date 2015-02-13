@@ -245,23 +245,16 @@ public class ComFacComprasController {
             @RequestParam(value="id_entrada", required=true) Integer id,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
-            ) {
+        ) {
         
         log.log(Level.INFO, "Ejecutando get_datos_entrada_mercanciaJson de {0}", ComFacComprasController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
-        
-        ArrayList<HashMap<String, String>> monedas = new ArrayList<HashMap<String, String>>();
-        ArrayList<HashMap<String, String>> impuestos = new ArrayList<HashMap<String, String>>();
-        ArrayList<HashMap<String, String>> ieps = new ArrayList<HashMap<String, String>>();
-        ArrayList<HashMap<String, String>> tasaFletes = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> datosEntrada = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> datosProveedor = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> datosGrid = new ArrayList<HashMap<String, String>>();
-        ArrayList<HashMap<String, String>> fleteras = new ArrayList<HashMap<String, String>>();
-        ArrayList<HashMap<String, String>> almacenes = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
         
-        //decodificar id de usuario
+        //Decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
         userDat = this.getHomeDao().getUserById(id_usuario);
         
@@ -275,22 +268,15 @@ public class ComFacComprasController {
         }
         //valorIva= this.getCdao().getValoriva();
         
-        monedas = this.getInvDao().getMonedas();
-        impuestos = this.getInvDao().getEntradas_Impuestos();
-        ieps = this.getInvDao().getIeps(id_empresa, 0);
-        tasaFletes = this.getInvDao().getEntradas_TasaFletes();
-        fleteras = this.getInvDao().geteEntradas_Fleteras(id_empresa,id_sucursal);
-        almacenes = this.getInvDao().getAlmacenes2(id_empresa);
-        
         jsonretorno.put("datosGrid", datosGrid);
         jsonretorno.put("datosEntrada", datosEntrada);
         jsonretorno.put("datosProveedor", datosProveedor);
-        jsonretorno.put("Monedas", monedas);
-        jsonretorno.put("Impuestos", impuestos);
-        jsonretorno.put("Ieps", ieps);
-        jsonretorno.put("tasaFletes", tasaFletes);
-        jsonretorno.put("Fleteras", fleteras);
-        jsonretorno.put("Almacenes", almacenes);
+        jsonretorno.put("Monedas", this.getInvDao().getMonedas());
+        jsonretorno.put("Impuestos", this.getInvDao().getEntradas_Impuestos());
+        jsonretorno.put("Ieps", this.getInvDao().getIeps(id_empresa, 0));
+        jsonretorno.put("tasaFletes", this.getInvDao().getEntradas_TasaFletes());
+        jsonretorno.put("Fleteras", this.getInvDao().geteEntradas_Fleteras(id_empresa,id_sucursal));
+        jsonretorno.put("Almacenes", this.getInvDao().getAlmacenes2(id_empresa));
         
         return jsonretorno;
     }
@@ -540,7 +526,7 @@ public class ComFacComprasController {
             @RequestParam(value="motivo", required=true) String motivo_cancelacion,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
-            ) {
+        ) {
         
         HashMap<String, String> jsonretorno = new HashMap<String, String>();
         System.out.println("Cancelacion de entrada de mercancia");
