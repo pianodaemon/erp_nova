@@ -1219,35 +1219,37 @@ public class InvSpringDao implements InvInterfaceDao{
 
     @Override
     public ArrayList<HashMap<String, String>> getEntrada_Datos(Integer id) {
-        String sql_to_query = "SELECT com_fac.id,"
-                                    +"com_fac.no_entrada,"
-                                    +"com_fac.proveedor_id,"
-                                    +"com_fac.factura,"
-                                    +"com_fac.factura_fecha_expedicion AS expedicion,"
-                                    +"to_char(com_fac.factura_fecha_expedicion,'dd/mm/yyyy') AS fecha_fac,"//este es solo para el pdf
-                                    +"to_char(com_fac.momento_creacion,'dd/mm/yyyy') AS fecha_entrada,"
-                                    +"com_fac.moneda_id,"
-                                    + "gral_mon.descripcion AS moneda,"
-                                    + "gral_mon.descripcion_abr AS moneda_abr,"
-                                    + "gral_mon.simbolo AS moneda_simbolo, "
-                                    +"com_fac.tipo_de_cambio as tipo_cambio,"
-                                    +"com_fac.fletera_id,"
-                                    +"com_fac.numero_guia,"
-                                    +"com_fac.orden_de_compra as orden_compra,"
-                                    +"com_fac.observaciones,"
-                                    +"com_fac.flete,"
-                                    +"(CASE WHEN com_fac.cancelacion=FALSE THEN '' ELSE 'CANCELADO' END) AS estado, "
-                                    +"com_fac.inv_alm_id as almacen_destino,"
-                                    +"com_fac.tipo_documento, "
-                                    + "com_fac.subtotal, "
-                                    + "com_fac.iva, "
-                                    + "com_fac.retencion, "
-                                    + "com_fac.total, "
-                                    + "com_fac.monto_ieps "
-                            +"FROM com_fac "
-                            + "LEFT JOIN gral_mon ON gral_mon.id=com_fac.moneda_id "
-                            +"where com_fac.id="+ id + ";";
-
+        String sql_to_query = ""
+        + "SELECT com_fac.id,"
+                +"com_fac.no_entrada,"
+                +"com_fac.proveedor_id,"
+                +"com_fac.factura,"
+                +"com_fac.factura_fecha_expedicion AS expedicion,"
+                +"to_char(com_fac.factura_fecha_expedicion,'dd/mm/yyyy') AS fecha_fac,"//este es solo para el pdf
+                +"to_char(com_fac.momento_creacion,'dd/mm/yyyy') AS fecha_entrada,"
+                +"com_fac.moneda_id,"
+                + "gral_mon.descripcion AS moneda,"
+                + "gral_mon.descripcion_abr AS moneda_abr,"
+                + "gral_mon.simbolo AS moneda_simbolo, "
+                +"com_fac.tipo_de_cambio as tipo_cambio,"
+                +"com_fac.fletera_id,"
+                +"com_fac.numero_guia,"
+                +"com_fac.orden_de_compra as orden_compra,"
+                +"com_fac.observaciones,"
+                +"com_fac.flete,"
+                +"(CASE WHEN com_fac.cancelacion=FALSE THEN '' ELSE 'CANCELADO' END) AS estado, "
+                +"com_fac.inv_alm_id as almacen_destino,"
+                +"com_fac.tipo_documento, "
+                + "com_fac.subtotal, "
+                + "com_fac.iva, "
+                + "com_fac.retencion, "
+                + "com_fac.total, "
+                + "com_fac.monto_ieps, "
+                + "com_fac.lab_destino "
+        +"FROM com_fac "
+        + "LEFT JOIN gral_mon ON gral_mon.id=com_fac.moneda_id "
+        +"where com_fac.id="+ id + ";";
+        
         //System.out.println("sql_to_query: "+sql_to_query);
         ArrayList<HashMap<String, String>> hm_datos_entrada = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -1280,6 +1282,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("retencion",StringHelper.roundDouble(rs.getString("retencion"),2));
                     row.put("total",StringHelper.roundDouble(rs.getString("total"),2));
                     row.put("monto_ieps",StringHelper.roundDouble(rs.getString("monto_ieps"),2));
+                    row.put("lab_destino",String.valueOf(rs.getBoolean("lab_destino")));
                     return row;
                 }
             }
@@ -1442,7 +1445,8 @@ public class InvSpringDao implements InvInterfaceDao{
             + "com_orden_compra.tipo_cambio,"
             + "com_orden_compra.subtotal, "
             + "com_orden_compra.impuesto,"
-            + "com_orden_compra.total "
+            + "com_orden_compra.total, "
+            + "com_orden_compra.lab_destino "
         + "FROM com_orden_compra "
         + "JOIN cxp_prov ON cxp_prov.id=com_orden_compra.proveedor_id "
         + "WHERE com_orden_compra.folio='"+ orden_compra + "'  "
@@ -1468,6 +1472,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("subtotal",StringHelper.roundDouble(rs.getString("subtotal"),2));
                     row.put("impuesto",StringHelper.roundDouble(rs.getString("impuesto"),2));
                     row.put("total",StringHelper.roundDouble(rs.getString("total"),2));
+                    row.put("lab_destino",String.valueOf(rs.getBoolean("lab_destino")));
                     return row;
                 }
             }
@@ -8400,6 +8405,8 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("inv_alm_id",String.valueOf(rs.getInt("inv_alm_id")));
                     row.put("formato_oc",String.valueOf(rs.getInt("formato_oc")));
                     row.put("captura_costo_ref",String.valueOf(rs.getBoolean("captura_costo_ref")).toLowerCase().trim());
+                    row.put("mostrar_lab", String.valueOf(rs.getBoolean("mostrar_lab")));
+                    row.put("texto_lab", rs.getString("texto_lab"));
                     return row;
                 }
             }

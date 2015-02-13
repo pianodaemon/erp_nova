@@ -241,25 +241,30 @@ public class ComFacComprasController {
     
     
     @RequestMapping(method = RequestMethod.POST, value="/get_datos_entrada_mercancia.json")
-    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> get_datos_entrada_mercanciaJson(
+    public @ResponseBody HashMap<String,Object> get_datos_entrada_mercanciaJson(
             @RequestParam(value="id_entrada", required=true) Integer id,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
         ) {
         
         log.log(Level.INFO, "Ejecutando get_datos_entrada_mercanciaJson de {0}", ComFacComprasController.class.getName());
-        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        HashMap<String,Object> jsonretorno = new HashMap<String,Object>();
         ArrayList<HashMap<String, String>> datosEntrada = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> datosProveedor = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> datosGrid = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
+        HashMap<String, String> comPar = new HashMap<String, String>();
+        HashMap<String, String> extra = new HashMap<String, String>();
         
         //Decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
         userDat = this.getHomeDao().getUserById(id_usuario);
-        
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        comPar = this.getInvDao().getCom_Par(id_empresa, id_sucursal);
+        
+        extra.put("mostrar_lab", comPar.get("mostrar_lab"));
+        extra.put("texto_lab", comPar.get("texto_lab"));
         
         if( id != 0 ){
             datosEntrada = this.getInvDao().getEntrada_Datos(id);
@@ -277,6 +282,7 @@ public class ComFacComprasController {
         jsonretorno.put("tasaFletes", this.getInvDao().getEntradas_TasaFletes());
         jsonretorno.put("Fleteras", this.getInvDao().geteEntradas_Fleteras(id_empresa,id_sucursal));
         jsonretorno.put("Almacenes", this.getInvDao().getAlmacenes2(id_empresa));
+        jsonretorno.put("Extra", extra);
         
         return jsonretorno;
     }
@@ -428,6 +434,8 @@ public class ComFacComprasController {
             @RequestParam(value="almacen_destino", required=true) String almacen_destino,
             @RequestParam(value="tipodoc", required=true) String tipo_documento,
             @RequestParam(value="flete", required=true) String flete,
+            @RequestParam(value="check_lab", required=false) String check_lab,
+            
             @RequestParam(value="cantidad", required=true) String[] cantidad,
             @RequestParam(value="costo", required=true) String[] costo,
             @RequestParam(value="id_prod_grid", required=true) String[] id_prod_grid,
@@ -435,7 +443,6 @@ public class ComFacComprasController {
             @RequestParam(value="valorimp", required=true) String[] valor_imp,
             @RequestParam(value="id_pres", required=true) String[] id_pres,
             @RequestParam(value="eliminado", required=true) String[] eliminado,
-            
             @RequestParam(value="select_ieps", required=true) String[] id_ieps,
             @RequestParam(value="valorieps", required=true) String[] tasa_eps,
             @RequestParam(value="iddetoc", required=true) String[] iddetoc,
@@ -498,7 +505,9 @@ public class ComFacComprasController {
                 command_selected = "edit";
             }
             
-            String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_entrada+"___"+id_proveedor+"___"+factura.toUpperCase()+"___"+expedicion+"___"+numeroguia+"___"+ordencompra+"___"+denominacion+"___"+tc+"___"+observaciones.toUpperCase()+"___"+fletera_id+"___"+flete+"___"+almacen_destino+"___"+tipo_documento;
+            check_lab = StringHelper.verificarCheckBox(check_lab);
+            
+            String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_entrada+"___"+id_proveedor+"___"+factura.toUpperCase()+"___"+expedicion+"___"+numeroguia+"___"+ordencompra+"___"+denominacion+"___"+tc+"___"+observaciones.toUpperCase()+"___"+fletera_id+"___"+flete+"___"+almacen_destino+"___"+tipo_documento+"___"+check_lab;
             
             //succes = this.getEdao().selectFunctionValidateAaplicativo(data_string,9,string_array);
             succes = this.getInvDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
