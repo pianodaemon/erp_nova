@@ -171,10 +171,6 @@ public class CtbCuentasContablesController {
         HashMap<String,Object> jsonretorno = new HashMap<String,Object>();
         HashMap<String, String> userDat = new HashMap<String, String>();
         HashMap<String, Object> data = new HashMap<String, Object>();
-        ArrayList<HashMap<String, String>> nivel_cuenta = new ArrayList<HashMap<String, String>>();
-        ArrayList<HashMap<String, String>> tipo_cuenta = new ArrayList<HashMap<String, String>>();
-        ArrayList<HashMap<String, String>> naturaleza_cuenta = new ArrayList<HashMap<String, String>>();
-        HashMap<String, String> map = null;
         
         //Decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
@@ -192,38 +188,6 @@ public class CtbCuentasContablesController {
         }else{
             data.put("versuc", false);
         }
-        
-        
-        //Agregar opciones para Nivel de la Cuenta
-        String[] niveles = {"Auxiliar","Mayor"};
-        for (int i=0; i<niveles.length; i++){
-            map = new HashMap<String, String>();
-            map.put("index", String.valueOf(i+1));
-            map.put("text", niveles[i]);
-            nivel_cuenta.add(map);
-        }
-        
-        //Agregar tipo de cuenta
-        String[] tipos = {"Balance","Resultados","De orden"};
-        for (int i=0; i<tipos.length; i++){
-            map = new HashMap<String, String>();
-            map.put("index", String.valueOf(i+1));
-            map.put("text", tipos[i]);
-            tipo_cuenta.add(map);
-        }
-        
-        //Agregar naturaleza de la cuenta
-        String[] naturalezas = {"Deudora","Acreedora"};
-        for (int i=0; i<naturalezas.length; i++){
-            map = new HashMap<String, String>();
-            map.put("index", String.valueOf(i+1));
-            map.put("text", naturalezas[i]);
-            naturaleza_cuenta.add(map);
-        }
-        
-        data.put("NivCta", nivel_cuenta);
-        data.put("TipoCta", tipo_cuenta);
-        data.put("NatCta", naturaleza_cuenta);
         
         jsonretorno.put("Suc", this.getCtbDao().getCtb_Sucursales(id_empresa));
         jsonretorno.put("CC", this.getCtbDao().getPolizasContables_CentrosCostos(id_empresa, idSucUser));

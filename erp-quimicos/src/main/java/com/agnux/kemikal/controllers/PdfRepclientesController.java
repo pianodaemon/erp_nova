@@ -1,6 +1,7 @@
 package com.agnux.kemikal.controllers;
 import com.agnux.common.helpers.TimeHelper;
 import com.agnux.cfd.v2.Base64Coder;
+import com.agnux.common.helpers.FileHelper;
 import com.agnux.common.obj.ResourceProject;
 import com.agnux.common.obj.UserSessionData;
 import com.agnux.kemikal.interfacedaos.CxcInterfaceDao;
@@ -160,7 +161,7 @@ public class PdfRepclientesController {
                 HttpServletRequest request,
                 HttpServletResponse response,
                 Model model)
-        throws ServletException, IOException, URISyntaxException, DocumentException {
+        throws ServletException, IOException, URISyntaxException, DocumentException, Exception {
 
         HashMap<String, String> userDat = new HashMap<String, String>();
         ArrayList<HashMap<String, String>> lista_clientes = new ArrayList<HashMap<String, String>>();
@@ -195,7 +196,7 @@ public class PdfRepclientesController {
 
 
         File file_dir_tmp = new File(dir_tmp);
-        System.out.println("Directorio temporal: "+file_dir_tmp.getCanonicalPath());
+        //System.out.println("Directorio temporal: "+file_dir_tmp.getCanonicalPath());
 
         String file_name = "REPCLIENTES_"+nombreMes+".pdf";
 
@@ -214,10 +215,14 @@ public class PdfRepclientesController {
         response.setBufferSize(size);
         response.setContentLength(size);
         response.setContentType("application/pdf");
-        response.setHeader("Content-Disposition","attachment; filename=\"" + file.getCanonicalPath() +"\"");
+        response.setHeader("Content-Disposition","attachment; filename=\"" + file.getName() +"\"");
         FileCopyUtils.copy(bis, response.getOutputStream());
         response.flushBuffer();
-
+        
+        if(file.exists()){
+            FileHelper.delete(fileout);
+        }
+        
         return null;
     }
 }

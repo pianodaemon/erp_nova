@@ -5,6 +5,7 @@
 package com.agnux.kemikal.controllers;
 
 import com.agnux.cfd.v2.Base64Coder;
+import com.agnux.common.helpers.FileHelper;
 import com.agnux.common.helpers.StringHelper;
 import com.agnux.common.helpers.TimeHelper;
 import com.agnux.common.obj.ResourceProject;
@@ -168,7 +169,7 @@ public class CtbRepBalanzaComprobacionController {
    
    //Obtiene datos para mostrar en el navegador
     @RequestMapping(method = RequestMethod.POST, value="/getDatosReporte.json")
-    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getDatosReporteJson(
+    public @ResponseBody HashMap<String,Object> getDatosReporteJson(
             @RequestParam(value="tipo_reporte", required=true) String tipo_reporte,
             @RequestParam(value="ano", required=true) String ano,
             @RequestParam(value="mes", required=false) String mes,
@@ -183,10 +184,11 @@ public class CtbRepBalanzaComprobacionController {
         ) {
         
         log.log(Level.INFO, "Ejecutando getDatosReporteJson de {0}", CtbRepBalanzaComprobacionController.class.getName());
-        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        HashMap<String,Object> jsonretorno = new HashMap<String,Object>();
         
-        HashMap<String, String> userDat = new HashMap<String, String>();
+        //HashMap<String, String> userDat = new HashMap<String, String>();
         ArrayList<HashMap<String, String>> datos = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> total = new HashMap<String, String>();
         
         //Reporte Balanza de Comprobacion
         Integer app_selected = 158;
@@ -209,7 +211,33 @@ public class CtbRepBalanzaComprobacionController {
         //Obtiene datos del Reporte Auxiliar de Cuentas
         datos = this.getCtbDao().getCtbRepBalanzaComp_Datos(data_string);
         
+        
+        Double suma_saldo_inicial=0.0;
+        Double suma_debe=0.0;
+        Double suma_haber=0.0;
+        Double suma_saldo_final=0.0;
+        
+        //Calcular totales
+        for( HashMap<String,String> i : datos ){
+            //Sumar solo los de nivel 2(1=Auxiliar, 2=Mayor) para evitar duplicar cantidades
+            if(i.get("nivel").trim().equals("2")){
+                //System.out.println("Nivel="+i.get("nivel")+"    saldo_inicial="+i.get("saldo_inicial")+"    debe="+i.get("debe")+"      haber="+i.get("haber")+"    saldo_final="+i.get("saldo_final"));
+                suma_saldo_inicial += (i.get("saldo_inicial").trim().equals(""))?0:Double.parseDouble(i.get("saldo_inicial"));
+                suma_debe += (i.get("debe").trim().equals(""))?0:Double.parseDouble(i.get("debe"));
+                suma_haber += (i.get("haber").trim().equals(""))?0:Double.parseDouble(i.get("haber"));
+                suma_saldo_final += (i.get("saldo_final").trim().equals(""))?0:Double.parseDouble(i.get("saldo_final"));
+            }
+        }
+        
+        System.out.println("suma_saldo_inicial="+suma_saldo_inicial+"    suma_debe="+suma_debe+"      suma_haber="+suma_haber+"    suma_saldo_final="+suma_saldo_final);
+        
+        total.put("suma_si", StringHelper.roundDouble(suma_saldo_inicial,2));
+        total.put("suma_d", StringHelper.roundDouble(suma_debe,2));
+        total.put("suma_h", StringHelper.roundDouble(suma_haber,2));
+        total.put("suma_sf", StringHelper.roundDouble(suma_saldo_final,2));
+        
         jsonretorno.put("Data", datos);
+        jsonretorno.put("Total", total);
         
         return jsonretorno;
     }
@@ -223,12 +251,13 @@ public class CtbRepBalanzaComprobacionController {
                 HttpServletRequest request,
                 HttpServletResponse response,
                 Model model)
-        throws ServletException, IOException, URISyntaxException, DocumentException {
+        throws ServletException, IOException, URISyntaxException, DocumentException, Exception {
         
         HashMap<String, String> userDat = new HashMap<String, String>();
         HashMap<String, String> datosEmpresaEmisora= new HashMap<String, String>();
         HashMap<String, String> datosEncabezadoPie= new HashMap<String, String>();
         ArrayList<HashMap<String, String>> datos = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> total = new HashMap<String, String>();
         
         System.out.println("Generando Reporte de Balanza de Comprobación");
         
@@ -277,7 +306,7 @@ public class CtbRepBalanzaComprobacionController {
         String dir_tmp = this.getGralDao().getTmpDir();
         
         File file_dir_tmp = new File(dir_tmp);
-        System.out.println("Directorio temporal: "+file_dir_tmp.getCanonicalPath());
+        //System.out.println("Directorio temporal: "+file_dir_tmp.getCanonicalPath());
         
         String file_name = "RepBalanzaComprobacion_"+nombreMes+".pdf";
         
@@ -286,7 +315,32 @@ public class CtbRepBalanzaComprobacionController {
         
         datos = this.getCtbDao().getCtbRepBalanzaComp_Datos(data_string);
         
-        CtbPdfReporteBalanzaComprobacion x = new CtbPdfReporteBalanzaComprobacion(fileout, datosEncabezadoPie, datosEmpresaEmisora, datos);
+        Double suma_saldo_inicial=0.0;
+        Double suma_debe=0.0;
+        Double suma_haber=0.0;
+        Double suma_saldo_final=0.0;
+        
+        //Calcular totales
+        for( HashMap<String,String> i : datos ){
+            //Sumar solo los de nivel 2(1=Auxiliar, 2=Mayor) para evitar duplicar cantidades
+            if(i.get("nivel").trim().equals("2")){
+                //System.out.println("saldo_inicial="+i.get("saldo_inicial")+"    debe="+i.get("debe")+"      haber="+i.get("haber")+"    saldo_final="+i.get("saldo_final"));
+                suma_saldo_inicial += (i.get("saldo_inicial").trim().equals(""))?0:Double.parseDouble(i.get("saldo_inicial"));
+                suma_debe += (i.get("debe").trim().equals(""))?0:Double.parseDouble(i.get("debe"));
+                suma_haber += (i.get("haber").trim().equals(""))?0:Double.parseDouble(i.get("haber"));
+                suma_saldo_final += (i.get("saldo_final").trim().equals(""))?0:Double.parseDouble(i.get("saldo_final"));
+            }
+        }
+        
+        System.out.println("suma_saldo_inicial="+suma_saldo_inicial+"    suma_debe="+suma_debe+"      suma_haber="+suma_haber+"    suma_saldo_final="+suma_saldo_final);
+        
+        total.put("suma_si", StringHelper.roundDouble(suma_saldo_inicial,2));
+        total.put("suma_d", StringHelper.roundDouble(suma_debe,2));
+        total.put("suma_h", StringHelper.roundDouble(suma_haber,2));
+        total.put("suma_sf", StringHelper.roundDouble(suma_saldo_final,2));
+        
+        
+        CtbPdfReporteBalanzaComprobacion x = new CtbPdfReporteBalanzaComprobacion(fileout, datosEncabezadoPie, datosEmpresaEmisora, datos, total);
         
         System.out.println("Recuperando archivo: " + fileout);
         File file = new File(fileout);
@@ -298,6 +352,10 @@ public class CtbRepBalanzaComprobacionController {
         response.setHeader("Content-Disposition","attachment; filename=\"" + file.getName() +"\"");
         FileCopyUtils.copy(bis, response.getOutputStream());
         response.flushBuffer();
+        
+        if(file.exists()){
+            FileHelper.delete(fileout);
+        }
         
         return null;
     }

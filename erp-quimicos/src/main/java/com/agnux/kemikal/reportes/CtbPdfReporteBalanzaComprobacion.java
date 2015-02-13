@@ -43,6 +43,15 @@ public class CtbPdfReporteBalanzaComprobacion {
     HashMap<String, String> datosHeaderFooter;
     HashMap<String, String> datosEmp;
     public List<HashMap<String, String>> rows;
+    private HashMap<String, String> total;
+
+    public HashMap<String, String> getTotal() {
+        return total;
+    }
+
+    public void setTotal(HashMap<String, String> total) {
+        this.total = total;
+    }
     
     public File getArchivoSalida() {
         return archivoSalida;
@@ -76,11 +85,12 @@ public class CtbPdfReporteBalanzaComprobacion {
         this.rows = rows;
     }
     
-    public CtbPdfReporteBalanzaComprobacion(String fileout, HashMap<String, String> datosEncabezadoPie, HashMap<String, String> datosEmpresa, ArrayList<HashMap<String, String>> itemsForPrinting){
+    public CtbPdfReporteBalanzaComprobacion(String fileout, HashMap<String, String> datosEncabezadoPie, HashMap<String, String> datosEmpresa, ArrayList<HashMap<String, String>> itemsForPrinting, HashMap<String, String> total){
         this.setArchivoSalida(new File(fileout));
         this.setDatosHeaderFooter(datosEncabezadoPie);
         this.setDatosEmp(datosEmpresa);
         this.setRows(itemsForPrinting);
+        this.setTotal(total);
         this.init();
     }
     
@@ -276,6 +286,62 @@ public class CtbPdfReporteBalanzaComprobacion {
                     table.addCell(celda);
                 }  
             }
+            
+            
+            PdfPCell celda = null;
+            celda = new PdfPCell(new Paragraph("",smallFont));
+            celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            celda.setBorderWidthTop(1);
+            celda.setBorderWidthBottom(0);
+            celda.setBorderWidthRight(0);
+            celda.setBorderWidthLeft(0);
+            table.addCell(celda);
+            
+            celda = new PdfPCell(new Paragraph("",smallFont));
+            celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            celda.setBorderWidthTop(1);
+            celda.setBorderWidthBottom(0);
+            celda.setBorderWidthRight(0);
+            celda.setBorderWidthLeft(0);
+            table.addCell(celda);
+            
+            celda = new PdfPCell(new Paragraph(StringHelper.AgregaComas(this.getTotal().get("suma_si")),smallFont));
+            celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            celda.setBorderWidthTop(1);
+            celda.setBorderWidthBottom(0);
+            celda.setBorderWidthRight(0);
+            celda.setBorderWidthLeft(0);
+            table.addCell(celda);
+            
+            celda = new PdfPCell(new Paragraph(StringHelper.AgregaComas(this.getTotal().get("suma_d")),smallFont));
+            celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            celda.setBorderWidthTop(1);
+            celda.setBorderWidthBottom(0);
+            celda.setBorderWidthRight(0);
+            celda.setBorderWidthLeft(0);
+            table.addCell(celda);
+            
+            celda = new PdfPCell(new Paragraph(StringHelper.AgregaComas(this.getTotal().get("suma_h")),smallFont));
+            celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            celda.setBorderWidthTop(1);
+            celda.setBorderWidthBottom(0);
+            celda.setBorderWidthRight(0);
+            celda.setBorderWidthLeft(0);
+            table.addCell(celda);
+            
+            celda = new PdfPCell(new Paragraph(StringHelper.AgregaComas(this.getTotal().get("suma_sf")),smallFont));
+            celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            celda.setBorderWidthTop(1);
+            celda.setBorderWidthBottom(0);
+            celda.setBorderWidthRight(0);
+            celda.setBorderWidthLeft(0);
+            table.addCell(celda);
             
             doc.add(table);   
             doc.close();

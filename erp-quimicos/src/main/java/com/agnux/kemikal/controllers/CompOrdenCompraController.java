@@ -217,23 +217,14 @@ public class CompOrdenCompraController {
         if(!id_orden_compra.equals("0")){
             datosOrdenCompra = this.getComDao().getComOrdenCompra_Datos(Integer.parseInt(id_orden_compra));
             datosGrid = this.getComDao().getComOrdenCompra_DatosGrid(Integer.parseInt(id_orden_compra));
-            
-            extra.put("texto_lab", parametros.get("texto_lab"));
-            if(String.valueOf(datosOrdenCompra.get(0).get("lab_dest")).equals("true")){
-                
-            }
         }else{
             dirEmp =this.getGralDao().getEmisor_Datos(id_empresa);
             
             consignado_a = dirEmp.get("emp_razon_social")+"\n"+dirEmp.get("emp_calle")+" #"+dirEmp.get("emp_no_exterior")+", "+dirEmp.get("emp_colonia")+",\n"+dirEmp.get("emp_municipio")+", "+dirEmp.get("emp_estado")+", "+dirEmp.get("emp_pais")+" C.P. "+dirEmp.get("emp_cp")+"\n"+"R.F.C. "+dirEmp.get("emp_rfc");
-            
-            if(String.valueOf(parametros.get("mostrar_lab")).equals("true")){
-                extra.put("texto_lab", parametros.get("texto_lab"));
-            }else{
-                //Envía vacio porque no se debe mostrar
-                extra.put("texto_lab", "");
-            }
         }
+        
+        extra.put("mostrar_lab", parametros.get("mostrar_lab"));
+        extra.put("texto_lab", parametros.get("texto_lab"));
         
         valorIva= this.getComDao().getValoriva(id_sucursal);
         extra.put("tipo_cambio", StringHelper.roundDouble(this.getComDao().getTipoCambioActual(), 4)) ;
