@@ -5,7 +5,6 @@
 package com.agnux.kemikal.springdaos;
 import com.agnux.common.helpers.StringHelper;
 import com.agnux.kemikal.interfacedaos.CtbInterfaceDao;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -103,7 +102,7 @@ public class CtbSpringDao implements CtbInterfaceDao{
         //System.out.println("Busqueda GetPage: "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query, 
-            new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+            new Object[]{data_string, new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, Object> row = new HashMap<String, Object>();
@@ -158,7 +157,7 @@ public class CtbSpringDao implements CtbInterfaceDao{
         
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query, 
-            new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+            new Object[]{data_string, new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, Object> row = new HashMap<String, Object>();
@@ -235,7 +234,7 @@ public class CtbSpringDao implements CtbInterfaceDao{
         //System.out.println("Busqueda GetPage: "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query, 
-            new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+            new Object[]{data_string, new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, Object> row = new HashMap<String, Object>();
@@ -288,7 +287,7 @@ public class CtbSpringDao implements CtbInterfaceDao{
         //System.out.println("Busqueda GetPage: "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query, 
-            new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+            new Object[]{data_string, new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, Object> row = new HashMap<String, Object>();
@@ -569,7 +568,7 @@ public class CtbSpringDao implements CtbInterfaceDao{
         System.out.println("Ctb_DatosRepAuxCtas:: "+sql_to_query);
         ArrayList<HashMap<String, String>> hm_facturas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
-            new Object[]{new String(data_string)}, new RowMapper(){
+            new Object[]{data_string}, new RowMapper(){
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, String> row = new HashMap<String, String>();
@@ -769,7 +768,7 @@ public class CtbSpringDao implements CtbInterfaceDao{
         System.out.println("Ctb_DatosRepAuxCtas:: "+sql_to_query);
         ArrayList<HashMap<String, String>> hm_facturas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
-            new Object[]{new String(data_string)}, new RowMapper(){
+            new Object[]{data_string}, new RowMapper(){
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, String> row = new HashMap<String, String>();
@@ -942,7 +941,7 @@ public class CtbSpringDao implements CtbInterfaceDao{
         System.out.println("Ctb_DatosRepAuxCtas:: "+sql_to_query);
         ArrayList<HashMap<String, String>> hm_facturas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
-            new Object[]{new String(data_string)}, new RowMapper(){
+            new Object[]{data_string}, new RowMapper(){
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, String> row = new HashMap<String, String>();
@@ -1027,7 +1026,7 @@ public class CtbSpringDao implements CtbInterfaceDao{
         System.out.println("Ctb_DatosRepAuxCtas:: "+sql_to_query);
         ArrayList<HashMap<String, String>> hm_facturas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
-            new Object[]{new String(data_string)}, new RowMapper(){
+            new Object[]{data_string}, new RowMapper(){
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, String> row = new HashMap<String, String>();
@@ -1113,7 +1112,7 @@ public class CtbSpringDao implements CtbInterfaceDao{
         System.out.println("Ctb_DatosRepAuxCtas:: "+sql_to_query);
         ArrayList<HashMap<String, String>> hm_facturas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
-            new Object[]{new String(data_string)}, new RowMapper(){
+            new Object[]{data_string}, new RowMapper(){
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, String> row = new HashMap<String, String>();

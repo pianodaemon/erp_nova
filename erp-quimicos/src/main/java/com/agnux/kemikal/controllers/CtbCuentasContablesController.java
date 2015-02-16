@@ -11,11 +11,10 @@ import com.agnux.common.obj.ResourceProject;
 import com.agnux.common.obj.UserSessionData;
 import com.agnux.kemikal.interfacedaos.CtbInterfaceDao;
 import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
-import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.pdf.PdfPCell;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -342,14 +341,5 @@ public class CtbCuentasContablesController {
         jsonretorno.put("success",String.valueOf( this.getCtbDao().selectFunctionForCtbAdmProcesos(data_string,extra_data_array)) );
         
         return jsonretorno;
-    }
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    }   
 }
