@@ -1902,7 +1902,7 @@ public class LogSpringDao implements LogInterfaceDao{
     public ArrayList<HashMap<String, Object>> getBuscadorUnidades(String no_unidad, String marca, Integer id_empresa, Integer id_sucursal) {
         String where="";
         if(id_sucursal!=0){
-            where = " and gral_suc_id="+id_sucursal;
+            where = " and log_vehiculos.gral_suc_id="+id_sucursal;
         }
         
 	String sql_query = ""
@@ -1960,7 +1960,7 @@ public class LogSpringDao implements LogInterfaceDao{
         
         String where="";
         if(id_sucursal!=0){
-            where +=" and gral_suc_id="+id_sucursal;
+            where +=" and log_vehiculos.gral_suc_id="+id_sucursal;
         }
         
         String sql_query = ""
