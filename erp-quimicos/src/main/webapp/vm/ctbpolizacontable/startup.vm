@@ -147,19 +147,13 @@
 														<tr>
 															<td width="10"></td>
 															<td width="60">Sucursal</td>
-															<td width="200">
-																<select name="select_sucursal" style="width:200px;"></select>
-															</td>
+															<td width="200"><select name="select_sucursal" style="width:200px;"></select></td>
 															<td width="90"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_sucursal"></div></td>
-															<td width="35">Mes</td>
-															<td width="80">
-																<select name="select_mes" style="width:80px;"></select>
-															</td>
+															<td width="52">Mes</td>
+															<td width="80"><select name="select_mes" style="width:80px;"></select></td>
 															<td width="30"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_mes"></div></td>
-															<td width="30">A&ntilde;o</td>
-															<td width="50">
-																<select name="select_anio" style="width:50px;"></select>
-															</td>
+															<td width="60">A&ntilde;o</td>
+															<td width="70"><select name="select_anio" style="width:70px;"></select></td>
 															<td width="50"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_anio"></div></td>
 														</tr>
 													</table>
@@ -171,21 +165,16 @@
 														<tr>
 															<td width="10"></td>
 															<td width="60">No.&nbsp;P&oacute;liza</td>
-															<td width="70">
-																<input type="text"name="no_poliza" style="width:70px;" maxlength="9">
-															</td>
+															<td width="70"><input type="text"name="no_poliza" style="width:70px;" maxlength="9"></td>
 															<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_nopoliza"></div></td>
 															<td width="35">Fecha</td>
-															<td width="70">
-																<input type="text"name="fecha" style="width:70px;" maxlength="10">
-															</td>
+															<td width="70"><input type="text"name="fecha" style="width:66px;" maxlength="10"></td>
 															<td width="85"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_fecha"></div></td>
-															<td width="50">Moneda</td>
-															<td width="65">
-																<select name="select_moneda" style="width:65px;"></select>
-															</td>
-															<td width="50"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_moneda"></div></td>
-															
+															<td width="52">Moneda</td>
+															<td width="80"><select name="select_moneda" style="width:80px;"></select></td>
+															<td width="30"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_moneda"></div></td>
+															<td width="60">Referencia</td>
+															<td width="70"><input type="text"name="referencia" style="width:70px;" maxlength="25"></td>
 														</tr>
 													</table>
 												</td>
@@ -198,15 +187,10 @@
 														<tr>
 															<td width="10"></td>
 															<td width="60">Tipo</td>
-															<td width="200">
-																<select name="select_tipo" style="width:200px;"></select>
-															</td>
+															<td width="200"><select name="select_tipo" style="width:200px;"></select></td>
 															<td width="90"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_tipo"></div></td>
-															
 															<td width="52">Concepto</td>
-															<td width="177">
-																<select name="select_concepto" style="width:177px;"></select>
-															</td>
+															<td width="170"><select name="select_concepto" style="width:170px;"></select></td>
 															<td width="50"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_concepto"></div></td>
 															
 														</tr>
@@ -214,16 +198,62 @@
 												</td>
 											</tr>
 											
+
+											<!--
+											<tr>
+												<td valign="top" > 
+													<table border="1" class="gral">
+														<tr>
+															<td width="10"></td>
+															<td width="60">Descripci&oacute;n</td>
+															<td width="500"><input type="text"name="descripcion_cuenta" style="width:500px;" readOnly="true"></td>
+															<td width="50"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_desccta"></div></td>
+														</tr>
+													</table>
+												</td>
+											</tr>
+											-->
+											
+											<tr>
+												<td valign="top" > 
+													<table border="0" class="gral">
+														<tr>
+															<td width="10">&nbsp;</td>
+															<td width="60" rowspan="2">Descripci&oacute;n de&nbsp;la&nbsp;p&oacute;liza</td>
+															<td width="510" colspan="8" rowspan="2">
+																<textarea name="descripcion_pol" rows="2" cols="90" style="width:510px; height:30px; resize:none;"></textarea>
+															</td>
+															<td width="50"></td>
+															<td width="70"></td>
+															<td width="80"></td>
+															<td width="15"></td>
+															<td width="100">&nbsp;</td>
+														</tr>
+														<tr>
+															<td width="10">&nbsp;</td>
+															<!--<td width="60">Observaci&oacute;n</td>-->
+															<!--<td width="500" colspan="8"></td>-->
+															<td width="50"></td>
+															<td width="70"></td>
+															<td width="80"></td>
+															<td width="25"></td>
+															<td width="100">
+																<input type="button" id="btn_contabilizar" value="Contabilizar" style="width:100px; font-weight:bold;">
+																<input type="button" id="btn_cancelar" value="Cancelar" style="width:100px; font-weight:bold;">
+															</td>
+														</tr>
+													</table>
+												</td>
+											</tr>
+											
+											
 											<tr>
 												<td valign="top" > 
 													<table border="0" class="gral">
 														<tr>
 															<td width="10"></td>
 															<td width="60">Cuenta&nbsp;</td>
-															<td>
-																<!--<input type="hidden" name="id_cta" value="0">-->
-																<input name="cuenta" style="width:40px;" maxlength="4">
-															</td>
+															<td><input name="cuenta" style="width:40px;" maxlength="4"></td>
 															<td width="5"></td>
 															<td><input name="scuenta" style="width:40px;" maxlength="4"></td>
 															<td width="5"></td>
@@ -233,59 +263,18 @@
 															<td width="5"></td>
 															<td><input name="sssscuenta" style="width:40px;" maxlength="4"></td>
 															<td width="5"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_cta"></div></td>
-															<td width="5"></td>
 															<td width="60"><a href="#agrega_cuenta_contble" id="agrega_cuenta_contble">&nbsp;(Agregar)</a></td>
 															<td width="5"></td>
-															<td width="60"><a href="#busca_cuenta_contble" id="busca_cuenta_contble">&nbsp;(Buscar)</a></td>
-														</tr>
-													</table>
-												</td>
-											</tr>
-											
-											<tr>
-												<td valign="top" > 
-													<table border="0" class="gral">
-														<tr>
-															<td width="10"></td>
-															<td width="60">Descripci&oacute;n</td>
-															<td width="500"><input type="text"name="descripcion_cuenta" style="width:500px;" readOnly="true"></td>
-															<td width="50"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_desccta"></div></td>
-															<!--<td width="50"><a href="#limpiar_cuenta_contable" id="limpiar_cuenta_contable">&nbsp;(Limpiar)</a></td>-->
+															<td width="125">Descripci&oacute;n&nbsp;de&nbsp;la&nbsp;cuenta</td>
+															<td width="320"><input type="text"name="descripcion_cuenta" style="width:320px;" readOnly="true"></td>
+															<td width="15"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_desccta"></div></td>
+															<td width="70"><a href="#busca_cuenta_contble" id="busca_cuenta_contble">&nbsp;(Buscar)</a></td>
 														</tr>
 													</table>
 												</td>
 											</tr>
 											
 											
-											<tr>
-												<td valign="top" > 
-													<table border="0" class="gral">
-														<tr>
-															<td width="10">&nbsp;</td>
-															<td width="60" rowspan="2">Observaci&oacute;n</td>
-															<td width="500" colspan="8" rowspan="2">
-																<textarea name="observacion" rows="2" cols="90" style="width:500px; resize:none;"></textarea>
-															</td>
-															<td width="50"></td>
-															<td width="100">&nbsp;</td>
-														</tr>
-														<tr>
-															<td width="10">&nbsp;</td>
-															<!--<td width="60">Observaci&oacute;n</td>-->
-															<!--<td width="500" colspan="8"></td>-->
-															<td width="50"></td>
-															<td width="100">
-																<input type="button" id="btn_contabilizar" value="Contabilizar" style="width:100px; font-weight:bold;">
-																<input type="button" id="btn_cancelar" value="Cancelar" style="width:100px; font-weight:bold;">
-															</td>
-														</tr>
-														
-													</table>
-													
-													
-													
-												</td>
-											</tr>
 											
 											<tr>
 												<td style="border-top: 1px solid #C1DAD7; border-bottom: 1px solid #C1DAD7; border-left: 1px solid #FFFFFF; border-right: 1px solid #FFFFFF;">
