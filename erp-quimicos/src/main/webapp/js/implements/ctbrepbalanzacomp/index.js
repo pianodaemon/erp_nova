@@ -100,7 +100,7 @@ $(function() {
 		
 		//Redimensionar el espacio para el resultado del reporte
 		var height2 = $('#cuerpo').css('height');
-		var alto = parseInt(height2)-240;
+		var alto = parseInt(height2)-260;
 		var pix_alto=alto+'px';
 		$('#table_rep').tableScroll({height:parseInt(pix_alto)});
 		
@@ -503,9 +503,9 @@ $(function() {
 			var alto = 0;
 			if(verMas){
 				//Entra aqui si esta activado la opcion ver mas parametros de la busqueda
-				alto = parseInt(height2)-282;
+				alto = parseInt(height2)-302;
 			}else{
-				alto = parseInt(height2)-240;
+				alto = parseInt(height2)-260;
 			}
 			var pix_alto=alto+'px';
 			$('#table_rep').tableScroll({height:parseInt(pix_alto)});

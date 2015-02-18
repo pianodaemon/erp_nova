@@ -461,20 +461,17 @@ $(function() {
 			html_fila_vacia +='<td align="right" id="sin_borde" width="135px"></td>';
 			html_fila_vacia +='</tr>';
 			
-			
 			if(parseInt(body_tabla.length)>0){
-				
 				for(var i=0; i<body_tabla.length; i++){
 					html_reporte +='<tr>';
 					html_reporte +='<td align="left">'+body_tabla[i]["cuenta"]+'</td>';
 					html_reporte +='<td align="left">'+body_tabla[i]["descripcion"]+'</td>';
-					html_reporte +='<td align="right">'+$(this).agregar_comas(body_tabla[i]["saldo_inicial"])+'</td>';
-					html_reporte +='<td align="right">'+$(this).agregar_comas(body_tabla[i]["debe"])+'</td>';
-					html_reporte +='<td align="right">'+$(this).agregar_comas(body_tabla[i]["haber"])+'</td>';
-					html_reporte +='<td align="right">'+$(this).agregar_comas(body_tabla[i]["saldo_final"])+'</td>';
+					html_reporte +='<td align="right">'+ ((body_tabla[i]["saldo_inicial"].trim()=='')? '':$(this).agregar_comas(body_tabla[i]["saldo_inicial"])) +'</td>';
+					html_reporte +='<td align="right">'+ ((body_tabla[i]["debe"].trim()=='')? '':$(this).agregar_comas(body_tabla[i]["debe"])) +'</td>';
+					html_reporte +='<td align="right">'+ ((body_tabla[i]["haber"].trim()=='')? '':$(this).agregar_comas(body_tabla[i]["haber"])) +'</td>';
+					html_reporte +='<td align="right">'+ ((body_tabla[i]["saldo_final"].trim()=='')? '':$(this).agregar_comas(body_tabla[i]["saldo_final"])) +'</td>';
 					html_reporte +='</tr>';
 				}
-				
 			}
 			
 			/*

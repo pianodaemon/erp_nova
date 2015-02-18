@@ -1087,6 +1087,7 @@ $(function() {
 		var $ssscuenta = $('#forma-ctbpolizacontable-window').find('input[name=ssscuenta]');
 		var $sssscuenta = $('#forma-ctbpolizacontable-window').find('input[name=sssscuenta]');
 		var $descripcion_cuenta = $('#forma-ctbpolizacontable-window').find('input[name=descripcion_cuenta]');
+		var $referencia = $('#forma-ctbpolizacontable-window').find('input[name=referencia]');
 		
 		
 		var $btn_contabilizar = $('#forma-ctbpolizacontable-window').find('#btn_contabilizar');
@@ -1473,7 +1474,8 @@ $(function() {
 			var $sssscuenta = $('#forma-ctbpolizacontable-window').find('input[name=sssscuenta]');
 			var $descripcion_cuenta = $('#forma-ctbpolizacontable-window').find('input[name=descripcion_cuenta]');
 			
-			var $observacion = $('#forma-ctbpolizacontable-window').find('textarea[name=observacion]');
+			var $descripcion_pol = $('#forma-ctbpolizacontable-window').find('textarea[name=descripcion_pol]');
+			var $referencia = $('#forma-ctbpolizacontable-window').find('input[name=referencia]');
 			
 			var $btn_contabilizar = $('#forma-ctbpolizacontable-window').find('#btn_contabilizar');
 			var $btn_cancelar = $('#forma-ctbpolizacontable-window').find('#btn_cancelar');
@@ -1630,11 +1632,12 @@ $(function() {
 					$descripcion_cuenta.attr({ 'value' : entry['Data'][0]['descripcion'] });
 					
 					
-					$observacion.text(entry['Data'][0]['observacion']);
+					$descripcion_pol.text(entry['Data'][0]['descripcion']);
+					$referencia.attr({'value':entry['Data'][0]['referencia'] });
+					
 					
 					$fecha.val(entry['Data'][0]['fecha']);
 					$select_sucursal.focus();
-
 				
 					//var valor = entry['Data'][0]['fecha'].split('-');
 					
@@ -1804,7 +1807,7 @@ $(function() {
 						$aplica_read_only_input_text($sscuenta);
 						$aplica_read_only_input_text($ssscuenta);
 						$aplica_read_only_input_text($sssscuenta);
-						$aplica_read_only_input_text($observacion);
+						$aplica_read_only_input_text($descripcion_pol);
 					}
 					
 					
@@ -1927,7 +1930,7 @@ $(function() {
         
         var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
         
-        $arreglo = {'orderby':'fecha','desc':'DESC','items_por_pag':10,'pag_start':1,'display_pag':10,'input_json':'/'+controller+'/getAllPolizas.json', 'cadena_busqueda':$cadena_busqueda, 'iu':iu}
+        $arreglo = {'orderby':'fecha1','desc':'DESC','items_por_pag':10,'pag_start':1,'display_pag':10,'input_json':'/'+controller+'/getAllPolizas.json', 'cadena_busqueda':$cadena_busqueda, 'iu':iu}
         
         $.post(input_json,$arreglo,function(data){
             
