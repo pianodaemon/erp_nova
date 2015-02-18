@@ -670,8 +670,26 @@ public class CtbSpringDao implements CtbInterfaceDao{
     @Override
     public ArrayList<HashMap<String, String>> getCtbRepAuxMovCtas_Datos(String data_string) {
         String sql_to_query="";
+        /*
         ArrayList<HashMap<String, String>>datos = new ArrayList<HashMap<String, String>>();
         
+        
+		tipo_reg character varying,
+		suc character varying,
+		cta character varying,
+		descrip_cta character varying,
+		poliza character varying,
+		orig character varying,
+		tipo_pol character varying,
+		fecha character varying,
+		referencia character varying,
+		cc character varying,
+		descrip_mov character varying,
+		saldo_ini character varying,
+		debe character varying,
+		haber character varying,
+		saldo_fin character varying
+         
         System.out.println("data_string: "+data_string);
           HashMap<String, String> row = new HashMap<String, String>();
                     row.put("suc", "11");
@@ -694,7 +712,39 @@ public class CtbSpringDao implements CtbInterfaceDao{
                     
         
         return datos;
+        */
         
+        
+        
+        sql_to_query = "select * from ctb_reporte(?) as foo(tipo_reg character varying, suc character varying, cta character varying, descrip_cta character varying, poliza character varying, orig character varying, tipo_pol character varying, fecha character varying, ref character varying, cc character varying, descrip_mov character varying, saldo_ini character varying, debe character varying, haber character varying, saldo_fin character varying);"; 
+        System.out.println("data_string: "+data_string);
+        System.out.println("Ctb_DatosRepAuxMovCtas:: "+sql_to_query);
+        ArrayList<HashMap<String, String>> datos = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{data_string}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("tipo_reg",rs.getString("tipo_reg"));
+                    row.put("suc",rs.getString("suc"));
+                    row.put("cta",rs.getString("cta"));
+                    row.put("descrip_cta",rs.getString("descrip_cta"));
+                    row.put("poliza",rs.getString("poliza"));
+                    row.put("orig",rs.getString("orig"));
+                    row.put("tipo_pol",rs.getString("tipo_pol"));
+                    row.put("fecha",rs.getString("fecha"));
+                    row.put("ref",rs.getString("ref"));
+                    row.put("descrip_mov",rs.getString("descrip_mov"));
+                    row.put("saldo_ini",rs.getString("saldo_ini"));
+                    row.put("debe",rs.getString("debe"));
+                    row.put("haber",rs.getString("haber"));
+                    row.put("saldo_fin",rs.getString("saldo_fin"));
+                    row.put("suc",rs.getString("suc"));
+                    return row;
+                }
+            }
+        );
+        return datos;
     }
     
     
@@ -1234,9 +1284,9 @@ public class CtbSpringDao implements CtbInterfaceDao{
         
 	String sql_to_query = ""
         + "select sbt1.id, poliza,tipo,concepto, fecha, moneda, status,sum(debe) as debe, sum(haber) as haber "
-        + "from (select  ctb_pol.id,ctb_pol.poliza, ctb_pol.tipo, ctb_pol.concepto, (case when ctb_pol.fecha is null then '' else to_char(ctb_pol.fecha,'dd-mm-yyyy') end) as fecha, ctb_pol.moneda, (CASE WHEN ctb_pol.status=1 THEN 'No afectada' WHEN ctb_pol.status=2 THEN 'Afectada' WHEN ctb_pol.status=3 THEN 'Cancelada' ELSE '' END) AS status, (case when ctb_pol_mov.tipo=1 then ctb_pol_mov.cantidad else 0 end) as debe,(case when ctb_pol_mov.tipo=2 then ctb_pol_mov.cantidad else 0 end) as haber from ctb_pol join ctb_pol_mov on ctb_pol_mov.ctb_pol_id=ctb_pol.id ) as sbt1 "
+        + "from (select ctb_pol.fecha::date as fecha1, ctb_pol.id, ctb_pol.poliza, ctb_pol.tipo, ctb_pol.concepto, (case when ctb_pol.fecha is null then '' else to_char(ctb_pol.fecha,'dd/mm/yyyy') end) as fecha, ctb_pol.moneda, (CASE WHEN ctb_pol.status=1 THEN 'No afectada' WHEN ctb_pol.status=2 THEN 'Afectada' WHEN ctb_pol.status=3 THEN 'Cancelada' ELSE '' END) AS status, (case when ctb_pol_mov.tipo=1 then ctb_pol_mov.cantidad else 0 end) as debe,(case when ctb_pol_mov.tipo=2 then ctb_pol_mov.cantidad else 0 end) as haber from ctb_pol join ctb_pol_mov on ctb_pol_mov.ctb_pol_id=ctb_pol.id ) as sbt1 "
         + "JOIN ("+sql_busqueda+") AS sbt ON sbt.id = sbt1.id "
-        + "group by sbt1.id, sbt1.poliza,sbt1.tipo,sbt1.concepto, sbt1.fecha, sbt1.moneda, sbt1.status "
+        + "group by sbt1.id, sbt1.fecha1, sbt1.poliza,sbt1.tipo,sbt1.concepto, sbt1.fecha, sbt1.moneda, sbt1.status "
         + "order by "+orderBy+" "+asc+" limit ? OFFSET ?";
         
         //System.out.println("data_string: "+data_string);
@@ -1285,7 +1335,8 @@ public class CtbSpringDao implements CtbInterfaceDao{
             + "ctb_pol.modulo_origen as mod_id, "
             + "ctb_pol.gral_usr_id_cap as user_cap_id, "
             + "to_char(ctb_pol.fecha,'yyyy-mm-dd') AS fecha,"
-            + "ctb_pol.observacion "
+            + "ctb_pol.descripcion, "
+            + "ctb_pol.referencia "
         + "FROM ctb_pol  "
         + "where ctb_pol.borrado_logico=false AND ctb_pol.id=?;";
         
@@ -1309,7 +1360,8 @@ public class CtbSpringDao implements CtbInterfaceDao{
                     row.put("mod_id",String.valueOf(rs.getInt("mod_id")));
                     row.put("user_cap_id",String.valueOf(rs.getInt("user_cap_id")));
                     row.put("fecha",rs.getString("fecha"));
-                    row.put("observacion",rs.getString("observacion"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("referencia",rs.getString("referencia"));
                     return row;
                 }
             }

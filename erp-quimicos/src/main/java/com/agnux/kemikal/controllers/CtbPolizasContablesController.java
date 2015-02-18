@@ -70,11 +70,11 @@ public class CtbPolizasContablesController {
         infoConstruccionTabla.put("poliza", "P&oacute;liza:80");
         infoConstruccionTabla.put("tipo", "Tipo de P&oacute;liza:170");
         infoConstruccionTabla.put("concepto","Concepto:170");
-        infoConstruccionTabla.put("fecha","Fecha:90");
-        infoConstruccionTabla.put("moneda", "Moneda:70");
+        infoConstruccionTabla.put("fecha","Fecha:80");
+        infoConstruccionTabla.put("moneda", "Moneda:60");
         infoConstruccionTabla.put("debe","Debe:90");
         infoConstruccionTabla.put("haber","Haber:90");
-        infoConstruccionTabla.put("status","Estatus:100");
+        infoConstruccionTabla.put("status","Estatus:90");
         
                     
         ModelAndView x = new ModelAndView("ctbpolizacontable/startup", "title", "P&oacute;lizas Contables");
@@ -347,7 +347,8 @@ public class CtbPolizasContablesController {
             @RequestParam(value="select_moneda", required=true) String select_moneda,
             @RequestParam(value="select_concepto", required=true) String select_concepto,
             @RequestParam(value="fecha", required=true) String fecha,
-            @RequestParam(value="observacion", required=true) String observacion,
+            @RequestParam(value="descripcion_pol", required=true) String descripcion_pol,
+            @RequestParam(value="referencia", required=true) String referencia,
             @RequestParam(value="accion", required=true) String accion,
             
             @RequestParam(value="cta", required=true) String[] cuenta,
@@ -410,7 +411,8 @@ public class CtbPolizasContablesController {
                 select_moneda+"___"+
                 select_concepto+"___"+
                 fecha+"___"+
-                observacion;
+                descripcion_pol.trim().toUpperCase()+"___"+
+                referencia.trim().toUpperCase();
         
         succes = this.getCtbDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
         
@@ -424,9 +426,5 @@ public class CtbPolizasContablesController {
         log.log(Level.INFO, "Salida json {0}", String.valueOf(jsonretorno.get("success")));
         return jsonretorno;
     }
-    
-    
-    
-    
     
 }

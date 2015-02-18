@@ -5,6 +5,7 @@
 package com.agnux.kemikal.controllers;
 
 import com.agnux.cfd.v2.Base64Coder;
+import com.agnux.common.helpers.FileHelper;
 import com.agnux.common.helpers.StringHelper;
 import com.agnux.common.helpers.TimeHelper;
 import com.agnux.common.obj.DataPost;
@@ -199,8 +200,8 @@ public class CtbRepAuxMovCtasController {
         HashMap<String, String> userDat = new HashMap<String, String>();
         ArrayList<HashMap<String, String>> datos = new ArrayList<HashMap<String, String>>();
         
-        //Reporte Auxiliar de Cuentas
-        Integer app_selected = 157;
+        //Reporte Auxiliar de Movimientos de Cuentas(CTB)
+        Integer app_selected = 159;
         String command_selected="reporte";
         String tipo_doc="nav";
         //Decodificar id de usuario
@@ -226,7 +227,7 @@ public class CtbRepAuxMovCtasController {
     }
     
    
-      //Genera pdf Reporte Auxiliar de Cuentas
+    //Genera pdf Reporte Auxiliar de Cuentas
     @RequestMapping(value = "/getPdfAuxMovCtas/{cadena}/{iu}/out.json", method = RequestMethod.GET )
     public ModelAndView getGeneraPdfRepAuxMovCtasJson(
                 @PathVariable("cadena") String cadena,
@@ -234,7 +235,7 @@ public class CtbRepAuxMovCtasController {
                 HttpServletRequest request,
                 HttpServletResponse response,
                 Model model)
-        throws ServletException, IOException, URISyntaxException, DocumentException {
+        throws ServletException, IOException, URISyntaxException, DocumentException, Exception {
         
         HashMap<String, String> userDat = new HashMap<String, String>();
         HashMap<String, String> datosEmpresaEmisora= new HashMap<String, String>();
@@ -309,6 +310,10 @@ public class CtbRepAuxMovCtasController {
         response.setHeader("Content-Disposition","attachment; filename=\"" + file.getName() +"\"");
         FileCopyUtils.copy(bis, response.getOutputStream());
         response.flushBuffer();
+        
+        if(file.exists()){
+            FileHelper.delete(fileout);
+        }
         
         return null;
     }
