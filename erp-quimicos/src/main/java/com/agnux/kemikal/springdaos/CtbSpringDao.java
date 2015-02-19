@@ -735,11 +735,10 @@ public class CtbSpringDao implements CtbInterfaceDao{
                     row.put("fecha",rs.getString("fecha"));
                     row.put("ref",rs.getString("ref"));
                     row.put("descrip_mov",rs.getString("descrip_mov"));
-                    row.put("saldo_ini",rs.getString("saldo_ini"));
-                    row.put("debe",rs.getString("debe"));
-                    row.put("haber",rs.getString("haber"));
-                    row.put("saldo_fin",rs.getString("saldo_fin"));
-                    row.put("suc",rs.getString("suc"));
+                    row.put("saldo_ini",(rs.getString("saldo_ini").trim().equals(""))?rs.getString("saldo_ini"):StringHelper.roundDouble(rs.getString("saldo_ini"),2));
+                    row.put("debe",(rs.getString("debe").trim().equals(""))?rs.getString("debe"):StringHelper.roundDouble(rs.getString("debe"),2));
+                    row.put("haber",(rs.getString("haber").trim().equals(""))?rs.getString("haber"):StringHelper.roundDouble(rs.getString("haber"),2));
+                    row.put("saldo_fin",(rs.getString("saldo_fin").trim().equals(""))?rs.getString("saldo_fin"):StringHelper.roundDouble(rs.getString("saldo_fin"),2));
                     return row;
                 }
             }
@@ -1181,7 +1180,7 @@ public class CtbSpringDao implements CtbInterfaceDao{
     
     
     
-       //Métodos para reporte de Libro Mayor------------------------------------------------------------------------------
+    //Métodos para reporte de Libro Mayor------------------------------------------------------------------------------
     //Calcular años a mostrar en el reporte de Libro Mayor
     @Override
     public ArrayList<HashMap<String, Object>>  getCtbRepLibroMayor_Anios() {
@@ -1270,14 +1269,7 @@ public class CtbSpringDao implements CtbInterfaceDao{
     
     
     
-    
-    
-    
-    
-    
-    
     //METODOS PARA APLICATIVO DE POLIZAS CONTABLES
-    
     @Override
     public ArrayList<HashMap<String, Object>> getPolizasContables_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";

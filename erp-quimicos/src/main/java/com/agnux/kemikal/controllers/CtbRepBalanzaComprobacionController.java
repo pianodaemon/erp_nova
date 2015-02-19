@@ -225,11 +225,14 @@ public class CtbRepBalanzaComprobacionController {
                 suma_saldo_inicial += (i.get("saldo_inicial").trim().equals(""))?0:Double.parseDouble(i.get("saldo_inicial"));
                 suma_debe += (i.get("debe").trim().equals(""))?0:Double.parseDouble(i.get("debe"));
                 suma_haber += (i.get("haber").trim().equals(""))?0:Double.parseDouble(i.get("haber"));
-                suma_saldo_final += (i.get("saldo_final").trim().equals(""))?0:Double.parseDouble(i.get("saldo_final"));
+                //suma_saldo_final += (i.get("saldo_final").trim().equals(""))?0:Double.parseDouble(i.get("saldo_final"));
             }
         }
         
-        System.out.println("suma_saldo_inicial="+suma_saldo_inicial+"    suma_debe="+suma_debe+"      suma_haber="+suma_haber+"    suma_saldo_final="+suma_saldo_final);
+        //SALDO FINAL = Suma SALDO INICIAL + Suma DEBE - Suma HABER 
+        suma_saldo_final = suma_saldo_inicial + suma_debe - suma_haber;
+        
+        //System.out.println("suma_saldo_inicial="+suma_saldo_inicial+"    suma_debe="+suma_debe+"      suma_haber="+suma_haber+"    suma_saldo_final="+suma_saldo_final);
         
         total.put("suma_si", StringHelper.roundDouble(suma_saldo_inicial,2));
         total.put("suma_d", StringHelper.roundDouble(suma_debe,2));
@@ -328,9 +331,12 @@ public class CtbRepBalanzaComprobacionController {
                 suma_saldo_inicial += (i.get("saldo_inicial").trim().equals(""))?0:Double.parseDouble(i.get("saldo_inicial"));
                 suma_debe += (i.get("debe").trim().equals(""))?0:Double.parseDouble(i.get("debe"));
                 suma_haber += (i.get("haber").trim().equals(""))?0:Double.parseDouble(i.get("haber"));
-                suma_saldo_final += (i.get("saldo_final").trim().equals(""))?0:Double.parseDouble(i.get("saldo_final"));
+                //suma_saldo_final += (i.get("saldo_final").trim().equals(""))?0:Double.parseDouble(i.get("saldo_final"));
             }
         }
+        
+        //SALDO FINAL = Suma SALDO INICIAL + Suma DEBE - Suma HABER 
+        suma_saldo_final = suma_saldo_inicial + suma_debe - suma_haber;
         
         total.put("suma_si", StringHelper.roundDouble(suma_saldo_inicial,2));
         total.put("suma_d", StringHelper.roundDouble(suma_debe,2));
