@@ -170,9 +170,9 @@ public class CtbRepBalanzaComprobacionController {
    //Obtiene datos para mostrar en el navegador
     @RequestMapping(method = RequestMethod.POST, value="/getDatosReporte.json")
     public @ResponseBody HashMap<String,Object> getDatosReporteJson(
-            @RequestParam(value="tipo_reporte", required=true) String tipo_reporte,
-            @RequestParam(value="ano", required=true) String ano,
-            @RequestParam(value="mes", required=false) String mes,
+            @RequestParam(value="suc", required=true) String suc,
+            @RequestParam(value="fecha_ini", required=true) String fecha_ini,
+            @RequestParam(value="fecha_fin", required=false) String fecha_fin,
             @RequestParam(value="cuentas", required=true) String cuentas,
             @RequestParam(value="cta", required=false) String cta,
             @RequestParam(value="scta", required=false) String scta,
@@ -206,7 +206,7 @@ public class CtbRepBalanzaComprobacionController {
         ssscta = StringHelper.verificarSelect(ssscta);
         sssscta = StringHelper.verificarSelect(sssscta);
         
-        String data_string = app_selected+"___"+id_user+"___"+command_selected+"___"+tipo_reporte+"___"+ano+"___"+mes+"___"+cuentas+"___"+cta+"___"+scta+"___"+sscta+"___"+ssscta+"___"+sssscta+"___"+tipo_doc;
+        String data_string = app_selected+"___"+id_user+"___"+command_selected+"___"+suc+"___"+fecha_ini+"___"+fecha_fin+"___"+cuentas+"___"+cta+"___"+scta+"___"+sscta+"___"+ssscta+"___"+sssscta+"___"+tipo_doc;
         
         //Obtiene datos del Reporte Auxiliar de Cuentas
         datos = this.getCtbDao().getCtbRepBalanzaComp_Datos(data_string);
@@ -276,9 +276,9 @@ public class CtbRepBalanzaComprobacionController {
         
         String arrayCad [] = cadena.split("___");
         
-        String tipo_reporte=arrayCad[0];
-        String ano=arrayCad[1];
-        String mes=arrayCad[2];
+        String suc=arrayCad[0];
+        String fecha_ini=arrayCad[1];
+        String fecha_fin=arrayCad[2];
         String cuentas=arrayCad[3];
         String cta=arrayCad[4];
         String scta=arrayCad[5];
@@ -286,7 +286,7 @@ public class CtbRepBalanzaComprobacionController {
         String ssscta=arrayCad[7];
         String sssscta=arrayCad[8];
         
-        String data_string = app_selected+"___"+id_user+"___"+command_selected+"___"+tipo_reporte+"___"+ano+"___"+mes+"___"+cuentas+"___"+cta+"___"+scta+"___"+sscta+"___"+ssscta+"___"+sssscta+"___"+tipo_doc;
+        String data_string = app_selected+"___"+id_user+"___"+command_selected+"___"+suc+"___"+fecha_ini+"___"+fecha_fin+"___"+cuentas+"___"+cta+"___"+scta+"___"+sscta+"___"+ssscta+"___"+sssscta+"___"+tipo_doc;
         
         //Obtiene datos de la Empresa Emisora
         datosEmpresaEmisora = this.getGralDao().getEmisor_Datos(id_empresa);

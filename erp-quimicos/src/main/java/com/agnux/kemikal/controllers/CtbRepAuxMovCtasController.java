@@ -8,7 +8,6 @@ import com.agnux.cfd.v2.Base64Coder;
 import com.agnux.common.helpers.FileHelper;
 import com.agnux.common.helpers.StringHelper;
 import com.agnux.common.helpers.TimeHelper;
-import com.agnux.common.obj.DataPost;
 import com.agnux.common.obj.ResourceProject;
 import com.agnux.common.obj.UserSessionData;
 import com.agnux.kemikal.interfacedaos.CtbInterfaceDao;
@@ -31,19 +30,13 @@ import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 
 /**
@@ -181,9 +174,9 @@ public class CtbRepAuxMovCtasController {
     //Obtiene datos para mostrar en el navegador
     @RequestMapping(method = RequestMethod.POST, value="/getDatosReporte.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getDatosReporteJson(
-            @RequestParam(value="tipo_reporte", required=true) String tipo_reporte,
-            @RequestParam(value="ano", required=true) String ano,
-            @RequestParam(value="mes", required=false) String mes,
+            @RequestParam(value="suc", required=true) String suc,
+            @RequestParam(value="fecha_ini", required=true) String fecha_ini,
+            @RequestParam(value="fecha_fin", required=false) String fecha_fin,
             @RequestParam(value="cuentas", required=true) String cuentas,
             @RequestParam(value="cta", required=false) String cta,
             @RequestParam(value="scta", required=false) String scta,
@@ -197,7 +190,7 @@ public class CtbRepAuxMovCtasController {
         log.log(Level.INFO, "Ejecutando getDatosReporteJson de {0}", CtbRepAuxMovCtasController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         
-        HashMap<String, String> userDat = new HashMap<String, String>();
+        //HashMap<String, String> userDat = new HashMap<String, String>();
         ArrayList<HashMap<String, String>> datos = new ArrayList<HashMap<String, String>>();
         
         //Reporte Auxiliar de Movimientos de Cuentas(CTB)
@@ -216,9 +209,9 @@ public class CtbRepAuxMovCtasController {
         ssscta = StringHelper.verificarSelect(ssscta);
         sssscta = StringHelper.verificarSelect(sssscta);
         
-        String data_string = app_selected+"___"+id_user+"___"+command_selected+"___"+tipo_reporte+"___"+ano+"___"+mes+"___"+cuentas+"___"+cta+"___"+scta+"___"+sscta+"___"+ssscta+"___"+sssscta+"___"+tipo_doc;
+        String data_string = app_selected+"___"+id_user+"___"+command_selected+"___"+suc+"___"+fecha_ini+"___"+fecha_fin+"___"+cuentas+"___"+cta+"___"+scta+"___"+sscta+"___"+ssscta+"___"+sssscta+"___"+tipo_doc;
         
-        //Obtiene datos del Reporte Auxiliar de Cuentas
+        //Obtiene datos del Reporte Auxiliarde Movimientos de Cuentas
         datos = this.getCtbDao().getCtbRepAuxMovCtas_Datos(data_string);
         
         jsonretorno.put("Data", datos);
@@ -256,9 +249,9 @@ public class CtbRepAuxMovCtasController {
         
         String arrayCad [] = cadena.split("___");
         
-        String tipo_reporte=arrayCad[0];
-        String ano=arrayCad[1];
-        String mes=arrayCad[2];
+        String suc=arrayCad[0];
+        String fecha_ini=arrayCad[1];
+        String fecha_fin=arrayCad[2];
         String cuentas=arrayCad[3];
         String cta=arrayCad[4];
         String scta=arrayCad[5];
@@ -266,7 +259,7 @@ public class CtbRepAuxMovCtasController {
         String ssscta=arrayCad[7];
         String sssscta=arrayCad[8];
         
-        String data_string = app_selected+"___"+id_user+"___"+command_selected+"___"+tipo_reporte+"___"+ano+"___"+mes+"___"+cuentas+"___"+cta+"___"+scta+"___"+sscta+"___"+ssscta+"___"+sssscta+"___"+tipo_doc;
+        String data_string = app_selected+"___"+id_user+"___"+command_selected+"___"+suc+"___"+fecha_ini+"___"+fecha_fin+"___"+cuentas+"___"+cta+"___"+scta+"___"+sscta+"___"+ssscta+"___"+sssscta+"___"+tipo_doc;
         
         //Obtiene datos de la Empresa Emisora
         datosEmpresaEmisora = this.getGralDao().getEmisor_Datos(id_empresa);
@@ -317,12 +310,4 @@ public class CtbRepAuxMovCtasController {
         
         return null;
     }
-   
-   
-   
-   
-   
-   
-   
-    
 }
