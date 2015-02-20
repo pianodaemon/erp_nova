@@ -223,7 +223,6 @@ $(function() {
 		a.css({'z-index':100});
 	});
     
-    
 	$fecha_final.val(mostrarFecha());
     
     

@@ -38,6 +38,52 @@ $(function() {
 		}
 	};
 	
+	//------------------------------------------------------------------
+	//valida la fecha seleccionada
+	function mayor(fecha, fecha2){
+		var xMes=fecha.substring(5, 7);
+		var xDia=fecha.substring(8, 10);
+		var xAnio=fecha.substring(0,4);
+		var yMes=fecha2.substring(5, 7);
+		var yDia=fecha2.substring(8, 10);
+		var yAnio=fecha2.substring(0,4);
+		
+		if (xAnio > yAnio){
+			return(true);
+		}else{
+			if (xAnio == yAnio){
+				if (xMes > yMes){
+					return(true);
+				}
+				if (xMes == yMes){
+					if (xDia > yDia){
+						return(true);
+					}else{
+						return(false);
+					}
+				}else{
+					return(false);
+				}
+			}else{
+				return(false);
+			}
+		}
+	}
+	
+	//muestra la fecha actual
+	var mostrarFecha = function mostrarFecha(){
+		var ahora = new Date();
+		var anoActual = ahora.getFullYear();
+		var mesActual = ahora.getMonth();
+		mesActual = mesActual+1;
+		mesActual = (mesActual <= 9)?"0" + mesActual : mesActual;
+		var diaActual = ahora.getDate();
+		diaActual = (diaActual <= 9)?"0" + diaActual : diaActual;
+		var Fecha = anoActual + "-" + mesActual + "-" + diaActual;		
+		return Fecha;
+	}
+	//------------------------------------------------------------------
+	
 	$('#header').find('#header1').find('span.emp').text(config.getEmp());
 	$('#header').find('#header1').find('span.suc').text(config.getSuc());
     $('#header').find('#header1').find('span.username').text(config.getUserName());
@@ -49,17 +95,7 @@ $(function() {
 	//barra para el buscador 
 	$('#barra_buscador').hide();
 	
-	var $select_tipo_reporte = $('#lienzo_recalculable').find('table#busqueda tr td').find('select[name=tipo_reporte]');
-	var $select_ano = $('#lienzo_recalculable').find('table#busqueda tr td').find('select[name=select_ano]');
-	var $select_mes = $('#lienzo_recalculable').find('table#busqueda tr td').find('select[name=select_mes]');
-	var $select_cuentas = $('#lienzo_recalculable').find('table#busqueda tr td').find('select[name=select_cuentas]');
-	var $select_cuenta = $('#lienzo_recalculable').find('table#busqueda tr td').find('select[name=select_cuenta]');
-	var $select_subcuenta = $('#lienzo_recalculable').find('table#busqueda tr td').find('select[name=select_subcuenta]');
-	var $select_subsubcuenta = $('#lienzo_recalculable').find('table#busqueda tr td').find('select[name=select_subsubcuenta]');
-	var $select_subsubsubcuenta = $('#lienzo_recalculable').find('table#busqueda tr td').find('select[name=select_subsubsubcuenta]');
-	var $select_subsubsubsubcuenta = $('#lienzo_recalculable').find('table#busqueda tr td').find('select[name=select_subsubsubsubcuenta]');
-	
-	var $descripcion = $('#lienzo_recalculable').find('table#busqueda tr td').find('input[name=descripcion]');
+	var $fecha_corte = $('#lienzo_recalculable').find('table#busqueda tr td').find('input[name=fecha_corte]');
 	var $select_sucursal = $('#lienzo_recalculable').find('table#busqueda tr td').find('select[name=select_sucursal]');
 	
 	var $genera_PDF = $('#lienzo_recalculable').find('table#busqueda tr td').find('input[value$=PDF]');
@@ -67,296 +103,77 @@ $(function() {
 	var $div_rep= $('#lienzo_recalculable').find('#div_rep');
 	
 	var $div_busqueda= $('#lienzo_recalculable').find('#div_busqueda');
-	var $tr_oculto= $('#lienzo_recalculable').find('#tr_oculto');
-	var $vermas= $('#lienzo_recalculable').find('#vermas');
-	var $vermenos= $('#lienzo_recalculable').find('#vermenos');
-	
-	//Ocultar tr
-	$tr_oculto.hide();
-	
-	//Muestra trs al hacer clic en esta imagen
-	$vermas.click(function(event){
-		event.preventDefault();
-		$div_busqueda.animate({height: '100px'}, 500);
-		
-		//Redimensionar el espacio para el resultado del reporte
-		var height2 = $('#cuerpo').css('height');
-		var alto = parseInt(height2)-282;
-		var pix_alto=alto+'px';
-		$('#table_rep').tableScroll({height:parseInt(pix_alto)});
-		
-		$vermas.hide();
-		$vermenos.show();
-		$tr_oculto.show();
-		verMas=true;
-	});
-	
-	
-	
-	//Oculta trs al hacer clic en esta imagen
-	$vermenos.click(function(event){
-		event.preventDefault();
-		$div_busqueda.animate({height: '58px'}, 500);
-		
-		//Redimensionar el espacio para el resultado del reporte
-		var height2 = $('#cuerpo').css('height');
-		var alto = parseInt(height2)-240;
-		var pix_alto=alto+'px';
-		$('#table_rep').tableScroll({height:parseInt(pix_alto)});
-		
-		$vermenos.hide();
-		$vermas.show();
-		$tr_oculto.hide();
-		verMas=false;
-	});
-	
-	
-	
-	
-	
-	$descripcion.css({'background' : '#DDDDDD'});
-	$descripcion.attr('readonly',true);
-	$descripcion.css({'background' : '#DDDDDD'});
-	$select_cuenta.attr('disabled','-1');
-	$select_subcuenta.attr('disabled','-1');
-	$select_subsubcuenta.attr('disabled','-1');
-	$select_subsubsubcuenta.attr('disabled','-1');
-	$select_subsubsubsubcuenta.attr('disabled','-1');
-	$descripcion.attr('disabled','-1');
-	
-	//Ocultar las cuentas por default, solo se mostraran mas adelante de acuerdo al nivel definido para la empresa
-	$select_cuenta.hide();
-	$select_subcuenta.hide();
-	$select_subsubcuenta.hide();
-	$select_subsubsubcuenta.hide();
-	$select_subsubsubsubcuenta.hide();
-	
-	$select_tipo_reporte.children().remove();
-	var html='<option value="1">Mensual</option>';
-	html+='<option value="2">Anual</option>';
-	$select_tipo_reporte.append(html);
-	
-	$select_cuentas.children().remove();
-	var html2='<option value="1">Todas</option>';
-	html2+='<option value="2">Una cuenta</option>';
-	$select_cuentas.append(html2);
-	
-	var array_meses = {0:"- Seleccionar -",  1:"Enero",  2:"Febrero", 3:"Marzo", 4:"Abirl", 5:"Mayo", 6:"Junio", 7:"Julio", 8:"Agosto", 9:"Septiembre", 10:"Octubre", 11:"Noviembre", 12:"Diciembre"};
-	var array_ctas_nivel1;
-	var array_ctas;
-	var mesActual=0;
-	var verMas=false;
 	
 	var arreglo_parametros = { iu:config.getUi() };
 	var restful_json_service = config.getUrlForGetAndPost() + '/getDatos.json';
 	$.post(restful_json_service,arreglo_parametros,function(entry){
-		//carga select de años
-		$select_ano.children().remove();
-		var html_anio = '';
-		$.each(entry['Anios'],function(entryIndex,anio){
-			if(parseInt(anio['valor']) == parseInt(entry['Dato'][0]['anioActual']) ){
-				html_anio += '<option value="' + anio['valor'] + '" selected="yes">' + anio['valor'] + '</option>';
-			}else{
-				html_anio += '<option value="' + anio['valor'] + '"  >' + anio['valor'] + '</option>';
-			}
-		});
-		$select_ano.append(html_anio);
-		
-		//cargar select del Mes inicial
-		$select_mes.children().remove();
-		var select_html = '';
-		for(var i in array_meses){
-			if(parseInt(i) == parseInt(entry['Dato'][0]['mesActual']) ){
-				select_html += '<option value="' + i + '" selected="yes">' + array_meses[i] + '</option>';	
-			}else{
-				select_html += '<option value="' + i + '"  >' + array_meses[i] + '</option>';	
-			}
-		}
-		$select_mes.append(select_html);
 
 		//cargar select de sucursales
 		$select_sucursal.children().remove();
-		var html_suc = '';
+		var html_suc = '<option value="0">Todos</option>';
 		$.each(entry['Suc'],function(entryIndex,suc){
 			html_suc += '<option value="' + suc['id'] + '"  >' + suc['titulo'] + '</option>';
 		});
 		$select_sucursal.append(html_suc);
 		
+		$fecha_corte.val(entry['fecha']);
 		
-		/*
-		$select_cuenta.children().remove();
-		var html_cta = '';
-		$.each(entry['Cta'],function(entryIndex,cta){
-			html_cta += '<option value="' + cta['cta'] + '"  >' + cta['cta'] + '</option>';
-		});
-		$select_cuenta.append(html_cta);
-		*/
-		
-		//Visualizar subcuentas de acuerdo al nivel definido para la empresa
-		if(parseInt(entry['Dato'][0]['nivel_cta']) >=1 ){ $select_cuenta.show(); };
-		if(parseInt(entry['Dato'][0]['nivel_cta']) >=2 ){ $select_subcuenta.show(); };
-		if(parseInt(entry['Dato'][0]['nivel_cta']) >=3 ){ $select_subsubcuenta.show(); };
-		if(parseInt(entry['Dato'][0]['nivel_cta']) >=4 ){ $select_subsubsubcuenta.show(); };
-		if(parseInt(entry['Dato'][0]['nivel_cta']) >=5 ){ $select_subsubsubsubcuenta.show(); };
-		
-		array_ctas_nivel1=entry['Cta'];
-		mesActual = entry['Dato'][0]['mesActual'];
+	});
+	
+	$fecha_corte.click(function (s){
+	var a=$('div.datepicker');
+		a.css({'z-index':100});
 	});
 	
 	
 	
-	$select_tipo_reporte.change(function(){
-		if(parseInt($(this).val())==1){
-			$select_mes.removeAttr('disabled');
-			
-			//Recargar select de Meses
-			$select_mes.children().remove();
-			var select_html = '';
-			for(var i in array_meses){
-				if(parseInt(i) == parseInt(mesActual) ){
-					select_html += '<option value="' + i + '" selected="yes">' + array_meses[i] + '</option>';	
+	$fecha_corte.DatePicker({
+		format:'Y-m-d',
+		date: $fecha_corte.val(),
+		current: $fecha_corte.val(),
+		starts: 1,
+		position: 'bottom',
+		locale: {
+			days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
+			daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
+			daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
+			months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
+			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
+			weekMin: 'se'
+		},
+		onChange: function(formated, dates){
+			var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
+			$fecha_corte.val(formated);
+			if (formated.match(patron) ){
+				var valida_fecha=mayor($fecha_corte.val(),mostrarFecha());
+				
+				if (valida_fecha==true){
+					jAlert("Fecha no valida",'! Atencion');
+					$fecha_corte.val(mostrarFecha());
 				}else{
-					select_html += '<option value="' + i + '"  >' + array_meses[i] + '</option>';	
+					$fecha_corte.DatePickerHide();	
 				}
 			}
-			$select_mes.append(select_html);
-			$select_mes.focus();
-		}else{
-			$select_mes.children().remove();
-			$select_mes.attr('disabled','-1');
-			$select_tipo_reporte.focus();
 		}
 	});
-	
-	$select_cuentas.change(function(){
-		if(parseInt($(this).val())==1){
-			$descripcion.val('');
-			$select_cuenta.children().remove();
-			$select_subcuenta.children().remove();
-			$select_subsubcuenta.children().remove();
-			$select_subsubsubcuenta.children().remove();
-			$select_subsubsubsubcuenta.children().remove();
-			
-			$descripcion.css({'background' : '#DDDDDD'});
-			$select_cuenta.attr('disabled','-1');
-			$select_subcuenta.attr('disabled','-1');
-			$select_subsubcuenta.attr('disabled','-1');
-			$select_subsubsubcuenta.attr('disabled','-1');
-			$select_subsubsubsubcuenta.attr('disabled','-1');
-			$descripcion.attr('disabled','-1');
-			$select_cuentas.focus();
-		}else{
-			$descripcion.css({'background' : '#ffffff'});
-			$select_cuenta.removeAttr('disabled');
-			$select_subcuenta.removeAttr('disabled');
-			$select_subsubcuenta.removeAttr('disabled');
-			$select_subsubsubcuenta.removeAttr('disabled');
-			$select_subsubsubsubcuenta.removeAttr('disabled');
-			$descripcion.removeAttr('disabled');
-			
-			$select_cuenta.children().remove();
-			var html_cta = '';
-			$.each(array_ctas_nivel1,function(entryIndex,cta){
-				html_cta += '<option value="' + cta['cta'] + '"  >' + cta['cta'] + '</option>';
-			});
-			$select_cuenta.append(html_cta);
-			
-			$select_cuenta.focus();
-		}
-	});
-	
+		
+
 
 	
-	$aplicar_evento_change = function(nivel, $campo_select, $campo_select2){
-		$campo_select.change(function(){
-			var valor_cta=$(this).val();
-			$descripcion.val('');
-			
-			var input_json_cuentas = config.getUrlForGetAndPost() + '/getCtas.json';
-			$arreglo = {
-				'cta':$select_cuenta.val(),
-				'scta':$select_subcuenta.val(),
-				'sscta':$select_subsubcuenta.val(),
-				'ssscta':$select_subsubsubcuenta.val(),
-				'nivel':nivel,
-				'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
-			}
-			
-			$.post(input_json_cuentas,$arreglo,function(data){
-				//alert(data['Cta'].length);
-				if(parseInt(data['Cta'].length)>0){
-					$campo_select2.children().remove();
-					var html = '';
-					$.each(data['Cta'],function(entryIndex,cta){
-						if(parseInt(cta['cta'])==0){
-							html += '<option value="' + cta['cta'] + '"  ></option>';
-						}else{
-							html += '<option value="' + cta['cta'] + '"  >' + cta['cta'] + '</option>';
-						}
-						if($descripcion.val()==''){
-							$descripcion.val(cta['descripcion']);
-						}
-					});
-					$campo_select2.append(html);
-					
-					//Almacena el arreglo del ultimo nivel que trae datos
-					array_ctas=data['Cta'];
-				}else{
-					$.each(array_ctas,function(entryIndex,cta){
-						//alert("valor_cta:"+valor_cta+" | cta:"+cta['cta']);
-						if(parseInt(valor_cta)==parseInt(cta['cta'])){
-							$descripcion.val(cta['descripcion']);
-						}
-					});
-				}
-			});
-		});
-	}
-	
-	
-	//Obtener las subcuentas de acuerdo al nivel que se le indica
-	$aplicar_evento_change(2, $select_cuenta, $select_subcuenta);
-	$aplicar_evento_change(3, $select_subcuenta, $select_subsubcuenta);
-	$aplicar_evento_change(4, $select_subsubcuenta, $select_subsubsubcuenta);
-	$aplicar_evento_change(5, $select_subsubsubcuenta, $select_subsubsubsubcuenta);
-	
-    
-	
-	//Crear y descargar PDF de Reporte Auxiliar de Cuentas
+	//Crear y descargar PDF de Reporte de Balance General
 	$genera_PDF.click(function(event){
 		event.preventDefault();
-		var mes="0";
-		var cta="0";
-		var scta="0";
-		var sscta="0";
-		var ssscta="0";
-		var sssscta="0";
 		
-		if($select_mes.val()!=null && $select_mes.val()!=""){
-			mes=$select_mes.val();
+		if($fecha_corte.val().trim()!=''){
+			var cadena = $select_sucursal.val()+"___"+$fecha_corte.val();
+			var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
+			var input_json = config.getUrlForGetAndPost() + '/getPdfRepBalanceGeneral/'+cadena+'/'+iu+'/out.json';
+			window.location.href=input_json;
+		}else{
+			jAlert('Es necesario seleccionar la Fecha.', 'Atencion!', function(r) {
+				$fecha_corte.focus();
+			});
 		}
-		
-		if($select_cuenta.val()!=null && $select_cuenta.val()!=""){
-			cta=$select_cuenta.val();
-		}
-		if($select_subcuenta.val()!=null && $select_subcuenta.val()!=""){
-			scta=$select_subcuenta.val();
-		}
-		if($select_subsubcuenta.val()!=null && $select_subsubcuenta.val()!=""){
-			sscta=$select_subsubcuenta.val();
-		}
-		if($select_subsubsubcuenta.val()!=null && $select_subsubsubcuenta.val()!=""){
-			ssscta=$select_subsubsubcuenta.val();
-		}
-		if($select_subsubsubsubcuenta.val()!=null && $select_subsubsubsubcuenta.val()!=""){
-			sssscta=$select_subsubsubsubcuenta.val();
-		}
-		
-		var cadena = $select_tipo_reporte.val()+"___"+$select_ano.val()+"___"+mes+"___"+$select_cuentas.val()+"___"+cta+"___"+scta+"___"+sscta+"___"+ssscta+"___"+sssscta;
-		//alert(cadena);
-		var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
-		var input_json = config.getUrlForGetAndPost() + '/getPdfRepBalanceGeneral/'+cadena+'/'+iu+'/out.json';
-		window.location.href=input_json;
 	});//termina llamada json
 	
 	
@@ -365,135 +182,83 @@ $(function() {
 		event.preventDefault();
 		$div_rep.children().remove();
 		
-		var mes="0";
-		var cta="0";
-		var scta="0";
-		var sscta="0";
-		var ssscta="0";
-		var sssscta="0";
-		
-		if($select_mes.val()!=null && $select_mes.val()!=""){
-			mes=$select_mes.val();
-		}
-		
-		if($select_cuenta.val()!=null && $select_cuenta.val()!=""){
-			cta=$select_cuenta.val();
-		}
-		if($select_subcuenta.val()!=null && $select_subcuenta.val()!=""){
-			scta=$select_subcuenta.val();
-		}
-		if($select_subsubcuenta.val()!=null && $select_subsubcuenta.val()!=""){
-			sscta=$select_subsubcuenta.val();
-		}
-		if($select_subsubsubcuenta.val()!=null && $select_subsubsubcuenta.val()!=""){
-			ssscta=$select_subsubsubcuenta.val();
-		}
-		if($select_subsubsubsubcuenta.val()!=null && $select_subsubsubsubcuenta.val()!=""){
-			sssscta=$select_subsubsubsubcuenta.val();
-		}
-		
-		var arreglo_parametros = {	
-			tipo_reporte: $select_tipo_reporte.val(),
-			ano: $select_ano.val(),
-			mes: mes,
-			cuentas: $select_cuentas.val(),
-			cta: cta,
-			scta: scta,
-			sscta: sscta,
-			ssscta: ssscta,
-			sssscta: sssscta,
-			iu:config.getUi()
-		};
-	
-	
-		var restful_json_service = config.getUrlForGetAndPost() + '/getDatosReporte.json'
-		var proveedoor="";
-		$.post(restful_json_service,arreglo_parametros,function(entry){
-			var body_tabla = entry['Data'];
-			var header_tabla = {
-				descripcion			:'Cuenta',
-				saldo_final	        :'Anual',
-				porcentaje		:'%',
+		if($fecha_corte.val().trim()!=''){
+			var arreglo_parametros = {	suc: $select_sucursal.val(), fecha: $fecha_corte.val(), iu:config.getUi() };
+			var restful_json_service = config.getUrlForGetAndPost() + '/getDatosReporte.json'
+			var proveedoor="";
+			$.post(restful_json_service,arreglo_parametros,function(entry){
+				var body_tabla = entry['Data'];
+				var header_tabla = {
+					descripcion	:'Cuenta',
+					saldo_final	:'Saldo'
+				};
 				
-			};
+				var html_reporte = '<table id="table_rep">';
+				var html_fila_vacia='';
+				var html_footer = '';
+				
+				html_reporte +='<thead> <tr>';
+				for(var key in header_tabla){
+					var attrValue = header_tabla[key];
+					if(attrValue == "Cuenta"){
+						html_reporte +='<td width="450px" align="left">'+attrValue+'</td>'; 
+					}
+					
+					if(attrValue == 'Anual'){
+						html_reporte +='<td width="250px" align="left" >'+attrValue+'</td>'; 
+					}
+				}
+				html_reporte +='</tr> </thead>';
+				
+				html_fila_vacia +='<tr class="first">';
+				html_fila_vacia +='<td align="left"  id="sin_borde" width="450px" height="10"></td>';
+				html_fila_vacia +='<td align="left"  id="sin_borde" width="250px"></td>';
 			
-			var html_reporte = '<table id="table_rep">';
-			var html_fila_vacia='';
-			var html_footer = '';
-			
-			html_reporte +='<thead> <tr>';
-			for(var key in header_tabla){
-				var attrValue = header_tabla[key];
-				if(attrValue == "Cuenta"){
-					html_reporte +='<td width="450px" align="left">'+attrValue+'</td>'; 
+				html_fila_vacia +='</tr>';
+				
+				
+				if(parseInt(body_tabla.length)>0){
+					for(var i=0; i<body_tabla.length; i++){
+						html_reporte +='<tr>';
+						html_reporte +='<td align="left">'+body_tabla[i]["descripcion"]+'</td>';
+						html_reporte +='<td align="right">'+ ((body_tabla[i]["saldo_fin"].trim()=='')? '':$(this).agregar_comas(body_tabla[i]["saldo_fin"])) +'</td>';
+						html_reporte +='</tr>';
+					}
 				}
 				
-				if(attrValue == 'Anual'){
-					html_reporte +='<td width="250px" align="left" >'+attrValue+'</td>'; 
-				}
 				
-				if(attrValue == '%'){
-					html_reporte +='<td width="150px" align="left" >'+attrValue+'</td>'; 
-				}
+				/*
+				html_reporte +='<tfoot>';
+					html_reporte += html_footer;
+				html_reporte +='</tfoot>';
+				*/
 				
-			
-			}
-			html_reporte +='</tr> </thead>';
-			
-			html_fila_vacia +='<tr class="first">';
-			html_fila_vacia +='<td align="left"  id="sin_borde" width="450px" height="10"></td>';
-			html_fila_vacia +='<td align="left"  id="sin_borde" width="250px"></td>';
-			html_fila_vacia +='<td align="right" id="sin_borde" width="150px"></td>';
-		
-			html_fila_vacia +='</tr>';
-			
-			
-			if(parseInt(body_tabla.length)>0){
 				
-				for(var i=0; i<body_tabla.length; i++){
-					html_reporte +='<tr>';
-					html_reporte +='<td align="left">'+body_tabla[i]["descripcion"]+'</td>';
-					html_reporte +='<td align="right">'+$(this).agregar_comas(body_tabla[i]["saldo_final"])+'</td>';
-					html_reporte +='<td align="left">'+body_tabla[i]["porcentaje"]+'</td>';
-					html_reporte +='</tr>';
-				}
+				html_reporte += '</table>';
 				
-			}
-			
-			/*
-			html_reporte +='<tfoot>';
-				html_reporte += html_footer;
-			html_reporte +='</tfoot>';
-			*/
-			
-			
-			html_reporte += '</table>';
-			
-			
-			$div_rep.append(html_reporte); 
-			var height2 = $('#cuerpo').css('height');
-			var alto = 0;
-			if(verMas){
-				//Entra aqui si esta activado la opcion ver mas parametros de la busqueda
-				alto = parseInt(height2)-282;
-			}else{
+				
+				$div_rep.append(html_reporte); 
+				var height2 = $('#cuerpo').css('height');
+				var alto = 0;
+				//alto = parseInt(height2)-282;
 				alto = parseInt(height2)-240;
-			}
-			var pix_alto=alto+'px';
-			$('#table_rep').tableScroll({height:parseInt(pix_alto)});
-		});
+				
+				var pix_alto=alto+'px';
+				$('#table_rep').tableScroll({height:parseInt(pix_alto)});
+			});
+		}else{
+			jAlert('Es necesario seleccionar la Fecha.', 'Atencion!', function(r) {
+				$fecha_corte.focus();
+			});
+		}
 	});
 	
 	
-	$(this).aplicarEventoKeypressEjecutaTrigger($select_tipo_reporte, $busqueda_reporte);
-	$(this).aplicarEventoKeypressEjecutaTrigger($select_ano, $busqueda_reporte);
-	$(this).aplicarEventoKeypressEjecutaTrigger($select_mes, $busqueda_reporte);
-	$(this).aplicarEventoKeypressEjecutaTrigger($select_cuentas, $busqueda_reporte);
-	$(this).aplicarEventoKeypressEjecutaTrigger($select_cuenta, $busqueda_reporte);
-	$(this).aplicarEventoKeypressEjecutaTrigger($select_subcuenta, $busqueda_reporte);
-	$(this).aplicarEventoKeypressEjecutaTrigger($select_subsubcuenta, $busqueda_reporte);
-	$(this).aplicarEventoKeypressEjecutaTrigger($select_subsubsubcuenta, $busqueda_reporte);
-	$(this).aplicarEventoKeypressEjecutaTrigger($select_subsubsubsubcuenta, $busqueda_reporte);
 	
-	$select_tipo_reporte.focus();
+	
+	
+	$(this).aplicarEventoKeypressEjecutaTrigger($fecha_corte, $busqueda_reporte);
+	$(this).aplicarEventoKeypressEjecutaTrigger($select_sucursal, $busqueda_reporte);
+	
+	$fecha_corte.focus();
 });
