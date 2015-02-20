@@ -29,17 +29,14 @@
                 <td>&nbsp;&nbsp;</td>
                 <td style="background-color:#ffffff;" >
 					<div id="div_busqueda">
+						
 						<table id="busqueda" border="0" align="left" width="1220">
 							<tr>
 								<td colspan="25" height="8"></td>
 							</tr>
 							<tr>
-								<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-								<td width="100">Tipo de Reporte</td>
-								<td width="20"></td>
-								<td width="100">Mes</td>
-								<td width="20"></td>
-								<td width="70">A&ntilde;o</td>
+								<td width="10">&nbsp;</td>
+								<td width="210" colspan="5">Seleccionar&nbsp;Periodo</td>
 								<td width="20"></td>
 								<td width="90">Cuentas</td>
 								<td width="20"></td>
@@ -54,37 +51,37 @@
 							</tr>
 							
 							<tr>
-								<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-								<td width="100"><select name="tipo_reporte" style="width:100px;"></select></td>
-								<td width="20"></td>
-								<td width="70"><select name="select_mes" style="width:100px;"></select></td>
-								<td width="20"></td>
-								<td width="70"><select name="select_ano" style="width:70px;"></select></td>
+								<td width="10">&nbsp;</td>
+								<td width="25"><IMG SRC="../../img/catalogo/calendario.png" ALIGN="top"></td>
+								<td width="75"><INPUT TYPE="text" name="fecha_inicial" style="width:75px;" readOnly="true"></td>
+								<td width="10"></td>
+								<td width="25"><IMG SRC="../../img/catalogo/calendario.png" ALIGN="top"></td>
+								<td width="75"><INPUT TYPE="text" name="fecha_final" style="width:75px;" readOnly="true"></td>
 								<td width="20"></td>
 								<td width="90"><select name="select_cuentas" style="width:90px;"></select></td>
 								<td width="20"></td>
-								<td width="50">
-									<select name="select_cuenta" style="width:50px;"></select>
+								<td width="55">
+									<select name="select_cuenta" style="width:55px;"></select>
 									<!--<input type="text"name="cuenta" style="width:45px;" maxlength="4">-->
 								</td>
 								<td width="5"></td>
-								<td width="50">
-									<select name="select_subcuenta" style="width:50px;"></select>
+								<td width="55">
+									<select name="select_subcuenta" style="width:55px;"></select>
 									<!--<input type="text"name="scuenta" style="width:45px;" maxlength="4">-->
 								</td>
 								<td width="5"></td>
-								<td>
-									<select name="select_subsubcuenta" style="width:50px;"></select>
+								<td width="55">
+									<select name="select_subsubcuenta" style="width:55px;"></select>
 									<!--<input type="text"name="sscuenta" style="width:45px;" maxlength="4">-->
 								</td>
 								<td width="5"></td>
-								<td>
-									<select name="select_subsubsubcuenta" style="width:50px;"></select>
+								<td width="55">
+									<select name="select_subsubsubcuenta" style="width:55px;"></select>
 									<!--<input type="text"name="ssscuenta" style="width:45px;" maxlength="4">-->
 								</td>
 								<td width="5"></td>
-								<td>
-									<select name="select_subsubsubsubcuenta" style="width:50px;"></select>
+								<td width="55">
+									<select name="select_subsubsubsubcuenta" style="width:55px;"></select>
 									<!--<input type="text"name="sssscuenta" style="width:45px;" maxlength="4">-->
 								</td>
 								<td width="20"></td>
@@ -103,12 +100,8 @@
 								<td colspan="25" height="8"></td>
 							</tr>
 							<tr id="tr_oculto">
-								<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-								<td width="100">Sucursal</td>
-								<td width="20"></td>
-								<td width="100"></td>
-								<td width="20"></td>
-								<td width="70"></td>
+								<td width="10">&nbsp;</td>
+								<td width="210" colspan="5">Sucursal</td>
 								<td width="20"></td>
 								<td width="90"></td>
 								<td width="20"></td>
@@ -122,14 +115,8 @@
 								<td width="25"></td>
 							</tr>
 							<tr id="tr_oculto">
-								<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-								<td width="190" colspan="3"><select name="select_sucursal" style="width:190px;"></select></td>
-								<!--
-								<td width="20"></td>
-								<td width="70"></td>
-								-->
-								<td width="20"></td>
-								<td width="70"></td>
+								<td width="10">&nbsp;</td>
+								<td width="210" colspan="5"><select name="select_sucursal" style="width:215px;"></select></td>
 								<td width="20"></td>
 								<td width="90"></td>
 								<td width="20"></td>
@@ -151,6 +138,7 @@
 								<td width="25" align="center"><a href="#" id="vermenos"><img src="../../img/farriba.png"/></a></td>
 							</tr>
 						</table>
+						
 					</div>
                 </td>
             </tr>

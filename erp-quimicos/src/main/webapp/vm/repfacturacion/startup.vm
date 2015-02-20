@@ -105,7 +105,6 @@
                         </div>
                     </div>
                     
-                    
                     <div id="div_three" title="" class="repfacturacion_div_three">
                         <div class="columns" >
                             <div class=" fixed column">
@@ -119,7 +118,6 @@
                                 <div class="fixed column" class="content_x" >
 
                                     <div id="tabx-1" class="contenidoPes" >
-										
 										
                                         <table border="0" style="margin:0; padding:0;" >
                                                 <tr>
@@ -166,9 +164,6 @@
                                                             
                                                         </table>
                                                     </td>
-                                                    
-                                                    
-                                                    
 													
                                                     <td width="10"></td>
                                                     <!--<td width="60"></td>-->
@@ -269,7 +264,6 @@
                                                     </td>
                                                 </tr>
                                                 
-												
                                                 <tr>
 													<td colspan="4" style="border-top: 1px solid #C1DAD7; border-bottom: 1px solid #C1DAD7; border-left: 1px solid #FFFFFF; border-right: 1px solid #FFFFFF;">
 														<table >
@@ -300,9 +294,7 @@
 												
                                                 <tr>
                                                     <td colspan="3" width="720"  align="left" valign="top">
-														
                                                         <div id="div_warning_grid" style="display:none;">
-															
                                                             <table border ="0">
                                                                 <tr>
                                                                     <td width="10"></td>
@@ -331,7 +323,6 @@
                                                                 </tr>
                                                             </table>
                                                         </div>
-
                                                     </td>
                                                     <td  width="300" align="right" valign="top" style="font-weight: bold;">
                                                         <table border ="0" width="300">
@@ -365,12 +356,8 @@
                                                         </table>
                                                     </td>
                                                 </tr>
-
                                         </table>
-
-
                                     </div>
-
                                 </div>
                             </div>
 
@@ -393,20 +380,8 @@
                     </div>
                 </div>
         </form>
-        
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
 		
         #include("${layoutfooter}")
-        
         
     </body>
 </html>	
