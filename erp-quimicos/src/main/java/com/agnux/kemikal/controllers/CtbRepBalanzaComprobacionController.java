@@ -222,7 +222,7 @@ public class CtbRepBalanzaComprobacionController {
             //Sumar solo los de nivel 2(1=Auxiliar, 2=Mayor) para evitar duplicar cantidades
             if(i.get("nivel").trim().equals("2")){
                 //System.out.println("Nivel="+i.get("nivel")+"    saldo_inicial="+i.get("saldo_inicial")+"    debe="+i.get("debe")+"      haber="+i.get("haber")+"    saldo_final="+i.get("saldo_final"));
-                suma_saldo_inicial += (i.get("saldo_inicial").trim().equals(""))?0:Double.parseDouble(i.get("saldo_inicial"));
+                //suma_saldo_inicial += (i.get("saldo_inicial").trim().equals(""))?0:Double.parseDouble(i.get("saldo_inicial"));
                 suma_debe += (i.get("debe").trim().equals(""))?0:Double.parseDouble(i.get("debe"));
                 suma_haber += (i.get("haber").trim().equals(""))?0:Double.parseDouble(i.get("haber"));
                 //suma_saldo_final += (i.get("saldo_final").trim().equals(""))?0:Double.parseDouble(i.get("saldo_final"));
@@ -230,7 +230,8 @@ public class CtbRepBalanzaComprobacionController {
         }
         
         //SALDO FINAL = Suma SALDO INICIAL + Suma DEBE - Suma HABER 
-        suma_saldo_final = suma_saldo_inicial + suma_debe - suma_haber;
+        //suma_saldo_final = suma_saldo_inicial + suma_debe - suma_haber;
+        suma_saldo_final = suma_debe - suma_haber;
         
         //System.out.println("suma_saldo_inicial="+suma_saldo_inicial+"    suma_debe="+suma_debe+"      suma_haber="+suma_haber+"    suma_saldo_final="+suma_saldo_final);
         
@@ -292,16 +293,20 @@ public class CtbRepBalanzaComprobacionController {
         datosEmpresaEmisora = this.getGralDao().getEmisor_Datos(id_empresa);
         datosEmpresaEmisora.put("regedo", "");
         
+        String[] fi = fecha_ini.split("-");
+        String[] ff = fecha_fin.split("-");
+        String periodo_reporte = "Periodo  del  "+fi[2]+"/"+fi[1]+"/"+fi[0]+"  al  "+ff[2]+"/"+ff[1]+"/"+ff[0];
+        
         //Crear cadena para imprimir Fecha en el pie de pagina del PDF.
-        String nombreMes= TimeHelper.ConvertNumToMonth(Integer.parseInt(TimeHelper.getMesActual()));
-        SimpleDateFormat formato = new SimpleDateFormat("'Impreso el' d 'de "+nombreMes+" del ' yyyy 'a las' HH:mm:ss 'hrs.'");
-        String impreso_en = formato.format(new Date());
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        String fecha_impresion = sdf.format(new Date());
         
         //Agregar datos para el Encabezado y Pie de pagina
         datosEncabezadoPie.put("empresa", datosEmpresaEmisora.get("emp_razon_social"));
         //datosEncabezadoPie.put("titulo_reporte", this.getGralDao().getTituloReporte(id_empresa, app_selected));
         datosEncabezadoPie.put("titulo_reporte", "Balanza de Comprobación");
-        datosEncabezadoPie.put("periodo", impreso_en);
+        datosEncabezadoPie.put("periodo", periodo_reporte);
+        datosEncabezadoPie.put("fecha_impresion", fecha_impresion);
         datosEncabezadoPie.put("codigo1", this.getGralDao().getCodigo1Iso(id_empresa, app_selected));
         datosEncabezadoPie.put("codigo2", this.getGralDao().getCodigo2Iso(id_empresa, app_selected));
         
@@ -311,7 +316,7 @@ public class CtbRepBalanzaComprobacionController {
         File file_dir_tmp = new File(dir_tmp);
         //System.out.println("Directorio temporal: "+file_dir_tmp.getCanonicalPath());
         
-        String file_name = "RepBalanzaComprobacion_"+nombreMes+".pdf";
+        String file_name = "RepBalanzaComprobacion_"+fi[2]+"-"+fi[1]+"-"+fi[0]+" al "+ff[2]+"-"+ff[1]+"-"+ff[0]+".pdf";
         
         //ruta de archivo de salida
         String fileout = file_dir_tmp +"/"+  file_name;
@@ -328,7 +333,7 @@ public class CtbRepBalanzaComprobacionController {
             //Sumar solo los de nivel 2(1=Auxiliar, 2=Mayor) para evitar duplicar cantidades
             if(i.get("nivel").trim().equals("2")){
                 //System.out.println("saldo_inicial="+i.get("saldo_inicial")+"    debe="+i.get("debe")+"      haber="+i.get("haber")+"    saldo_final="+i.get("saldo_final"));
-                suma_saldo_inicial += (i.get("saldo_inicial").trim().equals(""))?0:Double.parseDouble(i.get("saldo_inicial"));
+                //suma_saldo_inicial += (i.get("saldo_inicial").trim().equals(""))?0:Double.parseDouble(i.get("saldo_inicial"));
                 suma_debe += (i.get("debe").trim().equals(""))?0:Double.parseDouble(i.get("debe"));
                 suma_haber += (i.get("haber").trim().equals(""))?0:Double.parseDouble(i.get("haber"));
                 //suma_saldo_final += (i.get("saldo_final").trim().equals(""))?0:Double.parseDouble(i.get("saldo_final"));
@@ -336,7 +341,8 @@ public class CtbRepBalanzaComprobacionController {
         }
         
         //SALDO FINAL = Suma SALDO INICIAL + Suma DEBE - Suma HABER 
-        suma_saldo_final = suma_saldo_inicial + suma_debe - suma_haber;
+        //suma_saldo_final = suma_saldo_inicial + suma_debe - suma_haber;
+        suma_saldo_final = suma_debe - suma_haber;
         
         total.put("suma_si", StringHelper.roundDouble(suma_saldo_inicial,2));
         total.put("suma_d", StringHelper.roundDouble(suma_debe,2));

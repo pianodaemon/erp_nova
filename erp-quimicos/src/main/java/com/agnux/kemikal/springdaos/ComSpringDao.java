@@ -340,7 +340,8 @@ public class ComSpringDao  implements ComInterfaceDao {
                 + "LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = com_orden_compra_detalle.presentacion_id "
                 + "LEFT JOIN com_oc_requisicion on com_oc_requisicion.com_orden_compra_det_id=com_orden_compra_detalle.id "
                 + "LEFT JOIN com_oc_req on com_oc_req.id=com_oc_requisicion.com_oc_req_id "
-                + "WHERE com_orden_compra_detalle.com_orden_compra_id="+id_orden_compra;
+                + "WHERE com_orden_compra_detalle.com_orden_compra_id="+id_orden_compra+" "
+                + "order by com_orden_compra_detalle.id;";
         //0=Sin Estatus, 1=Parcial(Surtido Parcial), 2=Surtido(Surtido Completo), 3=Cancelado
         
         //System.out.println("Obtiene datos grid OC: "+sql_query);
@@ -702,7 +703,8 @@ public class ComSpringDao  implements ComInterfaceDao {
             + "JOIN gral_edo ON gral_edo.id = cxp_prov.estado_id "
             + "JOIN gral_mun ON gral_mun.id = cxp_prov.municipio_id  "
             + "LEFT JOIN gral_imptos ON gral_imptos.id=cxp_prov.impuesto "
-            + "WHERE empresa_id="+id_empresa+" AND cxp_prov.borrado_logico = false "+where;
+            + "WHERE empresa_id="+id_empresa+" AND cxp_prov.borrado_logico = false "+where+" "
+            + "ORDER BY cxp_prov.razon_social;";
         
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         
@@ -895,7 +897,8 @@ public class ComSpringDao  implements ComInterfaceDao {
                         + " left join com_orden_compra_detalle on com_orden_compra_detalle.com_orden_compra_id = com_orden_compra.id "
                         + " join inv_prod on inv_prod.id=com_orden_compra_detalle.inv_prod_id "
                         + " join inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "
-                        + " WHERE com_orden_compra.id="+id_ordenCompra;
+                        + " WHERE com_orden_compra.id="+id_ordenCompra+" "
+            + "ORDER BY com_orden_compra_detalle.id;";
     
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,

@@ -351,20 +351,4 @@ public class RepFacturacionController {
         
         return jsonretorno;
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
 }
