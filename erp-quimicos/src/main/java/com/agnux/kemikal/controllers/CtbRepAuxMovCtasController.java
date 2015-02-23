@@ -237,8 +237,8 @@ public class CtbRepAuxMovCtasController {
         
         System.out.println("Generando Reporte Auxiliar de Movimientos de Cuentas");
         
-        //Reporte Auxiliar de Cuentas
-        Integer app_selected = 157;
+        //Reporte Auxiliar de Movimientos de Cuentas(CTB)
+        Integer app_selected = 159;
         String command_selected="reporte";
         String tipo_doc="pdf";
         
