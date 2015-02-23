@@ -812,7 +812,7 @@ public class CtbSpringDao implements CtbInterfaceDao{
     @Override
     public ArrayList<HashMap<String, String>> getCtbRepBalanceGral_Datos(String data_string) {
         
-        String sql_to_query = "select * from ctb_reporte(?) as foo(nivel integer, descripcion character varying, saldo_fin character varying);"; 
+        String sql_to_query = "select * from ctb_reporte(?) as foo(tipo_reg integer, mayor integer, clasifica integer, descripcion character varying, saldo_fin character varying);"; 
         System.out.println("data_string: "+data_string);
         System.out.println("Ctb_DatosBalanceGeneral:: "+sql_to_query);
         ArrayList<HashMap<String, String>> hm_facturas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
@@ -821,7 +821,9 @@ public class CtbSpringDao implements CtbInterfaceDao{
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, String> row = new HashMap<String, String>();
-                    row.put("nivel",rs.getString("nivel"));
+                    row.put("tipo_reg",rs.getString("tipo_reg"));
+                    row.put("mayor",rs.getString("mayor"));
+                    row.put("clasifica",rs.getString("clasifica"));
                     row.put("descripcion",rs.getString("descripcion"));
                     row.put("saldo_fin",(rs.getString("saldo_fin").trim().equals(""))?rs.getString("saldo_fin"):StringHelper.roundDouble(rs.getString("saldo_fin"),2));
                     return row;

@@ -88,8 +88,8 @@ public class CtbPdfReporteBalanceGeneral {
         Font smallBoldFontWhite = new Font(Font.getFamily("ARIAL"),9,Font.BOLD,BaseColor.WHITE);
         Font smallFontBlack = new Font(Font.getFamily("ARIAL"),9,Font.NORMAL,BaseColor.BLACK);
         
-        float [] ancho_columnas = {5.5f, 1.5f,1.5f,1.5f};
-        Font largeBoldFont = new Font(Font.FontFamily.HELVETICA,10,Font.BOLD,BaseColor.BLACK);
+        float [] ancho_columnas = {7f,1.5f,1.5f};
+        Font smallFontBold = new Font(Font.FontFamily.HELVETICA,8,Font.BOLD,BaseColor.BLACK);
         Font smallFont = new Font(Font.FontFamily.HELVETICA,8,Font.NORMAL,BaseColor.BLACK);
         
         HeaderFooter event = new HeaderFooter(this.getDatosHeaderFooter());
@@ -101,79 +101,55 @@ public class CtbPdfReporteBalanceGeneral {
             
             writer = PdfWriter.getInstance(doc, new FileOutputStream(this.getArchivoSalida()));
             writer.setPageEvent(event);
-            
             doc.open();
-            
-            int numHeaderRows = 3;
             
             //Se declara la tabla y se establecen la configuraciones para la misma
             PdfPTable table = new PdfPTable(ancho_columnas);
             table.setKeepTogether(false);
-            table.setHeaderRows(numHeaderRows);
+            table.setHeaderRows(3);
+            PdfPCell cellHead=null;
             
+            //Fila 1
+            cellHead = new PdfPCell(new Paragraph(this.getDatosEmp().get("emp_calle").toUpperCase()+" "+this.getDatosEmp().get("emp_no_exterior")+", "+this.getDatosEmp().get("emp_colonia"),smallFontBlack));
+            cellHead.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cellHead.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cellHead.setUseAscender(true);
+            cellHead.setUseDescender(true);
+            cellHead.setFixedHeight(11);
+            cellHead.setBorder(0);
+            table.addCell(cellHead);
             
-            String[] columnas = {"direccion","vacio","etiqueta","dato"};
-            List<String>  lista_columnas = (List<String>) Arrays.asList(columnas);
-            for ( String columna_titulo : lista_columnas){
-                String dato="";
-                int colspan=1;
-                if (columna_titulo.equals("direccion")){
-                    dato = this.getDatosEmp().get("emp_calle").toUpperCase()+" "+this.getDatosEmp().get("emp_no_exterior")+", "+this.getDatosEmp().get("emp_colonia");
-                    colspan = 1;
-                   
-                }
-                
-                if (columna_titulo.equals("etiqueta")){
-                    dato = "     RFC:";
-                   
-                }
-                
-                if (columna_titulo.equals("dato")){
-                    dato = this.getDatosEmp().get("emp_rfc").toUpperCase();
-                                          
-
-                }
-                
-                PdfPCell cellX = new PdfPCell(new Paragraph(dato,smallFontBlack));
-                cellX.setHorizontalAlignment(Element.ALIGN_LEFT);
-                cellX.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                cellX.setUseAscender(true);
-                cellX.setUseDescender(true);
-                cellX.setFixedHeight(11);
-                cellX.setBorder(0);
-                cellX.setColspan(colspan);
-                table.addCell(cellX);
-            }
+            cellHead = new PdfPCell(new Paragraph("        RFC:          "+this.getDatosEmp().get("emp_rfc").toUpperCase(),smallFontBlack));
+            cellHead.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cellHead.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cellHead.setUseAscender(true);
+            cellHead.setUseDescender(true);
+            cellHead.setFixedHeight(11);
+            cellHead.setBorder(0);
+            cellHead.setColspan(2);
+            table.addCell(cellHead);
             
-        
-            for ( String columna_titulo : lista_columnas){
-                String dato="";
-                int colspan=1;
-                if (columna_titulo.equals("direccion")){
-                    dato = this.getDatosEmp().get("emp_municipio").toUpperCase()+", "+this.getDatosEmp().get("emp_estado").toUpperCase()+", "+this.getDatosEmp().get("emp_pais").toUpperCase()+", C.P."+this.getDatosEmp().get("emp_cp");
-                   colspan = 1;
-                }
-                
-                if (columna_titulo.equals("etiqueta")){
-                    dato = "     Reg. Edo.";
-                }
-                
-                if (columna_titulo.equals("dato")){
-                    dato = this.getDatosEmp().get("regedo");
-                }
-                
-                PdfPCell cellX = new PdfPCell(new Paragraph(dato,smallFontBlack));
-                cellX.setHorizontalAlignment(Element.ALIGN_LEFT);
-                cellX.setVerticalAlignment(Element.ALIGN_TOP);
-                cellX.setUseAscender(true);
-                cellX.setUseDescender(true);
-                cellX.setFixedHeight(22);
-                cellX.setBorder(0);
-                cellX.setColspan(colspan);
-                table.addCell(cellX);
-            }
+            //Fila 2
+            cellHead = new PdfPCell(new Paragraph(this.getDatosEmp().get("emp_municipio").toUpperCase()+", "+this.getDatosEmp().get("emp_estado").toUpperCase()+", "+this.getDatosEmp().get("emp_pais").toUpperCase()+", C.P."+this.getDatosEmp().get("emp_cp"),smallFontBlack));
+            cellHead.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cellHead.setVerticalAlignment(Element.ALIGN_TOP);
+            cellHead.setUseAscender(true);
+            cellHead.setUseDescender(true);
+            cellHead.setFixedHeight(13);
+            cellHead.setBorder(0);
+            table.addCell(cellHead);
             
-            String[] columnasHeader = {"Cuenta","Anual","%"};
+            cellHead = new PdfPCell(new Paragraph("        Impreso:    "+this.getDatosHeaderFooter().get("fecha_impresion"),smallFontBlack));
+            cellHead.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cellHead.setVerticalAlignment(Element.ALIGN_TOP);
+            cellHead.setUseAscender(true);
+            cellHead.setUseDescender(true);
+            cellHead.setFixedHeight(13);
+            cellHead.setBorder(0);
+            cellHead.setColspan(2);
+            table.addCell(cellHead);
+            
+            String[] columnasHeader = {"Cuenta",""};
             List<String>  lista_columnas_header = (List<String>) Arrays.asList(columnasHeader);
             for ( String columna_titulo : lista_columnas_header){
                 PdfPCell cellX = new PdfPCell(new Paragraph(columna_titulo,smallBoldFontWhite));
@@ -186,17 +162,12 @@ public class CtbPdfReporteBalanceGeneral {
                     cellX.setVerticalAlignment(Element.ALIGN_MIDDLE);   
                 }
 
-                if (columna_titulo.equals("Anual")){
-                    cellX.setHorizontalAlignment(Element.ALIGN_CENTER);
-                    cellX.setVerticalAlignment(Element.ALIGN_MIDDLE);   
-                }
-                
-                if (columna_titulo.equals("%")){
-                    cellX.setHorizontalAlignment(Element.ALIGN_CENTER);
-                    cellX.setVerticalAlignment(Element.ALIGN_MIDDLE);  
+                if (columna_titulo.equals("")){
+                    cellX.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                    cellX.setVerticalAlignment(Element.ALIGN_MIDDLE);
                     cellX.setColspan(2);
                 }
-
+                
                 cellX.setFixedHeight(13);
                 table.addCell(cellX);
             }
@@ -206,56 +177,39 @@ public class CtbPdfReporteBalanceGeneral {
             // Pintar los rows del Reporte
             for (HashMap<String, String> i : this.getRows()){
                 //Indices del HashMap que representa el row
-               // String[] wordList = {"descripcion","saldo_final","porcentaje1","porcentaje2","porcentaje3"};
-                String[] wordList = {"descripcion","saldo_final","porcentaje1"};
+                String[] wordList = {"descripcion","saldo_fin",};
                 
                 List<String>  indices = (List<String>) Arrays.asList(wordList);
                 String valor="";
-               // colspan = 1;
+                
                 for (String omega : indices){
                     PdfPCell celda = null;
-
+                    
                     if (omega.equals("descripcion")){
-                        celda = new PdfPCell(new Paragraph(i.get(omega),smallFont));
+                        if (!i.get("tipo_reg").equals("3")){
+                            celda = new PdfPCell(new Paragraph(i.get(omega),smallFontBold));
+                        }else{
+                            celda = new PdfPCell(new Paragraph(i.get(omega),smallFont));
+                        }
+                        
                         celda.setHorizontalAlignment(Element.ALIGN_LEFT);
                         celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
                     }
                     
-                    
-                    if (omega.equals("saldo_final")){
-                        valor="";
-                        if(!i.get(omega).equals("")){ valor=StringHelper.AgregaComas(i.get(omega)); }
-                        celda = new PdfPCell(new Paragraph(valor,smallFont));
+                    if (omega.equals("saldo_fin")){
+                        if (!i.get("tipo_reg").equals("3")){
+                            celda = new PdfPCell(new Paragraph((i.get(omega).trim().equals("")? "":StringHelper.AgregaComas(i.get(omega))),smallFontBold));
+                        }else{
+                            celda = new PdfPCell(new Paragraph((i.get(omega).trim().equals("")? "":StringHelper.AgregaComas(i.get(omega))),smallFont));
+                        }
+                        
                         celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                        celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                    }
-                    
-                    
-                    
-                    if (omega.equals("porcentaje1")){
-                        celda = new PdfPCell(new Paragraph(i.get(omega),smallFont));
-                        celda.setHorizontalAlignment(Element.ALIGN_LEFT);
                         celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
                         celda.setColspan(2);
                     }
-                    /*
-                     if (omega.equals("porcentaje2")){
-                        celda = new PdfPCell(new Paragraph(i.get(omega),smallFont));
-                        celda.setHorizontalAlignment(Element.ALIGN_LEFT);
-                        celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                    }
-                     /*
-                      if (omega.equals("porcentaje3")){
-                        celda = new PdfPCell(new Paragraph(i.get(omega),smallFont));
-                        celda.setHorizontalAlignment(Element.ALIGN_LEFT);
-                        celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                    }*/
+                    
 
-                   
-
-                  
-
-
+                    
                     
                     celda.setBorder(0);
                     table.addCell(celda);
