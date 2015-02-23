@@ -201,25 +201,29 @@ $(function() {
 				for(var key in header_tabla){
 					var attrValue = header_tabla[key];
 					if(attrValue == "Cuenta"){
-						html_reporte +='<td width="450px" align="left">'+attrValue+'</td>'; 
+						html_reporte +='<td width="485px" align="left">'+attrValue+'</td>'; 
 					}
 					
-					if(attrValue == 'Anual'){
-						html_reporte +='<td width="250px" align="left" >'+attrValue+'</td>'; 
+					if(attrValue == 'Saldo'){
+						html_reporte +='<td width="150px" align="left" >'+attrValue+'</td>'; 
 					}
 				}
 				html_reporte +='</tr> </thead>';
 				
 				html_fila_vacia +='<tr class="first">';
-				html_fila_vacia +='<td align="left"  id="sin_borde" width="450px" height="10"></td>';
-				html_fila_vacia +='<td align="left"  id="sin_borde" width="250px"></td>';
-			
+				html_fila_vacia +='<td align="left"  id="sin_borde" width="485px" height="10"></td>';
+				html_fila_vacia +='<td align="left"  id="sin_borde" width="150px"></td>';
 				html_fila_vacia +='</tr>';
 				
-				
+				var id_html = '';
 				if(parseInt(body_tabla.length)>0){
 					for(var i=0; i<body_tabla.length; i++){
-						html_reporte +='<tr>';
+						id_html = '';
+						if(parseInt(body_tabla[i]["tipo_reg"])!=3){
+							id_html='id="tr_totales"';
+						}
+						
+						html_reporte +='<tr '+id_html+'>';
 						html_reporte +='<td align="left">'+body_tabla[i]["descripcion"]+'</td>';
 						html_reporte +='<td align="right">'+ ((body_tabla[i]["saldo_fin"].trim()=='')? '':$(this).agregar_comas(body_tabla[i]["saldo_fin"])) +'</td>';
 						html_reporte +='</tr>';
