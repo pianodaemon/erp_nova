@@ -734,6 +734,7 @@ public class CtbSpringDao implements CtbInterfaceDao{
                     row.put("tipo_pol",rs.getString("tipo_pol"));
                     row.put("fecha",rs.getString("fecha"));
                     row.put("ref",rs.getString("ref"));
+                    row.put("cc",rs.getString("cc"));
                     row.put("descrip_mov",rs.getString("descrip_mov"));
                     row.put("saldo_ini",(rs.getString("saldo_ini").trim().equals(""))?rs.getString("saldo_ini"):StringHelper.roundDouble(rs.getString("saldo_ini"),2));
                     row.put("debe",(rs.getString("debe").trim().equals(""))?rs.getString("debe"):StringHelper.roundDouble(rs.getString("debe"),2));

@@ -5,35 +5,17 @@
 package com.agnux.kemikal.reportes;
 
 
-import com.itextpdf.text.pdf.PdfContentByte;
-import com.itextpdf.text.pdf.PdfPCell;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfPageEventHelper;
-import com.itextpdf.text.pdf.PdfTemplate;
-import com.itextpdf.text.pdf.PdfWriter;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.Phrase;
-import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.ExceptionConverter;
-import com.itextpdf.text.Font;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.pdf.BaseFont;
-import com.itextpdf.text.pdf.ColumnText;
+import com.agnux.common.helpers.StringHelper;
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.*;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import com.agnux.common.helpers.StringHelper;
-import com.agnux.common.helpers.TimeHelper;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 /**
  *
@@ -83,47 +65,30 @@ public class CtbPdfReporteAuxiliarDeMovimientosDeCuentas {
         this.setDatosEmp(datosEmpresa);
         this.setRows(datos);
         this.init();
-        
-        
-        double suma_monto_factura_cliente;
-        double suma_importe_pagado_cliente;
-        double suma_saldo_pendiente_cliente;
-        
-        String simbolo_moneda_pesos="";
-        String simbolo_moneda_dolar="";
-        String simbolo_moneda_euro="";
-                
-        //variables para totales de la moneda
-        double suma_monto_factura_moneda_pesos;
-        double suma_importe_pagado_moneda_pesos;
-        double suma_saldo_pendiente_moneda_pesos;
-        
-        double suma_monto_factura_moneda_dolar=0;
-        double suma_importe_pagado_moneda_dolar=0;
-        double suma_saldo_pendiente_moneda_dolar=0;
-
-        double suma_monto_factura_moneda_euro=0;
-        double suma_importe_pagado_moneda_euro=0;
-        double suma_saldo_pendiente_moneda_euro=0;
-        
-        String cliente_actual="";
     }
     
     private void init(){
-        Font smallsmall = new Font(Font.getFamily("ARIAL"),13,Font.NORMAL);
         Font smallBoldFontWhite = new Font(Font.getFamily("ARIAL"),9,Font.BOLD,BaseColor.WHITE);
         Font smallFontBlack = new Font(Font.getFamily("ARIAL"),9,Font.NORMAL,BaseColor.BLACK);
-        
-       // float [] ancho_columnas = {1f, 1f, 1f, 1f, 1f, 1f, 2f, 1.5f, 1.5f, 1.5f, 1.5f};
-        // float [] ancho_columnas = {1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f};
-         //float [] ancho_columnas = {1.5f, 1.5f, 1.5f, 1.5f, 1.5f};
-         float [] ancho_columnas = {1f,1f,1.5f,1f,1f,1.5f,1.5f,2f,1.5f,1.5f,1.5f};
-       // float [] ancho_columnas = {1f, 1f,1f, 1f, 1f, 1f};
-        Font largeBoldFont = new Font(Font.FontFamily.HELVETICA,10,Font.BOLD,BaseColor.BLACK);
         Font smallFont = new Font(Font.FontFamily.HELVETICA,8,Font.NORMAL,BaseColor.BLACK);
+        Font smallFontBold = new Font(Font.FontFamily.HELVETICA,8,Font.BOLD,BaseColor.BLACK);
+        
+        float [] ancho_columnas = {
+            1f,//Suc
+            1f,//Póliza
+            1.5f,//Orig
+            1f,//Tipo Pol.
+            1.1f,//Fecha
+            1.5f,//Referencia
+            1.5f,//C.C.
+            2f,//Descripción
+            1.5f,//Saldo Inicial
+            1.5f,//Debe
+            1.5f,//Haber
+            1.5f//Saldo
+        };
         
         HeaderFooter event = new HeaderFooter(this.getDatosHeaderFooter());
-        //Document doc = new Document(PageSize.LETTER,-50,-50,60,30);
         Document doc = new Document(PageSize.LETTER.rotate(),-50,-50,60,30);
         doc.addCreator("gpmarsan@gmail.com");
         doc.addAuthor("Noe Martinez");
@@ -141,68 +106,52 @@ public class CtbPdfReporteAuxiliarDeMovimientosDeCuentas {
             PdfPTable table = new PdfPTable(ancho_columnas);
             table.setKeepTogether(false);
             table.setHeaderRows(numHeaderRows);
+            PdfPCell cellHead=null;
             
             
-            String[] columnas = {"direccion","vacio","etiqueta","dato"};
-            List<String>  lista_columnas = (List<String>) Arrays.asList(columnas);
-            for ( String columna_titulo : lista_columnas){
-                String dato="";
-                int colspan=1;
-                if (columna_titulo.equals("direccion")){
-                    dato = this.getDatosEmp().get("emp_calle").toUpperCase()+" "+this.getDatosEmp().get("emp_no_exterior")+", "+this.getDatosEmp().get("emp_colonia");
-                    colspan = 8;
-                }
-                
-                if (columna_titulo.equals("etiqueta")){
-                    dato = "     RFC:";
-                }
-                
-                if (columna_titulo.equals("dato")){
-                    dato = this.getDatosEmp().get("emp_rfc").toUpperCase();
-                }
-                
-                PdfPCell cellX = new PdfPCell(new Paragraph(dato,smallFontBlack));
-                cellX.setHorizontalAlignment(Element.ALIGN_LEFT);
-                cellX.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                cellX.setUseAscender(true);
-                cellX.setUseDescender(true);
-                cellX.setFixedHeight(11);
-                cellX.setBorder(0);
-                cellX.setColspan(colspan);
-                table.addCell(cellX);
-            }
+            //Fila 1
+            cellHead = new PdfPCell(new Paragraph(this.getDatosEmp().get("emp_calle").toUpperCase()+" "+this.getDatosEmp().get("emp_no_exterior")+", "+this.getDatosEmp().get("emp_colonia"),smallFontBlack));
+            cellHead.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cellHead.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cellHead.setUseAscender(true);
+            cellHead.setUseDescender(true);
+            cellHead.setFixedHeight(11);
+            cellHead.setBorder(0);
+            cellHead.setColspan(9);
+            table.addCell(cellHead);
             
-        
-            for ( String columna_titulo : lista_columnas){
-                String dato="";
-                int colspan=1;
-                if (columna_titulo.equals("direccion")){
-                    dato = this.getDatosEmp().get("emp_municipio").toUpperCase()+", "+this.getDatosEmp().get("emp_estado").toUpperCase()+", "+this.getDatosEmp().get("emp_pais").toUpperCase()+", C.P."+this.getDatosEmp().get("emp_cp");
-                    colspan = 8;
-                }
-                
-                if (columna_titulo.equals("etiqueta")){
-                    dato = "     Reg. Edo.";
-                }
-                
-                if (columna_titulo.equals("dato")){
-                    dato = this.getDatosEmp().get("regedo");
-                }
-                
-                PdfPCell cellX = new PdfPCell(new Paragraph(dato,smallFontBlack));
-                cellX.setHorizontalAlignment(Element.ALIGN_LEFT);
-                cellX.setVerticalAlignment(Element.ALIGN_TOP);
-                cellX.setUseAscender(true);
-                cellX.setUseDescender(true);
-                cellX.setFixedHeight(22);
-                cellX.setBorder(0);
-                cellX.setColspan(colspan);
-                table.addCell(cellX);
-            }
+            cellHead = new PdfPCell(new Paragraph("             RFC:          "+this.getDatosEmp().get("emp_rfc").toUpperCase(),smallFontBlack));
+            cellHead.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cellHead.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cellHead.setUseAscender(true);
+            cellHead.setUseDescender(true);
+            cellHead.setFixedHeight(11);
+            cellHead.setBorder(0);
+            cellHead.setColspan(3);
+            table.addCell(cellHead);
             
+            //Fila 2
+            cellHead = new PdfPCell(new Paragraph(this.getDatosEmp().get("emp_municipio").toUpperCase()+", "+this.getDatosEmp().get("emp_estado").toUpperCase()+", "+this.getDatosEmp().get("emp_pais").toUpperCase()+", C.P."+this.getDatosEmp().get("emp_cp"),smallFontBlack));
+            cellHead.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cellHead.setVerticalAlignment(Element.ALIGN_TOP);
+            cellHead.setUseAscender(true);
+            cellHead.setUseDescender(true);
+            cellHead.setFixedHeight(13);
+            cellHead.setBorder(0);
+            cellHead.setColspan(9);
+            table.addCell(cellHead);
             
-         String[] columnasHeader = {"Suc","Póliza","Orig","Tip Pol","Fecha","Cheque","C.C.","Descripción","Debe","Haber","Saldo"};
-            //String[] columnasHeader = {"Sucursal","Póliza","Orig","Tip Pol","Fecha","Cheque","C.C.","Descripción","Debe","Haber","Saldo"};
+            cellHead = new PdfPCell(new Paragraph("             Impreso:    "+this.getDatosHeaderFooter().get("fecha_impresion"),smallFontBlack));
+            cellHead.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cellHead.setVerticalAlignment(Element.ALIGN_TOP);
+            cellHead.setUseAscender(true);
+            cellHead.setUseDescender(true);
+            cellHead.setFixedHeight(13);
+            cellHead.setBorder(0);
+            cellHead.setColspan(3);
+            table.addCell(cellHead);
+            
+            String[] columnasHeader = {"Suc.","Póliza","Orig.","Tipo Pol.","Fecha","Referencia","C.C.","Descripción","Saldo Inicial","Debe","Haber","Saldo"};
             List<String>  lista_columnas_header = (List<String>) Arrays.asList(columnasHeader);
             for ( String columna_titulo : lista_columnas_header){
                 PdfPCell cellX = new PdfPCell(new Paragraph(columna_titulo,smallBoldFontWhite));
@@ -210,23 +159,22 @@ public class CtbPdfReporteAuxiliarDeMovimientosDeCuentas {
                 cellX.setUseDescender(true);
                 cellX.setBackgroundColor(BaseColor.BLACK);
                 
-                 if (columna_titulo.equals("Suc")){
+                 if (columna_titulo.equals("Suc.")){
                     cellX.setHorizontalAlignment(Element.ALIGN_CENTER);
                     cellX.setVerticalAlignment(Element.ALIGN_MIDDLE);   
                 }
-
-               
+                 
                 if (columna_titulo.equals("Póliza")){
                     cellX.setHorizontalAlignment(Element.ALIGN_CENTER);
                     cellX.setVerticalAlignment(Element.ALIGN_MIDDLE);   
                 }
 
-                if (columna_titulo.equals("Orig")){
+                if (columna_titulo.equals("Orig.")){
                     cellX.setHorizontalAlignment(Element.ALIGN_CENTER);
                     cellX.setVerticalAlignment(Element.ALIGN_MIDDLE);   
                 }
 
-                if (columna_titulo.equals("Tip Pol")){
+                if (columna_titulo.equals("Tipo Pol.")){
                     cellX.setHorizontalAlignment(Element.ALIGN_CENTER);
                     cellX.setVerticalAlignment(Element.ALIGN_MIDDLE);   
                 }
@@ -236,12 +184,11 @@ public class CtbPdfReporteAuxiliarDeMovimientosDeCuentas {
                     cellX.setVerticalAlignment(Element.ALIGN_MIDDLE);   
                 }
                 
-                 if (columna_titulo.equals("Cheque")){
+                 if (columna_titulo.equals("Referencia")){
                     cellX.setHorizontalAlignment(Element.ALIGN_CENTER);
                     cellX.setVerticalAlignment(Element.ALIGN_MIDDLE);   
                 }
-              
-
+                 
                 if (columna_titulo.equals("C.C.")){
                     cellX.setHorizontalAlignment(Element.ALIGN_CENTER);
                     cellX.setVerticalAlignment(Element.ALIGN_MIDDLE);   
@@ -252,6 +199,10 @@ public class CtbPdfReporteAuxiliarDeMovimientosDeCuentas {
                     cellX.setVerticalAlignment(Element.ALIGN_MIDDLE);   
                 }
                 
+                if (columna_titulo.equals("Saldo Inicial")){
+                    cellX.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    cellX.setVerticalAlignment(Element.ALIGN_MIDDLE);   
+                }
                 if (columna_titulo.equals("Debe")){
                     cellX.setHorizontalAlignment(Element.ALIGN_CENTER);
                     cellX.setVerticalAlignment(Element.ALIGN_MIDDLE);   
@@ -267,160 +218,137 @@ public class CtbPdfReporteAuxiliarDeMovimientosDeCuentas {
                     cellX.setVerticalAlignment(Element.ALIGN_MIDDLE);   
                 }
                 
-                 
                 cellX.setFixedHeight(13);
                 table.addCell(cellX);
-                
-       
             }
             
+            //Indices del HashMap que representa el row
+            String[] wordList;
+            String[] wordListCta = {"cta","descrip_cta","saldo_ini","debe","haber","saldo_fin"};
+            String[] wordListMov = {"suc","poliza","orig","tipo_pol","fecha","ref","cc","descrip_mov","debe","haber","saldo_fin"};
+            String tipo_registro="";
             
           
-            // Pintar los rows del Reporte
+            //Pintar los rows del Reporte
             for (HashMap<String, String> i : this.getRows()){
-                //Indices del HashMap que representa el row
-                String[] wordList = {"sucursal","poliza","origen","tipopoliza","fechas","cheque","cc","descripcion","debe","haber","saldo"};
-                //String[] wordList = {"sucursal","poliza","origen","tipopoliza","fechas","cheque","cc","descripcion","debe","haber","saldo"};
+                tipo_registro = i.get("tipo_reg").toLowerCase().trim();
+                
+                if (tipo_registro.equals("cta")){
+                    wordList = wordListCta;
+                }else{
+                    wordList = wordListMov;
+                }
                 
                 List<String>  indices = (List<String>) Arrays.asList(wordList);
                 String valor="";
+                
                 for (String omega : indices){
                     PdfPCell celda = null;
-           /*
-                //pintamos en el pdf la razon social del primer cliente
-                cellX = new PdfPCell(new Paragraph(i.get(omega).get("suc").toString(),smallBoldFont));
-                //cell.setUseAscender(true);
-                cellX.setHorizontalAlignment(Element.ALIGN_LEFT);
-                //cell.setUseDescender(true);
-                cellX.setVerticalAlignment(Element.ALIGN_BOTTOM);
-                cellX.setColspan(9);
-                cellX.setBorder(0);
-                //cell.setFixedHeight(18);
-                table.addCell(cellX);
-
-                
-                      if (omega.equals("suc")){
-                        celda = new PdfPCell(new Paragraph(i.get(omega),smallFont));
+                    
+                    //Celda solo para registro cuenta
+                    if (omega.equals("cta")){
+                        celda = new PdfPCell(new Paragraph(i.get(omega),smallFontBold));
                         celda.setHorizontalAlignment(Element.ALIGN_LEFT);
-                        celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                    }*/
-
-                    if (omega.equals("sucursal")){
-                        celda = new PdfPCell(new Paragraph(i.get(omega),smallFont));
-                        celda.setHorizontalAlignment(Element.ALIGN_LEFT);
-                        celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        celda.setColspan(3);
                     }
-
+                    
+                    //Celda solo para registro cuenta
+                    if (omega.equals("descrip_cta")){
+                        celda = new PdfPCell(new Paragraph(i.get(omega),smallFontBold));
+                        celda.setHorizontalAlignment(Element.ALIGN_LEFT);
+                        celda.setColspan(5);
+                    }
+                    
+                    if (omega.equals("suc")){
+                        celda = new PdfPCell(new Paragraph(i.get(omega),smallFont));
+                        celda.setHorizontalAlignment(Element.ALIGN_LEFT);
+                    }
+                    
                     if (omega.equals("poliza")){
                         celda = new PdfPCell(new Paragraph(i.get(omega),smallFont));
                         celda.setHorizontalAlignment(Element.ALIGN_LEFT);
-                        celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
                     }
                     
-                      if (omega.equals("origen")){
+                    if (omega.equals("orig")){
                         celda = new PdfPCell(new Paragraph(i.get(omega),smallFont));
                         celda.setHorizontalAlignment(Element.ALIGN_LEFT);
-                        celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                    }
-
-                    if (omega.equals("tipopoliza")){
-                        celda = new PdfPCell(new Paragraph(i.get(omega),smallFont));
-                        celda.setHorizontalAlignment(Element.ALIGN_LEFT);
-                        celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
                     }
                     
-                        if (omega.equals("fechas")){
+                    if (omega.equals("tipo_pol")){
                         celda = new PdfPCell(new Paragraph(i.get(omega),smallFont));
                         celda.setHorizontalAlignment(Element.ALIGN_LEFT);
-                        celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                    }
-                        
-
-                    if (omega.equals("cheque")){
-                        celda = new PdfPCell(new Paragraph(i.get(omega),smallFont));
-                        celda.setHorizontalAlignment(Element.ALIGN_LEFT);
-                        celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
                     }
                     
-                      if (omega.equals("cc")){
+                    if (omega.equals("fecha")){
                         celda = new PdfPCell(new Paragraph(i.get(omega),smallFont));
                         celda.setHorizontalAlignment(Element.ALIGN_LEFT);
-                        celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
                     }
-
-                    if (omega.equals("descripcion")){
+                    
+                    if (omega.equals("ref")){
                         celda = new PdfPCell(new Paragraph(i.get(omega),smallFont));
                         celda.setHorizontalAlignment(Element.ALIGN_LEFT);
-                        celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
                     }
-                 
-                     if (omega.equals("debe")){
-                        valor="";
-                        if(!i.get(omega).equals("")){ valor=StringHelper.AgregaComas(i.get(omega)); }
-                        celda = new PdfPCell(new Paragraph(valor,smallFont));
+                    
+                    if (omega.equals("cc")){
+                        celda = new PdfPCell(new Paragraph(i.get(omega),smallFont));
+                        celda.setHorizontalAlignment(Element.ALIGN_LEFT);
+                    }
+                    
+                    if (omega.equals("descrip_mov")){
+                        celda = new PdfPCell(new Paragraph(i.get(omega),smallFont));
+                        celda.setHorizontalAlignment(Element.ALIGN_LEFT);
+                        celda.setColspan(2);
+                    }
+                    
+                    if (omega.equals("saldo_ini")){
+                        //valor="";
+                        //if(!i.get(omega).equals("")){ valor=StringHelper.AgregaComas(i.get(omega)); }
+                        celda = new PdfPCell(new Paragraph((i.get(omega).trim().equals("")? "":StringHelper.AgregaComas(i.get(omega))),smallFontBold));
                         celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                        celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                    }
+                    
+                    
+                    if (omega.equals("debe")){
+                        //valor="";
+                        //if(!i.get(omega).equals("")){ valor=StringHelper.AgregaComas(i.get(omega)); }
                         
+                        if(tipo_registro.equals("cta")){
+                            celda = new PdfPCell(new Paragraph((i.get(omega).trim().equals("")? "":StringHelper.AgregaComas(i.get(omega))),smallFontBold));
+                        }else{
+                            celda = new PdfPCell(new Paragraph((i.get(omega).trim().equals("")? "":StringHelper.AgregaComas(i.get(omega))),smallFont));
+                        }
+                        celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
                     }
                     
                     if (omega.equals("haber")){
-                        valor="";
-                        if(!i.get(omega).equals("")){ valor=StringHelper.AgregaComas(i.get(omega)); }
-                        celda = new PdfPCell(new Paragraph(valor,smallFont));
+                        //valor="";
+                        //if(!i.get(omega).equals("")){ valor=StringHelper.AgregaComas(i.get(omega)); }
+                        
+                        if(tipo_registro.equals("cta")){
+                            celda = new PdfPCell(new Paragraph((i.get(omega).trim().equals("")? "":StringHelper.AgregaComas(i.get(omega))),smallFontBold));
+                        }else{
+                            celda = new PdfPCell(new Paragraph((i.get(omega).trim().equals("")? "":StringHelper.AgregaComas(i.get(omega))),smallFont));
+                        }
                         celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                        celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                    }
-
-                    if (omega.equals("saldo")){
-                        valor="";
-                        if(!i.get(omega).equals("")){ valor=StringHelper.AgregaComas(i.get(omega)); }
-                        celda = new PdfPCell(new Paragraph(valor,smallFont));
-                        celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                        celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
                     }
                     
+                    if (omega.equals("saldo_fin")){
+                        //valor="";
+                        //if(!i.get(omega).equals("")){ valor=StringHelper.AgregaComas(i.get(omega)); }
+                        
+                        if(tipo_registro.equals("cta")){
+                            celda = new PdfPCell(new Paragraph((i.get(omega).trim().equals("")? "":StringHelper.AgregaComas(i.get(omega))),smallFontBold));
+                        }else{
+                            celda = new PdfPCell(new Paragraph((i.get(omega).trim().equals("")? "":StringHelper.AgregaComas(i.get(omega))),smallFont));
+                        }
+                        celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                    }
+                    
+                    celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
                     celda.setBorder(0);
                     table.addCell(celda);
-                    
-                    
-                                //inicializar variables
-                
-                
-                 //for (int x=0; x<=datos.size()-1;x++){
-                    // ArrayList<HashMap<String, String>> datos
-                      //ArrayList<HashMap<String, String>>  registro = datos.get(x);
-                    //HashMap<String,String> registro = datos.get(x);
-               /* suma_monto_factura_cliente=0;
-                suma_importe_pagado_cliente=0;
-                suma_saldo_pendiente_cliente=0;
-                
-                        suma_monto_factura_cliente = suma_monto_factura_cliente+ Double.parseDouble(("debe").toString());
-                        suma_importe_pagado_cliente = suma_importe_pagado_cliente + Double.parseDouble(("haber").toString());
-                        suma_saldo_pendiente_cliente = suma_saldo_pendiente_cliente + Double.parseDouble(("saldo").toString());
-                         
-                        
-                        
-                          //imprimir totales del cliente anterior
-                        celda= new PdfPCell(new Paragraph("Totales del cliente",smallFont));
-                        celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                        celda.setBorder(0);
-                        celda.setColspan(3);
-                        table.addCell(celda);
-                        
-                  
-                        
-                        celda= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(suma_monto_factura_cliente,2)),smallFont));
-                        celda.setHorizontalAlignment (Element.ALIGN_RIGHT);
-                        celda.setBorder(1);
-                        table.addCell(celda);
-                 //}
-                 
-                */ 
-                }  
-                
+                }
             }
-            
-         
             
             doc.add(table);   
             doc.close();

@@ -265,28 +265,28 @@ public class CtbRepAuxMovCtasController {
         datosEmpresaEmisora = this.getGralDao().getEmisor_Datos(id_empresa);
         datosEmpresaEmisora.put("regedo", "");
         
+        String[] fi = fecha_ini.split("-");
+        String[] ff = fecha_fin.split("-");
+        String periodo_reporte = "Periodo  del  "+fi[2]+"/"+fi[1]+"/"+fi[0]+"  al  "+ff[2]+"/"+ff[1]+"/"+ff[0];
+        
         //Crear cadena para imprimir Fecha en el pie de pagina del PDF.
-        String nombreMes= TimeHelper.ConvertNumToMonth(Integer.parseInt(TimeHelper.getMesActual()));
-        SimpleDateFormat formato = new SimpleDateFormat("'Impreso el' d 'de "+nombreMes+" del ' yyyy 'a las' HH:mm:ss 'hrs.'");
-        String impreso_en = formato.format(new Date());
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        String fecha_impresion = sdf.format(new Date());
+        
         
         //Agregar datos para el Encabezado y Pie de pagina
         datosEncabezadoPie.put("empresa", datosEmpresaEmisora.get("emp_razon_social"));
         //datosEncabezadoPie.put("titulo_reporte", this.getGralDao().getTituloReporte(id_empresa, app_selected));
         datosEncabezadoPie.put("titulo_reporte", "Auxiliar de Movimientos de Cuentas");
-        datosEncabezadoPie.put("periodo", impreso_en);
+        datosEncabezadoPie.put("periodo", periodo_reporte);
+        datosEncabezadoPie.put("fecha_impresion", fecha_impresion);
         datosEncabezadoPie.put("codigo1", this.getGralDao().getCodigo1Iso(id_empresa, app_selected));
         datosEncabezadoPie.put("codigo2", this.getGralDao().getCodigo2Iso(id_empresa, app_selected));
         
-        //obtener el directorio temporal
-        String dir_tmp = this.getGralDao().getTmpDir();
-        
-        File file_dir_tmp = new File(dir_tmp);
-        System.out.println("Directorio temporal: "+file_dir_tmp.getCanonicalPath());
-        
-        String file_name = "RepAuxMovCtas_"+nombreMes+".pdf";
-        
-        //ruta de archivo de salida
+        //Obtener el directorio temporal
+        File file_dir_tmp = new File(this.getGralDao().getTmpDir());
+        String file_name = "RepAuxMovCtas_"+fi[2]+"-"+fi[1]+"-"+fi[0]+" al "+ff[2]+"-"+ff[1]+"-"+ff[0]+".pdf";
+        //Ruta de archivo de salida
         String fileout = file_dir_tmp +"/"+  file_name;
         
         datos = this.getCtbDao().getCtbRepAuxMovCtas_Datos(data_string);
