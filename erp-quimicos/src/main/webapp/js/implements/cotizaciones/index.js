@@ -1021,8 +1021,7 @@ $(function() {
 		
 	}//termina buscador dpresentaciones disponibles de un producto
 	
-        
-       
+	
 	
 	
 	
@@ -1046,7 +1045,6 @@ $(function() {
 		var importeImpuesto=0.00;
 		var agregarTr=false;
 		
-
 		
 		//verificamos si la Lista de Precio trae moneda
 		if(parseInt($num_lista_precio.val())>0){
@@ -1068,13 +1066,15 @@ $(function() {
 			
 			//aqui solo debe entrar cuando el tr es Nuevo, en editar ya no
 			if(parseInt(idmonpartida)==0){
-				//si la moneda de la Cotizacion es diferente a la moneda del Precio del Producto
-				//entonces convertimos el precio a la moneda del Cotizacion de acuerdo al tipo de cambio actual
+				/*
+				Si la moneda de la Cotizacion es diferente a la moneda del Precio del Producto
+				entonces convertimos el precio a la moneda del Cotizacion de acuerdo al tipo de cambio actual
+				*/
 				if( parseInt(idMonedaCotizacion) != parseInt(idmonpre) ){
 					if(parseInt(idMonedaCotizacion)==1 && parseInt(idmonpre)!=1){
 						//si la moneda de la Cotizacion es pesos y la moneda del precio es diferente de Pesos,
 						//entonces calculamos su equivalente a pesos
-						precioCambiado = parseFloat( parseFloat(precioOriginal) * parseFloat(tcMonProd)).toFixed(4);
+						precioCambiado = parseFloat(parseFloat(precioOriginal) * parseFloat(tcMonProd)).toFixed(4);
 					}
 					
 					if(parseInt(idMonedaCotizacion)!=1 && parseInt(idmonpre)==1){
@@ -1158,8 +1158,10 @@ $(function() {
 			
 			var trr = '';
 			trr = '<tr>';
-				trr += '<td class="grid" style="font-size:11px;  border:1px solid #C1DAD7;" width="40">';
-					trr += '<a href="elimina_producto" id="delete'+ tr +'">Eliminar</a>';
+				trr += '<td class="grid" style="font-size:11px;  border:1px solid #C1DAD7;" width="25">';
+					//trr += '<a href="elimina_producto" id="delete'+ tr +'">Eliminar</a>';
+					trr += '<a href="#delete'+ tr +'" id="delete'+ tr +'"><div id="eliminar'+ tr +'" class="onmouseOutEliminar" style="width:24px; background-position:center;"/></a>';
+					
 					trr += '<input type="hidden" name="eliminado" class="elim'+ tr +'" id="elim" value="1">';//el 1 significa que el registro no ha sido eliminado
 					trr += '<input type="hidden" name="iddetalle" class="iddetalle'+ tr +'" id="idd" value="'+id_detalle+'">';//este es el id del registro que ocupa el producto en la tabla cotizacions_detalles
 					trr += '<input type="hidden" name="notr" class="notr'+ tr +'" value="'+ tr +'">';
@@ -1213,14 +1215,21 @@ $(function() {
 				trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="70">';
 					trr += '<input type="text" 	name="importe" 	class="import'+ tr +'" value="'+importe+'" id="import" readOnly="true" style="width:66px; text-align:right;">';
 					trr += '<input type="hidden" name="importeMonCot" class="impMonCot'+ tr +'" value="'+  importeMonCotizacion +'" id="impMonCot">';
-					
 					trr += '<input type="hidden" name="id_imp_prod"   value="'+ idImp +'" id="idimppord">';
 					trr += '<input type="hidden" name="valor_imp"     class="ivalorimp'+ tr +'" value="'+  valorImp +'" id="ivalorimp">';
 					trr += '<input type="hidden" name="totimpuesto'+ tr +'" class="totimp'+ tr +'" id="totimp" value="'+importeImpuesto+'">';
 				trr += '</td>';
 				
+				trr += '<td class="grid2" style="font-size:11px;  border:1px solid #C1DAD7;" width="25" id="td_check_auth'+ tr +'">';
+					//trr += '<input type="checkbox" name="check_auth" id="check_auth'+ tr +'" value="check">';
+				trr += '</td>';
+				
 			trr += '</tr>';
 			$grid_productos.append(trr);
+			
+			
+			
+			//<input type="button" id="auth" value="Autorizar" style="font-weight: bold;width:110px;">
 			
 			
 			
@@ -1562,8 +1571,9 @@ $(function() {
 			
 			
 			//elimina un producto del grid
-			$grid_productos.find('#delete'+ tr).bind('click',function(event){
-				event.preventDefault();
+			//$grid_productos.find('#delete'+ tr).bind('click',function(event){
+			$grid_productos.find('a[href=#delete'+ tr +']').click(function(e){
+				e.preventDefault();
 				if(parseInt($(this).parent().find('.elim'+ tr).val()) != 0){
 					//tomamos el valor de la partida eliminada
 					var iddetalle= $(this).parent().find('.iddetalle'+ tr).val();
@@ -1599,6 +1609,13 @@ $(function() {
 		}
 		
 		
+		$grid_productos.find('#eliminar'+ tr).mouseover(function(){
+			$(this).removeClass("onmouseOutEliminar").addClass("onmouseOverEliminar");
+		});
+		$grid_productos.find('#eliminar'+ tr).mouseout(function(){
+			$(this).removeClass("onmouseOverEliminar").addClass("onmouseOutEliminar");
+		});
+		
 	}//termina agregar producto al grid
 	
 	
@@ -1609,7 +1626,7 @@ $(function() {
 		//click al checkbox descripcion larga
 		$campo_check.click(function(event){
 			if(this.checked){
-				$('#forma-cotizacions-window').find('input[name=razoncliente]').css({'width':'550px'});
+				$('#forma-cotizacions-window').find('input[name=razoncliente]').css({'width':'555px'});
 				$('#forma-cotizacions-window').find('input[name=dircliente]').css({'width':'550px'});
 				$('#forma-cotizacions-window').find('input[name=contactocliente]').css({'width':'550px'});
 				$('#forma-cotizacions-window').find('#td_imagen').show();
@@ -1617,14 +1634,14 @@ $(function() {
 				$('#forma-cotizacions-window').find('#td1').css({'width':'740px'});
 				$('#forma-cotizacions-window').find('#td2').css({'width':'460px'});
 				$('#forma-cotizacions-window').find('.contenedor_grid').css({'width':'1180px'});
-				$('#forma-cotizacions-window').find('.cotizacions_div_one').css({'width':'1213px'});
-				$('#forma-cotizacions-window').find('.cotizacions_div_one').css({'width':'1213px'});
-				$('#forma-cotizacions-window').find('.cotizacions_div_two').css({'width':'1213px'});
-				$('#forma-cotizacions-window').find('.cotizacions_div_three').css({'width':'1203px'});
+				$('#forma-cotizacions-window').find('.cotizacions_div_one').css({'width':'1218px'});
+				$('#forma-cotizacions-window').find('.cotizacions_div_one').css({'width':'1218px'});
+				$('#forma-cotizacions-window').find('.cotizacions_div_two').css({'width':'1218px'});
+				$('#forma-cotizacions-window').find('.cotizacions_div_three').css({'width':'1208px'});
 				$('#forma-cotizacions-window').css({"margin-left": -480, 	"margin-top": -230});
-				$('#forma-cotizacions-window').find('#titulo_plugin').css({'width':'1173px'});
-				$('#forma-cotizacions-window').find('#div_botones').css({'width':'1190px'});
-				$('#forma-cotizacions-window').find('#div_botones').find('.tabla_botones').find('.td_left').css({'width':'1090px'});
+				$('#forma-cotizacions-window').find('#titulo_plugin').css({'width':'1178px'});
+				$('#forma-cotizacions-window').find('#div_botones').css({'width':'1195px'});
+				$('#forma-cotizacions-window').find('#div_botones').find('.tabla_botones').find('.td_left').css({'width':'1095px'});
 			}else{
 				$('#forma-cotizacions-window').find('input[name=razoncliente]').css({'width':'430px'});
 				$('#forma-cotizacions-window').find('input[name=dircliente]').css({'width':'430px'});

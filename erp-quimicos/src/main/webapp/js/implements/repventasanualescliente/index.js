@@ -297,45 +297,44 @@ $(function() {
                                         html_reporte +='<td class="grid_datos" width="120" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["suma_total3"]).toFixed(2))+'</td>'; 
                                         html_reporte +='</tr>';
                                         
-                                totalmesenero=parseFloat(totalmesenero)+parseFloat(body_tabla[i]["enero"]);
-                                totalmesfebrero=parseFloat(totalmesfebrero)+parseFloat(body_tabla[i]["febrero"]);
-                                totalmesmarzo=parseFloat(totalmesmarzo)+parseFloat(body_tabla[i]["marzo"]);
-                                totalmesabril=parseFloat(totalmesabril)+parseFloat(body_tabla[i]["abril"]);
-                                totalmesmayo=parseFloat(totalmesmayo)+parseFloat(body_tabla[i]["mayo"]);
-                                totalmesjunio=parseFloat(totalmesjunio)+parseFloat(body_tabla[i]["junio"]);
-                                totalmesjulio=parseFloat(totalmesjulio)+parseFloat(body_tabla[i]["julio"]);
-                                totalmesagosto=parseFloat(totalmesagosto)+parseFloat(body_tabla[i]["agosto"]);
-                                totalmesseptiembre=parseFloat(totalmesseptiembre)+parseFloat(body_tabla[i]["septiembre"]);
-                                totalmesoctubre=parseFloat(totalmesoctubre)+parseFloat(body_tabla[i]["octubre"]);
-                                totalmesnoviembre=parseFloat(totalmesnoviembre)+parseFloat(body_tabla[i]["noviembre"]);
-                                totalmesdiciembre=parseFloat(totalmesdiciembre)+parseFloat(body_tabla[i]["diciembre"]);
-                                
-                                totalmesenero1=parseFloat(totalmesenero1)+parseFloat(body_tabla[i]["enero1"]);
-                                totalmesfebrero2=parseFloat(totalmesfebrero2)+parseFloat(body_tabla[i]["febrero2"]);
-                                totalmesmarzo3=parseFloat(totalmesmarzo3)+parseFloat(body_tabla[i]["marzo3"]);
-                                totalmesabril4=parseFloat(totalmesabril4)+parseFloat(body_tabla[i]["abril4"]);
-                                totalmesmayo5=parseFloat(totalmesmayo5)+parseFloat(body_tabla[i]["mayo5"]);
-                                totalmesjunio6=parseFloat(totalmesjunio6)+parseFloat(body_tabla[i]["junio6"]);
-                                totalmesjulio7=parseFloat(totalmesjulio7)+parseFloat(body_tabla[i]["julio7"]);
-                                totalmesagosto8=parseFloat(totalmesagosto8)+parseFloat(body_tabla[i]["agosto8"]);
-                                totalmesseptiembre9=parseFloat(totalmesseptiembre9)+parseFloat(body_tabla[i]["septiembre9"]);
-                                totalmesoctubre10=parseFloat(totalmesoctubre10)+parseFloat(body_tabla[i]["octubre10"]);
-                                totalmesnoviembre11=parseFloat(totalmesnoviembre11)+parseFloat(body_tabla[i]["noviembre11"]);
-                                totalmesdiciembre12=parseFloat(totalmesdiciembre12)+parseFloat(body_tabla[i]["diciembre12"]);
-								
-								totalmesenero11=parseFloat(totalmesenero11)+parseFloat(body_tabla[i]["enero11"]);
-                                totalmesfebrero12=parseFloat(totalmesfebrero12)+parseFloat(body_tabla[i]["febrero12"]);
-                                totalmesmarzo13=parseFloat(totalmesmarzo13)+parseFloat(body_tabla[i]["marzo13"]);
-                                totalmesabril14=parseFloat(totalmesabril14)+parseFloat(body_tabla[i]["abril14"]);
-                                totalmesmayo15=parseFloat(totalmesmayo15)+parseFloat(body_tabla[i]["mayo15"]);
-                                totalmesjunio16=parseFloat(totalmesjunio16)+parseFloat(body_tabla[i]["junio16"]);
-                                totalmesjulio17=parseFloat(totalmesjulio17)+parseFloat(body_tabla[i]["julio17"]);
-                                totalmesagosto18=parseFloat(totalmesagosto18)+parseFloat(body_tabla[i]["agosto18"]);
-                                totalmesseptiembre19=parseFloat(totalmesseptiembre19)+parseFloat(body_tabla[i]["septiembre19"]);
-                                totalmesoctubre110=parseFloat(totalmesoctubre110)+parseFloat(body_tabla[i]["octubre110"]);
-                                totalmesnoviembre111=parseFloat(totalmesnoviembre111)+parseFloat(body_tabla[i]["noviembre111"]);
-                                totalmesdiciembre112=parseFloat(totalmesdiciembre112)+parseFloat(body_tabla[i]["diciembre112"]);
-
+										totalmesenero=parseFloat(totalmesenero)+parseFloat(body_tabla[i]["enero"]);
+										totalmesfebrero=parseFloat(totalmesfebrero)+parseFloat(body_tabla[i]["febrero"]);
+										totalmesmarzo=parseFloat(totalmesmarzo)+parseFloat(body_tabla[i]["marzo"]);
+										totalmesabril=parseFloat(totalmesabril)+parseFloat(body_tabla[i]["abril"]);
+										totalmesmayo=parseFloat(totalmesmayo)+parseFloat(body_tabla[i]["mayo"]);
+										totalmesjunio=parseFloat(totalmesjunio)+parseFloat(body_tabla[i]["junio"]);
+										totalmesjulio=parseFloat(totalmesjulio)+parseFloat(body_tabla[i]["julio"]);
+										totalmesagosto=parseFloat(totalmesagosto)+parseFloat(body_tabla[i]["agosto"]);
+										totalmesseptiembre=parseFloat(totalmesseptiembre)+parseFloat(body_tabla[i]["septiembre"]);
+										totalmesoctubre=parseFloat(totalmesoctubre)+parseFloat(body_tabla[i]["octubre"]);
+										totalmesnoviembre=parseFloat(totalmesnoviembre)+parseFloat(body_tabla[i]["noviembre"]);
+										totalmesdiciembre=parseFloat(totalmesdiciembre)+parseFloat(body_tabla[i]["diciembre"]);
+										
+										totalmesenero1=parseFloat(totalmesenero1)+parseFloat(body_tabla[i]["enero1"]);
+										totalmesfebrero2=parseFloat(totalmesfebrero2)+parseFloat(body_tabla[i]["febrero2"]);
+										totalmesmarzo3=parseFloat(totalmesmarzo3)+parseFloat(body_tabla[i]["marzo3"]);
+										totalmesabril4=parseFloat(totalmesabril4)+parseFloat(body_tabla[i]["abril4"]);
+										totalmesmayo5=parseFloat(totalmesmayo5)+parseFloat(body_tabla[i]["mayo5"]);
+										totalmesjunio6=parseFloat(totalmesjunio6)+parseFloat(body_tabla[i]["junio6"]);
+										totalmesjulio7=parseFloat(totalmesjulio7)+parseFloat(body_tabla[i]["julio7"]);
+										totalmesagosto8=parseFloat(totalmesagosto8)+parseFloat(body_tabla[i]["agosto8"]);
+										totalmesseptiembre9=parseFloat(totalmesseptiembre9)+parseFloat(body_tabla[i]["septiembre9"]);
+										totalmesoctubre10=parseFloat(totalmesoctubre10)+parseFloat(body_tabla[i]["octubre10"]);
+										totalmesnoviembre11=parseFloat(totalmesnoviembre11)+parseFloat(body_tabla[i]["noviembre11"]);
+										totalmesdiciembre12=parseFloat(totalmesdiciembre12)+parseFloat(body_tabla[i]["diciembre12"]);
+										
+										totalmesenero11=parseFloat(totalmesenero11)+parseFloat(body_tabla[i]["enero11"]);
+										totalmesfebrero12=parseFloat(totalmesfebrero12)+parseFloat(body_tabla[i]["febrero12"]);
+										totalmesmarzo13=parseFloat(totalmesmarzo13)+parseFloat(body_tabla[i]["marzo13"]);
+										totalmesabril14=parseFloat(totalmesabril14)+parseFloat(body_tabla[i]["abril14"]);
+										totalmesmayo15=parseFloat(totalmesmayo15)+parseFloat(body_tabla[i]["mayo15"]);
+										totalmesjunio16=parseFloat(totalmesjunio16)+parseFloat(body_tabla[i]["junio16"]);
+										totalmesjulio17=parseFloat(totalmesjulio17)+parseFloat(body_tabla[i]["julio17"]);
+										totalmesagosto18=parseFloat(totalmesagosto18)+parseFloat(body_tabla[i]["agosto18"]);
+										totalmesseptiembre19=parseFloat(totalmesseptiembre19)+parseFloat(body_tabla[i]["septiembre19"]);
+										totalmesoctubre110=parseFloat(totalmesoctubre110)+parseFloat(body_tabla[i]["octubre110"]);
+										totalmesnoviembre111=parseFloat(totalmesnoviembre111)+parseFloat(body_tabla[i]["noviembre111"]);
+										totalmesdiciembre112=parseFloat(totalmesdiciembre112)+parseFloat(body_tabla[i]["diciembre112"]);
                                 }
                                 
                                 html_reporte +='</table>';

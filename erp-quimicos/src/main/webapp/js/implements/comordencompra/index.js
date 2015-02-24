@@ -707,10 +707,12 @@ $(function() {
 				//Asignar el enfoque para corregir el problema donde muestra varias ventanas si le dan mas de un enter al querer agregar el producto al grid
 				$('#forma-comordencompra-window').find('input[name=folio]').focus();
 				
+				if($tipo_cambio.val().trim()==''){
+					$tipo_cambio.val(0);
+				}
+				
 				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getPresentacionesProducto.json';
-				$arreglo = {'sku':sku_producto,
-				            'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
-					   };
+				$arreglo = {'sku':sku_producto, 'tc':$tipo_cambio.val(), 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
 				
 				var trr = '';
 				

@@ -518,12 +518,12 @@ $(function() {
 			$.post(restful_json_service,arreglo_parametros,function(entry){
 				var body_tabla = entry['Data'];
 				var header_tabla = {
-					sucursal		:'Sucursal',
+					sucursal		:'Suc',
 					poliza		    :'P&oacute;liza',
 					origen	        :'Orig',
-					tipopoliza	    :'Tip Pol',
+					tipopoliza	    :'Tipo&nbsp;Pol.',
 					fechas	        :'Fecha',
-					cheque	        :'Cheque',
+					cheque	        :'Referencia',
 					cc	            :'CC',
 					descripcion     :'Descripci&oacute;n',
 					saldo_ini		:'Saldo&nbsp;Inicial',
@@ -558,41 +558,41 @@ $(function() {
 				html_reporte +='<tr>';
 				for(var key in header_tabla){
 					var attrValue = header_tabla[key];
-					if(attrValue == "Sucursal"){
-						html_reporte +='<td width="30" align="left">'+attrValue+'</td>';
+					if(attrValue == "Suc"){
+						html_reporte +='<td width="50" align="left" class="grid_head">'+attrValue+'</td>';
 					}
 					if(attrValue == "P&oacute;liza"){
-						html_reporte +='<td width="50" align="left">'+attrValue+'</td>';
+						html_reporte +='<td width="80" align="left" class="grid_head">'+attrValue+'</td>';
 					}
 					if(attrValue == "Orig"){
-						html_reporte +='<td width="50" align="left">'+attrValue+'</td>';
+						html_reporte +='<td width="50" align="left" class="grid_head">'+attrValue+'</td>';
 					}
-					if(attrValue == "Tipo Pol."){
-						html_reporte +='<td width="80" align="left">'+attrValue+'</td>';
+					if(attrValue == "Tipo&nbsp;Pol."){
+						html_reporte +='<td width="80" align="left" class="grid_head">'+attrValue+'</td>';
 					}
 					if(attrValue == "Fecha"){
-						html_reporte +='<td width="70" align="left">'+attrValue+'</td>';
+						html_reporte +='<td width="70" align="left" class="grid_head">'+attrValue+'</td>';
 					}
-					if(attrValue == "Cheque"){
-						html_reporte +='<td width="120" align="left">'+attrValue+'</td>';
+					if(attrValue == "Referencia"){
+						html_reporte +='<td width="120" align="left" class="grid_head">'+attrValue+'</td>';
 					}
 					if(attrValue == "CC"){
-						html_reporte +='<td width="120" align="left">'+attrValue+'</td>';
+						html_reporte +='<td width="120" align="left" class="grid_head">'+attrValue+'</td>';
 					}
 					if(attrValue == "Descripci&oacute;n"){
-						html_reporte +='<td width="130" align="left">'+attrValue+'</td>';
+						html_reporte +='<td width="190" align="left" class="grid_head">'+attrValue+'</td>';
 					}
 					if(attrValue == "Saldo&nbsp;Inicial"){
-						html_reporte +='<td width="120" align="left">'+attrValue+'</td>';
+						html_reporte +='<td width="110" align="left" class="grid_head">'+attrValue+'</td>';
 					}
 					if(attrValue == "Debe"){
-						html_reporte +='<td width="120" align="left">'+attrValue+'</td>';
+						html_reporte +='<td width="110" align="left" class="grid_head">'+attrValue+'</td>';
 					}
 					if(attrValue == "Haber"){
-						html_reporte +='<td width="120" align="left">'+attrValue+'</td>';
+						html_reporte +='<td width="110" align="left" class="grid_head">'+attrValue+'</td>';
 					}
 					if(attrValue == "Saldo"){
-						html_reporte +='<td width="120" align="left">'+attrValue+'</td>';
+						html_reporte +='<td width="140" align="left" class="grid_head">'+attrValue+'</td>';
 					}
 				}
 				html_reporte +='</tr></thead>';
@@ -612,20 +612,6 @@ $(function() {
 				html_fila_vacia +='<td align="left"  id="sin_borde" width="135px"></td>';
 				html_fila_vacia +='</tr>';
 				*/
-				html_reporte +='<tr class="first">';
-				html_reporte +='<td align="left"  id="sin_borde" width="30" height="0.1"></td>';
-				html_reporte +='<td align="left"  id="sin_borde" width="50"></td>';
-				html_reporte +='<td align="left"  id="sin_borde" width="50"></td>';
-				html_reporte +='<td align="left"  id="sin_borde" width="80"></td>';
-				html_reporte +='<td align="left"  id="sin_borde" width="70"></td>';
-				html_reporte +='<td align="left"  id="sin_borde" width="120"></td>';
-				html_reporte +='<td align="right" id="sin_borde" width="120"></td>';
-				html_reporte +='<td align="right" id="sin_borde" width="130"></td>';
-				html_reporte +='<td align="right" id="sin_borde" width="120"></td>';
-				html_reporte +='<td align="right" id="sin_borde" width="120"></td>';
-				html_reporte +='<td align="right" id="sin_borde" width="120"></td>';
-				html_reporte +='<td align="left"  id="sin_borde" width="120"></td>';
-				html_reporte +='</tr>';
 				
 				//inicializar variables
 				//var simbolo_moneda="";
@@ -634,91 +620,84 @@ $(function() {
 				var suma_total_haber=0.0;
 				var suma_total_saldo=0.0;
 				
+				
+				var height2 = $('#cuerpo').css('height');
+				var alto = parseInt(height2)-270;
+				var pix_alto=alto+'px';
+				
+				html_reporte +='<tbody>';
+				html_reporte +='<tr>';
+				html_reporte +='<td colspan="12">';
+				//html_reporte +='<div id="reporte" style="background-color:#ffffff; overflow:scroll; overflow-x:hidden; overflow-y:auto; height:'+pix_alto+'; width=1130px; align=top;">';
+				html_reporte +='<div id="reporte" style="background-color:#ffffff; overflow:scroll; overflow-x:hidden; overflow-y:auto; height:'+pix_alto+'; align=top;">';
+				html_reporte +='<table class="table_reporte" >';
+				
 				if(parseInt(body_tabla.length)>0){
 					
 					for(var i=0; i<body_tabla.length; i++){
 						
 						if(body_tabla[i]["tipo_reg"].trim()=='cta'){
 							html_reporte +='<tr id="tr_totales">';
-							html_reporte +='<td width="130" align="left" id="sin_borde" colspan="3">'+body_tabla[i]["cta"]+'</td>';
+							html_reporte +='<td width="180" align="left" id="sin_borde" colspan="3" class="grid_datos">'+body_tabla[i]["cta"]+'</td>';
 							//html_reporte +='<td width="50" align="left" id="sin_borde">'+body_tabla[i]["nombrepol"]+'</td>';
 							//html_reporte +='<td width="50" align="left" id="sin_borde"></td>';
-							html_reporte +='<td width="270" align="left" id="sin_borde" colspan="3">'+body_tabla[i]["descrip_cta"]+'</td>';
+							html_reporte +='<td width="390" align="left" id="sin_borde" colspan="4" class="grid_datos">'+body_tabla[i]["descrip_cta"]+'</td>';
 							//html_reporte +='<td width="80" align="left" id="sin_borde"></td>';
 							//html_reporte +='<td width="120" align="left" id="sin_borde"></td>';
+							//html_reporte +='<td width="120" align="left" id="sin_borde" class="grid_datos"></td>';
+							html_reporte +='<td width="190" align="right" id="sin_borde" class="grid_datos"></td>';
+							html_reporte +='<td width="110" align="right" id="sin_borde" class="grid_datos">'+ ((body_tabla[i]["saldo_ini"].trim()=='')? '':$(this).agregar_comas(body_tabla[i]["saldo_ini"])) +'</td>';
 							
-							html_reporte +='<td width="120" align="left" id="sin_borde"></td>';
-							html_reporte +='<td width="130" align="right" id="sin_borde"></td>';
-							html_reporte +='<td width="120" align="right" id="sin_borde">'+ ((body_tabla[i]["saldo_ini"].trim()=='')? '':$(this).agregar_comas(body_tabla[i]["saldo_ini"])) +'</td>';
-							
-							html_reporte +='<td width="120" align="right" id="sin_borde">'+ ((body_tabla[i]["debe"].trim()=='')? '':$(this).agregar_comas(body_tabla[i]["debe"])) +'</td>';
-							html_reporte +='<td width="120" align="right" id="sin_borde">'+ ((body_tabla[i]["haber"].trim()=='')? '':$(this).agregar_comas(body_tabla[i]["haber"])) +'</td>';
-							html_reporte +='<td width="120" align="right" id="sin_borde">'+ ((body_tabla[i]["saldo_fin"].trim()=='')? '':$(this).agregar_comas(body_tabla[i]["saldo_fin"])) +'</td>';
+							html_reporte +='<td width="110" align="right" id="sin_borde" class="grid_datos">'+ ((body_tabla[i]["debe"].trim()=='')? '':$(this).agregar_comas(body_tabla[i]["debe"])) +'</td>';
+							html_reporte +='<td width="110" align="right" id="sin_borde" class="grid_datos">'+ ((body_tabla[i]["haber"].trim()=='')? '':$(this).agregar_comas(body_tabla[i]["haber"])) +'</td>';
+							html_reporte +='<td width="110" align="right" id="sin_borde" class="grid_datos">'+ ((body_tabla[i]["saldo_fin"].trim()=='')? '':$(this).agregar_comas(body_tabla[i]["saldo_fin"])) +'</td>';
 							
 							html_reporte +='</tr>'; 
 						}else{
 							if(body_tabla[i]["tipo_reg"].trim()=='mov'){
 								
 								html_reporte +='<tr>';
-								html_reporte +='<td align="left" width="30">'+body_tabla[i]["suc"]+'</td>';
-								html_reporte +='<td align="left" width="50">'+body_tabla[i]["poliza"]+'</td>';
-								html_reporte +='<td align="left" width="50">'+body_tabla[i]["orig"]+'</td>';
+								html_reporte +='<td align="left" width="50" class="grid_datos">'+body_tabla[i]["suc"]+'</td>';
+								html_reporte +='<td align="left" width="80" class="grid_datos">'+body_tabla[i]["poliza"]+'</td>';
+								html_reporte +='<td align="left" width="50" class="grid_datos">'+body_tabla[i]["orig"]+'</td>';
 								
-								html_reporte +='<td align="left" width="80">'+body_tabla[i]["tipo_pol"]+'</td>';
-								html_reporte +='<td align="left" width="70">'+body_tabla[i]["fecha"]+'</td>';
-								html_reporte +='<td align="left" width="120">'+body_tabla[i]["ref"]+'</td>';
-								/*
-								html_reporte +='<td align="left" width="120">'+body_tabla[i]["cc"]+'</td>';
-								html_reporte +='<td align="left" width="250" colspan="2">'+body_tabla[i]["descrip_mov"]+'</td>';
-								*/
-								html_reporte +='<td align="left" width="120">'+body_tabla[i]["cc"]+'</td>';
-								html_reporte +='<td align="left" width="130">'+body_tabla[i]["descrip_mov"]+'</td>';
-								html_reporte +='<td align="left" width="120"></td>';
+								html_reporte +='<td align="left" width="80" class="grid_datos">'+body_tabla[i]["tipo_pol"]+'</td>';
+								html_reporte +='<td align="left" width="70" class="grid_datos">'+body_tabla[i]["fecha"]+'</td>';
+								html_reporte +='<td align="left" width="120" class="grid_datos">'+body_tabla[i]["ref"]+'</td>';
+								html_reporte +='<td align="left" width="120" class="grid_datos">'+body_tabla[i]["cc"]+'</td>';
 								
-								html_reporte +='<td align="right" width="120">'+ ((body_tabla[i]["debe"].trim()=='')? '':$(this).agregar_comas(body_tabla[i]["debe"])) +'</td>';
-								html_reporte +='<td align="right" width="120">'+ ((body_tabla[i]["haber"].trim()=='')? '':$(this).agregar_comas(body_tabla[i]["haber"])) +'</td>';
-								html_reporte +='<td align="right" width="120">'+ ((body_tabla[i]["saldo_fin"].trim()=='')? '':$(this).agregar_comas(body_tabla[i]["saldo_fin"])) +'</td>';
+								html_reporte +='<td align="left" width="300" colspan="2" class="grid_datos">'+body_tabla[i]["descrip_mov"]+'</td>';
+								
+								html_reporte +='<td align="right" width="110" class="grid_datos">'+ ((body_tabla[i]["debe"].trim()=='')? '':$(this).agregar_comas(body_tabla[i]["debe"])) +'</td>';
+								html_reporte +='<td align="right" width="110" class="grid_datos">'+ ((body_tabla[i]["haber"].trim()=='')? '':$(this).agregar_comas(body_tabla[i]["haber"])) +'</td>';
+								html_reporte +='<td align="right" width="110" class="grid_datos">'+ ((body_tabla[i]["saldo_fin"].trim()=='')? '':$(this).agregar_comas(body_tabla[i]["saldo_fin"])) +'</td>';
 								html_reporte +='</tr>';
-								/*
-								suma_total_debe=parseFloat(suma_total_debe) + parseFloat((body_tabla[i]["debe"].trim()=='')? 0:$(this).agregar_comas(body_tabla[i]["debe"]));
-								suma_total_haber=parseFloat(suma_total_haber) + parseFloat((body_tabla[i]["haber"].trim()=='')? 0:$(this).agregar_comas(body_tabla[i]["haber"]));
-								suma_total_saldo=parseFloat(suma_total_saldo) + parseFloat((body_tabla[i]["saldo_fin"].trim()=='')? 0:$(this).agregar_comas(body_tabla[i]["saldo_fin"]));
-								*/
+								
 							}
 						}
 					}
-					/*
-					//Imprimir totales
-					html_reporte +='<tr id="tr_totales">';
-					html_reporte +='<td align="left" id="sin_borde_derecho"></td>';
-					html_reporte +='<td align="left" id="sin_borde"></td>';
-					html_reporte +='<td align="left" id="sin_borde"></td>';
-					html_reporte +='<td align="left" id="sin_borde"></td>';
-					html_reporte +='<td align="left" id="sin_borde"></td>';
-					html_reporte +='<td align="left" id="sin_borde"></td>';
-					html_reporte +='<td align="left" id="sin_borde"></td>';
-					html_reporte +='<td align="right" id="sin_borde"  colspan="2">Total:</td>';
-					html_reporte +='<td align="right" id="monto">'+$(this).agregar_comas(parseFloat(suma_total_debe).toFixed(2))+'</td>';
-					html_reporte +='<td align="right" id="monto">'+$(this).agregar_comas(parseFloat(suma_total_haber).toFixed(2))+'</td>';
-					html_reporte +='<td align="right" id="monto">'+$(this).agregar_comas(parseFloat(suma_total_saldo).toFixed(2))+'</td>';
-					html_reporte +='</tr>';
-					*/
 				}
 				
 				html_reporte +='<tr>';
-				html_reporte +='<td id="sin_borde" height="2"><input type="text" name="col1" style="width:30px; height:1px; border-color:transparent; background:transparent"></td>';
-				html_reporte +='<td id="sin_borde"><input type="text" name="col2" style="width:50px; height:1px; border-color:transparent; background:transparent;"></td>';
-				html_reporte +='<td id="sin_borde"><input type="text" name="col3" style="width:50px; height:1px; border-color:transparent; background:transparent;"></td>';
-				html_reporte +='<td id="sin_borde"><input type="text" name="col4" style="width:80px; height:1px; border-color:transparent; background:transparent;"></td>';
-				html_reporte +='<td id="sin_borde"><input type="text" name="col5" style="width:70px; height:1px; border-color:transparent; background:transparent;"></td>';
-				html_reporte +='<td id="sin_borde"><input type="text" name="col6" style="width:120px; height:1px; border-color:transparent; background:transparent;"></td>';
-				html_reporte +='<td id="sin_borde"><input type="text" name="col7" style="width:120px; height:1px; border-color:transparent; background:transparent;"></td>';
-				html_reporte +='<td id="sin_borde"><input type="text" name="col8" style="width:130px; height:1px; border-color:transparent; background:transparent;"></td>';
-				html_reporte +='<td id="sin_borde"><input type="text" name="col8" style="width:120px; height:1px; border-color:transparent; background:transparent;"></td>';
-				html_reporte +='<td id="sin_borde"><input type="text" name="col9" style="width:120px; height:1px; border-color:transparent; background:transparent;"></td>';
-				html_reporte +='<td id="sin_borde"><input type="text" name="col10" style="width:120px; height:1px; border-color:transparent; background:transparent;"></td>';
-				html_reporte +='<td id="sin_borde"><input type="text" name="col11" style="width:120px; height:1px; border-color:transparent; background:transparent;"></td>';
+				html_reporte +='<td align="left"  id="sin_borde" width="50px" height="10" class="grid_datos">&nbsp;</td>';
+				html_reporte +='<td align="left"  id="sin_borde" width="80px" class="grid_datos">&nbsp;</td>';
+				html_reporte +='<td align="left"  id="sin_borde" width="50px" class="grid_datos">&nbsp;</td>';
+				html_reporte +='<td align="left"  id="sin_borde" width="80px" class="grid_datos">&nbsp;</td>';
+				html_reporte +='<td align="left"  id="sin_borde" width="70px" class="grid_datos">&nbsp;</td>';
+				html_reporte +='<td align="left"  id="sin_borde" width="120px" class="grid_datos">&nbsp;</td>';
+				html_reporte +='<td align="right" id="sin_borde" width="120px" class="grid_datos">&nbsp;</td>';
+				html_reporte +='<td align="right" id="sin_borde" width="190px" class="grid_datos">&nbsp;</td>';
+				html_reporte +='<td align="right" id="sin_borde" width="110px" class="grid_datos">&nbsp;</td>';
+				html_reporte +='<td align="right" id="sin_borde" width="110px" class="grid_datos">&nbsp;</td>';
+				html_reporte +='<td align="right" id="sin_borde" width="110px" class="grid_datos">&nbsp;</td>';
+				html_reporte +='<td align="left"  id="sin_borde" width="110px" class="grid_datos">&nbsp;</td>';
 				html_reporte +='</tr>';
+				
+				html_reporte +='</table>';
+				html_reporte +='</div>';
+				html_reporte +='</td>';
+				html_reporte +='</tr>';
+				html_reporte +='</tbody>';
 				
 				/*
 				html_reporte +='<tfoot>';
@@ -731,6 +710,8 @@ $(function() {
 				
 				
 				$div_rep.append(html_reporte); 
+				
+				/*
 				var height2 = $('#cuerpo').css('height');
 				var alto = 0;
 				if(verMas){
@@ -741,6 +722,19 @@ $(function() {
 				}
 				var pix_alto=alto+'px';
 				$('#table_rep').tableScroll({height:parseInt(pix_alto)});
+				*/
+				
+				
+				
+
+				$('#div_reporte').css('height:'+pix_alto+'px');
+				var width2 = $('#cuerpo').css('width');
+				var ancho = parseInt(width2);
+				var pix_ancho=ancho+'px';
+				//alert(pix_ancho);
+				$('#div_reporte').css('width:'+pix_ancho+'px');
+				
+				
 			});
 			
 		}else{
