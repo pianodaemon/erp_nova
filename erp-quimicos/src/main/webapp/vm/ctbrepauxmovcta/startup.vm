@@ -148,7 +148,7 @@
             </tr>
             <tr>
                 <td>&nbsp;&nbsp;</td>
-                <td><div id="div_rep"> </div></td>
+                <td><div id="div_rep" style="overflow:scroll; overflow-x:auto; overflow-y:auto; width:1250px; align=top; background-color:#dddddd;"> </div></td>
             </tr>
         </table>
 		

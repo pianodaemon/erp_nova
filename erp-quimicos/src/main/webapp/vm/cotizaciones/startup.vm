@@ -277,6 +277,25 @@
                                                                 -->
                                                                 <td width="10"></td>
                                                             </tr>
+                                                            
+                                                            <tr>
+                                                                <td width="10" height="10"></td>
+                                                                <td width="70"></td>
+                                                                <td width="95"></td>
+                                                                <td width="45"></td>
+                                                                <td width="100"></td>
+                                                                <td width="20"></td>
+                                                                <td width="10"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td width="10" height="10"></td>
+                                                                <td width="70"></td>
+                                                                <td width="95"></td>
+                                                                <td width="45"></td>
+                                                                <td width="120" colspan="2" align="right" id="td_btn_auth"></td>
+                                                                <!--<td width="20"></td>-->
+                                                                <td width="10"></td>
+                                                            </tr>
                                                         </table>
                                                     </td>
                                                 </tr>
@@ -366,24 +385,24 @@
                                                     </td>
                                                 </tr>
 												
-
                                                 <tr class="registros">
                                                     <td colspan="4" class="header_grid" style="border-top: 1px solid #C1DAD7; border-bottom: 1px solid #C1DAD7; border-left: 1px solid #FFFFFF; border-right: 1px solid #FFFFFF;">
 														
 														<table class="tabla_header_grid">
 															<thead>
 																<tr>
-																	<td class="grid" id="td_eliminar" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="40"><div class="delete">&nbsp;#</div></td>
+																	<td class="grid" id="td_eliminar" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="25"><div class="delete">&nbsp;#</div></td>
 																	<td class="grid" id="td_sku" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="102">&nbsp;C&oacute;digo</td>
 																	<td class="grid" id="td_nombre" style="background-color: rgb(180, 180, 180);"  width="182">&nbsp;Nombre</td>
 																	<td class="grid" id="td_imagen" style="background-color: rgb(180, 180, 180);" width="100">&nbsp;Imagen</td>
 																	<td class="grid" id="td_descripcion" style="background-color: rgb(180, 180, 180);"  width="220">&nbsp;Descripci&oacute;n</td>
-																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="90">&nbsp;Unidad</td>
-																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="100">&nbsp;Presentaci&oacute;n</td>
-																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="70">&nbsp;Cantidad</td>
-																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;Precio&nbsp;U.</td>
-																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="50">&nbsp;Moneda</td>
-																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="90">&nbsp;Importe</td>
+																	<td class="grid" style="background-color:rgb(180,180,180);" width="90">&nbsp;Unidad</td>
+																	<td class="grid" style="background-color:rgb(180,180,180);" width="100">&nbsp;Presentaci&oacute;n</td>
+																	<td class="grid" style="background-color:rgb(180,180,180);" width="70">&nbsp;Cantidad</td>
+																	<td class="grid" style="background-color:rgb(180,180,180);" width="80">&nbsp;Precio&nbsp;U.</td>
+																	<td class="grid" style="background-color:rgb(180,180,180);" width="50">&nbsp;Moneda</td>
+																	<td class="grid" style="background-color:rgb(180,180,180);" width="70">&nbsp;Importe</td>
+																	<td class="grid" style="background-color:rgb(180,180,180);" width="40">&nbsp;</td>
 																</tr>
 															</thead>
 														</table>
