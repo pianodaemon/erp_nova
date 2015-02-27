@@ -878,12 +878,13 @@ $(function() {
 							var idmonpartida=0;
 							var idImpto = entry['Presentaciones'][0]['id_impto'];
 							var valorImpto = entry['Presentaciones'][0]['valor_impto'];
+							var reg_aut = '0&&&0&&&0';
 							
 							if($('#forma-cotizacions-window').find('input[name=tc]').val()!='' && $('#forma-cotizacions-window').find('input[name=tc]').val()!=' '){
 								if(exislp=='1'){
 									//aqui se pasan datos a la funcion que agrega el tr en el grid
 									//$agrega_producto_grid($grid_productos, id_detalle, id_prod, sku, titulo, imagen, descripcion, unidad, id_pres, pres, precio, cantidad, importe, mon_id, arrayMonedas, idImp, valorImp);
-									$agrega_producto_grid($grid_productos, id_detalle, id_prod, sku, titulo, imagen, descripcion, unidadId, unidad, id_pres, pres, precio, cantidad, importe, idmonpre, arrayMonedas, idImpto, valorImpto, tcMonProd, idmonpartida);
+									$agrega_producto_grid($grid_productos, id_detalle, id_prod, sku, titulo, imagen, descripcion, unidadId, unidad, id_pres, pres, precio, cantidad, importe, idmonpre, arrayMonedas, idImpto, valorImpto, tcMonProd, idmonpartida, reg_aut);
 								}else{
 									jAlert(exislp, 'Atencion!', function(r) { 
 										$('#forma-cotizacions-window').find('input[name=sku_producto]').focus();
@@ -970,12 +971,13 @@ $(function() {
 								var idmonpartida=0;
 								var idImpto = $(this).find('span.idImpto').html();
 								var valorImpto = $(this).find('span.valorImpto').html();
+								var reg_aut = '0&&&0&&&0';
 								
 								if($('#forma-cotizacions-window').find('input[name=tc]').val()!='' && $('#forma-cotizacions-window').find('input[name=tc]').val()!=' '){
 									if(exislp=='1'){
 										//aqui se pasan datos a la funcion que agrega el tr en el grid
 										//$agrega_producto_grid($grid_productos, id_detalle, id_prod, sku, titulo, imagen, descripcion, unidad, id_pres, pres, precio, cantidad, importe, mon_id, arrayMonedas, idImp, valorImp);
-										$agrega_producto_grid($grid_productos, id_detalle, id_prod, sku, titulo, imagen, descripcion, unidadId, unidad, id_pres, pres, precio, cantidad, importe, idmonpre, arrayMonedas, idImpto, valorImpto, tcMonProd, idmonpartida);
+										$agrega_producto_grid($grid_productos, id_detalle, id_prod, sku, titulo, imagen, descripcion, unidadId, unidad, id_pres, pres, precio, cantidad, importe, idmonpre, arrayMonedas, idImpto, valorImpto, tcMonProd, idmonpartida, reg_aut);
 									}else{
 										jAlert(exislp, 'Atencion!', function(r) { 
 											$('#forma-cotizacions-window').find('input[name=sku_producto]').focus();
@@ -1028,7 +1030,7 @@ $(function() {
 	
 	
 	//agregar producto al grid
-	$agrega_producto_grid = function($grid_productos, id_detalle, id_prod, sku, titulo, imagen, descripcion, unidadId, unidad, id_pres, pres, precio, cantidad, importe, idmonpre, arrayMonedas, idImp, valorImp, tcMonProd, idmonpartida){
+	$agrega_producto_grid = function($grid_productos, id_detalle, id_prod, sku, titulo, imagen, descripcion, unidadId, unidad, id_pres, pres, precio, cantidad, importe, idmonpre, arrayMonedas, idImp, valorImp, tcMonProd, idmonpartida, reg_aut){
 		var $id_impuesto = $('#forma-cotizacions-window').find('input[name=id_impuesto]');
 		var $valor_impuesto = $('#forma-cotizacions-window').find('input[name=valorimpuesto]');
 		var $check_descripcion_larga =$('#forma-cotizacions-window').find('input[name=check_descripcion_larga]');
@@ -1046,7 +1048,7 @@ $(function() {
 		var agregarTr=false;
 		
 		
-		//verificamos si la Lista de Precio trae moneda
+		//Verificamos si la Lista de Precio trae moneda
 		if(parseInt($num_lista_precio.val())>0){
 			//verificamos si el grid no tiene registros
 			if(parseInt($("tr", $grid_productos).size())<=0){
@@ -1064,7 +1066,13 @@ $(function() {
 				$moneda_original.append(moneda_prod);
 			}
 			
-			//aqui solo debe entrar cuando el tr es Nuevo, en editar ya no
+			//alert("idMonedaCotizacion="+idMonedaCotizacion+"     idmonpre="+idmonpre+"     tcMonProd="+tcMonProd);
+			
+			if(parseFloat($tc_original.val())>1){
+				tcMonProd=$tc_original.val();
+			}
+			
+			//Aqui solo debe entrar cuando el tr es Nuevo, en editar ya no
 			if(parseInt(idmonpartida)==0){
 				/*
 				Si la moneda de la Cotizacion es diferente a la moneda del Precio del Producto
@@ -1221,16 +1229,39 @@ $(function() {
 				trr += '</td>';
 				
 				trr += '<td class="grid2" style="font-size:11px;  border:1px solid #C1DAD7;" width="25" id="td_check_auth'+ tr +'">';
-					//trr += '<input type="checkbox" name="check_auth" id="check_auth'+ tr +'" value="check">';
+					trr += '<input type="hidden" name="statusreg"   class="statusreg'+ tr +'" value="'+ reg_aut +'">';
+					trr += '<input type="hidden" name="reqauth"   class="reqauth'+ tr +'" value="false">';
+					trr += '<input type="hidden" name="success"   class="success'+ tr +'" value="false">';
+					trr += '<input type="checkbox" name="checkauth" class="checkauth'+ tr +'">';
 				trr += '</td>';
-				
 			trr += '</tr>';
 			$grid_productos.append(trr);
 			
+			$grid_productos.find('.checkauth'+tr).hide();
 			
-			
+			//var reg_aut = "status=0|value=0";
 			//<input type="button" id="auth" value="Autorizar" style="font-weight: bold;width:110px;">
 			
+			
+			
+			$grid_productos.find('.checkauth'+ tr).click(function(event){
+				if(this.checked){
+					$('#forma-cotizacions-window').find('#btn_autorizar').show();
+				}else{
+					var cont_check=0;
+					$grid_productos.find('input[name=checkauth]').each(function(index){
+						if(this.checked){
+							if(parseInt($(this).parent().parent().find('input[name=eliminado]').val())==1){
+								cont_check++;
+							}
+						}
+					});
+					
+					if(parseInt(cont_check)<=0){
+						$('#forma-cotizacions-window').find('#btn_autorizar').hide();
+					}
+				}
+			});
 			
 			
 			var unidadLitroKilo=false;
@@ -1242,7 +1273,6 @@ $(function() {
 					unidadLitroKilo=true;
 				}
 			}
-			
 			
 			var hmtl_um="";
 			if(cambiarUM.trim()=='true'){
@@ -1349,7 +1379,6 @@ $(function() {
 					
 					$importePartida.val(parseFloat(parseFloat($precioPartida.val()) * parseFloat($catidadPartida.val())).toFixed(4));
 					
-					
 					/*
 					Calcula el Importe de la partida en la Moneda Global de la Cotizacion, esto porque el total de la cotizacion
 					se saca tomando la moneda global y no la moneda de cada partida.
@@ -1388,7 +1417,7 @@ $(function() {
 				}
 			});
 			
-			//recalcula importe al perder enfoque el campo cantidad
+			//Recalcula importe al perder enfoque el campo cantidad
 			$grid_productos.find('.cant'+ tr).blur(function(){
 				$precioPartida = $(this).parent().parent().find('.precio'+ tr);
 				$importePartida = $(this).parent().parent().find('.import'+ tr);
@@ -1556,7 +1585,7 @@ $(function() {
 					return true;
 				}else {
 					return false;
-				}		
+				}
 			});
 			
 			//validar campo cantidad, solo acepte numeros y punto
@@ -1953,6 +1982,108 @@ $(function() {
 	
 	
 	
+	$forma_autorizacion= function($grid_productos, $btn_autorizar,id_to_show){
+		$(this).modalPanel_authorize();
+		var form_to_show = 'formaauthorize';
+		$('#' + form_to_show).each (function(){this.reset();});
+		var $forma_selected = $('#' + form_to_show).clone();
+		$forma_selected.attr({id : form_to_show + id_to_show});
+		$('#forma-authorize-window').css({"margin-left": -40,"margin-top": -180});
+		$forma_selected.prependTo('#forma-authorize-window');
+		$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
+		
+		var $idauth = $('#forma-authorize-window').find('input[name=idauth]');
+		var $passauth = $('#forma-authorize-window').find('input[name=passauth]');
+		
+		var $boton_aceptar = $('#forma-authorize-window').find('#boton_aceptar_validacion');
+		var $cancelar_plugin = $('#forma-authorize-window').find('#boton_cancelar_validacion');
+		
+		
+		$boton_aceptar.click(function(event){
+			if($idauth.val().trim()!="" && $passauth.val().trim()!=""){
+				var cadena = 'idauth='+$idauth.val()+'|passauth='+$passauth.val();
+				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAuth.json';
+				$arreglo = {'cad':cadena.toCharCode(), 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() }
+				
+				$.post(input_json,$arreglo,function(entry){
+					if(entry['Data']['success'].trim()=='true'){
+						//Eliminar formulario de autorizacion
+						var remove = function() {$(this).remove();};
+						$('#forma-authorize-overlay').fadeOut(remove);
+						
+						//Ocultar boton de autorizar
+						$('#forma-cotizacions-window').find('#btn_autorizar').hide();
+						
+						var cont_check=0;
+						$grid_productos.find('input[name=checkauth]').each(function(index){
+							$tr = $(this).parent().parent();
+							
+							if(this.checked){
+								if(parseInt($tr.find('input[name=eliminado]').val())==1){
+									$tr.find('input[name=statusreg]').val('1&&&'+$tr.find('input[name=precio]').val()+'&&&'+entry['Data']['ident']);
+									$tr.find('input[name=reqauth]').val('true');
+									$tr.find('input[name=precio]').css({'background':'#ffffff'});
+									//cont_check++;
+								}
+							}
+						});
+						
+						/*
+						if(parseInt(cont_check)<=0){
+							$('#forma-cotizacions-window').find('#btn_autorizar').hide();
+						}
+						*/
+						
+						jAlert('Precios autorizados!', 'Atencion!', function(r) {
+							
+						});
+					}else{
+						jAlert('Error al intentar autorizar. EL usuario debe tener permiso para autorizar precios.', 'Atencion!', function(r) {
+							//var remove = function() {$(this).remove();};
+							//$('#forma-authorize-overlay').fadeOut(remove);
+							$idauth.focus();
+						});
+					}
+					
+				});//termina llamada json
+			}else{
+				if($idauth.val().trim()=="" && $passauth.val().trim()==""){
+					jAlert('Ingresar nombre de Usuario y Password.', 'Atencion!', function(r) {
+						$idauth.focus();
+					});
+				}else{
+					if($idauth.val().trim()==""){
+						jAlert('Ingresar nombre de Usuario.', 'Atencion!', function(r) {
+							$idauth.focus(); 
+						});
+					}else{
+						if($passauth.val().trim()==""){
+							jAlert('Ingresar Password.', 'Atencion!', function(r) {
+								$passauth.focus(); 
+							});
+						}
+					}
+				}
+			}
+		});
+		
+		
+		
+		$(this).aplicarEventoKeypressEjecutaTrigger($idauth, $boton_aceptar);
+		$(this).aplicarEventoKeypressEjecutaTrigger($passauth, $boton_aceptar);
+		
+		//Ligamos el boton cancelar al evento click para eliminar la forma
+		$cancelar_plugin.bind('click',function(){
+			var remove = function() {$(this).remove();};
+			$('#forma-authorize-overlay').fadeOut(remove);
+		});
+		
+		$idauth.focus();
+		
+	}
+	
+	
+	
 	
 	//nueva cotizacion
 	$new_cotizacion.click(function(event){
@@ -1975,9 +2106,7 @@ $(function() {
 		$tabs_li_funxionalidad();
 		
 		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getCotizacion.json';
-		$arreglo = {'id_cotizacion':id_to_show,
-					'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
-					};
+		var $arreglo = {'id_cotizacion':id_to_show, 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
                 
 		var $tr_tipo = $('#forma-cotizacions-window').find('#tr_tipo');
 		var $td_imagen = $('#forma-cotizacions-window').find('#td_imagen');
@@ -2027,6 +2156,7 @@ $(function() {
 		//href para agregar producto al grid
 		var $agregar_producto = $('#forma-cotizacions-window').find('a[href*=agregar_producto]');
 		
+		var $btn_autorizar = $('#forma-cotizacions-window').find('#btn_autorizar');
 		var $boton_genera_pdf = $('#forma-cotizacions-window').find('#genera_pdf');
 		
 		//grid de productos
@@ -2046,6 +2176,7 @@ $(function() {
 		
 		
 		$id_cotizacion.val(0);//para nueva cotizacion el folio es 0
+		$vigencia.val(1);
 		$select_moneda_original.hide();
 		
 		//quitar enter a todos los campos input
@@ -2055,13 +2186,15 @@ $(function() {
 			}
 		});
 		
-				
+		
+		
 		//$campo_factura.css({'background' : '#ffffff'});
 		
 		//ocultar boton de generar pdf. Solo debe estar activo en editar
 		$boton_genera_pdf.hide();
 		$etiqueta_accion.hide();
 		$select_accion.hide();
+		$btn_autorizar.hide();
 		
 		
 		//$descripcion_larga.hide();
@@ -2140,6 +2273,8 @@ $(function() {
 				//$('#forma-cotizacions-window').find('.div_one').css({'height':'545px'});//sin errores
 				$('#forma-cotizacions-window').find('.cotizacions_div_one').css({'height':'600px'});//con errores
 				$('#forma-cotizacions-window').find('div.interrogacion').css({'display':'none'});
+				$grid_productos.find('input[name=reqauth]').val('false');
+				var contador_alert=0;
 				
 				$grid_productos.find('#cant').css({'background' : '#ffffff'});
 				$grid_productos.find('#cost').css({'background' : '#ffffff'});
@@ -2152,7 +2287,7 @@ $(function() {
 				for (var element in valor){
 					tmp = data['success'].split('___')[element];
 					longitud = tmp.split(':');
-
+					
 					if( longitud.length > 1 ){
 						$('#forma-cotizacions-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
 						.parent()
@@ -2173,13 +2308,41 @@ $(function() {
 							var titulo_producto = $campo_input.parent().parent().find('input[name=nombre]').val();
 							
 							var tr_warning = '<tr>';
-									tr_warning += '<td width="20"><div><IMG SRC="../../img/icono_advertencia.png" ALIGN="top" rel="warning_sku"></td>';
-									tr_warning += '<td width="120"><INPUT TYPE="text" value="' + codigo_producto + '" class="borde_oculto" readOnly="true" style="width:116px; color:red"></td>';
-									tr_warning += '<td width="200"><INPUT TYPE="text" value="' + titulo_producto + '" class="borde_oculto" readOnly="true" style="width:196px; color:red"></td>';
-									tr_warning += '<td width="235"><INPUT TYPE="text" value="'+  tmp.split(':')[1] +'" class="borde_oculto" readOnly="true" style="width:225px; color:red"></td>';
+								tr_warning += '<td width="20"><div><IMG SRC="../../img/icono_advertencia.png" ALIGN="top" rel="warning_sku"></td>';
+								tr_warning += '<td width="120"><INPUT TYPE="text" value="' + codigo_producto + '" class="borde_oculto" readOnly="true" style="width:116px; color:red"></td>';
+								tr_warning += '<td width="200"><INPUT TYPE="text" value="' + titulo_producto + '" class="borde_oculto" readOnly="true" style="width:196px; color:red"></td>';
+								tr_warning += '<td width="235"><INPUT TYPE="text" value="'+  tmp.split(':')[1] +'" class="borde_oculto" readOnly="true" style="width:225px; color:red"></td>';
 							tr_warning += '</tr>';
 							
 							$('#forma-cotizacions-window').find('#div_warning_grid').find('#grid_warning').append(tr_warning);
+						}
+						
+						
+						if(tmp.split(':')[0].substring(0,9)=='checkauth'){
+							//alert(tmp);
+							$grid_productos.find('.'+tmp.split(':')[0]).show();
+							$grid_productos.find('.'+tmp.split(':')[0]).parent().find('input[name=reqauth]').val('true');
+							
+							if(parseInt(contador_alert)<=0){
+								//Confirm para guardar sin autorizacion
+								jConfirm('Hay precios que necesitan autorizaci&oacute;n.<br>&iquest;Desea guardar para autorizar despu&eacute;s&#63;', 'Dialogo de Confirmacion', function(r) {
+									// If they confirmed, manually trigger a form submission
+									if (r) {
+										//Asignar los estatus correspondientes para permitir guardar sin autorizacion
+										$grid_productos.find('input[name=checkauth]').each(function(index){
+											$tr = $(this).parent().parent();
+											if(parseInt($tr.find('input[name=eliminado]').val())==1){
+												$tr.find('input[name=success]').val('true');
+											}
+										});
+										
+										//Ejecutar el submit de actualizar
+										$submit_actualizar.trigger('click');
+									}
+								});
+							}
+							
+							contador_alert++;
 						}
 					}
 				}
@@ -2351,7 +2514,7 @@ $(function() {
 		
 		//aplicar tipo de cambio a todos los precios al cambiar valor de tipo de cambio
 		$tc.blur(function(){
-			if($(this).val()=='' || $(this).val()==' '){
+			if($(this).val().trim()==''){
 				$(this).val(0);
 			}
 			
@@ -2364,24 +2527,25 @@ $(function() {
 				var precio_cambiado=0;
 				var importe_cambiado=0;
 				
-				if($(this).find('#cost').val()!=' ' && $(this).find('#cost').val()!=''){
+				if($(this).find('#cost').val().trim()!=''){
 					//si la moneda inicial de la cotizacion es diferente a la moneda actual seleccionada
 					//entonces recalculamos los precios de acuerdo al tipo de cambio
 					if( parseInt($select_moneda_original.val()) != parseInt($select_moneda.val()) ){
 						
 						if(parseInt($select_moneda_original.val())==1 && parseInt($select_moneda.val())!=1){
-							//si la moneda original es pesos, calculamos su equivalente a dolares
+							//Si la moneda original es pesos, calculamos su equivalente a dolares
 							precio_cambiado = parseFloat($(this).find('#precor').val()) / parseFloat($tc.val());
 						}
 						
 						if(parseInt($select_moneda_original.val())!=1 && parseInt($select_moneda.val())==1){
-							//si la moneda original es dolar, calculamos su equivalente a pesos
+							//Si la moneda original es dolar, calculamos su equivalente a pesos
 							precio_cambiado = parseFloat($(this).find('#precor').val()) * parseFloat($tc_original.val());
 						}
 						
 						$(this).find('#cost').val(parseFloat(precio_cambiado).toFixed(4));
 						
 						importe_cambiado = parseFloat($(this).find('#cant').val()) * parseFloat($(this).find('#cost').val());
+						
 						$(this).find('#import').val(parseFloat(importe_cambiado).toFixed(4));
 						
 					}else{
@@ -2461,6 +2625,16 @@ $(function() {
 		});
 		
 		
+		
+		
+		$btn_autorizar.click(function(event){
+			//LLamada a la funcion de la ventana de autorizacion
+			$forma_autorizacion($grid_productos, $btn_autorizar, id_to_show);
+		});
+		
+		
+		
+		
 		$submit_actualizar.bind('click',function(){
 			var trCount = $("tr", $grid_productos).size();
 			$total_tr.val(trCount);
@@ -2492,9 +2666,8 @@ $(function() {
 		if(accion_mode == 'cancel'){
                      
 			var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/' + 'logicDelete.json';
-			$arreglo = {'id_cotizacion':id_to_show,
-						'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
-						};
+			$arreglo = {'id_cotizacion':id_to_show,'iu':$('#lienzo_recalculable').find('input[name=iu]').val()};
+			
 			jConfirm('Realmente desea eliminar la cotizacion?', 'Dialogo de confirmacion', function(r) {
 				if (r){
 					$.post(input_json,$arreglo,function(entry){
@@ -2528,15 +2701,10 @@ $(function() {
 			
 			$tabs_li_funxionalidad();
 			
-			
 			//alert(id_to_show);
-			
 			if(accion_mode == 'edit'){
-                                
 				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getCotizacion.json';
-				$arreglo = {'id_cotizacion':id_to_show,
-							'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
-							};
+				$arreglo = {'id_cotizacion':id_to_show,'iu':$('#lienzo_recalculable').find('input[name=iu]').val()};
 				
 				var $tr_tipo = $('#forma-cotizacions-window').find('#tr_tipo');
 				var $td_imagen = $('#forma-cotizacions-window').find('#td_imagen');
@@ -2583,6 +2751,7 @@ $(function() {
 				//href para agregar producto al grid
 				var $agregar_producto = $('#forma-cotizacions-window').find('a[href*=agregar_producto]');
 				
+				var $btn_autorizar = $('#forma-cotizacions-window').find('#btn_autorizar');
 				var $boton_genera_pdf = $('#forma-cotizacions-window').find('#genera_pdf');
 				
 				//grid de productos
@@ -2600,6 +2769,7 @@ $(function() {
 				var $submit_actualizar = $('#forma-cotizacions-window').find('#submit');
 				
 				
+				$btn_autorizar.hide();
 				$select_moneda_original.hide();
 				//ocultar boton de generar pdf. Solo debe estar activo en editar
 				//$boton_genera_pdf.hide();
@@ -2628,6 +2798,8 @@ $(function() {
 						//$('#forma-cotizacions-window').find('.div_one').css({'height':'545px'});//sin errores
 						$('#forma-cotizacions-window').find('.cotizacions_div_one').css({'height':'600px'});//con errores
 						$('#forma-cotizacions-window').find('div.interrogacion').css({'display':'none'});
+						$grid_productos.find('input[name=reqauth]').val('false');
+						var contador_alert=0;
 						
 						$grid_productos.find('#cant').css({'background' : '#ffffff'});
 						$grid_productos.find('#cost').css({'background' : '#ffffff'});
@@ -2640,7 +2812,7 @@ $(function() {
 						for (var element in valor){
 							tmp = data['success'].split('___')[element];
 							longitud = tmp.split(':');
-
+							
 							if( longitud.length > 1 ){
 								$('#forma-cotizacions-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
 								.parent()
@@ -2666,7 +2838,38 @@ $(function() {
 									tr_warning += '</tr>';
 									
 									$('#forma-cotizacions-window').find('#div_warning_grid').find('#grid_warning').append(tr_warning);
-													
+								}
+								
+								if(tmp.split(':')[0].substring(0,9)=='checkauth'){
+									//alert(tmp);
+									$grid_productos.find('.'+tmp.split(':')[0]).show();
+									$grid_productos.find('.'+tmp.split(':')[0]).parent().find('input[name=reqauth]').val('true');
+									
+									var $campo_status_reg = $grid_productos.find('.'+tmp.split(':')[0]).parent().find('input[name=statusreg]');
+									
+									//Asignar nuevo valor
+									$campo_status_reg.val('0&&&'+$campo_status_reg.val().split('&&&')[1]+'&&&'+$campo_status_reg.val().split('&&&')[2]);
+									
+									if(parseInt(contador_alert)<=0){
+										//Confirm para guardar sin autorizacion
+										jConfirm('Hay precios que necesitan autorizaci&oacute;n.<br>&iquest;Desea guardar para autorizar despu&eacute;s&#63;', 'Dialogo de Confirmacion', function(r) {
+											// If they confirmed, manually trigger a form submission
+											if (r) {
+												//Asignar los estatus correspondientes para permitir guardar sin autorizacion
+												$grid_productos.find('input[name=checkauth]').each(function(index){
+													$tr = $(this).parent().parent();
+													if(parseInt($tr.find('input[name=eliminado]').val())==1){
+														$tr.find('input[name=success]').val('true');
+													}
+												});
+												
+												//Ejecutar el submit de actualizar
+												$submit_actualizar.trigger('click');
+											}
+										});
+									}
+									
+									contador_alert++;
 								}
 							}
 						}
@@ -2868,8 +3071,9 @@ $(function() {
 							var valorImp = prod['valor_imp'];
 							var tcMonProd = entry['datosCotizacion'][0]['tipo_cambio'];
 							var idmonpartida = prod['moneda_id'];
+							var reg_aut = prod['status_aut'];
 							//aqui se pasan datos a la funcion que agrega el tr en el grid
-							$agrega_producto_grid($grid_productos, id_detalle, id_prod, sku, titulo, imagen, descripcion, unidadId, unidad, id_pres, pres, precio, cantidad, importe, mon_id, entry['Monedas'], idImp, valorImp, tcMonProd, idmonpartida);
+							$agrega_producto_grid($grid_productos, id_detalle, id_prod, sku, titulo, imagen, descripcion, unidadId, unidad, id_pres, pres, precio, cantidad, importe, mon_id, entry['Monedas'], idImp, valorImp, tcMonProd, idmonpartida, reg_aut);
 							
 						});
 					}
@@ -3103,6 +3307,14 @@ $(function() {
 						return false;
 					}		
 				});
+				
+				
+				
+				$btn_autorizar.click(function(event){
+					//LLamada a la funcion de la ventana de autorizacion
+					$forma_autorizacion($grid_productos, $btn_autorizar, id_to_show);
+				});
+				
 				
 				
 				$submit_actualizar.bind('click',function(){
