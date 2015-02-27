@@ -122,4 +122,7 @@ public interface PocInterfaceDao{
     //Catalogo de condiciones de Venta
     public ArrayList<HashMap<String, Object>> getCotCondiciones_comerciales_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
     public ArrayList<HashMap<String, String>> getCotCondiciones_Comerciales_Datos(Integer id);
+    
+    //Validar usuario que autoriza
+    public HashMap<String, Object> getValidarUser(String username, String password, String id_suc);
 }

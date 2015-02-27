@@ -243,6 +243,36 @@ public class CotizacionesController {
     
     
     
+    //Valida el usuario que autoriza precios
+    @RequestMapping(method = RequestMethod.POST, value="/getAuth.json")
+    public @ResponseBody HashMap<String,Object> getAuthJson(
+            @RequestParam(value="cad", required=true) String cadena_autorizacion,
+            @RequestParam(value="iu", required=true) String id_user_cod,
+            Model model
+        ) {
+        
+        HashMap<String,Object> jsonretorno = new HashMap<String,Object>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        
+        //Decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        String id_sucursal = userDat.get("sucursal_id");
+        
+        HashMap<String,String> hash_autorizacion = StringHelper.convert2hash(StringHelper.ascii2string(cadena_autorizacion));
+        String username = StringHelper.isNullString(String.valueOf(hash_autorizacion.get("idauth")));
+        String password = StringHelper.isNullString(String.valueOf(hash_autorizacion.get("passauth")));
+        
+        System.out.println("cadena_autorizacion: "+cadena_autorizacion);
+        System.out.println("username: "+username+"    password: "+password);
+        
+        jsonretorno.put("Data", this.getPocDao().getValidarUser(username, password, id_sucursal));
+        
+        return jsonretorno;
+    }
+    
+    
+    
     @RequestMapping(method = RequestMethod.POST, value="/getCotizacion.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getCotizacionJson(
             @RequestParam(value="id_cotizacion", required=true) String id_cotizacion,
@@ -553,6 +583,7 @@ public class CotizacionesController {
             @RequestParam(value="moneda", required=true) String moneda_id,
             @RequestParam(value="fecha", required=true) String fecha,
             @RequestParam(value="select_agente", required=true) String select_agente,
+            
             @RequestParam(value="total_tr", required=true) String total_tr,
             @RequestParam(value="iddetalle", required=true) String[] iddetalle,
             @RequestParam(value="eliminado", required=true) String[] eliminado,
@@ -566,11 +597,13 @@ public class CotizacionesController {
             @RequestParam(value="valor_imp", required=true) String[] valor_imp,
             @RequestParam(value="notr", required=true) String[] notr,
             @RequestParam(value="select_incoterms", required=false) String[] select_incoterms,
+            @RequestParam(value="statusreg", required=true) String[] statusreg,
+            @RequestParam(value="reqauth", required=true) String[] reqauth,
+            @RequestParam(value="success", required=true) String[] salvar_registro,
             
             @ModelAttribute("user") UserSessionData user,
             Model model
         ) {
-            
             HashMap<String, String> jsonretorno = new HashMap<String, String>();
             HashMap<String, String> succes = new HashMap<String, String>();
             String arreglo[];
@@ -584,9 +617,23 @@ public class CotizacionesController {
             
             for(int i=0; i<eliminado.length; i++) { 
                 select_umedida[i] = StringHelper.verificarSelect(select_umedida[i]);
+                
+                System.out.println("statusreg[i]: "+statusreg[i]);
+                
+                //reg_aut = '0&&&0&&&0';
+                //statreg&&&valuereg&&&ident
+                String partida[] = statusreg[i].split("\\&&&");
+                //partida[0]    Estatus autorizacion
+                //partida[1]    Valor precio autorizado
+                //partida[2]    Usuario que autoriza
+                
+                String stat_reg = (StringHelper.isNullString(String.valueOf(partida[0])).equals("0"))? "false":"true";
+                String precio_autorizado = StringHelper.isNullString(String.valueOf(partida[1]));
+                String id_user_autoriza = (partida[2].trim().equals("0"))?partida[2]:Base64Coder.decodeString(StringHelper.isNullString(String.valueOf(partida[2])));
+                
                 //Imprimir el contenido de cada celda 
-                arreglo[i]= "'"+eliminado[i] +"___" + iddetalle[i] +"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + cantidad[i] +"___" + StringHelper.removerComas(precio[i]) +"___" + monedagrid[i]+"___"+notr[i]+"___"+id_imp_prod[i]+"___"+valor_imp[i]+"___"+select_umedida[i]+"'";
-                //System.out.println("arreglo["+i+"] = "+arreglo[i]);
+                arreglo[i]= "'"+eliminado[i] +"___" + iddetalle[i] +"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + cantidad[i] +"___" + StringHelper.removerComas(precio[i]) +"___" + monedagrid[i]+"___"+notr[i]+"___"+id_imp_prod[i]+"___"+valor_imp[i]+"___"+select_umedida[i]+"___"+stat_reg+"___"+precio_autorizado+"___"+id_user_autoriza+"___"+reqauth[i]+"___"+salvar_registro[i]+"'";
+                System.out.println("arreglo["+i+"] = "+arreglo[i]);
             }
             
             //Serializar el arreglo

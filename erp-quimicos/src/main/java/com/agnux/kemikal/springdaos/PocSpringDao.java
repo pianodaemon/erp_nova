@@ -4,6 +4,7 @@
  */
 package com.agnux.kemikal.springdaos;
 
+import com.agnux.cfd.v2.Base64Coder;
 import com.agnux.common.helpers.StringHelper;
 import com.agnux.kemikal.interfacedaos.PocInterfaceDao;
 import java.sql.ResultSet;
@@ -2863,34 +2864,34 @@ public class PocSpringDao implements PocInterfaceDao{
         );
         return hm_cotizacion;
     }
-
-    //obtine datos del cliente
+    
+    //Obtine datos del cliente
     @Override
     public ArrayList<HashMap<String, String>> getCotizacion_DatosCliente(Integer id) {
         String sql_query = ""
-                + "SELECT cxc_clie.id AS cliente_id, "
-                        + "cxc_clie.rfc, "
-                        + "cxc_clie.razon_social, "
-                        + "cxc_clie.moneda, "
-                        + "cxc_clie.numero_control, "
-                        + "cxc_clie.contacto, "
-                        + "cxc_clie.lista_precio,"
-                        + "cxc_clie.calle||' '||cxc_clie.numero||', '||cxc_clie.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo||' C.P. '||cxc_clie.cp as direccion, "
-                        + "cxc_clie.calle,"
-                        + "cxc_clie.numero,"
-                        + "cxc_clie.colonia,"
-                        + "gral_mun.titulo AS municipio,"
-                        + "gral_edo.titulo AS estado,"
-                        + "gral_pais.titulo AS pais,"
-                        + "cxc_clie.cp,"
-                        + "(CASE WHEN cxc_clie.telefono1='' THEN cxc_clie.telefono2 ELSE cxc_clie.telefono1 END) AS telefono "
-                    + "FROM poc_cot_clie "
-                    + "JOIN cxc_clie ON cxc_clie.id=poc_cot_clie.cxc_clie_id "
-                    + "JOIN gral_pais ON gral_pais.id = cxc_clie.pais_id "
-                    + "JOIN gral_edo ON gral_edo.id = cxc_clie.estado_id "
-                    + "JOIN gral_mun ON gral_mun.id = cxc_clie.municipio_id "
-                    + "WHERE poc_cot_clie.poc_cot_id=?;";
-
+        + "SELECT cxc_clie.id AS cliente_id, "
+                + "cxc_clie.rfc, "
+                + "cxc_clie.razon_social, "
+                + "cxc_clie.moneda, "
+                + "cxc_clie.numero_control, "
+                + "cxc_clie.contacto, "
+                + "cxc_clie.lista_precio,"
+                + "cxc_clie.calle||' '||cxc_clie.numero||', '||cxc_clie.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo||' C.P. '||cxc_clie.cp as direccion, "
+                + "cxc_clie.calle,"
+                + "cxc_clie.numero,"
+                + "cxc_clie.colonia,"
+                + "gral_mun.titulo AS municipio,"
+                + "gral_edo.titulo AS estado,"
+                + "gral_pais.titulo AS pais,"
+                + "cxc_clie.cp,"
+                + "(CASE WHEN cxc_clie.telefono1='' THEN cxc_clie.telefono2 ELSE cxc_clie.telefono1 END) AS telefono "
+            + "FROM poc_cot_clie "
+            + "JOIN cxc_clie ON cxc_clie.id=poc_cot_clie.cxc_clie_id "
+            + "JOIN gral_pais ON gral_pais.id = cxc_clie.pais_id "
+            + "JOIN gral_edo ON gral_edo.id = cxc_clie.estado_id "
+            + "JOIN gral_mun ON gral_mun.id = cxc_clie.municipio_id "
+            + "WHERE poc_cot_clie.poc_cot_id=?;";
+        
         //System.out.println("Obteniendo datos de la cotizacion: "+sql_query);
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
@@ -2919,35 +2920,35 @@ public class PocSpringDao implements PocInterfaceDao{
         );
         return hm;
     }
-
-
+    
+    
     //obtiene datos del prospecto
     @Override
     public ArrayList<HashMap<String, String>> getCotizacion_DatosProspecto(Integer id) {
         String sql_query = ""
-                + "SELECT crm_prospectos.id as prospecto_id, "
-                        + "crm_prospectos.rfc, "
-                        + "crm_prospectos.razon_social, "
-                        + "1::integer AS moneda, "
-                        + "crm_prospectos.numero_control, "
-                        + "crm_prospectos.contacto, "
-                        + "0::integer AS lista_precio,"
-                        + "crm_prospectos.calle||' '||crm_prospectos.numero||', '||crm_prospectos.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo||' C.P. '||crm_prospectos.cp as direccion, "
-                        + "crm_prospectos.calle,"
-                        + "crm_prospectos.numero,"
-                        + "crm_prospectos.colonia,"
-                        + "gral_mun.titulo AS municipio,"
-                        + "gral_edo.titulo AS estado,"
-                        + "gral_pais.titulo AS pais,"
-                        + "crm_prospectos.cp,"
-                        + "(CASE WHEN crm_prospectos.telefono1='' THEN crm_prospectos.telefono2 ELSE crm_prospectos.telefono1 END) AS telefono "
-                    + "FROM poc_cot_prospecto "
-                    + "JOIN crm_prospectos ON crm_prospectos.id=poc_cot_prospecto.crm_prospecto_id "
-                    + "JOIN gral_pais ON gral_pais.id = crm_prospectos.pais_id "
-                    + "JOIN gral_edo ON gral_edo.id = crm_prospectos.estado_id "
-                    + "JOIN gral_mun ON gral_mun.id = crm_prospectos.municipio_id "
-                    + "WHERE poc_cot_prospecto.poc_cot_id=?;";
-
+        + "SELECT crm_prospectos.id as prospecto_id, "
+                + "crm_prospectos.rfc, "
+                + "crm_prospectos.razon_social, "
+                + "1::integer AS moneda, "
+                + "crm_prospectos.numero_control, "
+                + "crm_prospectos.contacto, "
+                + "0::integer AS lista_precio,"
+                + "crm_prospectos.calle||' '||crm_prospectos.numero||', '||crm_prospectos.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo||' C.P. '||crm_prospectos.cp as direccion, "
+                + "crm_prospectos.calle,"
+                + "crm_prospectos.numero,"
+                + "crm_prospectos.colonia,"
+                + "gral_mun.titulo AS municipio,"
+                + "gral_edo.titulo AS estado,"
+                + "gral_pais.titulo AS pais,"
+                + "crm_prospectos.cp,"
+                + "(CASE WHEN crm_prospectos.telefono1='' THEN crm_prospectos.telefono2 ELSE crm_prospectos.telefono1 END) AS telefono "
+            + "FROM poc_cot_prospecto "
+            + "JOIN crm_prospectos ON crm_prospectos.id=poc_cot_prospecto.crm_prospecto_id "
+            + "JOIN gral_pais ON gral_pais.id = crm_prospectos.pais_id "
+            + "JOIN gral_edo ON gral_edo.id = crm_prospectos.estado_id "
+            + "JOIN gral_mun ON gral_mun.id = crm_prospectos.municipio_id "
+            + "WHERE poc_cot_prospecto.poc_cot_id=?;";
+        
         //System.out.println("Obteniendo datos de la cotizacion: "+sql_query);
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
@@ -2970,7 +2971,7 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("pais",rs.getString("pais"));
                     row.put("cp",rs.getString("cp"));
                     row.put("telefono",rs.getString("telefono"));
-
+                    
                     return row;
                 }
             }
@@ -2983,31 +2984,35 @@ public class PocSpringDao implements PocInterfaceDao{
     @Override
     public ArrayList<HashMap<String, String>> getCotizacion_DatosGrid(Integer id) {
         String sql_query = ""
-                + "SELECT  "
-                    + "poc_cot_detalle.id as id_detalle, "
-                    + "poc_cot_detalle.inv_prod_id as producto_id, "
-                    + "inv_prod.sku as codigo, "
-                    + "inv_prod.descripcion as producto, "
-                    + "(CASE WHEN inv_prod.descripcion_larga IS NULL THEN '' ELSE inv_prod.descripcion_larga END) AS descripcion_larga, "
-                    + "(CASE WHEN inv_prod.archivo_img='' THEN '' ELSE inv_prod.archivo_img END) AS archivo_img, "
-                    + "(CASE WHEN poc_cot_detalle.inv_prod_unidad_id=0 THEN inv_prod_unidades.id ELSE poc_cot_detalle.inv_prod_unidad_id END ) AS unidad_id, "
-                    + "inv_prod_unidades.titulo as unidad, "
-                    + "inv_prod_presentaciones.id as presentacion_id, "
-                    + "inv_prod_presentaciones.titulo as presentacion, "
-                    + "poc_cot_detalle.cantidad, "
-                    + "poc_cot_detalle.precio_unitario, "
-                    + "poc_cot_detalle.gral_mon_id as moneda_id, "
-                    + "gral_mon.descripcion_abr AS moneda_abr, "
-                    + "(poc_cot_detalle.cantidad * poc_cot_detalle.precio_unitario) AS importe,"
-                    + "poc_cot_detalle.gral_impto_id as id_imp,"
-                    + "poc_cot_detalle.valor_imp "
-                + "FROM poc_cot_detalle  "
-                + "LEFT JOIN inv_prod on inv_prod.id = poc_cot_detalle.inv_prod_id  "
-                + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = poc_cot_detalle.inv_prod_unidad_id  "
-                + "LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = poc_cot_detalle.inv_presentacion_id  "
-                + "LEFT JOIN gral_mon on gral_mon.id = poc_cot_detalle.gral_mon_id  "
-                + "WHERE poc_cot_detalle.poc_cot_id= ? "
-                + "ORDER BY poc_cot_detalle.id";
+        + "SELECT  "
+            + "poc_cot_detalle.id as id_detalle, "
+            + "poc_cot_detalle.inv_prod_id as producto_id, "
+            + "inv_prod.sku as codigo, "
+            + "inv_prod.descripcion as producto, "
+            + "(CASE WHEN inv_prod.descripcion_larga IS NULL THEN '' ELSE inv_prod.descripcion_larga END) AS descripcion_larga, "
+            + "(CASE WHEN inv_prod.archivo_img='' THEN '' ELSE inv_prod.archivo_img END) AS archivo_img, "
+            + "(CASE WHEN poc_cot_detalle.inv_prod_unidad_id=0 THEN inv_prod_unidades.id ELSE poc_cot_detalle.inv_prod_unidad_id END ) AS unidad_id, "
+            + "inv_prod_unidades.titulo as unidad, "
+            + "inv_prod_presentaciones.id as presentacion_id, "
+            + "inv_prod_presentaciones.titulo as presentacion, "
+            + "poc_cot_detalle.cantidad, "
+            + "poc_cot_detalle.precio_unitario, "
+            + "poc_cot_detalle.gral_mon_id as moneda_id, "
+            + "gral_mon.descripcion_abr AS moneda_abr, "
+            + "(poc_cot_detalle.cantidad * poc_cot_detalle.precio_unitario) AS importe,"
+            + "poc_cot_detalle.gral_impto_id as id_imp,"
+            + "poc_cot_detalle.valor_imp,"
+            + "(case when poc_cot_detalle.autorizado=true then 1 else 0 end) as status_aut,"
+            + "poc_cot_detalle.precio_aut,"
+            + "poc_cot_detalle.gral_usr_id_aut,"
+            + "poc_cot_detalle.requiere_aut "
+        + "FROM poc_cot_detalle  "
+        + "LEFT JOIN inv_prod on inv_prod.id = poc_cot_detalle.inv_prod_id  "
+        + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = poc_cot_detalle.inv_prod_unidad_id  "
+        + "LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = poc_cot_detalle.inv_presentacion_id  "
+        + "LEFT JOIN gral_mon on gral_mon.id = poc_cot_detalle.gral_mon_id  "
+        + "WHERE poc_cot_detalle.poc_cot_id= ? "
+        + "ORDER BY poc_cot_detalle.id";
         
         //System.out.println("sql_query: "+sql_query);
         
@@ -3034,6 +3039,9 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("importe",StringHelper.roundDouble(rs.getDouble("importe"),4));
                     row.put("id_imp",String.valueOf(rs.getInt("id_imp")));
                     row.put("valor_imp",StringHelper.roundDouble(rs.getDouble("valor_imp"),4));
+                    
+                    row.put("status_aut",String.valueOf(rs.getInt("status_aut"))+"&&&"+StringHelper.roundDouble(rs.getDouble("precio_aut"),4)+"&&&"+Base64Coder.encodeString(String.valueOf(rs.getInt("gral_usr_id_aut"))));
+                    row.put("requiere_aut",String.valueOf(rs.getBoolean("requiere_aut")));
                     return row;
                 }
             }
@@ -3503,6 +3511,28 @@ public class PocSpringDao implements PocInterfaceDao{
     
     
     
+    
+    @Override
+    public HashMap<String, Object> getValidarUser(String username, String password, String id_suc) {
+        HashMap<String, Object> data = new HashMap<String, Object>();
+        
+        //verificar si el usuario tiene  rol de ADMINISTTRADOR
+        //si exis es mayor que cero, el usuario si es ADMINISTRADOR
+        String sql_to_query = "select count(gral_usr.id) as exis from gral_usr_auth join gral_usr on gral_usr.id=gral_usr_auth.gral_usr_id where gral_usr.username='"+username+"' and gral_usr.password='"+password+"' and gral_usr_auth.gral_suc_id="+id_suc+" and gral_usr.enabled=true;";
+        Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_to_query);
+        
+        if(Integer.parseInt(String.valueOf(map.get("exis")))>0){
+            sql_to_query = "select gral_usr.id as ident from gral_usr_auth join gral_usr on gral_usr.id=gral_usr_auth.gral_usr_id where gral_usr.username='"+username+"' and gral_usr.password='"+password+"' and gral_usr_auth.gral_suc_id="+id_suc+" and gral_usr.enabled=true limit 1;";
+            Map<String, Object> map2 = this.getJdbcTemplate().queryForMap(sql_to_query);
+            data.put("ident",Base64Coder.encodeString(map2.get("ident").toString()));
+            data.put("success","true");
+        }else{
+            data.put("ident","");
+            data.put("success","false");
+        }
+        
+        return data;
+    }
     
     
     
