@@ -89,6 +89,10 @@ public interface LogInterfaceDao {
     public ArrayList<HashMap<String, String>> getLoAdmViaje_ListaPdf(Integer id_);
     public ArrayList<HashMap<String, Object>> getBuscadorServiciosAdicionales(String sku, String descripcion, Integer id_empresa);
     public ArrayList<HashMap<String, Object>> getDataServicioAdicional(String codigo, Integer id_empresa);
+    //Busca rutas sin incluir tipo de unidad y  cotso
+    public ArrayList<HashMap<String, Object>> getBuscadorRutas1(String no_ruta, String nombre_ruta, String poblacion, Integer id_empresa, Integer id_sucursal);
+    public ArrayList<HashMap<String, Object>> getDatosRuta_x_NoRuta1(String no_ruta, Integer id_empresa, Integer id_sucursal);
+    
     public ArrayList<HashMap<String, Object>> getBuscadorRutas(String no_ruta, String nombre_ruta, String poblacion, Integer tipo_unidad, Integer id_empresa, Integer id_sucursal);
     public ArrayList<HashMap<String, Object>> getDatosRuta_x_NoRuta(String no_ruta, Integer tipo_unidad, Integer id_empresa, Integer id_sucursal);
     public ArrayList<HashMap<String, Object>> getDatosRuta_Poblaciones(Integer id_ruta);
@@ -155,4 +159,8 @@ public interface LogInterfaceDao {
     public ArrayList<HashMap<String, String>> getRepLogAdmViajes(String fecha_inicial, String fecha_final, String cliente, String ruta, String clase, Integer id_empresa);
     public ArrayList<HashMap<String, Object>> getBuscador_Rutas(String no_ruta, String nombre_ruta, String poblacion, Integer id_empresa, Integer id_sucursal);
     
+    //Obtener los tipos de tarifas
+    public ArrayList<HashMap<String, Object>> getTarifario_Tipos();
+    public ArrayList<HashMap<String, Object>> getTarifarioVenta_Datos(Integer id);
+    public ArrayList<HashMap<String, Object>> getTarifarioVenta_DatosGrid(Integer id);
 }

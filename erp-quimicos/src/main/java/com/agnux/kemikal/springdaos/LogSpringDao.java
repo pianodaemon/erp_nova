@@ -3055,10 +3055,99 @@ public class LogSpringDao implements LogInterfaceDao{
     
     
     
+    //Buscador de Rutas sin incluir tipo de Unidad
+    @Override
+    public ArrayList<HashMap<String, Object>> getBuscadorRutas1(String no_ruta, String nombre_ruta, String poblacion, Integer id_empresa, Integer id_sucursal) {
+        String where = "";
+	if(!no_ruta.trim().equals("")){
+            where=" and log_ruta.folio ilike '%"+no_ruta.trim()+"%'";
+	}
+        
+	if(!nombre_ruta.trim().equals("")){
+            where +=" and log_ruta.titulo ilike '%"+ nombre_ruta.trim() +"%'";
+	}
+        
+	if(!poblacion.trim().equals("")){
+            where +=" and gral_mun.titulo ilike '%"+ poblacion.trim() +"%'";
+	}
+        
+        String sql_to_query = ""
+        + "select distinct "
+            + "log_ruta.folio,"
+            + "log_ruta.titulo as titulo_ruta,"
+            + "log_ruta.km,"
+            + "(case when log_ruta_tipo.id is null then '' else log_ruta_tipo.titulo end) as tipo "
+        + "from log_ruta "
+        + "join log_ruta_mun on log_ruta_mun.log_ruta_id=log_ruta.id  "
+        + "join gral_mun on gral_mun.id=log_ruta_mun.gral_mun_id "
+        + "left join log_ruta_tipo on log_ruta_tipo.id=log_ruta.log_ruta_tipo_id "
+        + "where log_ruta.gral_emp_id=? and log_ruta.gral_suc_id=? and log_ruta.borrado_logico=false "+where+" order by log_ruta.titulo;";
+        
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        //System.out.println("sql_to_query: "+sql_to_query);
+
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(id_empresa), new Integer(id_sucursal)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("folio",rs.getString("folio"));
+                    row.put("titulo_ruta",rs.getString("titulo_ruta"));
+                    row.put("km",StringHelper.roundDouble(rs.getString("km"),2));
+                    row.put("tipo",rs.getString("tipo"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
     
     
     
-    //Buscador de Servicios Adicionales
+    //Obtener datos de una ruta en especifico sin incluir datos de tipo de unidad y costo
+    @Override
+    public ArrayList<HashMap<String, Object>> getDatosRuta_x_NoRuta1(String no_ruta, Integer id_empresa, Integer id_sucursal) {
+        String where = "";
+        
+        String sql_to_query = ""
+        + "select distinct "
+            + "log_ruta.id,"
+            + "log_ruta.folio,"
+            + "log_ruta.titulo as titulo_ruta,"
+            + "(case when log_ruta_tipo.id is null then '' else log_ruta_tipo.titulo end) as tipo_ruta,"
+            + "log_ruta.km "
+        + "from log_ruta "
+        + "left join log_ruta_tipo on log_ruta_tipo.id=log_ruta.log_ruta_tipo_id "
+        + "where log_ruta.folio=? and log_ruta.gral_emp_id=? and log_ruta.gral_suc_id=? and log_ruta.borrado_logico=false "+where+" order by log_ruta.titulo;";
+        
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        //System.out.println("sql_to_query: "+sql_to_query);
+
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{no_ruta, new Integer(id_empresa), new Integer(id_sucursal)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getString("id"));
+                    row.put("folio",rs.getString("folio"));
+                    row.put("titulo_ruta",rs.getString("titulo_ruta"));
+                    row.put("tipo_ruta",rs.getString("tipo_ruta"));
+                    row.put("km",StringHelper.roundDouble(rs.getString("km"),2));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    
+    
+    
+    
+    //Buscador de Rutas
     @Override
     public ArrayList<HashMap<String, Object>> getBuscadorRutas(String no_ruta, String nombre_ruta, String poblacion, Integer tipo_unidad, Integer id_empresa, Integer id_sucursal) {
         String where = "";
@@ -3083,11 +3172,13 @@ public class LogSpringDao implements LogInterfaceDao{
             + "log_ruta.folio,"
             + "log_ruta.titulo as titulo_ruta,"
             + "log_ruta.km,"
+            + "(case when log_ruta_tipo.id is null then '' else log_ruta_tipo.titulo end) as tipo,"
             + "log_ruta_tipo_unidad.costo "
         + "from log_ruta "
         + "join log_ruta_tipo_unidad on log_ruta_tipo_unidad.log_ruta_id=log_ruta.id "
         + "join log_ruta_mun on log_ruta_mun.log_ruta_id=log_ruta.id  "
         + "join gral_mun on gral_mun.id=log_ruta_mun.gral_mun_id "
+        + "left join log_ruta_tipo on log_ruta_tipo.id=log_ruta.log_ruta_tipo_id "
         + "where log_ruta.gral_emp_id=? and log_ruta.gral_suc_id=? and log_ruta.borrado_logico=false "+where+" order by log_ruta.titulo;";
         
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
@@ -3102,6 +3193,7 @@ public class LogSpringDao implements LogInterfaceDao{
                     row.put("folio",rs.getString("folio"));
                     row.put("titulo_ruta",rs.getString("titulo_ruta"));
                     row.put("km",StringHelper.roundDouble(rs.getString("km"),2));
+                    row.put("tipo",rs.getString("tipo"));
                     row.put("costo",StringHelper.roundDouble(rs.getString("costo"),2));
                     return row;
                 }
@@ -3110,14 +3202,7 @@ public class LogSpringDao implements LogInterfaceDao{
         return hm;
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
+
     
     //Obtener datos de una ruta en especifico
     @Override
@@ -4117,7 +4202,7 @@ public class LogSpringDao implements LogInterfaceDao{
                 }
             }
         );
-		return hm_rtipo;
+        return hm_rtipo;
     }
     
     @Override
@@ -4568,4 +4653,87 @@ public class LogSpringDao implements LogInterfaceDao{
     }
     
     
+    
+    
+    //Obtiene Tipos de  Tarifas
+    @Override
+    public ArrayList<HashMap<String, Object>> getTarifario_Tipos() {
+	String sql_query = "select id, titulo from log_tarifa_tipo where borrado_logico=false;";
+        ArrayList<HashMap<String, Object>> hm_rtipo = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("titulo",rs.getString("titulo"));
+                    return row;
+                }
+            }
+        );
+        return hm_rtipo;
+    }
+    
+    
+    //Obtiene datos del Header del registro de tarifa por cliente-ruta
+    @Override
+    public ArrayList<HashMap<String, Object>> getTarifarioVenta_Datos(Integer id) {
+	String sql_query = ""
+        + "SELECT "
+            + "log_tarifario_venta.id, "
+            + "log_tarifario_venta.cxc_clie_id as clie_id, "
+            + "cxc_clie.numero_control as clie_no, "
+            + "cxc_clie.razon_social as clie, "
+            + "log_tarifario_venta.log_ruta_id as ruta_id, "
+            + "log_ruta.folio as ruta_no, "
+            + "log_ruta.titulo as ruta_nombre, "
+            + "log_ruta.km as ruta_km, "
+            + "(case when log_ruta_tipo.titulo is null then '' else log_ruta_tipo.titulo end) as ruta_tipo "
+        + "FROM log_tarifario_venta "
+        + "join cxc_clie on cxc_clie.id=log_tarifario_venta.cxc_clie_id "
+        + "join log_ruta on log_ruta.id=log_tarifario_venta.log_ruta_id "
+        + "left join log_ruta_tipo on log_ruta_tipo.id=log_ruta.log_ruta_tipo_id "
+        + "where log_tarifario_venta id=?;";
+        
+        ArrayList<HashMap<String, Object>> hm_rtipo = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{new Integer(id)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("clie_id",String.valueOf(rs.getInt("clie_id")));
+                    row.put("clie_no",rs.getString("clie_no"));
+                    row.put("clie",rs.getString("clie"));
+                    row.put("ruta_id",String.valueOf(rs.getInt("ruta_id")));
+                    row.put("ruta_no",rs.getString("ruta_no"));
+                    row.put("ruta_nombre",rs.getString("ruta_nombre"));
+                    row.put("ruta_km",StringHelper.roundDouble(rs.getString("ruta_km"),2));
+                    row.put("ruta_tipo",rs.getString("ruta_tipo"));
+                    
+                    return row;
+                }
+            }
+        );
+        return hm_rtipo;
+    }
+    
+    //Obtiene la lista de tipos de Trifas y las tarifas por cliente-ruta
+    @Override
+    public ArrayList<HashMap<String, Object>> getTarifarioVenta_DatosGrid(Integer id) {
+	String sql_query = "select id, titulo from log_tarifa_tipo where borrado_logico=false;";
+        ArrayList<HashMap<String, Object>> hm_rtipo = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("titulo",rs.getString("titulo"));
+                    return row;
+                }
+            }
+        );
+        return hm_rtipo;
+    }
 }
