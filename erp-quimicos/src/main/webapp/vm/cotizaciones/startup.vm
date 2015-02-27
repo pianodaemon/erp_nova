@@ -10,6 +10,7 @@
         <link rel="stylesheet" href="../../css/modalbox/cotizaciones/formaBuscaclientes.css" type="text/css" />
         <link rel="stylesheet" href="../../css/modalbox/cotizaciones/formaBuscapresentaciones.css" type="text/css" />
         <link rel="stylesheet" href="../../css/modalbox/cotizaciones/formaBuscaproducto.css" type="text/css" />
+        <link rel="stylesheet" href="../../css/modalbox/authorize/formaAuthorize.css" type="text/css" />
         
         <!--  js for this catalogo -->
         <script type="text/javascript" src="../../js/components/jquery-form/jquery-form.js"></script>
@@ -17,6 +18,7 @@
         <script type="text/javascript" src="../../js/components/modalbox/cotizaciones/modalboxBuscacliente.js"></script>
         <script type="text/javascript" src="../../js/components/modalbox/cotizaciones/modalboxBuscapresentaciones.js"></script>
         <script type="text/javascript" src="../../js/components/modalbox/cotizaciones/modalboxBuscaproducto.js"></script>
+        <script type="text/javascript" src="../../js/components/modalbox/authorize/modalboxAuthorize.js"></script>
         <script type="text/javascript" src="../../js/components/formatearnumeros/agrega_comas.js"></script>
         <script type="text/javascript" src="../../js/implements/cotizaciones/index.js" ></script>
         
@@ -250,10 +252,10 @@
                                                             <tr>
                                                                 <td width="10">&nbsp;</td>
                                                                 <td width="70" >Incoterms</td>
-                                                                <td width="95" colspan="4">
+                                                                <td width="260" colspan="4">
 																	<!--<select  multiple="multiple" style="width: 260px; height:58px;"></select>-->
 																	
-																	<select name="select_incoterms" multiple="multiple" title="Incoterms" size="5">
+																	<select name="select_incoterms" multiple="multiple" title="Incoterms" size="5"  style="width:260px;">
 																		<!--
 																		<option value="1">Option 1</option>
 																		<option value="2">Option 2</option>
@@ -288,13 +290,17 @@
                                                                 <td width="10"></td>
                                                             </tr>
                                                             <tr>
-                                                                <td width="10" height="10"></td>
-                                                                <td width="70"></td>
-                                                                <td width="95"></td>
+                                                                <td width="10" height="17"></td>
+                                                                <td width="70"><!--TC USD--></td>
+                                                                <td width="95"><!--<input type="text" name="tc_usd" value="0.0000" style="width:60px;" maxlength="8">--></td>
                                                                 <td width="45"></td>
-                                                                <td width="120" colspan="2" align="right" id="td_btn_auth"></td>
-                                                                <!--<td width="20"></td>-->
+                                                                <td width="130" colspan="3" align="right">
+																	<input type="button" id="btn_autorizar" value="Autorizar" style="font-weight:bold; width:110px;">
+                                                                </td>
+                                                                <!--
+                                                                <td width="20"></td>
                                                                 <td width="10"></td>
+                                                                -->
                                                             </tr>
                                                         </table>
                                                     </td>
@@ -346,7 +352,7 @@
                                                                 <td width="60">Tipo&nbsp;Cambio</td>
                                                                 <td width="60">
 																	<input type="text" name="tc" value="0.0000" style="width:60px;" maxlength="8">
-																	<input type="hidden" name="tc_original" value="0.0000">
+																	<input type="text" name="tc_original" value="0.0000">
 																</td>
                                                                 <td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" align="top" rel="warning_tc"></div></td>
                                                                 
@@ -435,7 +441,7 @@
                                                                     <td width="20" style="background-color:#A8A9AB; font-weight: bold;"></td>
                                                                     <td width="120" style="background-color:#A8A9AB; font-weight: bold;">SKU</td>
                                                                     <td width="200" style="background-color:#A8A9AB; font-weight: bold;">Nombre</td>
-                                                                    <td width="250" style="background-color:#A8A9AB; font-weight: bold;">Descripcion del error</td>
+                                                                    <td width="250" style="background-color:#A8A9AB; font-weight: bold;">Descripci&oacute;n del error</td>
                                                                     <td width="10"></td>
                                                                 </tr>
                                                                 <tr>
@@ -510,7 +516,31 @@
         
         
         
-        
+		<form id="formaauthorize" action="edit.json" method="POST" >
+		<div id="div_one" class="panelcito_modal authorize_div_one"  style="display:none;" title="">
+			<div id="div_two" title="" class="authorize_div_two"><div class="fixed column" style="width:290px; padding-left:6px;"><strong>Autorizaci&oacute;n de precios</strong></div></div>
+			<div id="div_three" title="" class="authorize_div_three">
+				<div class="columns" style="background:#731F6C;">
+					<div class="container" style="background:white;">
+						<div class="fixed column" class="content_x" >
+							<table id="tabla_busqueda" border="0"  class="contenidobusqueda">
+								<tr><td colspan="3" height="10"></td></tr>
+								<tr><td width="5"></td><td width="100">Usuario</td><td width="120"><input name="idauth" type="text" style="width:120px;"></td></tr>
+								<tr><td width="5"></td><td width="100" height="10"></td><td width="120"></td></tr>
+								<tr><td width="5"></td><td width="100">Password</td><td width="120"><input name="passauth" type="password" style="width:120px;"></td></tr>
+								<tr><td width="5"></td><td width="100" height="10"></td><td width="120"></td></tr>
+								<tr>
+									<td width="5"></td>
+									<td width="100" align="right"><input type="button" id="boton_cancelar_validacion" value="Cancelar" style="width:80px; font-weight:bold;"></td>
+									<td width="120"><center><input type="button" id="boton_aceptar_validacion" value="Aceptar" style="width:80px; font-weight:bold;"></center></td>
+								</tr>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		</form>
         
         
         
