@@ -2821,7 +2821,8 @@ public class PocSpringDao implements PocInterfaceDao{
                     + "poc_cot.incluye_iva,"
                     + "poc_cot.dias_vigencia,"
                     + "(fecha+dias_vigencia) AS fecha_vencimiento,"
-                    + "(CASE WHEN (fecha+dias_vigencia)::timestamp with time zone<=now() THEN true ELSE false END) AS vencido "
+                    + "(CASE WHEN (fecha+dias_vigencia)::timestamp with time zone<=now() THEN true ELSE false END) AS vencido, "
+                    + "poc_cot.tc_usd "
                 + "FROM poc_cot "
                 + "LEFT JOIN gral_usr ON gral_usr.id=poc_cot.gral_usr_id_creacion "
                 + "LEFT JOIN  gral_empleados ON gral_empleados.id=gral_usr.gral_empleados_id "
@@ -2845,6 +2846,7 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("observaciones",rs.getString("observaciones"));
                     row.put("img_desc",String.valueOf(rs.getBoolean("incluye_img_desc")));
                     row.put("tipo_cambio",StringHelper.roundDouble(rs.getString("tipo_cambio"),4));
+                    row.put("tc_usd",StringHelper.roundDouble(rs.getString("tc_usd"),4));
                     row.put("fecha",rs.getString("fecha"));
                     row.put("agente_id",String.valueOf(rs.getInt("cxc_agen_id")));
                     row.put("nombre_usuario",rs.getString("nombre_usuario"));
@@ -2855,7 +2857,7 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("total",StringHelper.roundDouble(rs.getString("total"),2));
                     row.put("dias_vigencia",String.valueOf(rs.getInt("dias_vigencia")));
                     row.put("incluye_iva",String.valueOf(rs.getBoolean("incluye_iva")));
-
+                    
                     row.put("fecha_vencimiento",rs.getString("fecha_vencimiento"));
                     row.put("vencido",String.valueOf(rs.getBoolean("vencido")));
                     return row;
@@ -3516,13 +3518,12 @@ public class PocSpringDao implements PocInterfaceDao{
     public HashMap<String, Object> getValidarUser(String username, String password, String id_suc) {
         HashMap<String, Object> data = new HashMap<String, Object>();
         
-        //verificar si el usuario tiene  rol de ADMINISTTRADOR
-        //si exis es mayor que cero, el usuario si es ADMINISTRADOR
-        String sql_to_query = "select count(gral_usr.id) as exis from gral_usr_auth join gral_usr on gral_usr.id=gral_usr_auth.gral_usr_id where gral_usr.username='"+username+"' and gral_usr.password='"+password+"' and gral_usr_auth.gral_suc_id="+id_suc+" and gral_usr.enabled=true;";
+        //Verificar si el usuario tiene  rol de ROLE_AUTH_PRECIO
+        String sql_to_query = "select count(gral_usr.id) as exis from gral_usr join gral_usr_rol on gral_usr_rol.gral_usr_id=gral_usr.id join gral_rol on (gral_rol.id=gral_usr_rol.gral_rol_id and gral_rol.authority='ROLE_AUTH_PRECIO') where gral_usr.username='"+username+"' and gral_usr.password='"+password+"' and gral_usr.enabled=true;";
         Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_to_query);
         
         if(Integer.parseInt(String.valueOf(map.get("exis")))>0){
-            sql_to_query = "select gral_usr.id as ident from gral_usr_auth join gral_usr on gral_usr.id=gral_usr_auth.gral_usr_id where gral_usr.username='"+username+"' and gral_usr.password='"+password+"' and gral_usr_auth.gral_suc_id="+id_suc+" and gral_usr.enabled=true limit 1;";
+            sql_to_query = "select gral_usr.id as ident from gral_usr where gral_usr.username='"+username+"' and gral_usr.password='"+password+"' and gral_usr.enabled=true limit 1;";
             Map<String, Object> map2 = this.getJdbcTemplate().queryForMap(sql_to_query);
             data.put("ident",Base64Coder.encodeString(map2.get("ident").toString()));
             data.put("success","true");

@@ -580,6 +580,7 @@ public class CotizacionesController {
             @RequestParam(value="select_accion", required=true) String select_accion,
             @RequestParam(value="vigencia", required=true) String vigencia,
             @RequestParam(value="tc", required=true) String tc,
+            @RequestParam(value="tc_usd", required=true) String tc_usd,
             @RequestParam(value="moneda", required=true) String moneda_id,
             @RequestParam(value="fecha", required=true) String fecha,
             @RequestParam(value="select_agente", required=true) String select_agente,
@@ -652,13 +653,12 @@ public class CotizacionesController {
                         primerIncoterm++;
                     }
                 }
-                
             }
             
             check_descripcion_larga = StringHelper.verificarCheckBox(check_descripcion_larga);
             check_incluye_iva = StringHelper.verificarCheckBox(check_incluye_iva);
             
-            String data_string = app_selected + "___"+ command_selected + "___"+ id_usuario + "___"+ identificador + "___"+ select_tipo_cotizacion + "___"+ id_cliente + "___"+ check_descripcion_larga + "___"+ observaciones.toUpperCase() + "___"+ tc+"___"+moneda_id+"___"+fecha+"___"+select_agente+"___"+vigencia+"___"+check_incluye_iva+"___"+incoterms;
+            String data_string = app_selected + "___"+ command_selected + "___"+ id_usuario + "___"+ identificador + "___"+ select_tipo_cotizacion + "___"+ id_cliente + "___"+ check_descripcion_larga + "___"+ observaciones.toUpperCase() + "___"+ tc+"___"+moneda_id+"___"+fecha+"___"+select_agente+"___"+vigencia+"___"+check_incluye_iva+"___"+incoterms+"___"+tc_usd;
             
             succes = this.getPocDao().selectFunctionValidateAaplicativo(data_string, app_selected, extra_data_array);
             
@@ -782,7 +782,8 @@ public class CotizacionesController {
         despedida = this.getPocDao().getCotizacion_Despedida(id_empresa);
         //obtiene las condiciones comerciales para la cotizacion
         condiciones_comerciales = this.getPocDao().getCotizacion_CondicionesComerciales(id_empresa);
-        //obtiene las politicas de pago para la cotizacion
+        
+        //Obtiene las politicas de pago para la cotizacion
         politicas_pago = this.getPocDao().getCotizacion_PolitizasPago(id_empresa);
         
         incoterms = this.getPocDao().getCotizacion_Incoterms(id_empresa, id_cotizacion);
@@ -794,7 +795,7 @@ public class CotizacionesController {
         datos.put("tipo", datosCotizacion.get(0).get("tipo"));
         datos.put("folio", datosCotizacion.get(0).get("folio"));
         datos.put("fecha", datosCotizacion.get(0).get("fecha"));
-        datos.put("tipoCambio", datosCotizacion.get(0).get("tipo_cambio"));
+        datos.put("tc_usd", datosCotizacion.get(0).get("tc_usd"));
         datos.put("observaciones", datosCotizacion.get(0).get("observaciones"));
         datos.put("img_desc", incluye_img);
         datos.put("nombre_usuario", datosCotizacion.get(0).get("nombre_usuario"));

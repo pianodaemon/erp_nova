@@ -107,7 +107,7 @@ public class pdfCotizacion {
         this.setTipo(datos.get("tipo"));
         this.setFolio(datos.get("folio"));
         this.setFecha(datos.get("fecha"));
-        this.setTipoCambio(datos.get("tipoCambio"));
+        this.setTipoCambio(datos.get("tc_usd"));
         this.setObservaciones(datos.get("observaciones"));
         this.setIncluyeImgDesc(datos.get("img_desc"));
         this.setPuestoUsuario(datos.get("puesto_usuario"));
@@ -157,9 +157,6 @@ public class pdfCotizacion {
             Font smallBoldFont = new Font(Font.FontFamily.HELVETICA, 8, Font.BOLD, BaseColor.WHITE);
             Font smallBoldFontBlack = new Font(Font.FontFamily.HELVETICA, 8, Font.BOLD, BaseColor.BLACK);
             Font largeBoldFont = new Font(Font.FontFamily.HELVETICA,10,Font.BOLD,BaseColor.BLACK);
-            
-            
-            
             
             Document document;
             PdfPTable tablaHeader;
