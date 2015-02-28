@@ -291,8 +291,11 @@
                                                             </tr>
                                                             <tr>
                                                                 <td width="10" height="17"></td>
-                                                                <td width="70"><!--TC USD--></td>
-                                                                <td width="95"><!--<input type="text" name="tc_usd" value="0.0000" style="width:60px;" maxlength="8">--></td>
+                                                                <td width="70">TC&nbsp;USD</td>
+                                                                <td width="95">
+																	<input type="text" name="tc_usd" value="0.0000" style="width:60px;" maxlength="8">
+																	<input type="hidden" name="tc_usd_sat" value="0.0000">
+                                                                </td>
                                                                 <td width="45"></td>
                                                                 <td width="130" colspan="3" align="right">
 																	<input type="button" id="btn_autorizar" value="Autorizar" style="font-weight:bold; width:110px;">
@@ -352,7 +355,6 @@
                                                                 <td width="60">Tipo&nbsp;Cambio</td>
                                                                 <td width="60">
 																	<input type="text" name="tc" value="0.0000" style="width:60px;" maxlength="8">
-																	<input type="text" name="tc_original" value="0.0000">
 																</td>
                                                                 <td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" align="top" rel="warning_tc"></div></td>
                                                                 
