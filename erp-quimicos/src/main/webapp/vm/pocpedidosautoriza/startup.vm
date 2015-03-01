@@ -7,13 +7,13 @@
         
         <!--  css for this catalogo -->
         <link rel="stylesheet" href="../../css/modalbox/pocpedidosautoriza/formaPocPedidosAutoriza.css" type="text/css" />
-        <link rel="stylesheet" href="../../css/modalbox/pocpedidosautoriza/formaCancelaEmision.css" type="text/css" />
+        <!--<link rel="stylesheet" href="../../css/modalbox/pocpedidosautoriza/formaCancelaEmision.css" type="text/css" />-->
         
         <!--  js for this catalogo -->
         <script type="text/javascript" src="../../js/components/jquery-form/jquery-form.js"></script>
 		<script type="text/javascript" src="../../js/components/formatearnumeros/agrega_comas.js"></script>
         <script type="text/javascript" src="../../js/components/modalbox/pocpedidosautoriza/modalboxPocPedidosAutoriza.js"></script>
-        <script type="text/javascript" src="../../js/components/modalbox/pocpedidosautoriza/modalboxCancelaEmision.js"></script>
+        <!--<script type="text/javascript" src="../../js/components/modalbox/pocpedidosautoriza/modalboxCancelaEmision.js"></script>-->
         <script type="text/javascript" src="../../js/implements/pocpedidosautoriza/index.js" ></script>
         
         #include("${layoutmenu}")
