@@ -1731,11 +1731,12 @@ $(function() {
 							var no_cot="0";
 							var id_det_cot="0";
 							var cantPartida=" ";
+							var reg_aut = '0&&&0&&&0';
 							
 							if($tipo_cambio.val().trim()!=''){
 								if(exislp=='1'){
 									//llamada a la funcion que agrega el producto al grid
-									$agrega_producto_grid($grid_productos, id_prod, sku, titulo, unidadId, unidad, id_pres,pres,prec_unitario,$select_moneda,id_moneda,$tipo_cambio,num_dec, arrayMonedas, tcMonProd, idImpto, valorImpto, iepsId, iepsTasa, vdescto, id_cot, no_cot, id_det_cot, cantPartida);
+									$agrega_producto_grid($grid_productos, id_prod, sku, titulo, unidadId, unidad, id_pres,pres,prec_unitario,$select_moneda,id_moneda,$tipo_cambio,num_dec, arrayMonedas, tcMonProd, idImpto, valorImpto, iepsId, iepsTasa, vdescto, id_cot, no_cot, id_det_cot, cantPartida, reg_aut);
 								}else{
 									jAlert(exislp, 'Atencion!', function(r) { 
 										$('#forma-pocpedidos-window').find('input[name=sku_producto]').focus();
@@ -1831,11 +1832,12 @@ $(function() {
 									var no_cot="0";
 									var id_det_cot="0";
 									var cantPartida=" ";
+									var reg_aut = '0&&&0&&&0';
 									
 									if($tipo_cambio.val().trim()!=''){
 										if(exislp=='1'){
-											//llamada a la funcion que agrega el producto al grid
-											$agrega_producto_grid($grid_productos, id_prod, sku, titulo, unidadId, unidad, id_pres,pres,prec_unitario,$select_moneda,id_moneda,$tipo_cambio,num_dec, arrayMonedas, tcMonProd, idImpto, valorImpto, iepsId, iepsTasa, vdescto, id_cot, no_cot, id_det_cot, cantPartida);
+											//Llamada a la funcion que agrega el producto al grid
+											$agrega_producto_grid($grid_productos, id_prod, sku, titulo, unidadId, unidad, id_pres,pres,prec_unitario,$select_moneda,id_moneda,$tipo_cambio,num_dec, arrayMonedas, tcMonProd, idImpto, valorImpto, iepsId, iepsTasa, vdescto, id_cot, no_cot, id_det_cot, cantPartida, reg_aut);
 										}else{
 											jAlert(exislp, 'Atencion!', function(r) { 
 												$('#forma-pocpedidos-window').find('input[name=sku_producto]').focus();
@@ -2045,7 +2047,7 @@ $(function() {
 	
 	
 	//agregar producto al grid
-	$agrega_producto_grid = function($grid_productos, id_prod, sku, titulo, unidadId, unidad,id_pres,pres,prec_unitario,$select_moneda, id_moneda, $tipo_cambio,num_dec, arrayMonedas, tcMonProd, idImpto, valorImpto, id_ieps, tasa_ieps, vdescto, id_cot, no_cot, id_det_cot, cantPartida){
+	$agrega_producto_grid = function($grid_productos, id_prod, sku, titulo, unidadId, unidad,id_pres,pres,prec_unitario,$select_moneda, id_moneda, $tipo_cambio,num_dec, arrayMonedas, tcMonProd, idImpto, valorImpto, id_ieps, tasa_ieps, vdescto, id_cot, no_cot, id_det_cot, cantPartida, reg_aut){
 		var $id_impuesto = $('#forma-pocpedidos-window').find('input[name=id_impuesto]');
 		var $valor_impuesto = $('#forma-pocpedidos-window').find('input[name=valorimpuesto]');
 		var $incluye_produccion = $('#forma-pocpedidos-window').find('input[name=incluye_pro]');
@@ -2084,7 +2086,7 @@ $(function() {
 				if(parseInt(idMonedaPedido)==1 && parseInt(id_moneda)!=1){
 					//si la moneda del pedido es pesos y la moneda del precio es diferente de Pesos,
 					//entonces calculamos su equivalente a pesos
-					precioCambiado = parseFloat( parseFloat(precioOriginal) * parseFloat(tcMonProd)).toFixed(4);
+					precioCambiado = parseFloat( parseFloat(precioOriginal) * parseFloat($tipo_cambio.val())).toFixed(4);
 				}
 				if(parseInt(idMonedaPedido)!=1 && parseInt(id_moneda)==1){
 					//alert("precioOriginal:"+precioOriginal +"		tc_original:"+$tc_original.val());
@@ -2125,8 +2127,10 @@ $(function() {
 			
 			var trr = '';
 			trr = '<tr>';
-				trr += '<td class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;" width="60">';
-					trr += '<a href="elimina_producto" id="delete'+ tr +'">Eliminar</a>';
+				trr += '<td class="grid" style="font-size:11px;  border:1px solid #C1DAD7;" width="25">';
+					//trr += '<a href="elimina_producto" id="delete'+ tr +'">Eliminar</a>';
+					trr += '<a href="elimina_producto" id="delete'+ tr +'"><div id="eliminar'+ tr +'" class="onmouseOutEliminar" style="width:24px; background-position:center;"/></a>';
+					
 					trr += '<input type="hidden" 	name="eliminado" id="elim" value="1">';//el 1 significa que el registro no ha sido eliminado
 					trr += '<input type="hidden" 	name="iddetalle" id="idd" value="0">';//este es el id del registro que ocupa el producto en la tabla pocpedidos_detalles
 					trr += '<input type="hidden" 	name="noTr" value="'+ tr +'">';
@@ -2157,9 +2161,12 @@ $(function() {
 				trr += '</td>';
 				trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
 					trr += '<input type="text" name="costo" value="'+ precioCambiado +'" class="costo'+ tr +'" id="cost" style="width:86px; text-align:right;">';
-					
 					trr += '<input type="hidden" 	name="vdescto" id="vdescto" value="'+vdescto+'">';
 					trr += '<input type="hidden" 	name="pu_descto" id="pu_descto" value="0">';
+					
+					trr += '<input type="hidden" 	name="id_mon_pre" id="id_moneda" value="'+id_moneda+'">';
+					trr += '<input type="hidden" 	name="pre_original" id="prec_original" value="'+precioOriginal+'">';
+					
 				trr += '</td>';
 				trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
 					trr += '<input type="text" name="importe'+ tr +'" value="" id="import" class="borde_oculto" readOnly="true" style="width:86px; text-align:right;">';
@@ -2192,9 +2199,40 @@ $(function() {
 					trr += '<input type="checkbox" 	name="checkProd" class="checkProd'+ tr +'" '+check+' '+desactivado+'>';
 					trr += '<input type="hidden" 	name="seleccionado" value="'+valor_seleccionado+'">';//el 1 significa que el registro no ha sido eliminado
 				trr += '</td>';
+				
+				trr += '<td class="grid2" style="font-size:11px;  border:1px solid #C1DAD7;" width="20" id="td_check_auth'+ tr +'">';
+					trr += '<input type="hidden" 	name="statusreg"   	class="statusreg'+ tr +'" value="'+ reg_aut +'">';
+					trr += '<input type="hidden" 	name="reqauth"   	class="reqauth'+ tr +'" value="false">';
+					trr += '<input type="hidden" 	name="success"   	class="success'+ tr +'" value="false">';
+					trr += '<input type="checkbox" 	name="checkauth" 	class="checkauth'+ tr +'">';
+				trr += '</td>';
 			trr += '</tr>';
 			
 			$grid_productos.append(trr);
+			
+			
+			
+			$grid_productos.find('.checkauth'+tr).hide();
+			
+			$grid_productos.find('.checkauth'+ tr).click(function(event){
+				if(this.checked){
+					$('#forma-pocpedidos-window').find('#btn_autorizar').show();
+				}else{
+					var cont_check=0;
+					$grid_productos.find('input[name=checkauth]').each(function(index){
+						if(this.checked){
+							if(parseInt($(this).parent().parent().find('input[name=eliminado]').val())==1){
+								cont_check++;
+							}
+						}
+					});
+					
+					if(parseInt(cont_check)<=0){
+						$('#forma-pocpedidos-window').find('#btn_autorizar').hide();
+					}
+				}
+			});
+			
 			
 			
 			var unidadLitroKilo=false;
@@ -2382,6 +2420,10 @@ $(function() {
 					$campoPrecioU.val(' ');
 				}
 				
+								
+				//Quitar marca que indica que requiere autorizacion
+				$(this).parent().parent().find('input[name=reqauth]').val('false');
+				
 				if( ($campoPrecioU.val().trim()!= '') && ($campoCantidad.val().trim() != '')){	
 					//Calcular y redondear el importe
 					$campoImporte.val( parseFloat(parseFloat($campoPrecioU.val()) * parseFloat( $campoCantidad.val())).toFixed(4) );
@@ -2429,7 +2471,8 @@ $(function() {
 			$permitir_solo_numeros( $grid_productos.find('#cant') );
 			
 			//elimina un producto del grid
-			$grid_productos.find('#delete'+ tr).bind('click',function(event){
+			//$grid_productos.find().bind('click',function(event){
+			$grid_productos.find('#delete'+ tr).click(function(e){
 				event.preventDefault();
 				if(parseInt($(this).parent().find('#elim').val()) != 0){
 					//asigna espacios en blanco a todos los input de la fila eliminada
@@ -2442,6 +2485,13 @@ $(function() {
 					$(this).parent().parent().hide();
 					$calcula_totales();//llamada a la funcion que calcula totales
 				}
+			});
+			
+			$grid_productos.find('#eliminar'+ tr).mouseover(function(){
+				$(this).removeClass("onmouseOutEliminar").addClass("onmouseOverEliminar");
+			});
+			$grid_productos.find('#eliminar'+ tr).mouseout(function(){
+				$(this).removeClass("onmouseOverEliminar").addClass("onmouseOutEliminar");
 			});
 			
 			//limpiar campos
@@ -2575,6 +2625,110 @@ $(function() {
 	
 	
 	
+	
+	$forma_autorizacion= function($grid_productos, $btn_autorizar,id_to_show){
+		$(this).modalPanel_authorize();
+		var form_to_show = 'formaauthorize';
+		$('#' + form_to_show).each (function(){this.reset();});
+		var $forma_selected = $('#' + form_to_show).clone();
+		$forma_selected.attr({id : form_to_show + id_to_show});
+		$('#forma-authorize-window').css({"margin-left": -40,"margin-top": -180});
+		$forma_selected.prependTo('#forma-authorize-window');
+		$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
+		
+		var $idauth = $('#forma-authorize-window').find('input[name=idauth]');
+		var $passauth = $('#forma-authorize-window').find('input[name=passauth]');
+		
+		var $boton_aceptar = $('#forma-authorize-window').find('#boton_aceptar_validacion');
+		var $cancelar_plugin = $('#forma-authorize-window').find('#boton_cancelar_validacion');
+		
+		
+		$boton_aceptar.click(function(event){
+			if($idauth.val().trim()!="" && $passauth.val().trim()!=""){
+				var cadena = 'idauth='+$idauth.val()+'|passauth='+$passauth.val();
+				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAuth.json';
+				$arreglo = {'cad':cadena.toCharCode(), 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() }
+				
+				$.post(input_json,$arreglo,function(entry){
+					if(entry['Data']['success'].trim()=='true'){
+						//Eliminar formulario de autorizacion
+						var remove = function() {$(this).remove();};
+						$('#forma-authorize-overlay').fadeOut(remove);
+						
+						//Ocultar boton de autorizar
+						$('#forma-pocpedidos-window').find('#btn_autorizar').hide();
+						
+						var cont_check=0;
+						$grid_productos.find('input[name=checkauth]').each(function(index){
+							$tr = $(this).parent().parent();
+							
+							if(this.checked){
+								if(parseInt($tr.find('input[name=eliminado]').val())==1){
+									$tr.find('input[name=statusreg]').val('1&&&'+quitar_comas($tr.find('input[name=costo]').val())+'&&&'+entry['Data']['ident']);
+									$tr.find('input[name=reqauth]').val('true');
+									$tr.find('input[name=precio]').css({'background':'#ffffff'});
+									//cont_check++;
+								}
+							}
+						});
+						
+						/*
+						if(parseInt(cont_check)<=0){
+							$('#forma-cotizacions-window').find('#btn_autorizar').hide();
+						}
+						*/
+						
+						jAlert('Precios autorizados!', 'Atencion!', function(r) {
+							
+						});
+					}else{
+						jAlert('Error al intentar autorizar. EL usuario debe tener permiso para autorizar precios.', 'Atencion!', function(r) {
+							//var remove = function() {$(this).remove();};
+							//$('#forma-authorize-overlay').fadeOut(remove);
+							$idauth.focus();
+						});
+					}
+					
+				});//termina llamada json
+			}else{
+				if($idauth.val().trim()=="" && $passauth.val().trim()==""){
+					jAlert('Ingresar nombre de Usuario y Password.', 'Atencion!', function(r) {
+						$idauth.focus();
+					});
+				}else{
+					if($idauth.val().trim()==""){
+						jAlert('Ingresar nombre de Usuario.', 'Atencion!', function(r) {
+							$idauth.focus(); 
+						});
+					}else{
+						if($passauth.val().trim()==""){
+							jAlert('Ingresar Password.', 'Atencion!', function(r) {
+								$passauth.focus(); 
+							});
+						}
+					}
+				}
+			}
+		});
+		
+		
+		
+		$(this).aplicarEventoKeypressEjecutaTrigger($idauth, $boton_aceptar);
+		$(this).aplicarEventoKeypressEjecutaTrigger($passauth, $boton_aceptar);
+		
+		//Ligamos el boton cancelar al evento click para eliminar la forma
+		$cancelar_plugin.bind('click',function(){
+			var remove = function() {$(this).remove();};
+			$('#forma-authorize-overlay').fadeOut(remove);
+		});
+		
+		$idauth.focus();
+	}
+	
+	
+	
+	
+	
 	//nuevo pedido
 	$new_pedido.click(function(event){
 		event.preventDefault();
@@ -2595,11 +2749,8 @@ $(function() {
 		
 		$tabs_li_funxionalidad();
 		
-		//var json_string = document.location.protocol + '//' + document.location.host + '/' + controller + '/' + accion + '/' + id_to_show + '/out.json';
 		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getPedido.json';
-		$arreglo = {'id_pedido':id_to_show,
-					'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
-					};
+		$arreglo = {'id_pedido':id_to_show, 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
         
 		var $id_pedido = $('#forma-pocpedidos-window').find('input[name=id_pedido]');
 		var $folio = $('#forma-pocpedidos-window').find('input[name=folio]');
@@ -2617,6 +2768,7 @@ $(function() {
 		
 		var $select_moneda = $('#forma-pocpedidos-window').find('select[name=select_moneda]');
 		var $tipo_cambio = $('#forma-pocpedidos-window').find('input[name=tipo_cambio]');
+		var $tc_usd_sat = $('#forma-pocpedidos-window').find('input[name=tc_usd_sat]');
 		var $id_impuesto = $('#forma-pocpedidos-window').find('input[name=id_impuesto]');
 		var $valor_impuesto = $('#forma-pocpedidos-window').find('input[name=valorimpuesto]');
 		var $check_enviar_obser = $('#forma-pocpedidos-window').find('input[name=check_enviar_obser]');
@@ -2650,6 +2802,7 @@ $(function() {
 		var $cancelar_pedido = $('#forma-pocpedidos-window').find('#cancelar_pedido');
 		var $descargarpdf = $('#forma-pocpedidos-window').find('#descargarpdf');
 		var $cancelado = $('#forma-pocpedidos-window').find('input[name=cancelado]');
+		var $btn_autorizar = $('#forma-pocpedidos-window').find('#btn_autorizar');
 		
 		//grid de productos
 		var $grid_productos = $('#forma-pocpedidos-window').find('#grid_productos');
@@ -2734,6 +2887,7 @@ $(function() {
 		$cancelar_pedido.hide();
 		$descargarpdf.hide();
 		$cancelado .hide();
+		$btn_autorizar.hide();
 		
 		
 		$etiqueta_motivo_descto.hide();
@@ -2778,23 +2932,6 @@ $(function() {
 				$('#forma-pocpedidos-overlay').fadeOut(remove);
 				$get_datos_grid();
 			}else{
-				/*
-				// Desaparece todas las interrogaciones si es que existen
-				//$('#forma-pocpedidos-window').find('.div_one').css({'height':'545px'});//sin errores
-				$('#forma-pocpedidos-window').find('.pocpedidos_div_one').css({'height':'580px'});//con errores
-				
-				if(parseFloat($ieps.val())>0 && parseFloat($impuesto_retenido.val())<=0){
-					$('#forma-pocpedidos-window').find('.pocpedidos_div_one').css({'height':'580px'});
-				}
-				
-				if(parseFloat($ieps.val())<=0 && parseFloat($impuesto_retenido.val())>0){
-					$('#forma-pocpedidos-window').find('.pocpedidos_div_one').css({'height':'580px'});
-				}
-				
-				if(parseFloat($ieps.val())>0 && parseFloat($impuesto_retenido.val())>0){
-					$('#forma-pocpedidos-window').find('.pocpedidos_div_one').css({'height':'600px'});
-				}
-				*/
 				var valorHeight=550;
 				
 				if(parseFloat(quitar_comas($('#forma-pocpedidos-window').find('input[name=monto_descuento]').val()))>0){
@@ -2802,10 +2939,10 @@ $(function() {
 				}
 				
 				if(parseFloat(quitar_comas($ieps.val()))>0){
-					valorHeight = parseFloat(valorHeight) + 20;
+					valorHeight = parseFloat(valorHeight) + 25;
 				}
 				if(parseFloat(quitar_comas($impuesto_retenido.val()))>0){
-					valorHeight = parseFloat(valorHeight) + 20;
+					valorHeight = parseFloat(valorHeight) + 25;
 				}
 				$('#forma-pocpedidos-window').find('.pocpedidos_div_one').css({'height':valorHeight+'px'});
 						
@@ -2817,6 +2954,9 @@ $(function() {
 				
 				$('#forma-pocpedidos-window').find('#div_warning_grid').css({'display':'none'});
 				$('#forma-pocpedidos-window').find('#div_warning_grid').find('#grid_warning').children().remove();
+				
+				$grid_productos.find('input[name=reqauth]').val('false');
+				var contador_alert=0;
 				
 				var valor = data['success'].split('___');
 				//muestra las interrogaciones
@@ -2878,6 +3018,33 @@ $(function() {
 							if(parseFloat(cant_prod) > 0 ){
 								$campo_input.parent().parent().find('input[name=checkProd]').show();
 							}
+						}
+						
+						if(tmp.split(':')[0].substring(0,9)=='checkauth'){
+							//alert(tmp);
+							$grid_productos.find('.'+tmp.split(':')[0]).show();
+							$grid_productos.find('.'+tmp.split(':')[0]).parent().find('input[name=reqauth]').val('true');
+							
+							if(parseInt(contador_alert)<=0){
+								//Confirm para guardar sin autorizacion
+								jConfirm('Hay precios que necesitan autorizaci&oacute;n.<br>&iquest;Desea guardar para autorizar despu&eacute;s&#63;', 'Dialogo de Confirmacion', function(r) {
+									// If they confirmed, manually trigger a form submission
+									if (r) {
+										//Asignar los estatus correspondientes para permitir guardar sin autorizacion
+										$grid_productos.find('input[name=checkauth]').each(function(index){
+											$tr = $(this).parent().parent();
+											if(parseInt($tr.find('input[name=eliminado]').val())==1){
+												$tr.find('input[name=success]').val('true');
+											}
+										});
+										
+										//Ejecutar el submit de actualizar
+										$submit_actualizar.trigger('click');
+									}
+								});
+							}
+							
+							contador_alert++;
 						}
 						
 					}
@@ -2942,9 +3109,10 @@ $(function() {
 			}
 			
 			//$campo_tc.val(entry['tc']['tipo_cambio']);
-			$id_impuesto.val(entry['iva']['0']['id_impuesto']);
-			$valor_impuesto.val(entry['iva']['0']['valor_impuesto']);
-			$tipo_cambio.val(entry['Tc']['0']['tipo_cambio']);
+			$id_impuesto.val(entry['iva'][0]['id_impuesto']);
+			$valor_impuesto.val(entry['iva'][0]['valor_impuesto']);
+			$tipo_cambio.val(entry['Tc'][0]['tipo_cambio']);
+			$tc_usd_sat.val(entry['Tc'][0]['tipo_cambio']);
 			
 			//carga select denominacion con todas las monedas
 			$select_moneda.children().remove();
@@ -3463,63 +3631,20 @@ $(function() {
 						}
 					});
 					
-					
-					//trr += '<input type="hidden" name="idcot" id="idcot" value="'+ id_cot +'">';
-					//trr += '<input type="hidden" name="nocot" id="nocot" value="'+ no_cot +'">';
-					//trr += '<input type="hidden" name="iddetcot" id="iddetcot" value="'+ id_det_cot +'">';
-					/*
-					jConfirm('Los datos de la cotizaci&oacute;n  <b>'+$no_cotizacion.val()+'</b> ya se encuentra en el listado. <br/>Desea cambiar la cotizaci&oacute;n?', 'Dialogo de Confirmacion', function(r) {
-						// If they confirmed, manually trigger a form submission
-						if (r) {
-							
-						}else{
-							//aqui no hay nada
-						}
-					});
-					*/
-					
 					if(parseInt(encontrado)<=0){
 						var input_json3 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDatosCotizacion.json';
 						$arreglo3 = {'no_cot':$no_cotizacion.val(),  'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
 						
 						$.post(input_json3,$arreglo3,function(entry3){
 							
+							if(entry3['VERIF']['msj'].trim()!=""){
+								jAlert(entry3['VERIF']['msj'], 'Atencion!', function(r) { 
+									$no_cotizacion.focus();
+								});
+							}
+							
 							if(parseInt(entry3['COTDATOS'].length) > 0 ){
-								/*
-								row.put("id_cot",String.valueOf(rs.getInt("id_cot")));
-								row.put("tipo_documento",String.valueOf(rs.getInt("tipo_documento")));
-								row.put("folio",rs.getString("folio"));
-								row.put("proceso_flujo_id",String.valueOf(rs.getInt("proceso_flujo_id")));
-								row.put("observaciones",rs.getString("observaciones"));
-								row.put("df_id",String.valueOf(rs.getInt("cxc_clie_df_id")));
-								row.put("monto_descto",StringHelper.roundDouble(rs.getDouble("monto_descto"),2));
-								row.put("subtotal",StringHelper.roundDouble(rs.getDouble("subtotal"),2));
-								row.put("monto_ieps",StringHelper.roundDouble(rs.getDouble("monto_ieps"),2));
-								row.put("impuesto",StringHelper.roundDouble(rs.getDouble("impuesto"),2));
-								row.put("retencion",StringHelper.roundDouble(rs.getDouble("monto_retencion"),2));
-								row.put("total",StringHelper.roundDouble(rs.getDouble("total"),2));
-								row.put("tipo_cambio",StringHelper.roundDouble(rs.getDouble("tipo_cambio"),4));
-								
-								row.put("no_cuenta",rs.getString("no_cuenta"));
-								row.put("enviar_ruta",String.valueOf(rs.getBoolean("enviar_ruta")));
-								row.put("enviar_obser",String.valueOf(rs.getBoolean("enviar_obser_fac")));
-								row.put("flete",String.valueOf(rs.getBoolean("flete")));
-								//row.put("pdescto",String.valueOf(rs.getBoolean("pdescto")));
-								row.put("mdescto",rs.getString("mdescto"));
-								//row.put("porcentaje_descto",StringHelper.roundDouble(rs.getDouble("porcentaje_descto"),4));
-								*/
-								
-								/*
-								$('#forma-pocpedidos-window').find('input[name=id_df]').val(0);
-								if(parseFloat(vdescto)>0){
-									$('#forma-pocpedidos-window').find('input[name=check_descto]').attr('checked',  (pdescto == 'true')? true:false );
-									$('#forma-pocpedidos-window').find('input[name=valor_descto]').attr("readonly", false);
-									$('#forma-pocpedidos-window').find('input[name=valor_descto]').css({'background' : '#ffffff'});
-								}
-								$('#forma-pocpedidos-window').find('input[name=pdescto]').val(pdescto);
-								$('#forma-pocpedidos-window').find('input[name=valor_descto]').val(vdescto);
-								*/
-								
+								$tipo_cambio.val(entry3['COTDATOS'][0]['tc_usd']);
 								var id_cliente = entry3['COTDATOS'][0]['cliente_id'];
 								var no_control = entry3['COTDATOS'][0]['numero_control'];
 								var razon_social = entry3['COTDATOS'][0]['razon_social'];
@@ -3562,9 +3687,10 @@ $(function() {
 										var no_cot = $no_cotizacion.val();
 										var id_det_cot = prod['id_det'];
 										var cantPartida = prod['cantidad'];
+										var reg_aut = prod['status_aut'];
 										
 										//llamada a la funcion que agrega el producto al grid
-										$agrega_producto_grid($grid_productos, id_prod, sku, titulo, unidadId, unidad, id_pres,pres,prec_unitario,$select_moneda,id_moneda,$tipo_cambio,num_dec, entry['Monedas'], tcMonProd, idImpto, valorImpto, iepsId, iepsTasa, vdescto, id_cot, no_cot, id_det_cot, cantPartida);
+										$agrega_producto_grid($grid_productos, id_prod, sku, titulo, unidadId, unidad, id_pres,pres,prec_unitario,$select_moneda,id_moneda,$tipo_cambio,num_dec, entry['Monedas'], tcMonProd, idImpto, valorImpto, iepsId, iepsTasa, vdescto, id_cot, no_cot, id_det_cot, cantPartida, reg_aut);
 										
 									});
 								}
@@ -3579,18 +3705,6 @@ $(function() {
 				}
 			});
 				
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
 			
 			
 			
@@ -3778,17 +3892,6 @@ $(function() {
 		});
 		
 		
-		$tipo_cambio.keypress(function(e){
-			// Permitir  numeros, borrar, suprimir, TAB, puntos, comas
-			if (e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
-				return true;
-			}else {
-				return false;
-			}
-		});
-		
-		
-		
 		//buscador de productos
 		$busca_sku.click(function(event){
 			event.preventDefault();
@@ -3802,6 +3905,120 @@ $(function() {
 		//desencadena clic del href Buscar Producto al pulsar enter en el campo Nombre del producto
 		$(this).aplicarEventoKeypressEjecutaTrigger($nombre_producto, $busca_sku);
 		
+		
+		
+		$tipo_cambio.keypress(function(e){
+			// Permitir  numeros, borrar, suprimir, TAB, puntos, comas
+			if (e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
+				return true;
+			}else {
+				return false;
+			}
+		});
+		
+		
+		
+		//Aplicar tipo de cambio a todos los precios al cambiar valor de tipo de cambio
+		$tipo_cambio.blur(function(){
+			if($(this).val().trim()==''){
+				$(this).val(0);
+			}
+			
+			$(this).val(parseFloat($(this).val()).toFixed(4));
+			
+			if(parseFloat($(this).val())>=parseFloat($tc_usd_sat.val())){
+				$grid_productos.find('tr').each(function (index){
+					
+					var $campoCantidad = $(this).find('#cant');
+					var $campoPrecioU = $(this).find('input[name=costo]');
+					var $campoImporte = $(this).find('#import');
+					
+					var $campoTasaIeps = $(this).find('#tasaIeps');
+					var $importeIeps = $(this).find('#importeIeps');
+					
+					var $campoTasaIva = $(this).find('#ivalorimp');
+					var $importeIva = $(this).find('#totimp');
+					
+					var $vdescto = $(this).find('#vdescto');
+					var $pu_con_descto = $(this).find('#pu_descto');
+					var $importe_del_descto = $(this).find('#importe_del_descto');
+					var $importe_con_descto = $(this).find('#importe_con_descto');
+					
+					var $campoMonedaPrecioOriginalPartida = $(this).find('input[name=id_mon_pre]');
+					var $campoPrecioOriginalPartida = $(this).find('input[name=pre_original]');
+					
+					if ($campoPrecioU.val().trim() == ''){
+						$campoPrecioU.val(' ');
+					}else{
+						$campoPrecioU.val(parseFloat($campoPrecioU.val()).toFixed(4));
+					}
+					
+					if( ($campoPrecioU.val().trim()!='') && ($campoCantidad.val().trim()!='') ){
+						
+						if( parseInt($campoMonedaPrecioOriginalPartida.val()) != parseInt($select_moneda.val()) ){
+							if(parseInt($campoMonedaPrecioOriginalPartida.val())==1 && parseInt($select_moneda.val())!=1){
+								//Si la moneda original es pesos, calculamos su equivalente a dolares
+								precio_cambiado = parseFloat($campoPrecioOriginalPartida.val()) / parseFloat($tipo_cambio.val());
+							}
+							
+							if(parseInt($campoMonedaPrecioOriginalPartida.val())!=1 && parseInt($select_moneda.val())==1){
+								//Si la moneda original es dolar, calculamos su equivalente a pesos
+								precio_cambiado = parseFloat($campoPrecioOriginalPartida.val()) * parseFloat($tipo_cambio.val());
+							}
+							
+							$campoPrecioU.val(parseFloat(precio_cambiado).toFixed(4));
+						}
+						
+						
+						//Calcula el importe
+						$campoImporte.val(parseFloat($campoPrecioU.val()) * parseFloat($campoCantidad.val()));
+						//Redondea el importe en dos decimales
+						//$(this).parent().parent().find('#import').val(Math.round(parseFloat($(this).parent().parent().find('#import').val())*100)/100);
+						$campoImporte.val( parseFloat($campoImporte.val()).toFixed(4));
+						
+						//Calcular el importe del IEPS
+						$importeIeps.val(parseFloat(parseFloat($campoImporte.val()) * (parseFloat($campoTasaIeps.val())/100)).toFixed(4));
+						
+						//Calcula el impuesto para este producto multiplicando el importe por el valor del iva
+						$importeIva.val((parseFloat($campoImporte.val()) + parseFloat($importeIeps.val())) * parseFloat($campoTasaIva.val()));
+						
+						if($pdescto.val().trim()=='true'){
+							if(parseFloat($vdescto.val())>0){
+								$pu_con_descto.val(parseFloat(parseFloat($campoPrecioU.val()) - (parseFloat($campoPrecioU.val()) * (parseFloat($vdescto.val())/100))).toFixed(4));
+								$importe_del_descto.val(parseFloat(parseFloat($campoImporte.val()) * (parseFloat($vdescto.val())/100)).toFixed(4));
+								$importe_con_descto.val(parseFloat(parseFloat($campoImporte.val()) - parseFloat($importe_del_descto.val())).toFixed(4));
+								
+								//Calcular y redondear el importe del IEPS, tomando el importe con descuento
+								$importeIeps.val(parseFloat(parseFloat($importe_con_descto.val()) * (parseFloat($campoTasaIeps.val())/100)).toFixed(4));
+								
+								//Calcular el impuesto para este producto multiplicando el importe_con_descto + ieps por la tasa del iva
+								$importeIva.val( (parseFloat($importe_con_descto.val()) + parseFloat($importeIeps.val())) * parseFloat( $campoTasaIva.val() ));
+							}
+						}
+						
+					}else{
+						$campoImporte.val(0);
+						$importeIva.val(0);
+					}
+					
+					//Llamada a la funcion que calcula totales
+					$calcula_totales();
+				});
+			}else{
+				jAlert('El TC USD para la conversion de precios no debe ser menor a '+$tc_usd_sat.val()+'.', 'Atencion!', function(r) { 
+					$tipo_cambio.focus(); 
+				});
+			}
+		});
+		
+		
+		
+		
+		
+		$btn_autorizar.click(function(event){
+			//LLamada a la funcion de la ventana de autorizacion
+			$forma_autorizacion($grid_productos, $btn_autorizar, id_to_show);
+		});
 		
 		
 		
@@ -3901,6 +4118,7 @@ $(function() {
 			var $select_moneda_original = $('#forma-pocpedidos-window').find('input[name=select_moneda_original]');
 			var $tipo_cambio = $('#forma-pocpedidos-window').find('input[name=tipo_cambio]');
 			var $tipo_cambio_original = $('#forma-pocpedidos-window').find('input[name=tipo_cambio_original]');
+			var $tc_usd_sat = $('#forma-pocpedidos-window').find('input[name=tc_usd_sat]');
 			var $orden_compra = $('#forma-pocpedidos-window').find('input[name=orden_compra]');
 			var	$orden_compra_original = $('#forma-pocpedidos-window').find('input[name=orden_compra_original]');
 			
@@ -3949,6 +4167,7 @@ $(function() {
 			var $descargarpdf = $('#forma-pocpedidos-window').find('#descargarpdf');
 			var $cancelar_pedido = $('#forma-pocpedidos-window').find('#cancelar_pedido');
 			var $cancelado = $('#forma-pocpedidos-window').find('input[name=cancelado]');
+			var $btn_autorizar = $('#forma-pocpedidos-window').find('#btn_autorizar');
 			
 			//grid de productos
 			var $grid_productos = $('#forma-pocpedidos-window').find('#grid_productos');
@@ -3968,7 +4187,8 @@ $(function() {
 			var $impuesto = $('#forma-pocpedidos-window').find('input[name=impuesto]');
 			var $campo_impuesto_retenido = $('#forma-pocpedidos-window').find('input[name=impuesto_retenido]');
 			var $total = $('#forma-pocpedidos-window').find('input[name=total]');
-			
+		
+		
 			//Variables para transportista
 			var $pestana_transportista = $('#forma-pocpedidos-window').find('ul.pestanas').find('a[href=#tabx-2]');
 			var $transportista = $('#forma-pocpedidos-window').find('input[name=transportista]');
@@ -4025,15 +4245,13 @@ $(function() {
 			
 			$pestana_transportista.parent().hide();
 			
-			//ocultar boton descargar y facturar. Despues de facturar debe mostrarse
-			//$boton_descargarpdf.hide();
-			//$boton_cancelarfactura.hide();
 			$busca_cliente.hide();
 			$razon_cliente.attr("readonly", true);
 			$empresa_immex.val('false');
 			$tasa_ret_immex.val('0');
 			$busca_cliente.hide();
 			$cancelado.hide();
+			$btn_autorizar.hide();
 			
 			$etiqueta_motivo_descto.hide();
 			$motivo_descuento.hide();
@@ -4094,18 +4312,23 @@ $(function() {
 					}else{
 						// Desaparece todas las interrogaciones si es que existen
 						//$('#forma-pocpedidos-window').find('.div_one').css({'height':'545px'});//sin errores
-						$('#forma-pocpedidos-window').find('.pocpedidos_div_one').css({'height':'588px'});//con errores
-						if(parseFloat($ieps.val())>0 && parseFloat($campo_impuesto_retenido.val())<=0){
-							$('#forma-pocpedidos-window').find('.pocpedidos_div_one').css({'height':'580px'});
+						//$('#forma-pocpedidos-window').find('.pocpedidos_div_one').css({'height':'588px'});//con errores
+						
+						var valorHeight=550;
+						
+						if(parseFloat(quitar_comas($('#forma-pocpedidos-window').find('input[name=monto_descuento]').val()))>0){
+							valorHeight = parseFloat(valorHeight) + 30;
 						}
 						
-						if(parseFloat($ieps.val())<=0 && parseFloat($campo_impuesto_retenido.val())>0){
-							$('#forma-pocpedidos-window').find('.pocpedidos_div_one').css({'height':'580px'});
+						if(parseFloat(quitar_comas($ieps.val()))>0){
+							valorHeight = parseFloat(valorHeight) + 25;
 						}
+						if(parseFloat(quitar_comas($campo_impuesto_retenido.val()))>0){
+							valorHeight = parseFloat(valorHeight) + 25;
+						}
+						$('#forma-pocpedidos-window').find('.pocpedidos_div_one').css({'height':valorHeight+'px'});
+								
 						
-						if(parseFloat($ieps.val())>0 && parseFloat($campo_impuesto_retenido.val())>0){
-							$('#forma-pocpedidos-window').find('.pocpedidos_div_one').css({'height':'600px'});
-						}
 						$('#forma-pocpedidos-window').find('div.interrogacion').css({'display':'none'});
 						
 						$grid_productos.find('#cant').css({'background' : '#ffffff'});
@@ -4114,6 +4337,9 @@ $(function() {
 						
 						$('#forma-pocpedidos-window').find('#div_warning_grid').css({'display':'none'});
 						$('#forma-pocpedidos-window').find('#div_warning_grid').find('#grid_warning').children().remove();
+						
+						$grid_productos.find('input[name=reqauth]').val('false');
+						var contador_alert=0;
 						
 						var valor = data['success'].split('___');
 						//muestra las interrogaciones
@@ -4176,6 +4402,33 @@ $(function() {
 									if(parseFloat(cant_prod) > 0 ){
 										$campo_input.parent().parent().find('input[name=checkProd]').show();
 									}
+								}
+								
+								if(tmp.split(':')[0].substring(0,9)=='checkauth'){
+									//alert(tmp);
+									$grid_productos.find('.'+tmp.split(':')[0]).show();
+									$grid_productos.find('.'+tmp.split(':')[0]).parent().find('input[name=reqauth]').val('true');
+									
+									if(parseInt(contador_alert)<=0){
+										//Confirm para guardar sin autorizacion
+										jConfirm('Hay precios que necesitan autorizaci&oacute;n.<br>&iquest;Desea guardar para autorizar despu&eacute;s&#63;', 'Dialogo de Confirmacion', function(r) {
+											// If they confirmed, manually trigger a form submission
+											if (r) {
+												//Asignar los estatus correspondientes para permitir guardar sin autorizacion
+												$grid_productos.find('input[name=checkauth]').each(function(index){
+													$tr = $(this).parent().parent();
+													if(parseInt($tr.find('input[name=eliminado]').val())==1){
+														$tr.find('input[name=success]').val('true');
+													}
+												});
+												
+												//Ejecutar el submit de actualizar
+												$submit_actualizar.trigger('click');
+											}
+										});
+									}
+									
+									contador_alert++;
 								}
 								
 							}
@@ -4275,6 +4528,7 @@ $(function() {
 					
 					$tipo_cambio.val(entry['datosPedido'][0]['tipo_cambio']);
 					$tipo_cambio_original.val(entry['datosPedido'][0]['tipo_cambio']);
+					$tc_usd_sat.val(entry['Tc'][0]['tipo_cambio']);
 					
 					$no_cuenta.val(entry['datosPedido'][0]['no_cuenta']);
 					
@@ -4298,11 +4552,8 @@ $(function() {
 					});
 					$select_moneda.append(moneda_hmtl);
 					$select_moneda.find('option').clone().appendTo($select_moneda_original);
-                    
-					//$campo_tc.val();
-					//$id_impuesto.val();
-					//$valor_impuesto.val();
-					//$campo_tc.val(entry['tc']['tipo_cambio']);
+					
+					
 					$id_impuesto.val(entry['iva'][0]['id_impuesto']);
 					$valor_impuesto.val(entry['iva'][0]['valor_impuesto']);
 					
@@ -4445,8 +4696,8 @@ $(function() {
 							
 							var trr = '';
 							trr = '<tr>';
-							trr += '<td class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;" width="60">';
-									trr += '<a href="elimina_producto" id="delete'+ tr +'">Eliminar</a>';
+							trr += '<td class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;" width="25">';
+									trr += '<a href="elimina_producto" id="delete'+ tr +'"><div id="eliminar'+ tr +'" class="onmouseOutEliminar" style="width:24px; background-position:center;"/></a>';
 									//El 1 significa que el registro no ha sido eliminado
 									trr += '<input type="hidden" name="eliminado" id="elim" value="1">';
 									//Este es el id del registro que ocupa el producto en la tabla pocpedidos_detalles
@@ -4488,7 +4739,13 @@ $(function() {
 								var precio_u_con_descto = parseFloat( parseFloat(prod['precio_unitario']) - (parseFloat(prod['precio_unitario'])*(parseFloat(prod['descto'])/100)) ).toFixed(4);
 								
 								trr += '<input type="hidden" 	name="vdescto" id="vdescto" value="'+ prod['descto'] +'">';
-								trr += '<input type="hidden" 	name="pu_descto" id="pu_descto" value="'+ precio_u_con_descto +'">';								
+								trr += '<input type="hidden" 	name="pu_descto" id="pu_descto" value="'+ precio_u_con_descto +'">';
+								
+								//Se toma la moneda del precio como moneda del precio
+								trr += '<input type="hidden" 	name="id_mon_pre" id="id_moneda" value="'+ $select_moneda.val() +'">';
+								//Se toma el precio como precio original porque ya no disponemos del precio de la lista de precios
+								trr += '<input type="hidden" 	name="pre_original" id="prec_original" value="'+ prod['precio_unitario'] +'">';
+								
 							trr += '</td>';
 							
 							trr += '<td class="grid2" style="font-size:11px;  border:1px solid #C1DAD7;" width="90">';
@@ -4527,7 +4784,7 @@ $(function() {
 							
 							trr += '<td class="grid2" id="td_oculto'+ tr +'" style="font-size:11px;  border:1px solid #C1DAD7;" width="80">';
 								trr += '<input type="text" 		name="produccion" 	value="'+cant_prod+'" 	 class="borde_oculto" readOnly="true" style="width:76px; text-align:right;">';
-								trr += '<input type="hidden"    name="existencia" 	value="0" 	>';
+								trr += '<input type="hidden"    name="existencia" 	value="0">';
 							trr += '</td>';
 							
 							var desactivado="";
@@ -4539,11 +4796,39 @@ $(function() {
 								trr += '<input type="hidden" 	name="seleccionado" value="'+valor_seleccionado+'">';//el 1 significa que el registro no ha sido eliminado
 							trr += '</td>';
 							
+							trr += '<td class="grid2" style="font-size:11px;  border:1px solid #C1DAD7;" width="20" id="td_check_auth'+ tr +'">';
+								trr += '<input type="hidden" 	name="statusreg"   	class="statusreg'+ tr +'" value="'+ prod['status_aut'] +'">';
+								trr += '<input type="hidden" 	name="reqauth"   	class="reqauth'+ tr +'" value="false">';
+								trr += '<input type="hidden" 	name="success"   	class="success'+ tr +'" value="false">';
+								trr += '<input type="checkbox" 	name="checkauth" 	class="checkauth'+ tr +'">';
+							trr += '</td>';
+							
 							trr += '</tr>';
 							$grid_productos.append(trr);
                             
                             
-                           
+							$grid_productos.find('.checkauth'+tr).hide();
+							
+							$grid_productos.find('.checkauth'+ tr).click(function(event){
+								if(this.checked){
+									$btn_autorizar.show();
+								}else{
+									var cont_check=0;
+									$grid_productos.find('input[name=checkauth]').each(function(index){
+										if(this.checked){
+											if(parseInt($(this).parent().parent().find('input[name=eliminado]').val())==1){
+												cont_check++;
+											}
+										}
+									});
+									
+									if(parseInt(cont_check)<=0){
+										$btn_autorizar.hide();
+									}
+								}
+							});
+							
+							
 							//carga select de metodos de pago
 							$grid_productos.find('select.select_umedida'+tr).children().remove();
 							var hmtl_um="";
@@ -4611,7 +4896,8 @@ $(function() {
 									$campoCantidad.val(parseFloat($campoCantidad.val()).toFixed(parseInt(prod['no_dec'])));
 								}
 								
-								if( ($campoCantidad.val().trim() != '') && ($campoPrecioU.val().trim() != '') ){   
+								if( ($campoCantidad.val().trim() != '') && ($campoPrecioU.val().trim() != '') ){
+									
 									//Calcula el importe
 									$campoImporte.val(parseFloat($campoCantidad.val()) * parseFloat($campoPrecioU.val()));
 									
@@ -4678,6 +4964,9 @@ $(function() {
 									$campoPrecioU.val(parseFloat($campoPrecioU.val()).toFixed(4));
 								}
 								
+								//Quitar marca que indica que requiere autorizacion
+								$(this).parent().parent().find('input[name=reqauth]').val('false');
+								
 								if( ($campoPrecioU.val().trim() != '') && ($campoCantidad.val().trim() != '') ){
 									//Calcula el importe
 									$campoImporte.val(parseFloat($campoPrecioU.val()) * parseFloat($campoCantidad.val()));
@@ -4735,6 +5024,14 @@ $(function() {
 									$calcula_totales();//llamada a la funcion que calcula totales
 								}
 							});
+							
+							$grid_productos.find('#eliminar'+ tr).mouseover(function(){
+								$(this).removeClass("onmouseOutEliminar").addClass("onmouseOverEliminar");
+							});
+							$grid_productos.find('#eliminar'+ tr).mouseout(function(){
+								$(this).removeClass("onmouseOverEliminar").addClass("onmouseOutEliminar");
+							});
+							
 						});
 						
 					}
@@ -5365,6 +5662,101 @@ $(function() {
 								}
 							}
 						});
+						
+						
+						//Aplicar tipo de cambio a todos los precios al cambiar valor de tipo de cambio
+						$tipo_cambio.blur(function(){
+							if($(this).val().trim()==''){
+								$(this).val(0);
+							}
+							
+							$(this).val(parseFloat($(this).val()).toFixed(4));
+							
+							if(parseFloat($(this).val())>=parseFloat($tc_usd_sat.val())){
+								$grid_productos.find('tr').each(function (index){
+									
+									var $campoCantidad = $(this).find('#cant');
+									var $campoPrecioU = $(this).find('input[name=costo]');
+									var $campoImporte = $(this).find('#import');
+									
+									var $campoTasaIeps = $(this).find('#tasaIeps');
+									var $importeIeps = $(this).find('#importeIeps');
+									
+									var $campoTasaIva = $(this).find('#ivalorimp');
+									var $importeIva = $(this).find('#totimp');
+									
+									var $vdescto = $(this).find('#vdescto');
+									var $pu_con_descto = $(this).find('#pu_descto');
+									var $importe_del_descto = $(this).find('#importe_del_descto');
+									var $importe_con_descto = $(this).find('#importe_con_descto');
+									
+									var $campoMonedaPrecioOriginalPartida = $(this).find('input[name=id_mon_pre]');
+									var $campoPrecioOriginalPartida = $(this).find('input[name=pre_original]');
+									
+									if ($campoPrecioU.val().trim() == ''){
+										$campoPrecioU.val(' ');
+									}else{
+										$campoPrecioU.val(parseFloat($campoPrecioU.val()).toFixed(4));
+									}
+									
+									if( ($campoPrecioU.val().trim()!='') && ($campoCantidad.val().trim()!='') ){
+										
+										if( parseInt($campoMonedaPrecioOriginalPartida.val()) != parseInt($select_moneda.val()) ){
+											if(parseInt($campoMonedaPrecioOriginalPartida.val())==1 && parseInt($select_moneda.val())!=1){
+												//Si la moneda original es pesos, calculamos su equivalente a dolares
+												precio_cambiado = parseFloat($campoPrecioOriginalPartida.val()) / parseFloat($tipo_cambio.val());
+											}
+											
+											if(parseInt($campoMonedaPrecioOriginalPartida.val())!=1 && parseInt($select_moneda.val())==1){
+												//Si la moneda original es dolar, calculamos su equivalente a pesos
+												precio_cambiado = parseFloat($campoPrecioOriginalPartida.val()) * parseFloat($tipo_cambio.val());
+											}
+											
+											$campoPrecioU.val(parseFloat(precio_cambiado).toFixed(4));
+										}
+										
+										
+										//Calcula el importe
+										$campoImporte.val(parseFloat($campoPrecioU.val()) * parseFloat($campoCantidad.val()));
+										//Redondea el importe en dos decimales
+										//$(this).parent().parent().find('#import').val(Math.round(parseFloat($(this).parent().parent().find('#import').val())*100)/100);
+										$campoImporte.val( parseFloat($campoImporte.val()).toFixed(4));
+										
+										//Calcular el importe del IEPS
+										$importeIeps.val(parseFloat(parseFloat($campoImporte.val()) * (parseFloat($campoTasaIeps.val())/100)).toFixed(4));
+										
+										//Calcula el impuesto para este producto multiplicando el importe por el valor del iva
+										$importeIva.val((parseFloat($campoImporte.val()) + parseFloat($importeIeps.val())) * parseFloat($campoTasaIva.val()));
+										
+										if($pdescto.val().trim()=='true'){
+											if(parseFloat($vdescto.val())>0){
+												$pu_con_descto.val(parseFloat(parseFloat($campoPrecioU.val()) - (parseFloat($campoPrecioU.val()) * (parseFloat($vdescto.val())/100))).toFixed(4));
+												$importe_del_descto.val(parseFloat(parseFloat($campoImporte.val()) * (parseFloat($vdescto.val())/100)).toFixed(4));
+												$importe_con_descto.val(parseFloat(parseFloat($campoImporte.val()) - parseFloat($importe_del_descto.val())).toFixed(4));
+												
+												//Calcular y redondear el importe del IEPS, tomando el importe con descuento
+												$importeIeps.val(parseFloat(parseFloat($importe_con_descto.val()) * (parseFloat($campoTasaIeps.val())/100)).toFixed(4));
+												
+												//Calcular el impuesto para este producto multiplicando el importe_con_descto + ieps por la tasa del iva
+												$importeIva.val( (parseFloat($importe_con_descto.val()) + parseFloat($importeIeps.val())) * parseFloat( $campoTasaIva.val() ));
+											}
+										}
+										
+									}else{
+										$campoImporte.val(0);
+										$importeIva.val(0);
+									}
+									
+									//Llamada a la funcion que calcula totales
+									$calcula_totales();
+								});
+							}else{
+								jAlert('El TC USD para la conversion de precios no debe ser menor a '+$tc_usd_sat.val()+'.', 'Atencion!', function(r) { 
+									$tipo_cambio.focus(); 
+								});
+							}
+						});
+						
 					}
 					
 					
@@ -5579,6 +5971,12 @@ $(function() {
 						jAlert("No se esta enviando el identificador  del pedido","Atencion!!!")
 					}
 				 });
+                
+                
+				$btn_autorizar.click(function(event){
+					//LLamada a la funcion de la ventana de autorizacion
+					$forma_autorizacion($grid_productos, $btn_autorizar, id_to_show);
+				});
                 
                 
 				$submit_actualizar.bind('click',function(){

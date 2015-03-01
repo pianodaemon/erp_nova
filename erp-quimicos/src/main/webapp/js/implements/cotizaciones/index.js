@@ -1214,11 +1214,6 @@ $(function() {
 			
 			$grid_productos.find('.checkauth'+tr).hide();
 			
-			//var reg_aut = "status=0|value=0";
-			//<input type="button" id="auth" value="Autorizar" style="font-weight: bold;width:110px;">
-			
-			
-			
 			$grid_productos.find('.checkauth'+ tr).click(function(event){
 				if(this.checked){
 					$('#forma-cotizacions-window').find('#btn_autorizar').show();
@@ -1474,6 +1469,9 @@ $(function() {
 				
 				//importe de la partida en la Moneda de la cotizacion
 				//var $importePartidaMonCot = $(this).parent().parent().find('.impMonCot'+ tr);
+				
+				//Quitar marca que indica que requiere autorizacion
+				$(this).parent().parent().find('input[name=reqauth]').val('false');
 				
 				$(this).val(quitar_comas($(this).val()));
 				
@@ -2009,7 +2007,6 @@ $(function() {
 		});
 		
 		$idauth.focus();
-		
 	}
 	
 	
@@ -3139,7 +3136,6 @@ $(function() {
 						});
 					}
 				});
-						
 				
 				
 				//pone cero al perder el enfoque

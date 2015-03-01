@@ -556,7 +556,12 @@ $(function() {
 											tr_warning += '</tr>';
 											$grid_warning.append(tr_warning);
 										}
+										
+										if(tmp.split(':')[0]=='checkauth'){
+											jAlert(tmp.split(':')[1], 'Atencion!', function(r) { $autorizar.focus(); });
+										}
 									}
+									
 								}
 							}
 						}
