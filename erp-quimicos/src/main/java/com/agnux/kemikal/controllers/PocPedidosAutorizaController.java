@@ -211,12 +211,8 @@ public class PocPedidosAutorizaController {
         ArrayList<HashMap<String, String>> datosPedido = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> datosGrid = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> valorIva = new ArrayList<HashMap<String, String>>();
-        ArrayList<HashMap<String, String>> monedas = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> tipoCambioActual = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> tc = new HashMap<String, String>();
-        ArrayList<HashMap<String, String>> vendedores = new ArrayList<HashMap<String, String>>();
-        ArrayList<HashMap<String, String>> condiciones = new ArrayList<HashMap<String, String>>();
-        ArrayList<HashMap<String, String>> metodos_pago = new ArrayList<HashMap<String, String>>();
         
         HashMap<String, String> userDat = new HashMap<String, String>();
         
@@ -236,19 +232,14 @@ public class PocPedidosAutorizaController {
         tc.put("tipo_cambio", StringHelper.roundDouble(this.getPocDao().getTipoCambioActual(), 4)) ;
         tipoCambioActual.add(0,tc);
         
-        monedas = this.getPocDao().getMonedas();
-        vendedores = this.getPocDao().getAgentes(id_empresa, id_sucursal);
-        condiciones = this.getPocDao().getCondicionesDePago();
-        metodos_pago = this.getPocDao().getMetodosPago();
-        
         jsonretorno.put("datosPedido", datosPedido);
         jsonretorno.put("datosGrid", datosGrid);
         jsonretorno.put("iva", valorIva);
-        jsonretorno.put("Monedas", monedas);
+        jsonretorno.put("Monedas", this.getPocDao().getMonedas());
         jsonretorno.put("Tc", tipoCambioActual);
-        jsonretorno.put("Vendedores", vendedores);
-        jsonretorno.put("Condiciones", condiciones);
-        jsonretorno.put("MetodosPago", metodos_pago);
+        jsonretorno.put("Vendedores", this.getPocDao().getAgentes(id_empresa, id_sucursal));
+        jsonretorno.put("Condiciones", this.getPocDao().getCondicionesDePago());
+        jsonretorno.put("MetodosPago", this.getPocDao().getMetodosPago());
         
         return jsonretorno;
     }

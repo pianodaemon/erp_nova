@@ -187,6 +187,36 @@ public class PocPedidosController {
     }
     
     
+    
+    //Valida el usuario que autoriza precios
+    @RequestMapping(method = RequestMethod.POST, value="/getAuth.json")
+    public @ResponseBody HashMap<String,Object> getAuthJson(
+            @RequestParam(value="cad", required=true) String cadena_autorizacion,
+            @RequestParam(value="iu", required=true) String id_user_cod,
+            Model model
+        ) {
+        
+        HashMap<String,Object> jsonretorno = new HashMap<String,Object>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        
+        //Decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        String id_sucursal = userDat.get("sucursal_id");
+        
+        HashMap<String,String> hash_autorizacion = StringHelper.convert2hash(StringHelper.ascii2string(cadena_autorizacion));
+        String username = StringHelper.isNullString(String.valueOf(hash_autorizacion.get("idauth")));
+        String password = StringHelper.isNullString(String.valueOf(hash_autorizacion.get("passauth")));
+        
+        System.out.println("cadena_autorizacion: "+cadena_autorizacion);
+        System.out.println("username: "+username+"    password: "+password);
+        
+        jsonretorno.put("Data", this.getPocDao().getValidarUser(username, password, id_sucursal));
+        
+        return jsonretorno;
+    }
+    
+    
     //Trae los datos del pedido
     @RequestMapping(method = RequestMethod.POST, value="/getPedido.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getPedidoJson(
@@ -200,25 +230,17 @@ public class PocPedidosController {
         ArrayList<HashMap<String, String>> datosPedido = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> datosGrid = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> valorIva = new ArrayList<HashMap<String, String>>();
-        ArrayList<HashMap<String, String>> monedas = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> tipoCambioActual = new ArrayList<HashMap<String, String>>();
-        ArrayList<HashMap<String, String>> vendedores = new ArrayList<HashMap<String, String>>();
-        ArrayList<HashMap<String, String>> condiciones = new ArrayList<HashMap<String, String>>();
-        ArrayList<HashMap<String, String>> metodos_pago = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> arrayExtra = new ArrayList<HashMap<String, String>>();
-        ArrayList<HashMap<String, String>> almacenes = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> datosTrans = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> paises = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> estadosOrigen = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> municipiosOrigen = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> estadosDestino = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> municipiosDestino = new ArrayList<HashMap<String, String>>();
-        ArrayList<HashMap<String, String>> unidadesMedida = new ArrayList<HashMap<String, String>>();
-        ArrayList<HashMap<String, String>> ieps = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> extra = new HashMap<String, String>();
         HashMap<String, String> tc = new HashMap<String, String>();
         HashMap<String, String> parametros = new HashMap<String, String>();
-        
         HashMap<String, String> userDat = new HashMap<String, String>();
         
         //Decodificar id de usuario
@@ -261,15 +283,6 @@ public class PocPedidosController {
         tc.put("tipo_cambio", StringHelper.roundDouble(this.getPocDao().getTipoCambioActual(), 4));
         tipoCambioActual.add(0,tc);
         
-        monedas = this.getPocDao().getMonedas();
-        vendedores = this.getPocDao().getAgentes(id_empresa, id_sucursal);
-        condiciones = this.getPocDao().getCondicionesDePago();
-        metodos_pago = this.getPocDao().getMetodosPago();
-        almacenes = this.getPocDao().getPocPedido_Almacenes(id_sucursal);
-        paises = this.getPocDao().getPaises();
-        unidadesMedida = this.getPocDao().getUnidadesMedida();
-        ieps = this.getPocDao().getIeps(id_empresa, 0);
-        
         if(userDat.get("transportista").toLowerCase().equals("true")){
             //Aqui solo entra cuando la emprsa es transportista
             if(id_pedido.equals("0")){
@@ -278,25 +291,27 @@ public class PocPedidosController {
             }
         }
         
+        paises = this.getPocDao().getPaises();
+        
         arrayExtra.add(0,extra);
         jsonretorno.put("datosPedido", datosPedido);
         jsonretorno.put("datosGrid", datosGrid);
         jsonretorno.put("iva", valorIva);
-        jsonretorno.put("Monedas", monedas);
         jsonretorno.put("Tc", tipoCambioActual);
-        jsonretorno.put("Vendedores", vendedores);
-        jsonretorno.put("Condiciones", condiciones);
-        jsonretorno.put("MetodosPago", metodos_pago);
         jsonretorno.put("Extras", arrayExtra);
-        jsonretorno.put("Almacenes", almacenes);
         jsonretorno.put("datosTrans", datosTrans);
         jsonretorno.put("Paises", paises);
         jsonretorno.put("EdoOrig", estadosOrigen);
         jsonretorno.put("MunOrig", municipiosOrigen);
         jsonretorno.put("EdoDest", estadosDestino);
         jsonretorno.put("MunDest", municipiosDestino);
-        jsonretorno.put("UM", unidadesMedida);
-        jsonretorno.put("Ieps", ieps);
+        jsonretorno.put("Monedas", this.getPocDao().getMonedas());
+        jsonretorno.put("Vendedores", this.getPocDao().getAgentes(id_empresa, id_sucursal));
+        jsonretorno.put("Condiciones", this.getPocDao().getCondicionesDePago());
+        jsonretorno.put("MetodosPago", this.getPocDao().getMetodosPago());
+        jsonretorno.put("Almacenes", this.getPocDao().getPocPedido_Almacenes(id_sucursal));
+        jsonretorno.put("UM", this.getPocDao().getUnidadesMedida());
+        jsonretorno.put("Ieps", this.getPocDao().getIeps(id_empresa, 0));
         return jsonretorno;
     }
     
@@ -395,13 +410,13 @@ public class PocPedidosController {
     
     //Obtener datos del cliente a partir del Numero de Control
     @RequestMapping(method = RequestMethod.POST, value="/getDatosCotizacion.json")
-    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getDatosCotizacionJson(
+    public @ResponseBody HashMap<String,Object> getDatosCotizacionJson(
             @RequestParam(value="no_cot", required=true) String folio_cot,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
         ) {
         
-        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        HashMap<String,Object> jsonretorno = new HashMap<String,Object>();
         ArrayList<HashMap<String, String>> datosCotizacion = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> datosGridCotizacion = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
@@ -418,13 +433,18 @@ public class PocPedidosController {
         parametros = this.getPocDao().getPocPedido_Parametros(id_empresa, id_sucursal);
         String permite_descto = parametros.get("permitir_descto").toLowerCase();
         
-        datosCotizacion = this.getPocDao().getPocPedido_DatosCotizacion(folio_cot, id_empresa);
-        if(datosCotizacion.size()>0){
-            datosGridCotizacion = this.getPocDao().getPocPedido_DatosCotizacionGrid(datosCotizacion.get(0).get("id_cot"));
+        HashMap<String, Object> verif_cotizacion = this.getPocDao().getVerificarCotizacion(folio_cot, id_sucursal);
+        
+        if(String.valueOf(verif_cotizacion.get("success")).equals("true")){
+            datosCotizacion = this.getPocDao().getPocPedido_DatosCotizacion(folio_cot, id_empresa);
+            if(datosCotizacion.size()>0){
+                datosGridCotizacion = this.getPocDao().getPocPedido_DatosCotizacionGrid(datosCotizacion.get(0).get("id_cot"));
+            }
         }
         
         jsonretorno.put("COTDATOS", datosCotizacion);
         jsonretorno.put("COTGRID", datosGridCotizacion);
+        jsonretorno.put("VERIF", verif_cotizacion);
         
         return jsonretorno;
     }
@@ -799,12 +819,7 @@ public class PocPedidosController {
         jsonretorno.put("Dest", this.getPocDao().getDatosByNoDestinatario(no_control, id_empresa, id_sucursal));
         
         return jsonretorno;
-    }    
-    
-    
-    
-    
-    
+    }
     
     
     
@@ -851,6 +866,9 @@ public class PocPedidosController {
             @RequestParam(value="idcot", required=false) String[] idcot,
             @RequestParam(value="iddetcot", required=false) String[] iddetcot,
             @RequestParam(value="nocot", required=true) String[] nocot,
+            @RequestParam(value="statusreg", required=true) String[] statusreg,
+            @RequestParam(value="reqauth", required=true) String[] reqauth,
+            @RequestParam(value="success", required=true) String[] salvar_registro,
             
             @RequestParam(value="transportista", required=true) String transportista,
             @RequestParam(value="check_flete", required=false) String check_flete,
@@ -896,12 +914,22 @@ public class PocPedidosController {
                     folio_cot=nocot[i];
                 }
                 
+                //statreg&&&valuereg&&&ident
+                String partida[] = statusreg[i].split("\\&&&");
+                //partida[0]    Estatus autorizacion
+                //partida[1]    Valor precio autorizado
+                //partida[2]    Usuario que autoriza
+                
+                String stat_reg = (StringHelper.isNullString(String.valueOf(partida[0])).equals("0"))? "false":"true";
+                String precio_autorizado = StringHelper.isNullString(String.valueOf(partida[1]));
+                String id_user_autoriza = (partida[2].trim().equals("0"))?partida[2]:Base64Coder.decodeString(StringHelper.isNullString(String.valueOf(partida[2])));
+                
                 select_umedida[i] = StringHelper.verificarSelect(select_umedida[i]);
-                arreglo[i]= "'"+eliminado[i] +"___" + iddetalle[i] +"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + id_impuesto[i] +"___" + cantidad[i] +"___" + costo[i] + "___"+valor_imp[i] + "___"+noTr[i] + "___"+seleccionado[i]+ "___" + select_umedida[i] + "___" + idIeps[i] + "___" + tasaIeps[i]+ "___"+ vdescto[i] +"___"+ idcot[i] +"___"+ iddetcot[i] +"'";
+                arreglo[i]= "'"+eliminado[i] +"___" + iddetalle[i] +"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + id_impuesto[i] +"___" + cantidad[i] +"___" + costo[i] + "___"+valor_imp[i] + "___"+noTr[i] + "___"+seleccionado[i]+ "___" + select_umedida[i] + "___" + idIeps[i] + "___" + tasaIeps[i]+ "___"+ vdescto[i] +"___"+ idcot[i] +"___"+ iddetcot[i] +"___"+stat_reg+"___"+precio_autorizado+"___"+id_user_autoriza+"___"+reqauth[i]+"___"+salvar_registro[i]+"'";
                 //System.out.println(arreglo[i]);
             }
             
-            //serializar el arreglo
+            //Serializar el arreglo
             String extra_data_array = StringUtils.join(arreglo, ",");
             
             if( id_pedido==0 ){

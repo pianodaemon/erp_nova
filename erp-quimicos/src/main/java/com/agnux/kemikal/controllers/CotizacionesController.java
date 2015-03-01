@@ -6,7 +6,6 @@ package com.agnux.kemikal.controllers;
 
 import com.agnux.cfd.v2.Base64Coder;
 import com.agnux.common.helpers.FileHelper;
-import com.agnux.kemikal.reportes.pdfCotizacion;
 import com.agnux.common.helpers.StringHelper;
 import com.agnux.common.obj.DataPost;
 import com.agnux.common.obj.ResourceProject;
@@ -14,7 +13,11 @@ import com.agnux.common.obj.UserSessionData;
 import com.agnux.kemikal.interfacedaos.GralInterfaceDao;
 import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
 import com.agnux.kemikal.interfacedaos.PocInterfaceDao;
+import com.agnux.kemikal.reportes.pdfCotizacion;
 import com.itextpdf.text.DocumentException;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -23,26 +26,17 @@ import java.util.LinkedHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestParam;
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import javax.servlet.ServletOutputStream;
 import org.springframework.util.FileCopyUtils;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 
 /**
@@ -288,8 +282,6 @@ public class CotizacionesController {
         ArrayList<HashMap<String, String>> datosGrid = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> valorIva = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> monedas = new ArrayList<HashMap<String, String>>();
-        ArrayList<HashMap<String, String>> agentes = new ArrayList<HashMap<String, String>>();
-        ArrayList<HashMap<String, String>> incoterms = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> arrayExtra = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> extra = new HashMap<String, String>();
         HashMap<String, String> tc = new HashMap<String, String>();
@@ -325,8 +317,6 @@ public class CotizacionesController {
         tc.put("tipo_cambio", StringHelper.roundDouble(this.getPocDao().getTipoCambioActual(), 4));
         tipoCambioActual.add(0,tc);
         
-        agentes = this.getPocDao().getAgentes(id_empresa, id_sucursal);
-        incoterms = this.getPocDao().getCotizacion_Incoterms(id_empresa, Integer.parseInt(id_cotizacion));
         
         //if(parametros.get("cambiar_unidad_medida").toLowerCase().equals("true")){
             jsonretorno.put("UM", this.getPocDao().getUnidadesMedida());
@@ -339,8 +329,8 @@ public class CotizacionesController {
         jsonretorno.put("Monedas", monedas);
         jsonretorno.put("Extras", arrayExtra);
         jsonretorno.put("Tc", tipoCambioActual);
-        jsonretorno.put("Agentes", agentes);
-        jsonretorno.put("Incoterms", incoterms);
+        jsonretorno.put("Agentes", this.getPocDao().getAgentes(id_empresa, id_sucursal));
+        jsonretorno.put("Incoterms", this.getPocDao().getCotizacion_Incoterms(id_empresa, Integer.parseInt(id_cotizacion)));
         
         return jsonretorno;
     }
@@ -621,7 +611,6 @@ public class CotizacionesController {
                 
                 System.out.println("statusreg[i]: "+statusreg[i]);
                 
-                //reg_aut = '0&&&0&&&0';
                 //statreg&&&valuereg&&&ident
                 String partida[] = statusreg[i].split("\\&&&");
                 //partida[0]    Estatus autorizacion

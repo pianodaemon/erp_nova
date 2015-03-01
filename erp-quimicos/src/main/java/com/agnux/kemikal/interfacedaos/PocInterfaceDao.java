@@ -125,4 +125,7 @@ public interface PocInterfaceDao{
     
     //Validar usuario que autoriza
     public HashMap<String, Object> getValidarUser(String username, String password, String id_suc);
+    
+    //Verifica si la Cotizacion no tiene precios pendientes de utorizar
+    public HashMap<String, Object> getVerificarCotizacion(String folio_cotizacion, Integer id_suc);
 }

@@ -31,14 +31,13 @@ public class PocSpringDao implements PocInterfaceDao{
     public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
-
-
+    
     @Override
     public HashMap<String, String> selectFunctionValidateAaplicativo(String data, Integer idApp, String string_array) {
         String sql_to_query = "select erp_fn_validaciones_por_aplicativo from erp_fn_validaciones_por_aplicativo('"+data+"',"+idApp+",array["+string_array+"]);";
         //System.out.println("Validacion:"+sql_to_query);
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
-
+        
         HashMap<String, String> hm = (HashMap<String, String>) this.jdbcTemplate.queryForObject(
             sql_to_query,
             new Object[]{}, new RowMapper() {
@@ -103,7 +102,7 @@ public class PocSpringDao implements PocInterfaceDao{
         //System.out.println("data_string: "+data_string);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
-            new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+            new Object[]{data_string,new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, Object> row = new HashMap<String, Object>();
@@ -264,7 +263,11 @@ public class PocSpringDao implements PocInterfaceDao{
             + "(poc_pedidos_detalle.cantidad - poc_pedidos_detalle.reservado) AS cant_produccion, "
             + "(CASE WHEN poc_pedidos_detalle.descto IS NULL THEN 0 ELSE poc_pedidos_detalle.descto END) AS descto,"
             + "(CASE WHEN poc_ped_cot.id IS NULL THEN 0 ELSE poc_ped_cot.poc_cot_id END) as id_cot, "
-            + "(CASE WHEN poc_ped_cot.id IS NULL THEN 0 ELSE poc_ped_cot.poc_cot_det_id END) as id_cot_det "
+            + "(CASE WHEN poc_ped_cot.id IS NULL THEN 0 ELSE poc_ped_cot.poc_cot_det_id END) as id_cot_det, "
+            + "(case when poc_pedidos_detalle.autorizado=true then 1 else 0 end) as status_aut,"
+            + "poc_pedidos_detalle.precio_aut,"
+            + "poc_pedidos_detalle.gral_usr_id_aut,"
+            + "poc_pedidos_detalle.requiere_aut "
         + "FROM poc_pedidos_detalle "
         + "LEFT JOIN inv_prod on inv_prod.id = poc_pedidos_detalle.inv_prod_id "
         + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = poc_pedidos_detalle.inv_prod_unidad_id "
@@ -310,6 +313,10 @@ public class PocSpringDao implements PocInterfaceDao{
                     
                     row.put("id_cot",String.valueOf(rs.getInt("id_cot")));
                     row.put("id_cot_det",String.valueOf(rs.getInt("id_cot_det")));
+                    
+                    row.put("status_aut",String.valueOf(rs.getInt("status_aut"))+"&&&"+StringHelper.roundDouble(rs.getDouble("precio_aut"),4)+"&&&"+Base64Coder.encodeString(String.valueOf(rs.getInt("gral_usr_id_aut"))));
+                    row.put("requiere_aut",String.valueOf(rs.getBoolean("requiere_aut")));
+                    
                     return row;
                 }
             }
@@ -343,6 +350,7 @@ public class PocSpringDao implements PocInterfaceDao{
             + "0::double precision AS monto_retencion,"
             + "poc_cot.total,"
             + "poc_cot.tipo_cambio,"
+            + "poc_cot.tc_usd,"
             + "poc_cot.cxc_agen_id,"
             + "cxc_clie.dias_credito_id,"
             + "cxc_clie.credito_suspendido, "
@@ -372,7 +380,7 @@ public class PocSpringDao implements PocInterfaceDao{
         //System.out.println("Obteniendo datos de la cotizacion: "+sql_query);
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
-            new Object[]{new String(folio_cotizacion), new Integer(id_empresa)}, new RowMapper() {
+            new Object[]{folio_cotizacion, new Integer(id_empresa)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, String> row = new HashMap<String, String>();
@@ -393,6 +401,7 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("retencion",StringHelper.roundDouble(rs.getDouble("monto_retencion"),2));
                     row.put("total",StringHelper.roundDouble(rs.getDouble("total"),2));
                     row.put("tipo_cambio",StringHelper.roundDouble(rs.getDouble("tipo_cambio"),4));
+                    row.put("tc_usd",StringHelper.roundDouble(rs.getDouble("tc_usd"),4));
                     row.put("cxc_agen_id",rs.getString("cxc_agen_id"));
                     row.put("dias_credito_id",rs.getString("dias_credito_id"));
                     row.put("credito_suspendido",String.valueOf(rs.getBoolean("credito_suspendido")));
@@ -443,7 +452,11 @@ public class PocSpringDao implements PocInterfaceDao{
             + "(CASE WHEN inv_prod_presentaciones.titulo IS NULL THEN '' ELSE inv_prod_presentaciones.titulo END) AS presentacion, "
             + "(CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS  decimales,  "
             + "poc_cot_detalle.cantidad,"
-            + "poc_cot_detalle.precio_unitario AS precio "
+            + "poc_cot_detalle.precio_unitario AS precio, "
+            + "(case when poc_cot_detalle.autorizado=true then 1 else 0 end) as status_aut,"
+            + "poc_cot_detalle.precio_aut,"
+            + "poc_cot_detalle.gral_usr_id_aut,"
+            + "poc_cot_detalle.requiere_aut "
         + "FROM poc_cot_detalle  "
         + "LEFT JOIN inv_prod on inv_prod.id = poc_cot_detalle.inv_prod_id "
         + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = poc_cot_detalle.inv_prod_unidad_id "
@@ -474,6 +487,9 @@ public class PocSpringDao implements PocInterfaceDao{
                     
                     row.put("cantidad",StringHelper.roundDouble(rs.getDouble("cantidad"),4));
                     row.put("precio",StringHelper.roundDouble(rs.getDouble("precio"),4));
+                    
+                    row.put("status_aut",String.valueOf(rs.getInt("status_aut"))+"&&&"+StringHelper.roundDouble(rs.getDouble("precio_aut"),4)+"&&&"+Base64Coder.encodeString(String.valueOf(rs.getInt("gral_usr_id_aut"))));
+                    row.put("requiere_aut",String.valueOf(rs.getBoolean("requiere_aut")));
                     
                     return row;
                 }
@@ -1465,7 +1481,7 @@ public class PocSpringDao implements PocInterfaceDao{
     public ArrayList<HashMap<String, String>> getPresentacionesProducto(String sku,String lista_precio, Integer id_empresa) {
         String sql_query = "";
         String precio = "";
-
+        
         if(lista_precio.equals("0")){
             precio=" 0::double precision AS precio,"
                     + "0::integer  AS id_moneda,"
@@ -3513,7 +3529,7 @@ public class PocSpringDao implements PocInterfaceDao{
     
     
     
-    
+    //Valida el usuario para autorizacion de precios
     @Override
     public HashMap<String, Object> getValidarUser(String username, String password, String id_suc) {
         HashMap<String, Object> data = new HashMap<String, Object>();
@@ -3535,6 +3551,36 @@ public class PocSpringDao implements PocInterfaceDao{
         return data;
     }
     
+    
+    //Verificar si la cotizacion no tiene pendiente autorizacion de precios
+    @Override
+    public HashMap<String, Object> getVerificarCotizacion(String folio_cotizacion, Integer id_suc) {
+        HashMap<String, Object> data = new HashMap<String, Object>();
+        
+        //Verificar si el usuario tiene  rol de ROLE_AUTH_PRECIO
+        String sql_to_query = "select count(poc_cot.id) as exis from poc_cot join erp_proceso on (erp_proceso.id=poc_cot.proceso_id and erp_proceso.sucursal_id="+id_suc+") where poc_cot.folio='"+folio_cotizacion+"';";
+        Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_to_query);
+        
+        if(Integer.parseInt(String.valueOf(map.get("exis")))>0){
+            sql_to_query = "select count(poc_cot_detalle.id) as count from poc_cot join erp_proceso on (erp_proceso.id=poc_cot.proceso_id and erp_proceso.sucursal_id="+id_suc+") join poc_cot_detalle on (poc_cot_detalle.poc_cot_id=poc_cot.id and poc_cot_detalle.requiere_aut=true and poc_cot_detalle.autorizado=false) where poc_cot.folio='"+folio_cotizacion+"';";
+            Map<String, Object> map2 = this.getJdbcTemplate().queryForMap(sql_to_query);
+            
+            if(Integer.parseInt(String.valueOf(map2.get("count")))>0){
+                data.put("success","false");
+                data.put("msj","La cotizaci&oacute;n tiene partidas con precios pendientes de autorizar.<br>Es necesario regresar a la cotizaci&oacute;n y pedir la autorizaci&oacute;n de precios.");
+            }else{
+                data.put("success","true");
+                data.put("msj","");
+            }
+            data.put("exis_cot","true");
+        }else{
+            data.put("exis_cot","false");
+            data.put("success","false");
+            data.put("msj","La cotizaci&oacute;n no existe.");
+        }
+        
+        return data;
+    }
     
     
 }
