@@ -594,6 +594,7 @@ $(function() {
 	
 	//calcula totales(subtotal,descuento, impuesto, total)
 	$calcula_totales = function(){
+		var $hidden_tipo_proveedor = $('#forma-entradamercancias-window').find('input[name=tipo_proveedor]');
 		//var $arreglo_grid = $('#forma-entradamercancias-window').find('input[name=arreglo]');
 		var $campo_flete = $('#forma-entradamercancias-window').find('input[name=flete]');
 		var $monto_iva_flete = $('#forma-entradamercancias-window').find('input[name=iva_flete]');
@@ -613,12 +614,13 @@ $(function() {
 		var impuesto = 0.00;
 		var partida=0;
 		var retencionfletes=0;
+		$monto_iva_flete.val(0);
 		
 		var $grid_productos = $('#forma-entradamercancias-window').find('#grid_productos');
 		$grid_productos.find('tr').each(function (index){
 			var $campoImportIeps=$(this).find('#import_ieps');
-				
-			if(($(this).find('#cost').val() != ' ') && ($(this).find('#cant').val() != ' ')){
+			
+			if(($(this).find('#cost').val().trim()!='') && ($(this).find('#cant').val().trim()!='')){
 				var id_ivatipo = $(this).find('#imp').val();
 				var valorImpuesto = 0;
 				//obtiene el valor del impuesto
@@ -635,19 +637,23 @@ $(function() {
 			}
 		});
 		
-		$.each(tiposIva,function(entryIndex,tipos){
-			if(parseInt(tipos['id'])==1){
-				//calcula iva del flete
-				$monto_iva_flete.val( parseFloat($campo_flete.val()) * parseFloat(tipos['iva_1'])  );
-			}
-		});
+		if(parseInt($hidden_tipo_proveedor.val()) != 2){
+			$.each(tiposIva,function(entryIndex,tipos){
+				if(parseInt(tipos['id'])==1){
+					//calcula iva del flete
+					$monto_iva_flete.val( parseFloat($campo_flete.val()) * parseFloat(tipos['iva_1'])  );
+				}
+			});
+		}
 		
 		sumaImpuesto = parseFloat(sumaImpuesto) + parseFloat($monto_iva_flete.val());
 		
 		sumaImporte = parseFloat(sumaImporte) + parseFloat($campo_flete.val());
 		
-		//calcula la retencion de fletes, para eso convierto la tasa de retencion 4% en su valor 0.04 dividiendola entre 100
-		retencionfletes = parseFloat($campo_flete.val()) * parseFloat(parseFloat($tasa_fletes.val())/100);
+		if(parseInt($hidden_tipo_proveedor.val()) != 2){
+			//Calcula la retencion de fletes, para eso convierto la tasa de retencion 4% en su valor 0.04 dividiendola entre 100
+			retencionfletes = parseFloat($campo_flete.val()) * parseFloat(parseFloat($tasa_fletes.val())/100);
+		}
 		
 		//se resta la retencion de fletes
 		//sumaImpuesto = parseFloat(sumaImpuesto) - parseFloat(retencionfletes);
@@ -2337,11 +2343,6 @@ $(function() {
 					var remove = function() { $(this).remove(); };
 					$('#forma-entradamercancias-overlay').fadeOut(remove);
 				});
-                                
-                                
-                                
-                                
-                                
 				
 			}
 		}

@@ -732,10 +732,14 @@ $(function() {
 							var num_dec = entry['Presentaciones'][0]['decimales'];
 							var cant_partida=0;
 							var prec_unitario=" ";
+							var id_moneda=1;
 							if(parseFloat(entry['Presentaciones'][0]['cu'])>0){
 								prec_unitario = entry['Presentaciones'][0]['cu'];
 							}
-							var id_moneda=0;
+							if(parseFloat(entry['Presentaciones'][0]['mon_id'])>0){
+								id_moneda = entry['Presentaciones'][0]['mon_id'];
+							}
+							
 							var id_req=0;
 							var iddet_req=0;
 							var folio_req=" ";
@@ -779,6 +783,7 @@ $(function() {
 										trr += '<span class="pres">'+pres['presentacion']+'</span>';
 										trr += '<span class="dec" style="display:none">'+pres['decimales']+'</span>';
 										trr += '<span class="cu" style="display:none">'+pres['cu']+'</span>';
+										trr += '<span class="monid" style="display:none">'+pres['mon_id']+'</span>';
 									trr += '</td>';
 								trr += '</tr>';
 								$tabla_resultados.append(trr);
@@ -798,7 +803,7 @@ $(function() {
 							}, function() {
 								$(this).find('td').css({'background-color':'#FFFFFF'});
 							});
-
+							
 							//seleccionar un producto del grid de resultados
 							$tabla_resultados.find('tr').click(function(){
 								//Llamada a la funcion que busca y agrega producto al grid, se le pasa como parametro el lote y el almacen
@@ -811,12 +816,15 @@ $(function() {
 								var num_dec = $(this).find('span.dec').html();
 								var cant_partida=0;
 								var prec_unitario=" ";
+								var id_moneda=1;
 								
 								if(parseFloat($(this).find('span.cu').html())>0){
 									prec_unitario = $(this).find('span.cu').html();
 								}
+								if(parseFloat($(this).find('span.monid').html())>0){
+									id_moneda=$(this).find('span.monid').html();;
+								}
 								
-								var id_moneda=0;
 								var id_req=0;
 								var iddet_req=0;
 								var folio_req=" ";
@@ -949,6 +957,7 @@ $(function() {
 		
 		var $id_impuesto = $('#forma-comordencompra-window').find('input[name=id_impuesto]');
 		var $valor_impuesto = $('#forma-comordencompra-window').find('input[name=valorimpuesto]');
+		
 		//si  el campo tipo de cambio es null o vacio, se le asigna un 0
 		if( $valor_impuesto.val()== null || $valor_impuesto.val()== ''){
 			$valor_impuesto.val(0);
@@ -974,7 +983,27 @@ $(function() {
 		
 		if(parseInt(encontrado)!=1){//si el producto no esta en el grid entra aqui
 			//ocultamos el boton facturar para permitir Guardar los cambios  antes de facturar
-			$('#forma-comordencompra-window').find('#facturar').hide();
+			//$('#forma-comordencompra-window').find('#facturar').hide();
+			
+			if(parseInt(prec_unitario)>0){
+				if(parseInt(id_moneda)>0){
+					if( parseInt($select_moneda.val()) != parseInt(id_moneda) ){
+						if(parseInt($select_moneda.val())==1 && parseInt(id_moneda)!=1){
+							//si la moneda del pedido es pesos y la moneda del precio es diferente de Pesos,
+							//entonces calculamos su equivalente a pesos
+							prec_unitario = parseFloat(parseFloat(prec_unitario) * parseFloat($tipo_cambio.val())).toFixed(4);
+						}
+						
+						if(parseInt($select_moneda.val())!=1 && parseInt(id_moneda)==1){
+							//alert("precioOriginal:"+precioOriginal +"		tc_original:"+$tc_original.val());
+							//si la moneda original es dolar y la moneda del precio es Pesos, calculamos su equivalente a dolar
+							prec_unitario = parseFloat(parseFloat(prec_unitario) / parseFloat($tipo_cambio.val()) ).toFixed(4);
+						}
+					}
+				}
+			}
+			
+			
 			//obtiene numero de trs
 			var tr = $("tr", $grid_productos).size();
 			tr++;
