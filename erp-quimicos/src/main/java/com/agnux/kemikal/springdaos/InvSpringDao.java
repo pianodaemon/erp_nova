@@ -1250,7 +1250,7 @@ public class InvSpringDao implements InvInterfaceDao{
         + "LEFT JOIN gral_mon ON gral_mon.id=com_fac.moneda_id "
         +"where com_fac.id="+ id + ";";
         
-        System.out.println("sql_to_query: "+sql_to_query);
+        //System.out.println("sql_to_query: "+sql_to_query);
         ArrayList<HashMap<String, String>> hm_datos_entrada = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -1314,7 +1314,7 @@ public class InvSpringDao implements InvInterfaceDao{
                             + "left JOIN gral_mun ON gral_mun.id = cxp_prov.municipio_id "
                             + "WHERE cxp_prov.id="+ id_proveedor;
 
-        System.out.println("sql_to_query:"+sql_to_query);
+        //System.out.println("sql_to_query:"+sql_to_query);
         ArrayList<HashMap<String, String>> hm_datos_proveedor = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -1518,7 +1518,7 @@ public class InvSpringDao implements InvInterfaceDao{
         
         //0=Sin Estatus, 1=Parcial(Surtido Parcial), 2=Surtido(Surtido Completo), 3=Cancelado
         
-        System.out.println("sql_to_query: "+sql_to_query);
+        //System.out.println("sql_to_query: "+sql_to_query);
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
