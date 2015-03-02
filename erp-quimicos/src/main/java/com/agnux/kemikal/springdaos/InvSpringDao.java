@@ -1194,7 +1194,7 @@ public class InvSpringDao implements InvInterfaceDao{
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
-            new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+            new Object[]{data_string,new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, Object> row = new HashMap<String, Object>();
@@ -1250,7 +1250,7 @@ public class InvSpringDao implements InvInterfaceDao{
         + "LEFT JOIN gral_mon ON gral_mon.id=com_fac.moneda_id "
         +"where com_fac.id="+ id + ";";
         
-        //System.out.println("sql_to_query: "+sql_to_query);
+        System.out.println("sql_to_query: "+sql_to_query);
         ArrayList<HashMap<String, String>> hm_datos_entrada = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -1298,7 +1298,7 @@ public class InvSpringDao implements InvInterfaceDao{
                                     + "cxp_prov.rfc, "
                                     + "cxp_prov.folio AS no_proveedor, "
                                     + "cxp_prov.razon_social, "
-                                    + "cxp_prov.calle||' '||cxp_prov.numero||', '||cxp_prov.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo ||' C.P. '||cxp_prov.cp as direccion, "
+                                    + "cxp_prov.calle||' '||cxp_prov.numero||', '||cxp_prov.colonia||', '||(case when gral_mun.titulo is null then '' else gral_mun.titulo end)||', '||(case when gral_edo.titulo is null then '' else gral_edo.titulo end)||', '||(case when gral_pais.titulo is null then '' else gral_pais.titulo end)||' C.P. '||cxp_prov.cp as direccion, "
                                     + "cxp_prov.calle,"
                                     + "cxp_prov.numero,"
                                     + "cxp_prov.colonia,"
@@ -1309,12 +1309,12 @@ public class InvSpringDao implements InvInterfaceDao{
                                     + "cxp_prov.cp, "
                                     + "cxp_prov.proveedortipo_id  "
                             + "FROM cxp_prov "
-                            + "JOIN gral_pais ON gral_pais.id = cxp_prov.pais_id "
-                            + "JOIN gral_edo ON gral_edo.id = cxp_prov.estado_id "
-                            + "JOIN gral_mun ON gral_mun.id = cxp_prov.municipio_id "
+                            + "left JOIN gral_pais ON gral_pais.id = cxp_prov.pais_id "
+                            + "left JOIN gral_edo ON gral_edo.id = cxp_prov.estado_id "
+                            + "left JOIN gral_mun ON gral_mun.id = cxp_prov.municipio_id "
                             + "WHERE cxp_prov.id="+ id_proveedor;
 
-        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        System.out.println("sql_to_query:"+sql_to_query);
         ArrayList<HashMap<String, String>> hm_datos_proveedor = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -1392,7 +1392,7 @@ public class InvSpringDao implements InvInterfaceDao{
         + "LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = com_fac_detalle.presentacion_id "
         + "LEFT JOIN com_fac_oc ON com_fac_oc.com_fac_det_id=com_fac_detalle.id "
         + "LEFT JOIN com_orden_compra ON com_orden_compra.id=com_fac_oc.com_oc_id "
-        + "WHERE com_fac_detalle.com_fac_id="+ id + ";";
+        + "WHERE com_fac_detalle.com_fac_id="+ id + " order by com_fac_detalle.id;";
         
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, String>> hm_datos_entrada = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
@@ -1513,7 +1513,8 @@ public class InvSpringDao implements InvInterfaceDao{
         + "WHERE com_orden_compra_detalle.com_orden_compra_id="+ id_orden_compra +" "
         + "AND com_orden_compra_detalle.surtir=true "
         + "AND com_orden_compra_detalle.estatus IN (0,1) "
-        + "AND (com_orden_compra_detalle.cantidad - (CASE WHEN com_orden_compra_detalle.cant_surtido IS NULL THEN 0 ELSE com_orden_compra_detalle.cant_surtido END))>0.0001;";
+        + "AND (com_orden_compra_detalle.cantidad - (CASE WHEN com_orden_compra_detalle.cant_surtido IS NULL THEN 0 ELSE com_orden_compra_detalle.cant_surtido END))>0.0001 "
+        + "order by com_orden_compra_detalle.id;";
         
         //0=Sin Estatus, 1=Parcial(Surtido Parcial), 2=Surtido(Surtido Completo), 3=Cancelado
         

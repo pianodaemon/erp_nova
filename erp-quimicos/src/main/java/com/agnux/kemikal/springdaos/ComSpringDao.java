@@ -439,7 +439,7 @@ public class ComSpringDao  implements ComInterfaceDao {
         +" LEFT JOIN inv_prod on inv_prod.id = com_oc_req_detalle.inv_prod_id "
         +" LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "
         +" LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = com_oc_req_detalle.presentacion_id "
-        +" WHERE com_oc_req_detalle.com_oc_req_id=?;";
+        +" WHERE com_oc_req_detalle.com_oc_req_id=? order by com_oc_req_detalle.id;";
 
         //System.out.println("Obtiene datos grid requisiciones: "+sql_query);
         ArrayList<HashMap<String, String>> hm_grid = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
