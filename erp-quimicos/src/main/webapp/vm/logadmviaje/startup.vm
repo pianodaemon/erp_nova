@@ -305,7 +305,10 @@
 														<tr>
 															<td width="10">&nbsp;</td>
 															<td width="50">Almacen</td>
-															<td width="180"><select name="select_almacen" style="width:180px;" title="Seleccionar el Almacen"></select></td>
+															<td width="180">
+																<select name="select_almacen" style="width:180px;" title="Seleccionar el Almacen"></select>
+																<input type="hidden" name="alm_actual" value="0">
+															</td>
 															<td width="30"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_almacen"></div></td>
 															<td width="100" align="right">
 																<input type="button" id="btn_confirmar" value="Confirmar" style="width:100px; font-weight:bold;">

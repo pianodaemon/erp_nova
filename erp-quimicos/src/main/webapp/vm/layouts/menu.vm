@@ -493,7 +493,8 @@
 													<li><a href="../logvehiculotiporodada/startup.agnux">Tipo Rodada</a></li>
 													<li><a href="../logvehiculotipocaja/startup.agnux">Tipo Caja</a></li>
 													<li><a href="../logtiporechazo/startup.agnux">Tipo de Rechazo</a></li>
-													<li><a href="../logtarifario/startup.agnux">Tarifario</a></li>
+													<li><a href="../logtarifario/startup.agnux">Tarifario por ruta</a></li>
+													<li><a href="../logtarifarioventa/startup.agnux">Tarifario de Venta</a></li>
 												</ul>
 											</li>
 											
