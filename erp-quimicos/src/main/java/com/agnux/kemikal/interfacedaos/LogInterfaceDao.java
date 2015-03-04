@@ -160,7 +160,8 @@ public interface LogInterfaceDao {
     public ArrayList<HashMap<String, Object>> getBuscador_Rutas(String no_ruta, String nombre_ruta, String poblacion, Integer id_empresa, Integer id_sucursal);
     
     //Obtener los tipos de tarifas
-    public ArrayList<HashMap<String, Object>> getTarifario_Tipos();
+    public ArrayList<HashMap<String, Object>> getTarifario_Tipos(Integer id_emp);
+    public ArrayList<HashMap<String, Object>> getTarifarioVenta_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
     public ArrayList<HashMap<String, Object>> getTarifarioVenta_Datos(Integer id);
-    public ArrayList<HashMap<String, Object>> getTarifarioVenta_DatosGrid(Integer id);
+    public ArrayList<HashMap<String, Object>> getTarifarioVenta_DatosGrid(Integer id, Integer id_emp);
 }
