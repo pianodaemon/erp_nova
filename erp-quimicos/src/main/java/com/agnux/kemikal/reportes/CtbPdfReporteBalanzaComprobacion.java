@@ -81,13 +81,13 @@ public class CtbPdfReporteBalanzaComprobacion {
         Font smallBoldFontWhite = new Font(Font.getFamily("ARIAL"),9,Font.BOLD,BaseColor.WHITE);
         Font smallFontBlack = new Font(Font.getFamily("ARIAL"),9,Font.NORMAL,BaseColor.BLACK);
         
-        float [] ancho_columnas = {1.5f, 5f, 1.5f,1.5f, 1.5f, 1.5f};
+        float [] ancho_columnas = {2f, 5f, 1.5f,1.5f, 1.5f, 1.5f};
         
         Font largeBoldFont = new Font(Font.FontFamily.HELVETICA,10,Font.BOLD,BaseColor.BLACK);
         Font smallFont = new Font(Font.FontFamily.HELVETICA,8,Font.NORMAL,BaseColor.BLACK);
         
         HeaderFooter event = new HeaderFooter(this.getDatosHeaderFooter());
-        Document doc = new Document(PageSize.LETTER.rotate(),-50,-50,60,30);
+        Document doc = new Document(PageSize.LETTER,-50,-50,60,30);
         //Document doc = new Document(PageSize.LETTER,-50,-50,60,30);
         doc.addCreator("gpmarsan@gmail.com");
         doc.addAuthor("Noe Martinez");
@@ -115,7 +115,7 @@ public class CtbPdfReporteBalanzaComprobacion {
             cellHead.setColspan(4);
             table.addCell(cellHead);
             
-            cellHead = new PdfPCell(new Paragraph("        RFC:          "+this.getDatosEmp().get("emp_rfc").toUpperCase(),smallFontBlack));
+            cellHead = new PdfPCell(new Paragraph("    RFC:        "+this.getDatosEmp().get("emp_rfc").toUpperCase(),smallFontBlack));
             cellHead.setHorizontalAlignment(Element.ALIGN_LEFT);
             cellHead.setVerticalAlignment(Element.ALIGN_MIDDLE);
             cellHead.setUseAscender(true);
@@ -136,7 +136,7 @@ public class CtbPdfReporteBalanzaComprobacion {
             cellHead.setColspan(4);
             table.addCell(cellHead);
             
-            cellHead = new PdfPCell(new Paragraph("        Impreso:    "+this.getDatosHeaderFooter().get("fecha_impresion"),smallFontBlack));
+            cellHead = new PdfPCell(new Paragraph("    Impreso:  "+this.getDatosHeaderFooter().get("fecha_impresion"),smallFontBlack));
             cellHead.setHorizontalAlignment(Element.ALIGN_LEFT);
             cellHead.setVerticalAlignment(Element.ALIGN_TOP);
             cellHead.setUseAscender(true);
