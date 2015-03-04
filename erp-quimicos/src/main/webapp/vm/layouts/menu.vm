@@ -552,9 +552,9 @@
 													<li class="topline"><a href="../ctbrepauxmovcta/startup.agnux">Auxiliar de Movimientos de Cuentas</a></li>
 													<li class="topline"><a href="../ctbrepbalanzacomp/startup.agnux">Balanza de Comprobaci&oacute;n</a></li>
 													<li class="topline"><a href="../ctbrepbalancegnl/startup.agnux">Balance General</a></li>
+													<li class="topline"><a href="../ctbrepestadoresult/startup.agnux">Estado de Resultados</a></li>
 													
 													<li class="topline"><a href="../ctbrepauxcta/startup.agnux">Auxiliar de Cuentas</a></li>
-													<li class="topline"><a href="../ctbrepestadoresult/startup.agnux">Estado de Resultados</a></li>
 													<li class="topline"><a href="../ctbreppolizacont/startup.agnux">P&oacute;lizas Contables</a></li>
 													<li class="topline"><a href="../ctbrepestadoresultanual/startup.agnux">Estado de Resultados Anual</a></li>
 													<li class="topline"><a href="../ctbreplibromayor/startup.agnux">Libro de Mayor</a></li>
