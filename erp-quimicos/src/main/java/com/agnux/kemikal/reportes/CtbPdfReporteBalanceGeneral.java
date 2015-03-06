@@ -131,7 +131,7 @@ public class CtbPdfReporteBalanceGeneral {
             cellHead.setColspan(2);
             table.addCell(cellHead);
             
-            String[] columnasHeader = {"Cuenta",""};
+            String[] columnasHeader = {"Concepto",""};
             List<String>  lista_columnas_header = (List<String>) Arrays.asList(columnasHeader);
             for ( String columna_titulo : lista_columnas_header){
                 PdfPCell cellX = new PdfPCell(new Paragraph(columna_titulo,smallBoldFontWhite));
@@ -139,13 +139,13 @@ public class CtbPdfReporteBalanceGeneral {
                 cellX.setUseDescender(true);
                 cellX.setBackgroundColor(BaseColor.BLACK);
                 
-                if (columna_titulo.equals("Cuenta")){
-                    cellX.setHorizontalAlignment(Element.ALIGN_CENTER);
+                if (columna_titulo.equals("Concepto")){
+                    cellX.setHorizontalAlignment(Element.ALIGN_LEFT);
                     cellX.setVerticalAlignment(Element.ALIGN_MIDDLE);   
                 }
-
+                
                 if (columna_titulo.equals("")){
-                    cellX.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                    cellX.setHorizontalAlignment(Element.ALIGN_LEFT);
                     cellX.setVerticalAlignment(Element.ALIGN_MIDDLE);
                     cellX.setColspan(2);
                 }

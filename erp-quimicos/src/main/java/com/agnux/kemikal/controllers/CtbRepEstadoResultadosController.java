@@ -196,7 +196,7 @@ public class CtbRepEstadoResultadosController {
         datosEmpresaEmisora.put("regedo", "");
         
         String[] fi = fecha.split("-");
-        String periodo_reporte = "Al  "+fi[2]+"/"+fi[1]+"/"+fi[0];
+        String periodo_reporte = "Del 01/01/"+fi[0]+" al "+fi[2]+"/"+fi[1]+"/"+fi[0];
         
         //Crear cadena para imprimir Fecha en el pie de pagina del PDF.
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
@@ -205,7 +205,7 @@ public class CtbRepEstadoResultadosController {
         //Agregar datos para el Encabezado y Pie de pagina
         datosEncabezadoPie.put("empresa", datosEmpresaEmisora.get("emp_razon_social"));
         //datosEncabezadoPie.put("titulo_reporte", this.getGralDao().getTituloReporte(id_empresa, app_selected));
-        datosEncabezadoPie.put("titulo_reporte", "Balance General");
+        datosEncabezadoPie.put("titulo_reporte", "Estado de Resultados");
         datosEncabezadoPie.put("periodo", periodo_reporte);
         datosEncabezadoPie.put("fecha_impresion", fecha_impresion);
         datosEncabezadoPie.put("codigo1", this.getGralDao().getCodigo1Iso(id_empresa, app_selected));
@@ -215,13 +215,14 @@ public class CtbRepEstadoResultadosController {
         String dir_tmp = this.getGralDao().getTmpDir();
         File file_dir_tmp = new File(dir_tmp);
         
-        String file_name = "RepBalanceGeneral_al_"+fecha+".pdf";
+        String file_name = "EstadoDeResultadosDel_01-01-"+fi[0]+"_al_"+fi[2]+"-"+fi[1]+"-"+fi[0]+".pdf";
         
         //Ruta de archivo de salida
         String fileout = file_dir_tmp +"/"+  file_name;
         
         datos = this.getCtbDao().getCtbRepBalanceGral_Datos(data_string);
         
+        //Utiliza el mismo PDF de Balance General
         CtbPdfReporteBalanceGeneral x = new CtbPdfReporteBalanceGeneral(fileout, datosEncabezadoPie, datosEmpresaEmisora, datos);
         
         System.out.println("Recuperando archivo:" + fileout);
