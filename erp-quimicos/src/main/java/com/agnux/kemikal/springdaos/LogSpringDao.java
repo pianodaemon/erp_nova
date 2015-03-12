@@ -2097,9 +2097,28 @@ public class LogSpringDao implements LogInterfaceDao{
         + "left join inv_prod_unidades as um on um.id=inv_prod.unidad_id "
         + "left join gral_mun on gral_mun.id=cxc_destinatarios.gral_mun_id  "
         + "left join log_status on log_status.id=log_doc_ped.log_status_id  "
+        
+        + "left join (select log_tarifa_clie.cxc_clie_id, log_tarifa_clie.log_tarifa_clase_id, log_tarifa_clie.log_tarifa_tipo_id, log_tarifario_venta.gral_mun_id, log_tarifa_tipo.operacion, log_tarifa_tipo.base, log_tarifario_venta_det.valor as precio from log_tarifa_clie join log_tarifario_venta on log_tarifario_venta.cxc_clie_id=log_tarifa_clie.cxc_clie_id  join log_tarifario_venta_det on (log_tarifario_venta_det.log_tarifario_venta_id=log_tarifario_venta.id and log_tarifario_venta_det.log_tarifa_tipo_id=log_tarifa_clie.log_tarifa_tipo_id) join log_tarifa_tipo on log_tarifa_tipo.id=log_tarifa_clie.log_tarifa_tipo_id "
+                + ") as tbl_tarifa on (tbl_tarifa.cxc_clie_id=cxc_clie.id and tbl_tarifa.log_tarifa_clase_id=log_doc_ped.log_tarifa_clase_id and tbl_tarifa.gral_mun_id=gral_mun.id ) "
+      
+                
         + "where log_doc.gral_emp_id=? "+ where +" "
         + "group by cxc_clie.numero_control, cxc_clie.razon_social, log_doc.id, log_doc_carga.id, log_doc_ped.id, log_doc_carga.no_carga, log_doc_ped.no_pedido, cxc_destinatarios.id, cxc_destinatarios.folio, cxc_destinatarios.razon_social, gral_mun.id, gral_mun.titulo, inv_prod.id, um.id, log_status.id "
         + "order by cxc_destinatarios.razon_social;";
+        
+        /*
+select 
+	log_tarifario_venta.cxc_clie_id,
+	log_tarifa_tipo.log_tarifa_clase_id,
+	log_tarifario_venta_det.log_tarifa_tipo_id,
+	log_tarifario_venta.gral_mun_id,
+	log_tarifa_tipo.operacion,
+	log_tarifa_tipo.base,
+	log_tarifario_venta_det.valor as precio
+from log_tarifario_venta
+join log_tarifario_venta_det on (log_tarifario_venta_det.log_tarifario_venta_id=log_tarifario_venta.id)
+join log_tarifa_tipo on log_tarifa_tipo.id=log_tarifario_venta_det.log_tarifa_tipo_id 
+         */
         
         //System.out.println("Pendientes: "+sql_to_query);
         
@@ -4696,11 +4715,11 @@ public class LogSpringDao implements LogInterfaceDao{
 	String sql_to_query = ""
         + "select "
             + "log_tarifario_venta.id,"
-            + "log_ruta.titulo as ruta, "
+            + "upper(gral_mun.titulo) as poblacion, "
             + "cxc_clie.razon_social as cliente "
         + "from log_tarifario_venta  "
         + "join cxc_clie on cxc_clie.id=log_tarifario_venta.cxc_clie_id "
-        + "join log_ruta on log_ruta.id=log_tarifario_venta.log_ruta_id  "
+        + "join gral_mun on gral_mun.id=log_tarifario_venta.gral_mun_id  "
         + "JOIN ("+sql_busqueda+") AS sbt ON sbt.id = log_tarifario_venta.id "
         + "order by "+orderBy+" "+asc+" limit ? OFFSET ?";
         
@@ -4712,7 +4731,7 @@ public class LogSpringDao implements LogInterfaceDao{
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, Object> row = new HashMap<String, Object>();
                     row.put("id",rs.getInt("id"));
-                    row.put("ruta",rs.getString("ruta"));
+                    row.put("poblacion",rs.getString("poblacion"));
                     row.put("cliente",rs.getString("cliente"));
                     return row;
                 }
@@ -4732,17 +4751,13 @@ public class LogSpringDao implements LogInterfaceDao{
             + "log_tarifario_venta.cxc_clie_id as clie_id, "
             + "cxc_clie.numero_control as clie_no, "
             + "cxc_clie.razon_social as clie, "
-            + "log_tarifario_venta.log_ruta_id as ruta_id, "
-            + "log_ruta.folio as ruta_no, "
-            + "log_ruta.titulo as ruta_nombre, "
-            + "log_ruta.km as ruta_km, "
-            + "(case when log_ruta_tipo.titulo is null then '' else log_ruta_tipo.titulo end) as ruta_tipo "
+            + "log_tarifario_venta.gral_mun_id as mun_id, "
+            + "log_tarifario_venta.gral_edo_id as edo_id, "
+            + "log_tarifario_venta.gral_pais_id as pais_id "
         + "FROM log_tarifario_venta "
         + "join cxc_clie on cxc_clie.id=log_tarifario_venta.cxc_clie_id "
-        + "join log_ruta on log_ruta.id=log_tarifario_venta.log_ruta_id "
-        + "left join log_ruta_tipo on log_ruta_tipo.id=log_ruta.log_ruta_tipo_id "
         + "where log_tarifario_venta.id=?;";
-        
+  
         ArrayList<HashMap<String, Object>> hm_rtipo = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_query,
             new Object[]{new Integer(id)}, new RowMapper() {
@@ -4753,12 +4768,9 @@ public class LogSpringDao implements LogInterfaceDao{
                     row.put("clie_id",rs.getInt("clie_id"));
                     row.put("clie_no",rs.getString("clie_no"));
                     row.put("clie",rs.getString("clie"));
-                    row.put("ruta_id",rs.getInt("ruta_id"));
-                    row.put("ruta_no",rs.getString("ruta_no"));
-                    row.put("ruta_nombre",rs.getString("ruta_nombre"));
-                    row.put("ruta_km",StringHelper.roundDouble(rs.getString("ruta_km"),2));
-                    row.put("ruta_tipo",rs.getString("ruta_tipo"));
-                    
+                    row.put("mun_id",rs.getInt("mun_id"));
+                    row.put("edo_id",rs.getInt("edo_id"));
+                    row.put("pais_id",rs.getInt("pais_id"));
                     return row;
                 }
             }
