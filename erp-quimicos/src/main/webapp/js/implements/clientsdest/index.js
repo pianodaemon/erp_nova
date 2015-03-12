@@ -905,6 +905,7 @@ $(function() {
 								entidad_hmtl += '<option value="' + entidad['cve_ent'] + '"  >' + entidad['nom_ent'] + '</option>';
 							});
 							$select_estado.append(entidad_hmtl);
+							
 							var trama_hmtl_localidades = '<option value="00" selected="yes" >[-Seleccionar Municipio-]</option>';
 							$select_municipio.children().remove();
 							$select_municipio.append(trama_hmtl_localidades);
