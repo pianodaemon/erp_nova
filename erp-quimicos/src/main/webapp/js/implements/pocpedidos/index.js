@@ -2469,11 +2469,11 @@ $(function() {
 			//Validar campo costo, solo acepte numeros y punto
 			$permitir_solo_numeros( $grid_productos.find('#cost') );
 			$permitir_solo_numeros( $grid_productos.find('#cant') );
-			
+			//trr += '<a href="elimina_producto" id="delete'+ tr +'"><div id="eliminar'+ tr +'" class="onmouseOutEliminar" style="width:24px; background-position:center;"/></a>';
 			//elimina un producto del grid
 			//$grid_productos.find().bind('click',function(event){
 			$grid_productos.find('#delete'+ tr).click(function(e){
-				event.preventDefault();
+				e.preventDefault();
 				if(parseInt($(this).parent().find('#elim').val()) != 0){
 					//asigna espacios en blanco a todos los input de la fila eliminada
 					$(this).parent().parent().find('input').val(' ');
