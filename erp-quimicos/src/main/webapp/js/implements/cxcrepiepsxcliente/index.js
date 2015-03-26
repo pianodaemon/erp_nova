@@ -2,7 +2,7 @@ $(function() {
 	var config =  {
 		empresa: $('#lienzo_recalculable').find('input[name=emp]').val(),
 		sucursal: $('#lienzo_recalculable').find('input[name=suc]').val(),
-		tituloApp: 'Reporte de IEPS cobrado' ,                 
+		tituloApp: 'Reporte de IEPS Cobrado por Cliente' ,                 
 		contextpath : $('#lienzo_recalculable').find('input[name=contextpath]').val(),
 		
 		userName : $('#lienzo_recalculable').find('input[name=user]').val(),
@@ -33,7 +33,7 @@ $(function() {
 		},
 
 		getController: function(){
-			return this.contextpath + "/controllers/cxcrepiepscobrado";
+			return this.contextpath + "/controllers/cxcrepiepsxcliente";
 			//  return this.controller;
 		}
 	};
@@ -63,12 +63,13 @@ $(function() {
 	var $fecha_inicial = $('#lienzo_recalculable').find('input[name=fecha_inicial]');
 	var $fecha_final = $('#lienzo_recalculable').find('input[name=fecha_final]');
 	
-	var $genera_pdf = $('#lienzo_recalculable').find('#pdf');
+	var $pdf = $('#lienzo_recalculable').find('#pdf');
+	var $excel = $('#lienzo_recalculable').find('#excel');
 	var $buscar = $('#lienzo_recalculable').find('#buscar');
 	
 	
 	
-	//$genera_pdf.hide();
+	//$pdf.hide();
 	
 	
 
@@ -199,7 +200,7 @@ $(function() {
 	
 	
 	
-	$genera_pdf.click(function(event){
+	$pdf.click(function(event){
 		event.preventDefault();
 		
 		var busqueda = $ciente.val() +"___"+ $fecha_inicial.val() +"___"+ $fecha_final.val();
@@ -213,6 +214,19 @@ $(function() {
 	});
 	
 	
+	$excel.click(function(event){
+		event.preventDefault();
+		
+		var busqueda = $ciente.val() +"___"+ $fecha_inicial.val() +"___"+ $fecha_final.val();
+		
+		var input_json = config.getUrlForGetAndPost() + '/getXls/'+busqueda+'/'+config.getUi()+'/out.json';
+		if($fecha_inicial.val()!='' && $fecha_final.val()!=''){
+			window.location.href=input_json;
+		}else{
+			jAlert("Es necesario definir las dos fechas para el periodo de busqueda.",'! Atencion');
+		}
+	});
+	
 	
 	
 	
@@ -225,8 +239,8 @@ $(function() {
 		$div_reporte.css("width", (parseInt($('#cuerpo').css('width'))-20)+'px');
 		
 		var input_json = config.getUrlForGetAndPost()+'/getDatos.json';
-		$arreglo = {'ciente':$ciente.val(), 'finicial':$fecha_inicial.val(),'ffinal':$fecha_final.val(),'iu': $('#lienzo_recalculable').find('input[name=iu]').val()};
-				
+		$arreglo = {'ciente':$ciente.val(), 'finicial':$fecha_inicial.val(), 'ffinal':$fecha_final.val(), 'iu': $('#lienzo_recalculable').find('input[name=iu]').val()};
+		
 		if($fecha_inicial.val()!='' && $fecha_final.val()!=''){
 			
 			$.post(input_json,$arreglo,function(entry){
@@ -236,7 +250,6 @@ $(function() {
 					var height2 = $('#cuerpo').css('height');
 					var alto = parseInt(height2)-280;
 					var pix_alto=alto+'px';
-					
 					
 					var html_reporte = '<table class="table_main" width="'+entry['Conf']['widthMainTable']+'">';
 					html_reporte +='<thead><tr>';
