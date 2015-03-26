@@ -129,12 +129,10 @@
 													<li class="topline"><a href="../clientsclasif3/startup.agnux">Clasificaci&oacute;n 3</a></li>
 													<li class="topline"><a href="../clientstmovimientos/startup.agnux">Tipos de Movimientos</a></li>
 													
-
-													
-													
 													<li class="topline" id="transpor"><a href="../clientsremiten/startup.agnux">Remitentes</a></li>
 													<li class="topline" id="transpor"><a href="../clientsdest/startup.agnux">Destinatarios</a></li>
 													<li class="topline" id="transpor"><a href="../clientsagenaduanal/startup.agnux">Agentes Aduanales</a></li>
+													
 													<!--
 													<li class="topline"><a href="#">Mensajes</a></li>
 													<li class="topline"><a href="#">Direcciones</a></li>
@@ -143,7 +141,7 @@
 													-->
 												</ul>
 											</li>
-
+											
 											<!--esto se agrego, estaba en menu cunetas por cobrar-->
 											<li>
 												<a href="#" class="sub">Procesos &raquo;</a>
@@ -193,7 +191,8 @@
 													
 													<li class="topline"><a href="../repclientes/startup.agnux">Clientes</a></li>
 													<li class="topline"><a href="../cxcrepsaldomes/startup.agnux">Saldo Mensual</a></li>
-													<li class="topline"><a href="../cxcrepiepscobrado/startup.agnux">IEPS Cobrado</a></li>
+													<li class="topline"><a href="../cxcrepiepscobrado/startup.agnux">IEPS Cobrado por Factura</a></li>
+													<li class="topline"><a href="../cxcrepiepsxcliente/startup.agnux">IEPS Cobrado por Cliente</a></li>
 													
 													
 													<!--
