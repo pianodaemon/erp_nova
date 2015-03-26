@@ -5390,7 +5390,7 @@ return subfamilias;
     @Override
     public ArrayList<HashMap<String, String>> getListaIeps(Integer id_empresa) {
         
-        String sql_to_query = "select id, titulo, tasa from gral_ieps where gral_emp_id=? and borrado_logico=false;"; 
+        String sql_to_query = "select id, titulo, tasa from gral_ieps where gral_emp_id=? and borrado_logico=false order by tasa;"; 
         
         //System.out.println("CxC_DatosReporteSaldoMensual:: "+sql_to_query);
         ArrayList<HashMap<String, String>> arraydata = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
@@ -5408,4 +5408,97 @@ return subfamilias;
         );
         return arraydata;
     }
+    
+    
+    
+    @Override
+    public ArrayList<HashMap<String, String>> getDatosCxcReporteIepsCobradoPorCliente(ArrayList<HashMap<String, String>> listaIeps, String ciente, String finicial, String ffinal, Integer id_empresa) {
+        final ArrayList<HashMap<String, String>> tiposIeps = listaIeps;
+        String condiciones="";
+        String campos1="";
+        String campos2="";
+        
+        if(!ciente.trim().equals("")){
+            condiciones += condiciones + " and cxc_clie.razon_social ilike '%"+ciente+"%'";
+        }
+        
+        //Crear nombres de campos dinamicamente
+        for( HashMap<String,String> i : tiposIeps ){
+            campos1 += ", sum(ieps"+i.get("id")+") as ieps"+i.get("id")+" ";
+            campos2 += ", (CASE WHEN fac_det.gral_ieps_id="+i.get("id")+" THEN (CASE WHEN fac_det.gral_ieps_id>0 THEN ((fac_det.cantidad * (fac_det.precio_unitario * fac_docs.tipo_cambio)) * fac_det.valor_ieps) ELSE 0 END) ELSE 0 END) AS ieps"+i.get("id")+" ";
+        }
+        
+        String sql_to_query = ""
+        + "SELECT "
+            + "no_cliente"
+            + ", cliente"
+            + ", sum(subtotal) as subtotal"
+            + ", sum(retencion) as retencion"
+            + ", sum(iva) as iva"
+            + ", sum(total) as total"
+            + campos1
+        + "from ( "
+            + "SELECT "
+                + "no_cliente"
+                + ", cliente"
+                + ", serie_folio"
+                + ", subtotal "
+                + ", retencion"
+                + ", iva"
+                + ", total"
+                + campos1
+            + "from ( "
+                + "select "
+                    + "cxc_clie.numero_control as no_cliente"
+                    + ",cxc_clie.razon_social as cliente"
+                    + ",erp_h_facturas.serie_folio"
+                    + ",(fac_docs.subtotal * fac_docs.tipo_cambio) as subtotal"
+                    + ",(fac_docs.monto_retencion * fac_docs.tipo_cambio) as retencion"
+                    + ",(fac_docs.impuesto * fac_docs.tipo_cambio) as iva"
+                    + ",(fac_docs.total * fac_docs.tipo_cambio) as total"
+                    + campos2 
+                + "from fac_docs "
+                + "join fac_docs_detalles as fac_det on fac_det.fac_doc_id=fac_docs.id "
+                + "join erp_h_facturas on (erp_h_facturas.serie_folio=fac_docs.serie_folio and erp_h_facturas.cliente_id=fac_docs.cxc_clie_id and erp_h_facturas.pagado=true and erp_h_facturas.cancelacion=false) "
+                + "join cxc_clie on cxc_clie.id=fac_docs.cxc_clie_id "
+                + "join gral_mon on gral_mon.id=fac_docs.moneda_id "
+                + "where fac_det.gral_ieps_id>0 and cxc_clie.borrado_logico=false and cxc_clie.empresa_id=? "+condiciones +" AND (to_char(erp_h_facturas.fecha_ultimo_pago,'yyyymmdd')::integer BETWEEN to_char('"+finicial+"'::timestamp with time zone,'yyyymmdd')::integer AND to_char('"+ffinal+"'::timestamp with time zone,'yyyymmdd')::integer) "
+            + ") as sbt "
+            + "group by no_cliente, cliente, serie_folio, subtotal,retencion,iva,total "
+        + ") as sbt2 "
+        + "group by no_cliente,cliente "
+        + "order by cliente;"; 
+        
+        System.out.println("getDatosReporteIepsCobradoPorCliente:: "+sql_to_query);
+        
+        ArrayList<HashMap<String, String>> arraydata = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(id_empresa)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    
+                    row.put("cliente",rs.getString("cliente"));
+                    row.put("moneda_simbolo_subtotal","$");
+                    row.put("subtotal",StringHelper.AgregaComas(StringHelper.roundDouble(rs.getDouble("subtotal"), 2)));
+                    row.put("moneda_simbolo_retencion","$");
+                    row.put("retencion",StringHelper.AgregaComas(StringHelper.roundDouble(rs.getDouble("retencion"), 2)));
+                    row.put("moneda_simbolo_iva","$");
+                    row.put("iva",StringHelper.AgregaComas(StringHelper.roundDouble(rs.getDouble("iva"), 2)));
+                    row.put("moneda_simbolo_total","$");
+                    row.put("total",StringHelper.AgregaComas(StringHelper.roundDouble(rs.getDouble("total"), 2)));
+                    
+                    //Crear nombres de campos dinamicamente(diferentes tasas de ieps)
+                    for( HashMap<String,String> i : tiposIeps ){
+                        row.put("moneda_simbolo_ieps"+i.get("id"),"$");
+                        row.put("ieps"+i.get("id"),StringHelper.AgregaComas(StringHelper.roundDouble(rs.getDouble("ieps"+i.get("id")), 2)));
+                    }
+                    return row;
+                }
+            }
+        );
+        return arraydata;
+    }
+    
+    
 }

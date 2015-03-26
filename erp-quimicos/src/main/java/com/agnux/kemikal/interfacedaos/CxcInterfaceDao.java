@@ -211,8 +211,10 @@ public interface CxcInterfaceDao {
     public ArrayList<HashMap<String, Object>> getClientstDescuentos_PaginaGrid(String data_string, int offset, int pageSize, String orderBy , String asc);
     public ArrayList<HashMap<String, Object>> getClientstDescuentos_Datos(Integer id);
     
-    
+    //Reporte de Ieps Cobrado por factura
     public ArrayList<HashMap<String, String>> getDatosReporteIepsCobrado(ArrayList<HashMap<String, String>> listaIeps, String ciente, String finicial, String ffinal, Integer id_empresa);
     public ArrayList<HashMap<String, String>> getListaIeps(Integer id_empresa);
     
+    //Reporte de Ieps Cobrado por Cliente
+    public ArrayList<HashMap<String, String>> getDatosCxcReporteIepsCobradoPorCliente(ArrayList<HashMap<String, String>> listaIeps, String ciente, String finicial, String ffinal, Integer id_empresa);
 }
