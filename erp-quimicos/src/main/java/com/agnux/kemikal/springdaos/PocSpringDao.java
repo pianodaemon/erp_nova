@@ -1544,7 +1544,7 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("id_presentacion",String.valueOf(rs.getInt("id_presentacion")));
                     row.put("presentacion",rs.getString("presentacion"));
                     row.put("decimales",rs.getString("decimales"));
-                    row.put("precio",StringHelper.roundDouble(rs.getString("precio"),2));
+                    row.put("precio",StringHelper.roundDouble(rs.getString("precio"),4));
                     row.put("exis_prod_lp",rs.getString("exis_prod_lp"));
                     row.put("id_moneda",String.valueOf(rs.getInt("id_moneda")));
                     row.put("tc",StringHelper.roundDouble(rs.getString("tc"),4));
