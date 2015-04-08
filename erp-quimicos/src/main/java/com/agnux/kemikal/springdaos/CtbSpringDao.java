@@ -366,11 +366,11 @@ public class CtbSpringDao implements CtbInterfaceDao{
                     + "ctb_cta.id,"
                     + "cta_mayor AS m, "
                     + "clasifica AS c, "
-                    + "(CASE 	WHEN nivel_cta=1 THEN rpad(cta::character varying, 4, '0')  "
-                        + "WHEN nivel_cta=2 THEN '&nbsp;&nbsp;'||rpad(cta::character varying, 4, '0')||'-'||lpad(subcta::character varying, 4, '0') "
-                        + "WHEN nivel_cta=3 THEN '&nbsp;&nbsp;&nbsp;&nbsp;'||rpad(cta::character varying, 4, '0')||'-'||lpad(subcta::character varying, 4, '0')||'-'||lpad(ssubcta::character varying, 4, '0')   "
-                        + "WHEN nivel_cta=4 THEN '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'||rpad(cta::character varying, 4, '0')||'-'||lpad(subcta::character varying, 4, '0')||'-'||lpad(ssubcta::character varying, 4, '0')||'-'||lpad(sssubcta::character varying, 4, '0') "
-                        + "WHEN nivel_cta=5 THEN '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'||rpad(cta::character varying, 4, '0')||'-'||lpad(subcta::character varying, 4, '0')||'-'||lpad(ssubcta::character varying, 4, '0')||'-'||lpad(sssubcta::character varying, 4, '0')||'-'||lpad(ssssubcta::character varying, 4, '0') "
+                    + "(CASE 	WHEN nivel_cta=1 THEN lpad(cta::character varying, 4, '0')  "
+                        + "WHEN nivel_cta=2 THEN '&nbsp;&nbsp;'||lpad(cta::character varying, 4, '0')||'-'||lpad(subcta::character varying, 4, '0') "
+                        + "WHEN nivel_cta=3 THEN '&nbsp;&nbsp;&nbsp;&nbsp;'||lpad(cta::character varying, 4, '0')||'-'||lpad(subcta::character varying, 4, '0')||'-'||lpad(ssubcta::character varying, 4, '0')   "
+                        + "WHEN nivel_cta=4 THEN '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'||lpad(cta::character varying, 4, '0')||'-'||lpad(subcta::character varying, 4, '0')||'-'||lpad(ssubcta::character varying, 4, '0')||'-'||lpad(sssubcta::character varying, 4, '0') "
+                        + "WHEN nivel_cta=5 THEN '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'||lpad(cta::character varying, 4, '0')||'-'||lpad(subcta::character varying, 4, '0')||'-'||lpad(ssubcta::character varying, 4, '0')||'-'||lpad(sssubcta::character varying, 4, '0')||'-'||lpad(ssssubcta::character varying, 4, '0') "
                         + "ELSE '' "
                         + "END ) AS cuenta, "
                     + "(CASE WHEN detalle=0 THEN 'NO' WHEN detalle=1 THEN 'SI' ELSE '' END) AS detalle, "
@@ -526,7 +526,7 @@ public class CtbSpringDao implements CtbInterfaceDao{
         
         switch(nivel) {
             case 1: 
-                sql_query = "SELECT rpad(cta::character varying, 4, '0') AS cta,descripcion FROM ( SELECT DISTINCT cta, (CASE WHEN subcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=?  AND borrado_logico=FALSE AND estatus=1 ORDER BY cta ) AS sbt WHERE trim(descripcion)<>'' ORDER BY cta;";
+                sql_query = "SELECT lpad(cta::character varying, 4, '0') AS cta,descripcion FROM ( SELECT DISTINCT cta, (CASE WHEN subcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=?  AND borrado_logico=FALSE AND estatus=1 ORDER BY cta ) AS sbt WHERE trim(descripcion)<>'' ORDER BY cta;";
                 break;
             case 2: 
                 sql_query = "SELECT lpad(cta::character varying, 4, '0') AS cta, descripcion FROM (SELECT DISTINCT subcta AS cta, (CASE WHEN ssubcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=? AND cta="+cta+"  AND borrado_logico=FALSE AND estatus=1 ORDER BY subcta ) AS sbt WHERE descripcion<>'' ORDER BY cta;";
@@ -633,7 +633,7 @@ public class CtbSpringDao implements CtbInterfaceDao{
         
        switch(nivel) {
             case 1: 
-                sql_query = "SELECT rpad(cta::character varying, 4, '0') AS cta,descripcion FROM ( SELECT DISTINCT cta, (CASE WHEN subcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=?  AND borrado_logico=FALSE AND estatus=1 ORDER BY cta ) AS sbt WHERE trim(descripcion)<>'' ORDER BY cta;";
+                sql_query = "SELECT lpad(cta::character varying, 4, '0') AS cta,descripcion FROM ( SELECT DISTINCT cta, (CASE WHEN subcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=?  AND borrado_logico=FALSE AND estatus=1 ORDER BY cta ) AS sbt WHERE trim(descripcion)<>'' ORDER BY cta;";
                 break;
             case 2: 
                 sql_query = "SELECT lpad(cta::character varying, 4, '0') AS cta, descripcion FROM (SELECT DISTINCT subcta AS cta, (CASE WHEN ssubcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=? AND cta="+cta+"  AND borrado_logico=FALSE AND estatus=1 ORDER BY subcta ) AS sbt WHERE descripcion<>'' ORDER BY cta;";
@@ -776,7 +776,7 @@ public class CtbSpringDao implements CtbInterfaceDao{
         
         switch(nivel) {
             case 1: 
-                sql_query = "SELECT rpad(cta::character varying, 4, '0') AS cta,descripcion FROM ( SELECT DISTINCT cta, (CASE WHEN subcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=?  AND borrado_logico=FALSE AND estatus=1 ORDER BY cta ) AS sbt WHERE trim(descripcion)<>'' ORDER BY cta;";
+                sql_query = "SELECT lpad(cta::character varying, 4, '0') AS cta,descripcion FROM ( SELECT DISTINCT cta, (CASE WHEN subcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=?  AND borrado_logico=FALSE AND estatus=1 ORDER BY cta ) AS sbt WHERE trim(descripcion)<>'' ORDER BY cta;";
                 break;
             case 2: 
                 sql_query = "SELECT lpad(cta::character varying, 4, '0') AS cta, descripcion FROM (SELECT DISTINCT subcta AS cta, (CASE WHEN ssubcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=? AND cta="+cta+"  AND borrado_logico=FALSE AND estatus=1 ORDER BY subcta ) AS sbt WHERE descripcion<>'' ORDER BY cta;";
@@ -861,7 +861,7 @@ public class CtbSpringDao implements CtbInterfaceDao{
         
         switch(nivel) {
             case 1: 
-                sql_query = "SELECT rpad(cta::character varying, 4, '0') AS cta,descripcion FROM ( SELECT DISTINCT cta, (CASE WHEN subcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=?  AND borrado_logico=FALSE AND estatus=1 ORDER BY cta ) AS sbt WHERE trim(descripcion)<>'' ORDER BY cta;";
+                sql_query = "SELECT lpad(cta::character varying, 4, '0') AS cta,descripcion FROM ( SELECT DISTINCT cta, (CASE WHEN subcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=?  AND borrado_logico=FALSE AND estatus=1 ORDER BY cta ) AS sbt WHERE trim(descripcion)<>'' ORDER BY cta;";
                 break;
             case 2: 
                 sql_query = "SELECT lpad(cta::character varying, 4, '0') AS cta, descripcion FROM (SELECT DISTINCT subcta AS cta, (CASE WHEN ssubcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=? AND cta="+cta+"  AND borrado_logico=FALSE AND estatus=1 ORDER BY subcta ) AS sbt WHERE descripcion<>'' ORDER BY cta;";
@@ -948,7 +948,7 @@ public class CtbSpringDao implements CtbInterfaceDao{
         
         switch(nivel) {
             case 1: 
-                sql_query = "SELECT rpad(cta::character varying, 4, '0') AS cta,descripcion FROM ( SELECT DISTINCT cta, (CASE WHEN subcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=?  AND borrado_logico=FALSE AND estatus=1 ORDER BY cta ) AS sbt WHERE trim(descripcion)<>'' ORDER BY cta;";
+                sql_query = "SELECT lpad(cta::character varying, 4, '0') AS cta,descripcion FROM ( SELECT DISTINCT cta, (CASE WHEN subcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=?  AND borrado_logico=FALSE AND estatus=1 ORDER BY cta ) AS sbt WHERE trim(descripcion)<>'' ORDER BY cta;";
                 break;
             case 2: 
                 sql_query = "SELECT lpad(cta::character varying, 4, '0') AS cta, descripcion FROM (SELECT DISTINCT subcta AS cta, (CASE WHEN ssubcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=? AND cta="+cta+"  AND borrado_logico=FALSE AND estatus=1 ORDER BY subcta ) AS sbt WHERE descripcion<>'' ORDER BY cta;";
@@ -1033,7 +1033,7 @@ public class CtbSpringDao implements CtbInterfaceDao{
         
         switch(nivel) {
             case 1: 
-                sql_query = "SELECT rpad(cta::character varying, 4, '0') AS cta,descripcion FROM ( SELECT DISTINCT cta, (CASE WHEN subcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=?  AND borrado_logico=FALSE AND estatus=1 ORDER BY cta ) AS sbt WHERE trim(descripcion)<>'' ORDER BY cta;";
+                sql_query = "SELECT lpad(cta::character varying, 4, '0') AS cta,descripcion FROM ( SELECT DISTINCT cta, (CASE WHEN subcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=?  AND borrado_logico=FALSE AND estatus=1 ORDER BY cta ) AS sbt WHERE trim(descripcion)<>'' ORDER BY cta;";
                 break;
             case 2: 
                 sql_query = "SELECT lpad(cta::character varying, 4, '0') AS cta, descripcion FROM (SELECT DISTINCT subcta AS cta, (CASE WHEN ssubcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=? AND cta="+cta+"  AND borrado_logico=FALSE AND estatus=1 ORDER BY subcta ) AS sbt WHERE descripcion<>'' ORDER BY cta;";
@@ -1119,7 +1119,7 @@ public class CtbSpringDao implements CtbInterfaceDao{
         
         switch(nivel) {
             case 1: 
-                sql_query = "SELECT rpad(cta::character varying, 4, '0') AS cta,descripcion FROM ( SELECT DISTINCT cta, (CASE WHEN subcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=?  AND borrado_logico=FALSE AND estatus=1 ORDER BY cta ) AS sbt WHERE trim(descripcion)<>'' ORDER BY cta;";
+                sql_query = "SELECT lpad(cta::character varying, 4, '0') AS cta,descripcion FROM ( SELECT DISTINCT cta, (CASE WHEN subcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=?  AND borrado_logico=FALSE AND estatus=1 ORDER BY cta ) AS sbt WHERE trim(descripcion)<>'' ORDER BY cta;";
                 break;
             case 2: 
                 sql_query = "SELECT lpad(cta::character varying, 4, '0') AS cta, descripcion FROM (SELECT DISTINCT subcta AS cta, (CASE WHEN ssubcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=? AND cta="+cta+"  AND borrado_logico=FALSE AND estatus=1 ORDER BY subcta ) AS sbt WHERE descripcion<>'' ORDER BY cta;";
@@ -1205,7 +1205,7 @@ public class CtbSpringDao implements CtbInterfaceDao{
         
         switch(nivel) {
             case 1: 
-                sql_query = "SELECT rpad(cta::character varying, 4, '0') AS cta,descripcion FROM ( SELECT DISTINCT cta, (CASE WHEN subcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=?  AND borrado_logico=FALSE AND estatus=1 ORDER BY cta ) AS sbt WHERE trim(descripcion)<>'' ORDER BY cta;";
+                sql_query = "SELECT lpad(cta::character varying, 4, '0') AS cta,descripcion FROM ( SELECT DISTINCT cta, (CASE WHEN subcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=?  AND borrado_logico=FALSE AND estatus=1 ORDER BY cta ) AS sbt WHERE trim(descripcion)<>'' ORDER BY cta;";
                 break;
             case 2: 
                 sql_query = "SELECT lpad(cta::character varying, 4, '0') AS cta, descripcion FROM (SELECT DISTINCT subcta AS cta, (CASE WHEN ssubcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=? AND cta="+cta+"  AND borrado_logico=FALSE AND estatus=1 ORDER BY subcta ) AS sbt WHERE descripcion<>'' ORDER BY cta;";
@@ -1606,11 +1606,11 @@ public class CtbSpringDao implements CtbInterfaceDao{
                     + "ctb_cta.ssubcta, "
                     + "ctb_cta.sssubcta,"
                     + "ctb_cta.ssssubcta, "
-                    + "(CASE 	WHEN nivel_cta=1 THEN rpad(ctb_cta.cta::character varying, 4, '0')   "
-                    + "WHEN ctb_cta.nivel_cta=2 THEN '&nbsp;&nbsp;&nbsp;'||rpad(ctb_cta.cta::character varying, 4, '0')||'-'||lpad(ctb_cta.subcta::character varying, 4, '0') "
-                    + "WHEN ctb_cta.nivel_cta=3 THEN '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'||rpad(ctb_cta.cta::character varying, 4, '0')||'-'||lpad(ctb_cta.subcta::character varying, 4, '0')||'-'||lpad(ctb_cta.ssubcta::character varying, 4, '0') "
-                    + "WHEN ctb_cta.nivel_cta=4 THEN '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'||rpad(ctb_cta.cta::character varying, 4, '0')||'-'||lpad(ctb_cta.subcta::character varying, 4, '0')||'-'||lpad(ctb_cta.ssubcta::character varying, 4, '0')||'-'||lpad(ctb_cta.sssubcta::character varying, 4, '0') "
-                    + "WHEN ctb_cta.nivel_cta=5 THEN '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'||rpad(ctb_cta.cta::character varying, 4, '0')||'-'||lpad(ctb_cta.subcta::character varying, 4, '0')||'-'||lpad(ctb_cta.ssubcta::character varying, 4, '0')||'-'||lpad(ctb_cta.sssubcta::character varying, 4, '0')||'-'||lpad(ctb_cta.ssssubcta::character varying, 4, '0') "
+                    + "(CASE 	WHEN nivel_cta=1 THEN lpad(ctb_cta.cta::character varying, 4, '0')   "
+                    + "WHEN ctb_cta.nivel_cta=2 THEN '&nbsp;&nbsp;&nbsp;'||lpad(ctb_cta.cta::character varying, 4, '0')||'-'||lpad(ctb_cta.subcta::character varying, 4, '0') "
+                    + "WHEN ctb_cta.nivel_cta=3 THEN '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'||lpad(ctb_cta.cta::character varying, 4, '0')||'-'||lpad(ctb_cta.subcta::character varying, 4, '0')||'-'||lpad(ctb_cta.ssubcta::character varying, 4, '0') "
+                    + "WHEN ctb_cta.nivel_cta=4 THEN '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'||lpad(ctb_cta.cta::character varying, 4, '0')||'-'||lpad(ctb_cta.subcta::character varying, 4, '0')||'-'||lpad(ctb_cta.ssubcta::character varying, 4, '0')||'-'||lpad(ctb_cta.sssubcta::character varying, 4, '0') "
+                    + "WHEN ctb_cta.nivel_cta=5 THEN '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'||lpad(ctb_cta.cta::character varying, 4, '0')||'-'||lpad(ctb_cta.subcta::character varying, 4, '0')||'-'||lpad(ctb_cta.ssubcta::character varying, 4, '0')||'-'||lpad(ctb_cta.sssubcta::character varying, 4, '0')||'-'||lpad(ctb_cta.ssssubcta::character varying, 4, '0') "
                     + "ELSE '' "
                     + "END ) AS cuenta, "
                     + "(CASE WHEN ctb_cta.descripcion IS NULL OR ctb_cta.descripcion='' THEN  (CASE WHEN ctb_cta.descripcion_ing IS NULL OR ctb_cta.descripcion_ing='' THEN  ctb_cta.descripcion_otr ELSE ctb_cta.descripcion_ing END )  ELSE descripcion END ) AS descripcion, "
@@ -1698,10 +1698,10 @@ public class CtbSpringDao implements CtbInterfaceDao{
             + "ctb_cta.sssubcta,"
             + "ctb_cta.ssssubcta, "
             + "(CASE WHEN nivel_cta=1 THEN rpad(ctb_cta.cta::character varying, 4, '0')   "
-            + "WHEN ctb_cta.nivel_cta=2 THEN rpad(ctb_cta.cta::character varying, 4, '0')||'-'||lpad(ctb_cta.subcta::character varying, 4, '0') "
-            + "WHEN ctb_cta.nivel_cta=3 THEN rpad(ctb_cta.cta::character varying, 4, '0')||'-'||lpad(ctb_cta.subcta::character varying, 4, '0')||'-'||lpad(ctb_cta.ssubcta::character varying, 4, '0') "
-            + "WHEN ctb_cta.nivel_cta=4 THEN rpad(ctb_cta.cta::character varying, 4, '0')||'-'||lpad(ctb_cta.subcta::character varying, 4, '0')||'-'||lpad(ctb_cta.ssubcta::character varying, 4, '0')||'-'||lpad(ctb_cta.sssubcta::character varying, 4, '0') "
-            + "WHEN ctb_cta.nivel_cta=5 THEN rpad(ctb_cta.cta::character varying, 4, '0')||'-'||lpad(ctb_cta.subcta::character varying, 4, '0')||'-'||lpad(ctb_cta.ssubcta::character varying, 4, '0')||'-'||lpad(ctb_cta.sssubcta::character varying, 4, '0')||'-'||lpad(ctb_cta.ssssubcta::character varying, 4, '0') "
+            + "WHEN ctb_cta.nivel_cta=2 THEN lpad(ctb_cta.cta::character varying, 4, '0')||'-'||lpad(ctb_cta.subcta::character varying, 4, '0') "
+            + "WHEN ctb_cta.nivel_cta=3 THEN lpad(ctb_cta.cta::character varying, 4, '0')||'-'||lpad(ctb_cta.subcta::character varying, 4, '0')||'-'||lpad(ctb_cta.ssubcta::character varying, 4, '0') "
+            + "WHEN ctb_cta.nivel_cta=4 THEN lpad(ctb_cta.cta::character varying, 4, '0')||'-'||lpad(ctb_cta.subcta::character varying, 4, '0')||'-'||lpad(ctb_cta.ssubcta::character varying, 4, '0')||'-'||lpad(ctb_cta.sssubcta::character varying, 4, '0') "
+            + "WHEN ctb_cta.nivel_cta=5 THEN lpad(ctb_cta.cta::character varying, 4, '0')||'-'||lpad(ctb_cta.subcta::character varying, 4, '0')||'-'||lpad(ctb_cta.ssubcta::character varying, 4, '0')||'-'||lpad(ctb_cta.sssubcta::character varying, 4, '0')||'-'||lpad(ctb_cta.ssssubcta::character varying, 4, '0') "
             + "ELSE '' "
             + "END ) AS cuenta, "
             + "(CASE WHEN ctb_cta.descripcion IS NULL OR ctb_cta.descripcion='' THEN  (CASE WHEN ctb_cta.descripcion_ing IS NULL OR ctb_cta.descripcion_ing='' THEN  ctb_cta.descripcion_otr ELSE ctb_cta.descripcion_ing END )  ELSE descripcion END ) AS descripcion, "
