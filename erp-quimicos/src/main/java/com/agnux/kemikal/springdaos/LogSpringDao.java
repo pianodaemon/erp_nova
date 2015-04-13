@@ -1663,7 +1663,7 @@ public class LogSpringDao implements LogInterfaceDao{
         String updateSql="";
         
         try{
-            updateSql = "DELETE FROM log_carga_doc_tmp WHERE emp_id=? AND suc_id=?;";
+            updateSql = "DELETE FROM log_carga_doc_tmp WHERE gral_emp_id=? AND gral_suc_id=?;";
             
             //System.out.println("updateSql: "+updateSql);
             
@@ -1765,7 +1765,7 @@ public class LogSpringDao implements LogInterfaceDao{
                 insertSql = "";
                 
                 //Cargar en la tabla INV_EXI_TMP
-                insertSql = "INSERT INTO log_carga_doc_tmp(emp_id,suc_id,user_id,alm_id,no_carga,no_pedido,tipo_entrega,fecha_entrega, cliente_id, no_dest,nombre_dest,poblacion_dest,codigo_prod,descripcion_prod,cantidad,unidad,peso,volumen,no_fac,monto_fac,fecha_carga,estatus) "
+                insertSql = "INSERT INTO log_carga_doc_tmp(gral_emp_id,gral_suc_id,user_id,alm_id,no_carga,no_pedido,tipo_entrega,fecha_entrega, cliente_id, no_dest,nombre_dest,poblacion_dest,codigo_prod,descripcion_prod,cantidad,unidad,peso,volumen,no_fac,monto_fac,fecha_carga,estatus) "
                         + "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,true);";
                 //System.out.println("insertSql: "+insertSql);
                 
@@ -2086,7 +2086,25 @@ public class LogSpringDao implements LogInterfaceDao{
             + "(case when log_status.id is null then '' else log_status.titulo end) as status_ped,"
             + "sum(log_doc_ped_det.cantidad) as cant_uni, "
             + "sum(log_doc_ped_det.peso) as peso, "
-            + "sum(log_doc_ped_det.volumen) as volumen "
+            + "sum(log_doc_ped_det.volumen) as volumen,"
+            
+            + "(case when tbl_tarifa.log_tarifa_tipo_id is null then 0 else tbl_tarifa.log_tarifa_clase_id end) as t_clase_id, "
+            + "(case when tbl_tarifa.log_tarifa_tipo_id is null then 0 else tbl_tarifa.log_tarifa_tipo_id end)as t_tipo_id, "
+            + "(case when tbl_tarifa.log_tarifa_tipo_id is null then 0 else tbl_tarifa.operacion end) as operacion, "
+            + "(case when tbl_tarifa.log_tarifa_tipo_id is null then 0 else tbl_tarifa.base end) as base, "
+            + "(case when tbl_tarifa.log_tarifa_tipo_id is null then 0 else tbl_tarifa.precio end) as precio_u,"
+            + "(case when tbl_tarifa.log_tarifa_tipo_id is null then '' else tbl_tarifa.clase end) as t_clase,"
+            + "(case when tbl_tarifa.log_tarifa_tipo_id is null then '' else tbl_tarifa.tipo_tarifa end) as t_tipo,"
+            
+            + "(case when tbl_tarifa.log_tarifa_tipo_id is null then 0 else "
+                + "(case when tbl_tarifa.operacion=1 then "
+                    + "(case when tbl_tarifa.base=1 then (1 * tbl_tarifa.precio::double precision) "
+                        + "when tbl_tarifa.base=2 then ((sum(log_doc_ped_det.peso)/1000) * tbl_tarifa.precio::double precision) "
+                        + "when tbl_tarifa.base=3 then (sum(log_doc_ped_det.volumen) * tbl_tarifa.precio::double precision) "
+                    + "else 0 end) "
+                + "else 0 end)"
+            + "end) as precio,"
+            + "log_doc_ped.log_tarifa_clase_id as tarifa_clase_id "
         + "from log_doc "
         + "join log_doc_carga on log_doc_carga.log_doc_id=log_doc.id "
         + "join log_doc_ped on (log_doc_ped.log_doc_carga_id=log_doc_carga.id and log_doc_ped.log_status_id=0)"
@@ -2097,14 +2115,20 @@ public class LogSpringDao implements LogInterfaceDao{
         + "left join inv_prod_unidades as um on um.id=inv_prod.unidad_id "
         + "left join gral_mun on gral_mun.id=cxc_destinatarios.gral_mun_id  "
         + "left join log_status on log_status.id=log_doc_ped.log_status_id  "
-        
-        + "left join (select log_tarifa_clie.cxc_clie_id, log_tarifa_clie.log_tarifa_clase_id, log_tarifa_clie.log_tarifa_tipo_id, log_tarifario_venta.gral_mun_id, log_tarifa_tipo.operacion, log_tarifa_tipo.base, log_tarifario_venta_det.valor as precio from log_tarifa_clie join log_tarifario_venta on log_tarifario_venta.cxc_clie_id=log_tarifa_clie.cxc_clie_id  join log_tarifario_venta_det on (log_tarifario_venta_det.log_tarifario_venta_id=log_tarifario_venta.id and log_tarifario_venta_det.log_tarifa_tipo_id=log_tarifa_clie.log_tarifa_tipo_id) join log_tarifa_tipo on log_tarifa_tipo.id=log_tarifa_clie.log_tarifa_tipo_id "
-                + ") as tbl_tarifa on (tbl_tarifa.cxc_clie_id=cxc_clie.id and tbl_tarifa.log_tarifa_clase_id=log_doc_ped.log_tarifa_clase_id and tbl_tarifa.gral_mun_id=gral_mun.id ) "
-      
-                
+        + "left join log_tarifa_clie on (log_tarifa_clie.cxc_clie_id=cxc_clie.id and log_tarifa_clie.log_tarifa_clase_id=log_doc_ped.log_tarifa_clase_id) "
+        + "left join ("
+                + "select log_tarifario_venta.cxc_clie_id, log_tarifa_tipo.log_tarifa_clase_id, log_tarifario_venta_det.log_tarifa_tipo_id, log_tarifario_venta.gral_mun_id, log_tarifa_tipo.operacion, log_tarifa_tipo.base, log_tarifario_venta_det.valor as precio, upper(log_tarifa_clase.titulo) as clase, upper(log_tarifa_tipo.titulo) as tipo_tarifa "
+                + "from log_tarifario_venta "
+                + "join log_tarifario_venta_det on (log_tarifario_venta_det.log_tarifario_venta_id=log_tarifario_venta.id) "
+                + "join log_tarifa_tipo on log_tarifa_tipo.id=log_tarifario_venta_det.log_tarifa_tipo_id "
+                + "join log_tarifa_clase on log_tarifa_clase.id=log_tarifa_tipo.log_tarifa_clase_id "
+        + ") as tbl_tarifa on (tbl_tarifa.cxc_clie_id=log_tarifa_clie.cxc_clie_id and tbl_tarifa.log_tarifa_clase_id=log_tarifa_clie.log_tarifa_clase_id and tbl_tarifa.log_tarifa_tipo_id=log_tarifa_clie.log_tarifa_tipo_id and tbl_tarifa.gral_mun_id=gral_mun.id ) "
         + "where log_doc.gral_emp_id=? "+ where +" "
-        + "group by cxc_clie.numero_control, cxc_clie.razon_social, log_doc.id, log_doc_carga.id, log_doc_ped.id, log_doc_carga.no_carga, log_doc_ped.no_pedido, cxc_destinatarios.id, cxc_destinatarios.folio, cxc_destinatarios.razon_social, gral_mun.id, gral_mun.titulo, inv_prod.id, um.id, log_status.id "
+        + "group by cxc_clie.numero_control, cxc_clie.razon_social, log_doc.id, log_doc_carga.id, log_doc_ped.id, log_doc_carga.no_carga, log_doc_ped.no_pedido, cxc_destinatarios.id, cxc_destinatarios.folio, cxc_destinatarios.razon_social, gral_mun.id, gral_mun.titulo, inv_prod.id, um.id, log_status.id, tbl_tarifa.log_tarifa_clase_id, tbl_tarifa.log_tarifa_tipo_id, tbl_tarifa.clase, tbl_tarifa.tipo_tarifa, tbl_tarifa.operacion, tbl_tarifa.base, tbl_tarifa.precio  "
         + "order by cxc_destinatarios.razon_social;";
+        
+        //log_tarifa_tipo.operacion IS '1=Multiplicacion';
+        //log_tarifa_tipo.base IS 'Utilizar Multiplicador 1=1(El numero uno), 2=Peso en toneladas, 3=Cantidad de Metros Cubicos';
         
         /*
 select 
@@ -2114,10 +2138,13 @@ select
 	log_tarifario_venta.gral_mun_id,
 	log_tarifa_tipo.operacion,
 	log_tarifa_tipo.base,
-	log_tarifario_venta_det.valor as precio
+	log_tarifario_venta_det.valor as precio,
+	upper(log_tarifa_clase.titulo) as clase, 
+        upper(log_tarifa_tipo.titulo) as tipo_tarifa 
 from log_tarifario_venta
 join log_tarifario_venta_det on (log_tarifario_venta_det.log_tarifario_venta_id=log_tarifario_venta.id)
 join log_tarifa_tipo on log_tarifa_tipo.id=log_tarifario_venta_det.log_tarifa_tipo_id 
+join log_tarifa_clase on log_tarifa_clase.id=log_tarifa_tipo.log_tarifa_clase_id 
          */
         
         //System.out.println("Pendientes: "+sql_to_query);
@@ -2161,6 +2188,14 @@ join log_tarifa_tipo on log_tarifa_tipo.id=log_tarifario_venta_det.log_tarifa_ti
                     row.put("cant_uni",StringHelper.roundDouble(rs.getString("cant_uni"),2));
                     row.put("peso",StringHelper.roundDouble(rs.getString("peso"),3));
                     row.put("volumen",StringHelper.roundDouble(rs.getString("volumen"),3));
+                    
+                    row.put("t_clase_id",rs.getInt("t_clase_id"));
+                    row.put("t_tipo_id",rs.getInt("t_tipo_id"));
+                    row.put("t_clase",rs.getString("t_clase"));
+                    row.put("t_tipo",rs.getString("t_tipo"));
+                    row.put("precio",StringHelper.roundDouble(rs.getString("precio"),2));
+                    
+                    row.put("tarifa_clase_id",rs.getInt("tarifa_clase_id"));
                     return row;
                 }
             }
@@ -2221,7 +2256,8 @@ join log_tarifa_tipo on log_tarifa_tipo.id=log_tarifario_venta_det.log_tarifa_ti
             + "log_doc_ped_det.log_status_id as estatus,"
             + "(case when log_doc_ped_det_dev.id is null then 0 else 1 end) as status_r, "
             + "(case when log_doc_ped_det_dev.id is null then 0 else log_doc_ped_det_dev.log_tipo_rechazo_id end) as tr_id, "
-            + "(case when log_doc_ped_det_dev.id is null then 0 else log_doc_ped_det_dev.cantidad end) as cant_r "
+            + "(case when log_doc_ped_det_dev.id is null then 0 else log_doc_ped_det_dev.cantidad end) as cant_r,"
+            + "(case when log_doc_ped_det_dev.id is null then 0 else log_doc_ped_det_dev.cargo end) as cargo_r "
         + "from log_doc_ped_det "
         + "join inv_prod on inv_prod.id=log_doc_ped_det.inv_prod_id "
         + "left join inv_prod_unidades on inv_prod_unidades.id=log_doc_ped_det.inv_prod_unidad_id "
@@ -2248,6 +2284,7 @@ join log_tarifa_tipo on log_tarifa_tipo.id=log_tarifario_venta_det.log_tarifa_ti
                     row.put("status_r",rs.getInt("status_r"));
                     row.put("tr_id",rs.getInt("tr_id"));
                     row.put("cant_r",StringHelper.roundDouble(rs.getString("cant_r"),2));
+                    row.put("cargo_r",StringHelper.roundDouble(rs.getString("cargo_r"),2));
                     return row;
                 }
             }
@@ -2270,13 +2307,15 @@ join log_tarifa_tipo on log_tarifa_tipo.id=log_tarifario_venta_det.log_tarifa_ti
             + "(case when log_choferes.nombre is null then '' else log_choferes.nombre end) ||' '|| (case when log_choferes.apellido_paterno is null then '' else log_choferes.apellido_paterno end) ||' '|| case when log_choferes.apellido_materno is null then '' else log_choferes.apellido_materno	END AS operador,  "
             + "(case when log_vehiculo_marca.id is null then '' else log_vehiculo_marca.titulo end) AS marca_unidad, "
             + "(case when log_vehiculo_clase.id is null then '' else log_vehiculo_clase.titulo end) AS clase, "
-            + "(case when log_status.id is null then '' else log_status.titulo end) AS status_viaje "
+            + "(case when log_status.id is null then '' else log_status.titulo end) AS status_viaje,"
+            + "(case when inv_alm.id is null then '' else inv_alm.titulo end) AS almacen "
         + "FROM log_viaje "
         + "left join log_choferes on log_choferes.id=log_viaje.log_chofer_id "
         + "left join log_vehiculos on log_vehiculos.id=log_viaje.log_vehiculo_id "
         + "left join log_vehiculo_clase on log_vehiculo_clase.id=log_viaje.log_vehiculo_clase_id " 
         + "left join log_vehiculo_marca on log_vehiculo_marca.id=log_vehiculos.log_vehiculo_marca_id " 
         + "left join log_status on log_status.id=log_viaje.log_status_id " 
+        + "left join inv_alm on inv_alm.id=log_viaje.inv_alm_id "
         +"JOIN ("+sql_busqueda+") AS sbt on sbt.id=log_viaje.id "
         +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
         
@@ -2294,6 +2333,7 @@ join log_tarifa_tipo on log_tarifa_tipo.id=log_tarifario_venta_det.log_tarifa_ti
                     row.put("marca_unidad",rs.getString("marca_unidad"));
                     row.put("clase",rs.getString("clase"));
                     row.put("status_viaje",rs.getString("status_viaje"));
+                    row.put("almacen",rs.getString("almacen"));
                     return row;
                 }
             }
@@ -2326,7 +2366,7 @@ join log_tarifa_tipo on log_tarifa_tipo.id=log_tarifario_venta_det.log_tarifa_ti
             + "log_vehiculos.cap_peso,"
             + "(case when log_vehiculo_clase.id is null then '' else log_vehiculo_clase.titulo end) AS clase, "
             + "log_choferes.clave AS no_operador,"
-            + "(case when log_choferes.nombre is null then '' else log_choferes.nombre end) || (case when log_choferes.apellido_paterno is null then '' else log_choferes.apellido_paterno end) || case when log_choferes.apellido_materno is null then '' else log_choferes.apellido_materno END AS operador, "
+            + "(case when log_choferes.nombre is null then '' else log_choferes.nombre end) || (case when log_choferes.apellido_paterno is null then '' else ' '||log_choferes.apellido_paterno end) || case when log_choferes.apellido_materno is null then '' else ' '||log_choferes.apellido_materno END AS operador, "
             + "log_viaje.observaciones, "
             + "log_viaje.log_status_id as status,"
             + "log_viaje.inv_alm_id as alm_id,"
@@ -2420,6 +2460,22 @@ join log_tarifa_tipo on log_tarifa_tipo.id=log_tarifario_venta_det.log_tarifa_ti
             + "(case when inv_prod.id is null then '' else inv_prod.descripcion end) as serv_desc,"
             + "(case when um.id is null then '' else um.titulo end) as serv_um,"
                 
+            + "(case when log_viaje_det.log_tarifa_clase_id=5 then log_viaje_det.log_tarifa_clase_id else (case when log_viaje_det.log_status_id=0 then (case when tbl_tarifa.log_tarifa_tipo_id is null then 0 else tbl_tarifa.log_tarifa_clase_id end) else log_viaje_det.log_tarifa_clase_id end) end) as t_clase_id,"
+            + "(case when log_viaje_det.log_status_id=0 then (case when tbl_tarifa.log_tarifa_tipo_id is null then 0 else tbl_tarifa.log_tarifa_tipo_id end) else log_viaje_det.log_tarifa_tipo_id end) as t_tipo_id,"   
+            + "(case when tbl_tarifa.log_tarifa_tipo_id is null then '' else tbl_tarifa.clase end) as t_clase,"
+            + "(case when tbl_tarifa.log_tarifa_tipo_id is null then '' else tbl_tarifa.tipo_tarifa end) as t_tipo,"
+            
+            + "(case when log_viaje_det.log_status_id=0 then "
+                + "(case when tbl_tarifa.log_tarifa_tipo_id is null then 0 else "
+                    + "(case when tbl_tarifa.operacion=1 then "
+                        + "(case when tbl_tarifa.base=1 then (1 * tbl_tarifa.precio::double precision) "
+                            + "when tbl_tarifa.base=2 then ((sum(log_doc_ped_det.peso)/1000) * tbl_tarifa.precio::double precision) "
+                            + "when tbl_tarifa.base=3 then (sum(log_doc_ped_det.volumen) * tbl_tarifa.precio::double precision) "
+                        + "else 0 end) "
+                    + "else 0 end)"
+                + "end) "
+            + "else log_viaje_det.precio_tarifa_venta end) as precio_venta, "
+            
             + "gral_mun.id AS mun_id,"
             + "upper(gral_mun.titulo) AS municipio,"
             + "log_doc_ped.log_status_id AS status_ped,"
@@ -2439,8 +2495,12 @@ join log_tarifa_tipo on log_tarifa_tipo.id=log_tarifario_venta_det.log_tarifa_ti
         + "left join inv_prod_unidades as um on um.id=inv_prod.unidad_id "
         + "JOIN gral_mun on gral_mun.id=log_viaje_det.gral_mun_id  "
         + "left join log_status on log_status.id=log_viaje_det.log_status_id  "
+        
+        + "left join log_tarifa_clie on (log_tarifa_clie.cxc_clie_id=cxc_clie.id and log_tarifa_clie.log_tarifa_clase_id=log_doc_ped.log_tarifa_clase_id) "
+        + "left join (select log_tarifario_venta.cxc_clie_id, log_tarifa_tipo.log_tarifa_clase_id, log_tarifario_venta_det.log_tarifa_tipo_id, log_tarifario_venta.gral_mun_id, log_tarifa_tipo.operacion, log_tarifa_tipo.base, log_tarifario_venta_det.valor as precio, upper(log_tarifa_clase.titulo) as clase, upper(log_tarifa_tipo.titulo) as tipo_tarifa from log_tarifario_venta join log_tarifario_venta_det on (log_tarifario_venta_det.log_tarifario_venta_id=log_tarifario_venta.id) join log_tarifa_tipo on log_tarifa_tipo.id=log_tarifario_venta_det.log_tarifa_tipo_id join log_tarifa_clase on log_tarifa_clase.id=log_tarifa_tipo.log_tarifa_clase_id) as tbl_tarifa on (tbl_tarifa.cxc_clie_id=log_tarifa_clie.cxc_clie_id and tbl_tarifa.log_tarifa_clase_id=log_tarifa_clie.log_tarifa_clase_id and tbl_tarifa.log_tarifa_tipo_id=log_tarifa_clie.log_tarifa_tipo_id and tbl_tarifa.gral_mun_id=gral_mun.id ) "
+        
         + "WHERE log_viaje_det.log_viaje_id=? "
-        + "group by cxc_clie.numero_control,cxc_clie.razon_social,log_viaje_det.id,log_doc_carga.id,log_doc.fecha_carga,log_doc_ped.id,log_doc_carga.no_carga,log_doc_carga.fecha_entrega, log_doc_ped.no_pedido, cxc_destinatarios.id,cxc_destinatarios.folio_ext,cxc_destinatarios.razon_social,log_viaje_det.solicitar_firma,log_viaje_det.solicitar_sello,log_viaje_det.solicitar_efectivo, inv_prod.id, um.id, gral_mun.id,gral_mun.titulo,log_doc_ped.log_status_id, log_status.id  "
+        + "group by cxc_clie.numero_control,cxc_clie.razon_social,log_viaje_det.id,log_doc_carga.id,log_doc.fecha_carga,log_doc_ped.id,log_doc_carga.no_carga,log_doc_carga.fecha_entrega, log_doc_ped.no_pedido, cxc_destinatarios.id,cxc_destinatarios.folio_ext,cxc_destinatarios.razon_social,log_viaje_det.solicitar_firma,log_viaje_det.solicitar_sello,log_viaje_det.solicitar_efectivo, inv_prod.id, um.id, gral_mun.id,gral_mun.titulo,log_doc_ped.log_status_id, log_status.id,  tbl_tarifa.log_tarifa_clase_id, tbl_tarifa.log_tarifa_tipo_id, tbl_tarifa.clase, tbl_tarifa.tipo_tarifa, tbl_tarifa.operacion, tbl_tarifa.base, tbl_tarifa.precio  "
         + "order by log_viaje_det.id";
         
         //System.out.println("sql_to_query: "+sql_to_query);
@@ -2475,6 +2535,12 @@ join log_tarifa_tipo on log_tarifa_tipo.id=log_tarifario_venta_det.log_tarifa_ti
                     row.put("peso",StringHelper.roundDouble(rs.getString("peso"),3));
                     row.put("volumen",StringHelper.roundDouble(rs.getString("volumen"),3));
                     row.put("serv",rs.getInt("serv_id")+"&|&"+rs.getString("serv_codigo")+"&|&"+rs.getString("serv_desc")+"&|&"+rs.getString("serv_um")+"&|&"+StringHelper.roundDouble(rs.getString("serv_costo"),2));
+                    
+                    row.put("t_clase_id",rs.getInt("t_clase_id"));
+                    row.put("t_tipo_id",rs.getInt("t_tipo_id"));
+                    row.put("t_clase",rs.getString("t_clase"));
+                    row.put("t_tipo",rs.getString("t_tipo"));
+                    row.put("precio_venta",StringHelper.roundDouble(rs.getString("precio_venta"),2));
                     
                     return row;
                 }
@@ -2542,6 +2608,90 @@ join log_tarifa_tipo on log_tarifa_tipo.id=log_tarifario_venta_det.log_tarifa_ti
             }
         );
         return hm;
+    }
+    
+    
+    
+    //Obtener el precio de venta dependiendo del rango de volumen
+    @Override
+    public HashMap<String, Object> getLoAdmViaje_PrecioVenta(String clase_tarifa_id, String volumen) {
+        HashMap<String, Object> hm_return = new HashMap<String, Object>();
+        
+        String sql_to_query = "SELECT count(log_tarifa_clie.id) as exis  FROM log_tarifa_clie "
+                + "join log_tarifario_venta on log_tarifario_venta.cxc_clie_id=log_tarifa_clie.cxc_clie_id "
+                + "join log_tarifario_venta_det on (log_tarifario_venta_det.log_tarifario_venta_id=log_tarifario_venta.id and log_tarifario_venta_det.log_tarifa_tipo_id=log_tarifa_clie.log_tarifa_tipo_id and (now()::date between log_tarifario_venta_det.fecha_inicio and log_tarifario_venta_det.fecha_fin))  "
+                + "join log_tarifario_venta_det_rango on (log_tarifario_venta_det_rango.log_tarifario_venta_det_id=log_tarifario_venta_det.id and ("+volumen+"::double precision>valor1 and "+volumen+"::double precision<=valor2)) "
+                + "where log_tarifa_clie.log_tarifa_clase_id=?;";
+        //System.out.println("Validacion:"+sql_to_query);
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        
+        HashMap<String, Object> hm = (HashMap<String, Object>) this.jdbcTemplate.queryForObject(
+            sql_to_query, 
+            new Object[]{new Integer(clase_tarifa_id)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("exis",rs.getString("exis"));
+                    return row;
+                }
+            }
+        );
+        
+        
+        if(Integer.valueOf(hm.get("exis").toString())>0){
+            String sql_to_query2 = ""
+            + "SELECT "
+                + "log_tarifa_clie.cxc_clie_id,  "
+                + "log_tarifa_clie.log_tarifa_clase_id as t_clase_id, "
+                + "log_tarifa_clie.log_tarifa_tipo_id  as t_tipo_id, "
+                + "(case when log_tarifa_clase.id is null then '' else log_tarifa_clase.titulo end) as t_clase,"
+                + "(case when log_tarifa_tipo.id is null then '' else log_tarifa_tipo.titulo end) as t_tipo, "
+                + "log_tarifario_venta_det_rango.titulo, "
+                + "log_tarifario_venta_det_rango.valor1, "
+                + "log_tarifario_venta_det_rango.valor2, "
+                + "(log_tarifario_venta_det_rango.precio * "+volumen+"::double precision) as precio_total, "
+                + "log_tarifario_venta_det_rango.precio as precio_venta "
+            + "FROM log_tarifa_clie "
+            + "join log_tarifario_venta on log_tarifario_venta.cxc_clie_id=log_tarifa_clie.cxc_clie_id "
+            + "join log_tarifario_venta_det on (log_tarifario_venta_det.log_tarifario_venta_id=log_tarifario_venta.id and log_tarifario_venta_det.log_tarifa_tipo_id=log_tarifa_clie.log_tarifa_tipo_id and (now()::date between log_tarifario_venta_det.fecha_inicio and log_tarifario_venta_det.fecha_fin))  "
+            + "join log_tarifario_venta_det_rango on (log_tarifario_venta_det_rango.log_tarifario_venta_det_id=log_tarifario_venta_det.id and ("+volumen+"::double precision>valor1 and "+volumen+"::double precision<=valor2)) "
+            + "left join log_tarifa_clase on log_tarifa_clase.id=log_tarifa_clie.log_tarifa_clase_id "
+            + "left join log_tarifa_tipo on log_tarifa_tipo.id=log_tarifa_clie.log_tarifa_tipo_id "
+            + "where log_tarifa_clie.log_tarifa_clase_id=? limit 1;";
+            
+            System.out.println("sql_to_query2: "+sql_to_query2);
+            System.out.println("sql_to_query2: "+sql_to_query2);
+            
+            HashMap<String, Object> hm2 = (HashMap<String, Object>) this.jdbcTemplate.queryForObject(
+                sql_to_query2, 
+                new Object[]{new Integer(clase_tarifa_id)}, new RowMapper() {
+                    @Override
+                    public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                        HashMap<String, Object> row = new HashMap<String, Object>();
+                        row.put("t_clase_id",rs.getInt("t_clase_id"));
+                        row.put("t_tipo_id",rs.getInt("t_tipo_id"));
+                        row.put("t_clase",rs.getString("t_clase"));
+                        row.put("t_tipo",rs.getString("t_tipo"));
+                        row.put("precio_total",StringHelper.roundDouble(rs.getString("precio_total"),2));
+                        row.put("precio_venta",StringHelper.roundDouble(rs.getString("precio_venta"),2));
+                        return row;
+                    }
+                }
+            );
+            
+            hm_return=hm2;
+        }else{
+            HashMap<String, Object> row = new HashMap<String, Object>();
+            row.put("t_clase_id","0");
+            row.put("t_tipo_id","0");
+            row.put("t_clase","");
+            row.put("t_tipo","");
+            row.put("precio_venta",StringHelper.roundDouble(0,2));
+            
+            hm_return=row;
+        }
+        
+        return hm_return;
     }
     
     
@@ -3544,11 +3694,13 @@ join log_tarifa_tipo on log_tarifa_tipo.id=log_tarifario_venta_det.log_tarifa_ti
             + "log_doc_carga.folio, "
             + "to_char(log_doc.fecha_carga::timestamp with time zone, 'dd/mm/yyyy') as fecha_carga, "
             + "(case when cxc_clie.id is null then '' else cxc_clie.razon_social end) AS cliente, "
-            + "(case when log_status.id is null then '' else log_status.titulo end) as status "
+            + "(case when log_status.id is null then '' else log_status.titulo end) as status, "
+            + "(case when inv_alm.id is null then '' else inv_alm.titulo end) AS almacen "
         + "FROM log_doc_carga "
         + "join log_doc on log_doc.id=log_doc_carga.log_doc_id "
         + "join cxc_clie on cxc_clie.id=log_doc.cxc_clie_id "
         + "left join log_status on log_status.id=log_doc_carga.log_status_id  "
+        + "left join inv_alm on inv_alm.id=log_doc.inv_alm_id "
         +"JOIN ("+sql_busqueda+") AS sbt on sbt.id=log_doc_carga.id "
         +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
         
@@ -3565,6 +3717,7 @@ join log_tarifa_tipo on log_tarifa_tipo.id=log_tarifario_venta_det.log_tarifa_ti
                     row.put("fecha_carga",rs.getString("fecha_carga"));
                     row.put("cliente",rs.getString("cliente"));
                     row.put("status",rs.getString("status"));
+                    row.put("almacen",rs.getString("almacen"));
                     return row;
                 }
             }
@@ -3638,6 +3791,7 @@ join log_tarifa_tipo on log_tarifa_tipo.id=log_tarifario_venta_det.log_tarifa_ti
             + "(case when gral_mun.id is null then '' else gral_mun.titulo end) as poblacion,"
             + "log_doc_ped.log_status_id as status_id,"
             + "(case when log_status.id is null then '' else log_status.titulo end) as status_ped, "
+            + "log_doc_ped.log_tarifa_clase_id as tclas_id,"
             //+ "(case when log_doc_ped.estatus=0 then '' when log_doc_ped.estatus=1 then 'Enviado' else '' end) as status_ped,"
             + "sum((case when log_doc_ped_det.cantidad is null then 0 else log_doc_ped_det.cantidad end)) as cant_uni, "
             + "sum((case when log_doc_ped_det.peso is null then 0 else log_doc_ped_det.peso end)) AS peso,"
@@ -3649,7 +3803,7 @@ join log_tarifa_tipo on log_tarifa_tipo.id=log_tarifario_venta_det.log_tarifa_ti
         + "left join gral_mun on gral_mun.id=cxc_destinatarios.gral_mun_id "
         + "left join log_status on log_status.id=log_doc_ped.log_status_id  "
         + "where log_doc_ped.log_doc_carga_id=? "
-        + "group by log_doc_ped.id, log_doc_ped.no_pedido, log_doc_ped_fac.id, log_doc_ped_fac.no_facura, cxc_destinatarios.id, cxc_destinatarios.folio, cxc_destinatarios.razon_social, gral_mun.id, log_doc_ped.log_status_id, log_status.id "
+        + "group by log_doc_ped.id, log_doc_ped.no_pedido, log_doc_ped_fac.id, log_doc_ped_fac.no_facura, cxc_destinatarios.id, cxc_destinatarios.folio, cxc_destinatarios.razon_social, gral_mun.id, log_doc_ped.log_status_id, log_status.id, log_doc_ped.log_tarifa_tipo_id "
         + "order by log_doc_ped.id;";
         
         //System.out.println("DatosGrid: "+sql_to_query);
@@ -3671,6 +3825,7 @@ join log_tarifa_tipo on log_tarifa_tipo.id=log_tarifario_venta_det.log_tarifa_ti
                     row.put("poblacion",rs.getString("poblacion"));
                     row.put("status_id",rs.getInt("status_id"));
                     row.put("status_ped",rs.getString("status_ped"));
+                    row.put("tclas_id",rs.getInt("tclas_id"));
                     row.put("cant_uni",StringHelper.roundDouble(rs.getString("cant_uni"),2));
                     row.put("peso",StringHelper.roundDouble(rs.getString("peso"),3));
                     row.put("volumen",StringHelper.roundDouble(rs.getString("volumen"),3));
@@ -3707,6 +3862,7 @@ join log_tarifa_tipo on log_tarifa_tipo.id=log_tarifario_venta_det.log_tarifa_ti
                 fila.put("poblacion",i.get("poblacion").toString());
                 fila.put("status_id",Integer.parseInt(i.get("status_id").toString()));
                 fila.put("status_ped",i.get("status_ped").toString());
+                fila.put("tclas_id",i.get("tclas_id"));
                 fila.put("cant_uni",StringHelper.roundDouble(i.get("cant_uni").toString(),2));
                 fila.put("peso",StringHelper.roundDouble(i.get("peso").toString(),3));
                 fila.put("volumen",StringHelper.roundDouble(i.get("volumen").toString(),3));
@@ -3723,6 +3879,7 @@ join log_tarifa_tipo on log_tarifa_tipo.id=log_tarifario_venta_det.log_tarifa_ti
                 fila.put("poblacion","");
                 fila.put("status_id",Integer.parseInt(i.get("status_id").toString()));
                 fila.put("status_ped","");
+                fila.put("tclas_id",i.get("tclas_id"));
                 fila.put("cant_uni","");
                 fila.put("peso","");
                 fila.put("volumen","");
@@ -3733,6 +3890,31 @@ join log_tarifa_tipo on log_tarifa_tipo.id=log_tarifario_venta_det.log_tarifa_ti
         }
         
         return tratado;
+    }
+    
+    
+    
+    
+    
+    //Obtiene detalles del pedido
+    @Override
+    public ArrayList<HashMap<String, Object>> getLogRegCarga_ClaseTarifa() {
+        //String sql_to_query = "select log_tarifa_tipo.id, upper(log_tarifa_clase.titulo||'-'||log_tarifa_tipo.titulo) as tarifa from log_tarifa_tipo  join log_tarifa_clase on log_tarifa_clase.id=log_tarifa_tipo.log_tarifa_clase_id where log_tarifa_tipo.gral_emp_id=? and log_tarifa_tipo.borrado_logico=false order by log_tarifa_clase.titulo, log_tarifa_tipo.titulo;";
+        String sql_to_query = "select id, titulo from log_tarifa_clase where borrado_logico=false;";
+        
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("titulo",rs.getString("titulo"));
+                    return row;
+                }
+            }
+        );
+        return hm;
     }
     
     
@@ -4551,7 +4733,7 @@ join log_tarifa_tipo on log_tarifa_tipo.id=log_tarifario_venta_det.log_tarifa_ti
             + "left join log_vehiculo_tipo on log_vehiculo_tipo.id=log_vehiculos.log_vehiculo_tipo_id "
             + "left join log_ruta_tipo_unidad on (log_ruta_tipo_unidad.log_ruta_id=log_ruta.id and log_ruta_tipo_unidad.log_vehiculo_tipo_id=log_vehiculos.log_vehiculo_tipo_id) "
             + "left join cxp_prov on cxp_prov.id=log_vehiculos.cxp_prov_id  "
-            + "where log_viaje.borrado_logico=false and log_viaje.log_status_id>=2 and log_ruta.gral_emp_id=? "+ where +" "
+            + "where log_viaje.borrado_logico=false and log_viaje.log_status_id in(2,3,4,5) and log_ruta.gral_emp_id=? "+ where +" "
             +" and (to_char(log_viaje.fecha,'yyyymmdd')::integer BETWEEN to_char('"+fecha_inicial+"'::timestamp with time zone,'yyyymmdd')::integer AND to_char('"+fecha_final+"'::timestamp with time zone,'yyyymmdd')::integer) "
             + "group by log_viaje.folio, log_viaje.fecha, log_ruta.titulo, log_choferes.nombre, log_choferes.apellido_paterno, log_choferes.apellido_materno, cxp_prov.id, log_vehiculo_tipo.titulo, log_vehiculo_clase.titulo, log_viaje.costo_ruta, log_ruta_tipo_unidad.costo, cxc_clie.razon_social  "
             + "order by log_viaje.fecha"
@@ -4675,6 +4857,7 @@ join log_tarifa_tipo on log_tarifa_tipo.id=log_tarifario_venta_det.log_tarifa_ti
     
     
     //Obtiene Tipos de  Tarifas
+    //Solo se obtienen los tipos de tarifa 1=por poblacion
     @Override
     public ArrayList<HashMap<String, Object>> getTarifario_Tipos(Integer id_emp) {
 	String sql_query = ""
@@ -4686,7 +4869,7 @@ join log_tarifa_tipo on log_tarifa_tipo.id=log_tarifario_venta_det.log_tarifa_ti
         + "from log_tarifa_tipo "
         + "join log_tarifa_clase on log_tarifa_clase.id=log_tarifa_tipo.log_tarifa_clase_id "
         + "left join log_vehiculo_tipo on (log_vehiculo_tipo.id=log_tarifa_tipo.log_vehiculo_tipo_id and log_vehiculo_tipo.borrado_logico=false)"
-        + "where log_tarifa_tipo.borrado_logico=false and log_tarifa_tipo.gral_emp_id=? ORDER BY log_tarifa_clase.titulo, log_tarifa_tipo.id, log_vehiculo_tipo.titulo;";
+        + "where log_tarifa_tipo.borrado_logico=false and log_tarifa_tipo.gral_emp_id=? and log_tarifa_tipo.tipo=1 ORDER BY log_tarifa_clase.titulo, log_tarifa_tipo.id, log_vehiculo_tipo.titulo;";
         
         ArrayList<HashMap<String, Object>> hm_rtipo = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_query,
@@ -4814,4 +4997,141 @@ join log_tarifa_tipo on log_tarifa_tipo.id=log_tarifario_venta_det.log_tarifa_ti
         );
         return hm_rtipo;
     }
+    
+    
+    
+    
+    
+    //Tarifario de venta POR RANGO
+    @Override
+    public ArrayList<HashMap<String, Object>> getTarifarioVentaPorRango_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
+        String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
+        
+	String sql_to_query = ""
+        + "select  "
+            + "log_tarifario_venta.id,"
+            + "upper(log_tarifa_clase.titulo||'-'||log_tarifa_tipo.titulo) as tipo_tarifa, "
+            + "(case when log_tarifario_venta_det.fecha_inicio is null then '' else to_char(log_tarifario_venta_det.fecha_inicio::timestamp with time zone, 'dd/mm/yyyy') end)||' - '||(case when log_tarifario_venta_det.fecha_fin is null then '' else to_char(log_tarifario_venta_det.fecha_fin::timestamp with time zone, 'dd/mm/yyyy') end) AS vigencia, "
+            + "cxc_clie.razon_social as cliente  "
+        + "from log_tarifario_venta "
+        + "join log_tarifario_venta_det on log_tarifario_venta_det.log_tarifario_venta_id=log_tarifario_venta.id  "
+        + "join log_tarifa_tipo on (log_tarifa_tipo.id=log_tarifario_venta_det.log_tarifa_tipo_id  and log_tarifa_tipo.tipo=2)  "
+        + "join log_tarifa_clase on log_tarifa_clase.id=log_tarifa_tipo.log_tarifa_clase_id  "
+        + "join cxc_clie on cxc_clie.id=log_tarifario_venta.cxc_clie_id   "
+        + "JOIN ("+sql_busqueda+") AS sbt ON sbt.id = log_tarifario_venta.id "
+        + "order by "+orderBy+" "+asc+" limit ? OFFSET ?";
+        
+        //System.out.println("IMPRIMIENDO EL GRID DE RUTA: "+sql_to_query);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query, 
+            new Object[]{data_string, new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("tipo_tarifa",rs.getString("tipo_tarifa"));
+                    row.put("vigencia",rs.getString("vigencia"));
+                    row.put("cliente",rs.getString("cliente"));
+                    return row;
+                }
+            }
+        );
+        return hm; 
+    }
+    
+    
+    
+    //Obtiene los tipos de tarifa
+    //Solo se obtienen los tipos de tarifa 2=por Rango
+    @Override
+    public ArrayList<HashMap<String, Object>> getLog_TiposTarifasVentaPorRango(Integer id_emp) {
+        String sql_to_query = "select log_tarifa_tipo.id, upper(log_tarifa_clase.titulo||'-'||log_tarifa_tipo.titulo) as titulo from log_tarifa_tipo join log_tarifa_clase on log_tarifa_clase.id=log_tarifa_tipo.log_tarifa_clase_id where log_tarifa_tipo.gral_emp_id=? and log_tarifa_tipo.borrado_logico=false and log_tarifa_tipo.tipo=2 order by log_tarifa_clase.titulo, log_tarifa_tipo.titulo;";
+        
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(id_emp)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("titulo",rs.getString("titulo"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    
+    
+    
+    //Obtiene datos del Header del registro de tarifa por cliente por rango
+    @Override
+    public ArrayList<HashMap<String, Object>> getTarifarioVentaPorRango_Datos(Integer id) {
+	String sql_query = ""
+        + "SELECT "
+            + "log_tarifario_venta.id, "
+            + "log_tarifario_venta.cxc_clie_id as clie_id, "
+            + "cxc_clie.numero_control as clie_no, "
+            + "cxc_clie.razon_social as clie, "
+            + "log_tarifario_venta_det.log_tarifa_tipo_id as tt_id, "
+            + "log_tarifario_venta_det.fecha_inicio::character varying as fecha_inicio, "
+            + "log_tarifario_venta_det.fecha_fin::character varying as fecha_fin "
+        + "FROM log_tarifario_venta "
+        + "join log_tarifario_venta_det on log_tarifario_venta_det.log_tarifario_venta_id=log_tarifario_venta.id  "
+        + "join cxc_clie on cxc_clie.id=log_tarifario_venta.cxc_clie_id "
+        + "where log_tarifario_venta.id=? limit 1;";
+  
+        ArrayList<HashMap<String, Object>> hm_rtipo = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{new Integer(id)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("clie_id",rs.getInt("clie_id"));
+                    row.put("clie_no",rs.getString("clie_no"));
+                    row.put("clie",rs.getString("clie"));
+                    row.put("tt_id",rs.getInt("tt_id"));
+                    
+                    row.put("fecha_inicio",rs.getString("fecha_inicio"));
+                    row.put("fecha_fin",rs.getString("fecha_fin"));
+                    
+                    return row;
+                }
+            }
+        );
+        return hm_rtipo;
+    }
+    
+    //Obtiene la lista de tipos de Trifas y las tarifas por cliente-ruta
+    @Override
+    public ArrayList<HashMap<String, Object>> getTarifarioVentaPorRango_DatosGrid(Integer id) {
+	String sql_query = "select distinct tvdet_rango.id as id_det, tvdet_rango.titulo as titulo_rango,tvdet_rango.valor1,tvdet_rango.valor2,tvdet_rango.precio "
+                + "from log_tarifario_venta_det_rango as tvdet_rango "
+                + "join log_tarifario_venta_det as tvdet on tvdet.id=tvdet_rango.log_tarifario_venta_det_id "
+                + "where tvdet.log_tarifario_venta_id=? order by tvdet_rango.id;";
+        
+        System.err.println("TarifarioVentaPorRango_DatosGrid:  "+sql_query);
+        ArrayList<HashMap<String, Object>> hm_rtipo = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{new Integer(id)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id_det",rs.getInt("id_det"));
+                    row.put("titulo_rango",rs.getString("titulo_rango"));
+                    row.put("valor1",StringHelper.roundDouble(rs.getString("valor1"), 2));
+                    row.put("valor2",StringHelper.roundDouble(rs.getString("valor2"), 2));
+                    row.put("precio",StringHelper.roundDouble(rs.getString("precio"), 2));
+                    return row;
+                }
+            }
+        );
+        return hm_rtipo;
+    }
+    
+    
+    
 }

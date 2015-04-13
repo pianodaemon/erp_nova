@@ -84,6 +84,9 @@ public interface LogInterfaceDao {
     public ArrayList<HashMap<String, Object>> getLoAdmViaje_DatosGrid(Integer id);
     public ArrayList<HashMap<String, Object>> getLoAdmViaje_Adicionales(Integer id);
     public ArrayList<HashMap<String, Object>> getLogAdmViaje_TiposDeRechazo(Integer id_empresa);
+    public HashMap<String, Object> getLoAdmViaje_PrecioVenta(String clase_tarifa_id, String volumen);
+    
+    
     
     public HashMap<String, String> getLoAdmViaje_DatosPdf(Integer id);
     public ArrayList<HashMap<String, String>> getLoAdmViaje_ListaPdf(Integer id_);
@@ -129,6 +132,7 @@ public interface LogInterfaceDao {
     public ArrayList<HashMap<String, Object>> getLogRegCarga_Datos(Integer id);
     public ArrayList<HashMap<String, Object>> getLogRegCarga_DatosGrid(Integer id);
     public ArrayList<HashMap<String, Object>> tratar_datos_grid(ArrayList<HashMap<String, Object>> partidas);
+    public ArrayList<HashMap<String, Object>> getLogRegCarga_ClaseTarifa();
     public ArrayList<HashMap<String, Object>> getLogRegCarga_DetallePedido(Integer id_ped);
     public HashMap<String, Object> getLogRegCarga_VerificaStatusPedido(Integer id_ped);
     public HashMap<String, Object> getLogRegCarga_VerificaStatusPartida(Integer id_reg);
@@ -164,4 +168,10 @@ public interface LogInterfaceDao {
     public ArrayList<HashMap<String, Object>> getTarifarioVenta_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
     public ArrayList<HashMap<String, Object>> getTarifarioVenta_Datos(Integer id);
     public ArrayList<HashMap<String, Object>> getTarifarioVenta_DatosGrid(Integer id, Integer id_emp);
+    
+    //Tarifario de ventas por rango
+    public ArrayList<HashMap<String, Object>> getLog_TiposTarifasVentaPorRango(Integer id_emp);
+    public ArrayList<HashMap<String, Object>> getTarifarioVentaPorRango_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
+    public ArrayList<HashMap<String, Object>> getTarifarioVentaPorRango_Datos(Integer id);
+    public ArrayList<HashMap<String, Object>> getTarifarioVentaPorRango_DatosGrid(Integer id);
 }
