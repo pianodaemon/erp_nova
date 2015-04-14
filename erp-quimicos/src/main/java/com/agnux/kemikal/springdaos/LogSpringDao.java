@@ -2659,8 +2659,8 @@ join log_tarifa_clase on log_tarifa_clase.id=log_tarifa_tipo.log_tarifa_clase_id
             + "left join log_tarifa_tipo on log_tarifa_tipo.id=log_tarifa_clie.log_tarifa_tipo_id "
             + "where log_tarifa_clie.log_tarifa_clase_id=? limit 1;";
             
-            System.out.println("sql_to_query2: "+sql_to_query2);
-            System.out.println("sql_to_query2: "+sql_to_query2);
+            System.out.println("clase_tarifa_id: "+clase_tarifa_id+"     volumen: "+volumen);
+            //System.out.println("sql_to_query2: "+sql_to_query2);
             
             HashMap<String, Object> hm2 = (HashMap<String, Object>) this.jdbcTemplate.queryForObject(
                 sql_to_query2, 
@@ -5113,7 +5113,7 @@ join log_tarifa_clase on log_tarifa_clase.id=log_tarifa_tipo.log_tarifa_clase_id
                 + "join log_tarifario_venta_det as tvdet on tvdet.id=tvdet_rango.log_tarifario_venta_det_id "
                 + "where tvdet.log_tarifario_venta_id=? order by tvdet_rango.id;";
         
-        System.err.println("TarifarioVentaPorRango_DatosGrid:  "+sql_query);
+        //System.out.println("TarifarioVentaPorRango_DatosGrid:  "+sql_query);
         ArrayList<HashMap<String, Object>> hm_rtipo = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_query,
             new Object[]{new Integer(id)}, new RowMapper() {
