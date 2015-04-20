@@ -424,7 +424,7 @@ public class InvAjustesController {
             
             for(int i=0; i<no_tr.length; i++) {
                 arreglo[i]= "'"+idproducto[i]+"___"+id_almacen[i]+"___"+cant_ajuste[i]+"___"+costo_ajuste[i]+"___"+no_tr[i]+"___"+select_pres[i]+"'";
-                System.out.println(arreglo[i]);
+                //System.out.println(arreglo[i]);
             }
             
             //serializar el arreglo
@@ -438,7 +438,7 @@ public class InvAjustesController {
             
             //la accion es para confirmar
             String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+identificador+"___"+select_tipo_mov+"___"+observaciones.toUpperCase()+"___"+select_almacen;
-            System.out.println("data_string: "+data_string);
+            //System.out.println("data_string: "+data_string);
             
             succes = this.getInvDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
             actualizar = String.valueOf(succes.get("success"));
@@ -527,13 +527,13 @@ public class InvAjustesController {
         response.setBufferSize(size);
         response.setContentLength(size);
         response.setContentType("application/pdf");
-        response.setHeader("Content-Disposition","attachment; filename=\"" + file.getCanonicalPath() +"\"");
+        response.setHeader("Content-Disposition","attachment; filename=\"" + file.getName() +"\"");
         FileCopyUtils.copy(bis, response.getOutputStream());  	
         response.flushBuffer();
         
         FileHelper.delete(fileout);
         
-        return null;        
+        return null;
     }
 
     

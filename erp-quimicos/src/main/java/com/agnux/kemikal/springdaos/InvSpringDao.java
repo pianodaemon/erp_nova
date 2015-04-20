@@ -5886,6 +5886,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     + "inv_mov_detalle.cantidad, "
                     + "(CASE WHEN inv_prod_presentaciones.id IS NULL THEN 0 ELSE (inv_mov_detalle.cantidad::double precision/inv_prod_presentaciones.cantidad::double precision) END ) AS cantPres, "
                     + "inv_mov_detalle.costo, "
+                    + "(inv_mov_detalle.cantidad * inv_mov_detalle.costo::double precision) as costo_partida, "
                     + cadena_existencia
                 + " FROM inv_mov_detalle "
                 + "JOIN inv_prod ON inv_prod.id=inv_mov_detalle.producto_id "
@@ -5914,6 +5915,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("costo_promedio",StringHelper.roundDouble(rs.getString("costo_promedio"),2));
                     row.put("cant_ajuste",StringHelper.roundDouble(rs.getString("cantidad"),rs.getInt("no_dec")));
                     row.put("costo_ajuste",StringHelper.roundDouble(rs.getString("costo"),2));
+                    row.put("costo_partida",StringHelper.roundDouble(rs.getString("costo_partida"),2));
                     row.put("existencia",StringHelper.roundDouble(rs.getString("existencia"),rs.getInt("no_dec")));
                     row.put("idPres",String.valueOf(rs.getInt("idPres")));
                     row.put("cantEqiv",String.valueOf(rs.getInt("cantEqiv")));

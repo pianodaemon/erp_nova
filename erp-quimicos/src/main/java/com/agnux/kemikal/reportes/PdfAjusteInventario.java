@@ -620,17 +620,16 @@ public final class PdfAjusteInventario {
     
     private class TablaPDF {
         public PdfPTable addContent() {
-            
-            Font small = new Font(Font.FontFamily.COURIER,6,Font.NORMAL,BaseColor.BLACK);
-            
             Font smallFont = new Font(Font.FontFamily.HELVETICA,7,Font.NORMAL,BaseColor.BLACK);
+            Font smallBoldFontBlack = new Font(Font.FontFamily.HELVETICA,7,Font.BOLD,BaseColor.BLACK);
             Font smallBoldFont = new Font(Font.FontFamily.HELVETICA, 8, Font.BOLD, BaseColor.WHITE);
-            Font smallBoldFont1 = new Font(Font.FontFamily.HELVETICA, 7, Font.BOLD, BaseColor.WHITE);
-            Font smallBoldFontBlack = new Font(Font.FontFamily.HELVETICA, 8, Font.BOLD, BaseColor.BLACK);
-            Font largeFont = new Font(Font.FontFamily.HELVETICA,8,Font.NORMAL,BaseColor.BLACK);
+            Double suma_costo_ajuste = 0.00;
             
+            //Font small = new Font(Font.FontFamily.COURIER,6,Font.NORMAL,BaseColor.BLACK);
+            //Font smallBoldFont1 = new Font(Font.FontFamily.HELVETICA, 7, Font.BOLD, BaseColor.WHITE);
+            //Font smallBoldFontBlack = new Font(Font.FontFamily.HELVETICA, 8, Font.BOLD, BaseColor.BLACK);
+            //Font largeFont = new Font(Font.FontFamily.HELVETICA,8,Font.NORMAL,BaseColor.BLACK);
             
-            //float [] widths = {2f, 5.5f, 3f, 2f, 1.5f, 2f,2f,2f,2f};
             float [] widths = {
                 2.5f,     //codigo
                 5f,   //descripcion
@@ -707,7 +706,6 @@ public final class PdfAjusteInventario {
                 cell.setHorizontalAlignment(Element.ALIGN_LEFT);
                 table.addCell(cell);
                 
-                
                 String descripcion = map.get("descripcion");
                 descripcion =  StringEscapeUtils.unescapeHtml(descripcion);
                 cell = new PdfPCell(new Paragraph(StringHelper.capitalizaString(descripcion), smallFont));
@@ -744,15 +742,58 @@ public final class PdfAjusteInventario {
                 cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                 cell.setBorderWidthLeft(0);
                 table.addCell(cell);
-                  
-            } 
+                
+                if(!map.get("costo_partida").equals("")){
+                    suma_costo_ajuste = suma_costo_ajuste + Double.parseDouble(map.get("costo_partida"));
+                }
+            }
             
+           
+           
             cell = new PdfPCell(new Paragraph("", smallFont));
             cell.setBorderWidthBottom(0);
             cell.setBorderWidthTop(1);
             cell.setBorderWidthRight(0);
             cell.setBorderWidthLeft(0);
-            cell.setColspan(6);
+            cell.setColspan(7);
+            cell.setFixedHeight(6);
+            table.addCell(cell);
+            
+           
+            cell = new PdfPCell(new Paragraph("", smallFont));
+            cell.setColspan(3);
+            cell.setBorderWidthBottom(0);
+            cell.setBorderWidthTop(0);
+            cell.setBorderWidthRight(0);
+            cell.setBorderWidthLeft(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("Costo total", smallBoldFontBlack));
+            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell.setColspan(2);
+            cell.setBorderWidthBottom(0);
+            cell.setBorderWidthTop(0);
+            cell.setBorderWidthRight(0);
+            cell.setBorderWidthLeft(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("$", smallBoldFontBlack));
+            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell.setBorderWidthRight(0);
+            cell.setBorderWidthBottom(1);
+            cell.setBorderWidthTop(1);
+            cell.setBorderWidthLeft(1);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(suma_costo_ajuste, 2)), smallBoldFontBlack));
+            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell.setBorderWidthBottom(1);
+            cell.setBorderWidthTop(1);
+            cell.setBorderWidthRight(1);
+            cell.setBorderWidthLeft(0);
             table.addCell(cell);
             
            return table;
