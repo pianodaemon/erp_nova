@@ -235,13 +235,13 @@
                                                         <table border="0">
                                                             <tr>
                                                                 <td width="10"></td>
-                                                                <td width="330">Observaciones</td>
+                                                                <td width="420">Observaciones</td>
                                                                 <td width="10"></td>
                                                             </tr>
                                                             <tr>
                                                                 <td width="10"></td>
-                                                                <td width="330">
-																	<textarea name="observaciones" rows="3" cols="60" style="width:330px; resize: none;"></textarea>
+                                                                <td width="420">
+																	<textarea name="observaciones" rows="3" cols="60" style="width:420px; resize:none;"></textarea>
                                                                 </td>
                                                                 <td width="10"></td>
                                                             </tr>
@@ -276,87 +276,118 @@
 												
                                                 <tr>
                                                     <td colspan="3" style="border-top: 1px solid #C1DAD7; border-bottom: 1px solid #C1DAD7; border-left: 1px solid #FFFFFF; border-right: 1px solid #FFFFFF;">
-														<table >
+														<table>
 															<thead>
 																<tr>
-																	<td class="grid" id="td_eliminar" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="60"><div class="delete">&nbsp;</div></td>
+																	<td class="grid" id="td_eliminar" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="25"><div class="delete">&nbsp;</div></td>
 																	<td class="grid" id="td_sku" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="110">&nbsp;</td>
 																	<td class="grid" id="td_nombre" style="background-color: rgb(180, 180, 180);"  width="180">&nbsp;</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="90">&nbsp;</td>
 																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="100">&nbsp;</td>
-																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="100">&nbsp;</td>
-																	<td class="grid" style="background-color: rgb(180, 180, 180); border-bottom:1px solid #ccc;" width="160" colspan="2">&nbsp;Existencia Actual</td>
-																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;</td>
-																	<td class="grid" style="background-color: rgb(180, 180, 180); border-bottom:1px solid #ccc;" width="160" colspan="2">&nbsp;Cantidad Ajuste</td>
-																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180); border-bottom:1px solid #ccc;" width="155" colspan="2">&nbsp;Existencia Actual</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="75">&nbsp;</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180); border-bottom:1px solid #ccc;" width="145" colspan="2">&nbsp;Cantidad Ajuste</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180); border-bottom:1px solid #ccc;" width="140" colspan="2">&nbsp;Costo del Ajuste</td>
 																</tr>
 																<tr>
-																	<td class="grid" id="td_eliminar" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="60"><div class="delete">&nbsp;#</div></td>
+																	<td class="grid" id="td_eliminar" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="25"><div class="delete">&nbsp;#</div></td>
 																	<td class="grid" id="td_sku" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="110">&nbsp;C&oacute;digo</td>
 																	<td class="grid" id="td_nombre" style="background-color: rgb(180, 180, 180);"  width="180">&nbsp;Descripci&oacute;n</td>
-																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="100">&nbsp;Unidad</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="90">&nbsp;Unidad</td>
 																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="100">&nbsp;Presentaci&oacute;n</td>
 																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;Unidad</td>
-																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;Presentaci&oacute;n</td>
-																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;Costo&nbsp;Prom.</td>
-																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;Unidad</td>
-																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;Presentaci&oacute;n</td>
-																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;Costo&nbsp;Ajuste</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="75">&nbsp;Presentaci&oacute;n</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="75">&nbsp;Costo&nbsp;Prom.</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="70">&nbsp;Unidad</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="75">&nbsp;Presentaci&oacute;n</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="65">&nbsp;Unitario</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;Total</td>
 																</tr>
 															</thead>
+															<tbody>
+																<tr>
+																	<td colspan="12" height="2"></td>
+																</tr>
+																<tr>
+																	<td colspan="12">
+																		<div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width:980; height:150px; border:1px solid #C1DAD7 !important;">	
+																			<table>
+																				<tbody style="background-color: #FFFFFF;" valign="top" id="grid_productos">
+																					
+																				</tbody>
+																			</table>
+																		</div>
+																	</td>
+																</tr>
+															</tbody>
+															<tfoot>
+																<tr>
+																	<td class="grid3" colspan="11" rowspan="2">
+																		<div id="div_warning_grid" style="display:none; width:890px; height:80px; overflow:scroll; overflow-x:auto; overflow-y:auto;">
+																			
+																			<table border ="0">
+																				<thead>
+																					<tr>
+																						<td width="10"></td>
+																						<td width="845" colspan="4"><div style="color:#d41000; text-align:left;">&nbsp;&nbsp;Datos&nbsp;no&nbsp;validos</div></td>
+																						<td width="10"></td>
+																					</tr>
+																					<tr>
+																						<td width="10" style="background-color:#A8A9AB;"></td>
+																						<td width="25" style="background-color:#A8A9AB; font-weight: bold; text-align:left;"></td>
+																						<td width="120" style="background-color:#A8A9AB; font-weight: bold; text-align:left;">C&oacute;digo&nbsp;producto</td>
+																						<td width="220" style="background-color:#A8A9AB; font-weight: bold; text-align:left;">Descripci&oacute;n</td>
+																						<td width="500" style="background-color:#A8A9AB; font-weight: bold; text-align:left;">Descripci&oacute;n&nbsp;del&nbsp;error</td>
+																						<td width="10" style="background-color:#A8A9AB;"></td>
+																					</tr>
+																				</thead>
+																				<tbody id="grid_warning">
+																					
+																					
+																				</tbody>
+																				<!--
+																				<tr>
+																					<td width="10"></td>
+																					<td colspan="5"> 
+																						<div align="left" style="width:575px; height:70px; overflow:scroll; overflow-x: auto; overflow-y: auto; color:#d41000;">
+																							<table id="grid_warning" border="1" style="width:1070px;"">
+																							</table>
+																						</div>
+																					</td>
+																					<td width="10"></td>
+																				</tr>
+																				-->
+																			</table>
+																		</div>
+																	</td>
+																	<!--
+																	<td class="grid3" width="110"></td>
+																	<td class="grid3" width="180"></td>
+																	<td class="grid3" width="90"></td>
+																	<td class="grid3" width="100"></td>
+																	<td class="grid3" width="80"></td>
+																	<td class="grid3" width="75"></td>
+																	<td class="grid3" width="75"></td>
+																	<td class="grid3" width="70"></td>
+																	<td class="grid3" width="75"></td>
+																	<td class="grid3" width="65"></td>
+																	-->
+																	<td class="grid" id="suma_total_costo_ajuste" width="80" height="13" style="border:1px solid #ccc; text-align:right; vertical-align:top;">0.00</td>
+																</tr>
+																
+																<tr>
+																	<td width="80"></td>
+																</tr>
+																
+															</tfoot>
+															
 														</table>
-														<div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width:980; height: 150px; border:1px solid #C1DAD7 !important;">	
-															<table>
-																<tbody style="background-color: #FFFFFF;" valign="top" id="grid_productos">
-																	
-																</tbody>
-															</table>
-														</div>
+
                                                         
                                                     </td>
                                                 </tr>
-												
-                                                <tr>
-                                                    <td colspan="3" width="970"  align="left" valign="top">
-														
-                                                        <div id="div_warning_grid" style="display:none;">
-															
-                                                            <table border ="0">
-                                                                <tr>
-                                                                    <td width="10"></td>
-                                                                    <td width="900" colspan="4"><div style="color:#d41000;">&nbsp;&nbsp;Datos&nbsp;no&nbsp;validos</div></td>
-                                                                    <td width="10"></td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td width="10"></td>
-                                                                    <td width="20" style="background-color:#A8A9AB; font-weight: bold;"></td>
-                                                                    <td width="150" style="background-color:#A8A9AB; font-weight: bold;">C&oacute;digo&nbsp;producto</td>
-                                                                    <td width="250" style="background-color:#A8A9AB; font-weight: bold;">Descripci&oacute;n</td>
-                                                                    <td width="400" style="background-color:#A8A9AB; font-weight: bold;">Descripci&oacute;n&nbsp;del&nbsp;error</td>
-                                                                    <td width="10"></td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td width="10"></td>
-                                                                    <td colspan="5"> 
-                                                                        <div align="left" style="width:950px; height:70px; overflow:scroll; overflow-x: auto; overflow-y: auto; color:#d41000;">
-                                                                            <table id="grid_warning" border="0" style="width:1070px;"">
-                                                                                <!-- Aqui se muestran los warning
-                                                                                style="background-color:#e7e8ea;"
-                                                                                -->
-                                                                            </table>
-                                                                        </div>
-                                                                    </td>
-                                                                </tr>
-                                                            </table>
-                                                        </div>
-														
-                                                    </td>
-                                                    
-                                                    
-                                                </tr>
 
                                         </table>
-
-
                                     </div>
 
                                 </div>

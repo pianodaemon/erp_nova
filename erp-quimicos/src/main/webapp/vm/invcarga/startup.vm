@@ -97,7 +97,7 @@
 												<td width="650">
 													<fieldset style="border:solid 1px #313E74; margin:0px; padding:0px;">
 														<legend>&nbsp;Datos de busqueda para el reporte&nbsp;</legend>
-														<table border="1" class="gral">
+														<table border="0" class="gral">
 															<tr><td colspan="6" height="10"></td></tr>
 															<tr>
 																<td width="5"></td>
