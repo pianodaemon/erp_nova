@@ -517,6 +517,24 @@ $(function() {
 				$campo_input.val(0);
 				$campo_input.val(parseFloat($campo_input.val()).toFixed(2))
 			}
+			
+			//Esto es para controlar la suma del costo cuando cambie el costo del ajuste
+			var $this_tr = $campo_input.parent().parent();
+			var $cantUniAjuste = $this_tr.find('input[name=cant_ajuste]');
+			var $costo_ajuste = $this_tr.find('input[name=costo_ajuste]');
+			var $tdSumaTotalCostoAjuste = $('#forma-invajustes-window').find('#suma_total_costo_ajuste');
+			var $tdCostoAjustePartida = $this_tr.find('td:eq(11)');
+			var valorCostoAjustePartidaAnterior = quitar_comas($tdCostoAjustePartida.html());
+			
+			//Calcular el nuevo costo del Ajuste
+			var valorCostoAjustePartidaNuevo = parseFloat(parseFloat($cantUniAjuste.val())*parseFloat($costo_ajuste.val())).toFixed(2);
+			
+			//Asignar el nuevo costo de la partida
+			$tdCostoAjustePartida.html($(this).agregar_comas(valorCostoAjustePartidaNuevo));
+			
+			//Restar el costo anterior de la partida y sumar el nuevo costo
+			$tdSumaTotalCostoAjuste.html($(this).agregar_comas(parseFloat(parseFloat(quitar_comas($tdSumaTotalCostoAjuste.html())) - parseFloat(valorCostoAjustePartidaAnterior) + parseFloat(valorCostoAjustePartidaNuevo)).toFixed(2)));
+			
 		});
 	}
 	
@@ -547,13 +565,17 @@ $(function() {
 		$campo_href.click(function(e){
 			e.preventDefault();
 			$tr_padre=$(this).parent().parent();
+			var $tdSumaTotalCostoAjuste = $('#forma-invajustes-window').find('#suma_total_costo_ajuste');
+			var valorCostoAjustePartidaAnterior = quitar_comas($tr_padre.find('td:eq(11)').html());
 			//$tr_padre.find('input').val('');//asignar vacio a todos los input del tr
 			//$tr_padre.find('input[name=eliminado]').val('0');//asignamos 0 para indicar que se ha eliminado
+			
+			//Restar de la suma total de costos el importe del costo de la partida
+			$tdSumaTotalCostoAjuste.html($(this).agregar_comas(parseFloat(parseFloat(quitar_comas($tdSumaTotalCostoAjuste.html())) - parseFloat(valorCostoAjustePartidaAnterior)).toFixed(2)));
+			
 			$tr_padre.remove();//eliminar el tr
 			
-			$grid_productos = $tr_padre.parent();
-			
-			
+			//$grid_productos = $tr_padre.parent();
 		});
 	}
 	
@@ -563,6 +585,11 @@ $(function() {
 	$genera_tr = function(noTr, id_producto, codigo, descripcion, unidad, id_almacen, existencia,costo_prom, cant_ajuste, costo_ajuste, tipo_costo, idPres, equivPres, exisPres, ajustePres){
 		var readOnly=''//esta variable indica si el campo costo ajuste va a ser editable o no de pendiendo del tipo de costo que se utiliza para el tipo de movimiento
 		var fondo_input="";
+		var $tdSumaTotalCostoAjuste = $('#forma-invajustes-window').find('#suma_total_costo_ajuste');
+		var valorCostoAjustePartida = parseFloat(parseFloat(cant_ajuste)*parseFloat(costo_ajuste)).toFixed(2);
+		
+		//Sumar el costo de la partida
+		$tdSumaTotalCostoAjuste.html($(this).agregar_comas(parseFloat(parseFloat(quitar_comas($tdSumaTotalCostoAjuste.html())) + parseFloat(valorCostoAjustePartida)).toFixed(2)));
 		
 		//0=Alimentado
 		if(parseInt(tipo_costo)==0){
@@ -578,13 +605,14 @@ $(function() {
 		
 		var trr = '';
 		trr = '<tr>';
-			trr += '<td class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;" width="60">';
-				trr += '<a href="elimina_producto" class="delete'+ noTr +'">Eliminar</a>';
+			trr += '<td class="grid" style="font-size:11px;  border:1px solid #C1DAD7;" width="25">';
+				//trr += '<a href="elimina_producto" class="delete'+ noTr +'">Eliminar</a>';
+				trr += '<a href="elimina_producto" class="delete'+ noTr +'"><div id="eliminar'+ noTr +'" class="onmouseOutEliminar" style="width:24px; background-position:center;"/></a>';
 				trr += '<input type="hidden" 	name="eliminado" value="1">';//el 1 significa que el registro no ha sido eliminado
 				trr += '<input type="hidden" 	name="id_almacen" value="'+ id_almacen +'">';
 				trr += '<input type="hidden" 	name="no_tr" value="'+ noTr +'">';
 			trr += '</td>';
-			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="110">';
+			trr += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="110">';
 				trr += '<input type="hidden" 	name="idproducto" id="idprod" value="'+ id_producto +'">';
 				trr += '<INPUT TYPE="text" 		name="codigo" value="'+ codigo +'" class="borde_oculto" readOnly="true" style="width:106px;">';
 			trr += '</td>';
@@ -592,39 +620,40 @@ $(function() {
 				trr += '<INPUT TYPE="text" 		name="nombre" 	value="'+ descripcion +'" class="borde_oculto" readOnly="true" style="width:176px;">';
 			trr += '</td>';
 			
-			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="100">';
-				trr += '<INPUT TYPE="text" 		name="unidad" 	value="'+ unidad +'" class="borde_oculto" readOnly="true" style="width:96px;">';
+			trr += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="90">';
+				trr += '<INPUT TYPE="text" 		name="unidad" 	value="'+ unidad +'" class="borde_oculto" readOnly="true" style="width:86px;">';
 			trr += '</td>';
 			
-			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="100">';
+			trr += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="100">';
 				trr += '<input type="hidden" 	name="equivPres" value="'+ equivPres +'">';
 				trr += '<input type="hidden" 	name="idPresSelec" id="idPresSelec" value="'+idPres+'">';
 				trr += '<select name="select_pres" class="select_pres'+ noTr +'" style="width:96px;"></select>';
 			trr += '</td>';
 			
-			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
+			trr += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="80">';
 				trr += '<INPUT TYPE="text" 		name="cantidad" value="'+$(this).agregar_comas(existencia)+'" class="borde_oculto" readOnly="true" style="width:76px; text-align:right;">';
 			trr += '</td>';
 			
-			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
-				trr += '<INPUT TYPE="text" 		name="exisPres" value="'+$(this).agregar_comas(exisPres)+'" class="borde_oculto" readOnly="true" style="width:76px; text-align:right;">';
+			trr += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="75">';
+				trr += '<INPUT TYPE="text" 		name="exisPres" value="'+$(this).agregar_comas(exisPres)+'" class="borde_oculto" readOnly="true" style="width:71px; text-align:right;">';
 			trr += '</td>';
 			
-			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
-				trr += '<INPUT TYPE="text" 		name="costo_prom" value="'+$(this).agregar_comas(costo_prom)+'" class="borde_oculto" readOnly="true" style="width:76px; text-align:right;">';
+			trr += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="75">';
+				trr += '<INPUT TYPE="text" 		name="costo_prom" value="'+$(this).agregar_comas(costo_prom)+'" class="borde_oculto" readOnly="true" style="width:71px; text-align:right;">';
 			trr += '</td>';
 			
-			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
-				trr += '<INPUT TYPE="text" 		name="cant_ajuste" value="'+cant_ajuste+'" class="cant_ajuste'+noTr+'" style="width:76px;">';
+			trr += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="70">';
+				trr += '<INPUT TYPE="text" 		name="cant_ajuste" value="'+cant_ajuste+'" class="cant_ajuste'+noTr+'" style="width:67px; text-align:right;">';
 			trr += '</td>';
 			
-			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
-				trr += '<INPUT TYPE="text" 		name="cantAjustePres" value="'+ajustePres+'" id="cantAjustePres'+noTr+'" class="borde_oculto" style="width:76px;">';
+			trr += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="75">';
+				trr += '<INPUT TYPE="text" 		name="cantAjustePres" value="'+ajustePres+'" id="cantAjustePres'+noTr+'" class="borde_oculto" style="width:71px; text-align:right;">';
 			trr += '</td>';
 			
-			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
-				trr += '<INPUT TYPE="text" 		name="costo_ajuste" value="'+costo_ajuste+'" '+readOnly+' class="costo_ajuste'+noTr+'" style="width:76px; '+fondo_input+'">';
+			trr += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="65">';
+				trr += '<INPUT TYPE="text" 		name="costo_ajuste" value="'+costo_ajuste+'" '+readOnly+' class="costo_ajuste'+noTr+'" style="width:62px; text-align:right; '+fondo_input+'">';
 			trr += '</td>';
+			trr += '<td class="grid2" style="font-size:11px;  border:1px solid #C1DAD7;" width="65">'+$(this).agregar_comas(valorCostoAjustePartida)+'</td>';
 		trr += '</tr>';
 		
 		return trr;
@@ -781,12 +810,15 @@ $(function() {
 			var $cantUniAjuste = $this_tr.find('input[name=cant_ajuste]');
 			var $cantPresAjuste = $this_tr.find('input[name=cantAjustePres]');
 			var cantUniExis = quitar_comas($this_tr.find('input[name=cantidad]').val());
+			var $costo_ajuste = $this_tr.find('input[name=costo_ajuste]');
+			var $tdSumaTotalCostoAjuste = $('#forma-invajustes-window').find('#suma_total_costo_ajuste');
+			var $tdCostoAjustePartida = $this_tr.find('td:eq(11)');
+			var valorCostoAjustePartidaAnterior = quitar_comas($tdCostoAjustePartida.html());
 			
 			if($cantUniAjuste.val().trim()=='' || parseFloat($campo_input.val())==0 ){
 				$campo_input.val(0);
 				$campo_input.val(parseFloat($campo_input.val()).toFixed(2))
 			}else{
-				
 				//si la configuracion indica que debe controlar existencias por presentacion hay que realizar los calculos
 				if(controlExisPres=='true'){
 					
@@ -811,6 +843,20 @@ $(function() {
 					$cantPresAjuste.val(parseFloat(0).toFixed(noDec));
 				}
 			}
+			
+			if($costo_ajuste.val().trim()==""){
+				$costo_ajuste.val("0.00");
+			}
+			
+			
+			//Calcular el nuevo costo del Ajuste
+			var valorCostoAjustePartidaNuevo = parseFloat(parseFloat($cantUniAjuste.val())*parseFloat($costo_ajuste.val())).toFixed(2);
+			
+			//Asignar el nuevo costo de la partida
+			$tdCostoAjustePartida.html($(this).agregar_comas(valorCostoAjustePartidaNuevo));
+			
+			//Restar el costo anterior de la partida y sumar el nuevo costo
+			$tdSumaTotalCostoAjuste.html($(this).agregar_comas(parseFloat(parseFloat(quitar_comas($tdSumaTotalCostoAjuste.html())) - parseFloat(valorCostoAjustePartidaAnterior) + parseFloat(valorCostoAjustePartidaNuevo)).toFixed(2)));
 		});
 	}
         
@@ -880,6 +926,14 @@ $(function() {
 						$aplicar_evento_blur_input($grid_productos.find('.costo_ajuste'+noTr));
 						$aplicar_evento_eliminar($grid_productos.find('.delete'+noTr));
 						
+						$grid_productos.find('#eliminar'+ noTr).mouseover(function(){
+							$(this).removeClass("onmouseOutEliminar").addClass("onmouseOverEliminar");
+						});
+						$grid_productos.find('#eliminar'+ noTr).mouseout(function(){
+							$(this).removeClass("onmouseOverEliminar").addClass("onmouseOutEliminar");
+						});
+						
+						
 						$grid_productos.find('.select_pres'+noTr).children().remove();
 						var pres_hmtl = '<option value="0">[-Seleccionar-]</option>';
 						$.each(entry['Presentaciones'],function(entryIndex,pres){
@@ -893,6 +947,8 @@ $(function() {
 						}
 						
 						$aplicar_evento_blur_campo_cantidad( $grid_productos.find('.cant_ajuste'+noTr), noDec, entry['Presentaciones'], controlExisPres, $select_tipo_ajuste);
+						
+						
 						
 					}else{
 						jAlert("El producto que intenta agregar no existe, pruebe ingresando otro.\nHaga clic en Buscar.",'! Atencion');
@@ -1026,10 +1082,12 @@ $(function() {
 						var titulo_producto = $campo.parent().parent().find('input[name=nombre]').val();
 						
 						var tr_warning = '<tr>';
-								tr_warning += '<td width="20"><div><IMG SRC="../../img/icono_advertencia.png" ALIGN="top" rel="warning_sku"></td>';
-								tr_warning += '<td width="150"><INPUT TYPE="text" value="' + codigo_producto + '" class="borde_oculto" readOnly="true" style="width:150px; color:red"></td>';
-								tr_warning += '<td width="250"><INPUT TYPE="text" value="' + titulo_producto + '" class="borde_oculto" readOnly="true" style="width:250px; color:red"></td>';
-								tr_warning += '<td width="380"><INPUT TYPE="text" value="'+  tmp.split(':')[1] +'" class="borde_oculto" readOnly="true" style="width:350px; color:red"></td>';
+								tr_warning += '<td width="10"></td>';
+								tr_warning += '<td width="25"><div><IMG SRC="../../img/icono_advertencia.png" ALIGN="top" rel="warning_sku"></td>';
+								tr_warning += '<td width="120"><INPUT TYPE="text" value="' + codigo_producto + '" class="borde_oculto" readOnly="true" style="width:116px; color:red"></td>';
+								tr_warning += '<td width="220"><INPUT TYPE="text" value="' + titulo_producto + '" class="borde_oculto" readOnly="true" style="width:216px; color:red"></td>';
+								tr_warning += '<td width="500"><INPUT TYPE="text" value="'+  tmp.split(':')[1] +'" class="borde_oculto" readOnly="true" style="width:496px; color:red"></td>';
+								tr_warning += '<td width="10"></td>';
 						tr_warning += '</tr>';
 						
 						$('#forma-invajustes-window').find('#div_warning_grid').find('#grid_warning').append(tr_warning);
@@ -1431,14 +1489,15 @@ $(function() {
 							var titulo_producto = $campo.parent().parent().find('input[name=nombre]').val();
 							
 							var tr_warning = '<tr>';
-									tr_warning += '<td width="20"><div><IMG SRC="../../img/icono_advertencia.png" ALIGN="top" rel="warning_sku"></td>';
-									tr_warning += '<td width="150"><INPUT TYPE="text" value="' + codigo_producto + '" class="borde_oculto" readOnly="true" style="width:150px; color:red"></td>';
-									tr_warning += '<td width="250"><INPUT TYPE="text" value="' + titulo_producto + '" class="borde_oculto" readOnly="true" style="width:250px; color:red"></td>';
-									tr_warning += '<td width="380"><INPUT TYPE="text" value="'+  tmp.split(':')[1] +'" class="borde_oculto" readOnly="true" style="width:350px; color:red"></td>';
+									tr_warning += '<td width="10"></td>';
+									tr_warning += '<td width="25"><div><IMG SRC="../../img/icono_advertencia.png" ALIGN="top" rel="warning_sku"></td>';
+									tr_warning += '<td width="120"><INPUT TYPE="text" value="' + codigo_producto + '" class="borde_oculto" readOnly="true" style="width:116px; color:red"></td>';
+									tr_warning += '<td width="220"><INPUT TYPE="text" value="' + titulo_producto + '" class="borde_oculto" readOnly="true" style="width:216px; color:red"></td>';
+									tr_warning += '<td width="500"><INPUT TYPE="text" value="'+  tmp.split(':')[1] +'" class="borde_oculto" readOnly="true" style="width:496px; color:red"></td>';
+									tr_warning += '<td width="10"></td>';
 							tr_warning += '</tr>';
 							
 							$('#forma-invajustes-window').find('#div_warning_grid').find('#grid_warning').append(tr_warning);
-							
 						}
 					}
 					$('#forma-invajustes-window').find('#div_warning_grid').find('#grid_warning').find('tr:odd').find('td').css({ 'background-color' : '#FFFFFF'});
