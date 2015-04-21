@@ -549,7 +549,7 @@ public class PocSpringDao implements PocInterfaceDao{
                 + "poc_pedidos.observaciones,"
                 + "to_char(poc_pedidos.momento_creacion,'dd/mm/yyyy HH24:MI') AS fecha_expedicion, "
                 + "poc_pedidos.gral_usr_id_autoriza, "
-                + "(CASE WHEN poc_pedidos.gral_usr_id_autoriza=0 THEN '' ELSE gral_empleados.nombre_pila||' ' ||gral_empleados.apellido_paterno||' ' ||gral_empleados.apellido_materno END) AS nombre_autorizo_pedido,  "
+                + "(case when gral_empleados.id is null then '' else (CASE WHEN poc_pedidos.gral_usr_id_autoriza=0 THEN '' ELSE gral_empleados.nombre_pila||' ' ||gral_empleados.apellido_paterno||' ' ||gral_empleados.apellido_materno END) end) AS nombre_autorizo_pedido,  "
                 + "(case when cxc_agen.nombre is null then '' else cxc_agen.nombre  end) AS nombre_agente,  "
                 + "poc_pedidos.cancelado,"
                 + "poc_pedidos.flete "
