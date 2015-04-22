@@ -544,10 +544,10 @@
 												<td width="110">Permitir&nbsp;Stock</td>
 												<td width="5"></td>
 												<td width="45"><input type="checkbox" name="check_stock"></td>
-												<td width="50">&nbsp;Densidad</td>
+												<td width="50"></td>
+												<td width="50">Densidad</td>
 												<td width="50"><input type="text" name="densidad" value="1" style="width:50px;" maxlength="8"></td>
 												<td width="50"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_densidad"></div></td>
-												<td width="50"></td>
 												<td width="180" align="center"><a  href="agregar_pres">Agregar >></a></td>
 												<td width="15"></td>
 												<td width="180" align="center"><a  href="remover_pres"> << Remover</a></td>
@@ -562,9 +562,9 @@
 												<td width="110">Punto&nbsp;de&nbsp;Reorden</td>
 												<td width="5"></td>
 												<td width="45"><input type="text" name="punto_reorden" value="0" style="width:45px;" maxlength="10"></td>
-												<td width="50" align="right">Flete&nbsp;&nbsp;</td>
-												<td width="50"><input type="checkbox" name="check_flete"></td>
 												<td width="50"></td>
+												<td width="50">Flete&nbsp;&nbsp;</td>
+												<td width="50"><input type="checkbox" name="check_flete"></td>
 												<td width="50"></td>
 												<td width="195" colspan="2">Seleccionar presentaci&oacute;n default</td>
 												<td width="180"><select name="select_pres_default" style="width:180px;"></select></td>
@@ -579,9 +579,9 @@
 												<td width="110">Valor&nbsp;M&aacute;ximo</td>
 												<td width="5"></td>
 												<td width="45"><input type="text" name="valor_maximo" value="0" style="width:45px;" maxlength="10"></td>
-												<td width="50"></td>
-												<td width="50"></td>
-												<td width="50"></td>
+												<td width="100" colspan="2" align="right">Retenci&oacute;n&nbsp;de&nbsp;IVA&nbsp;&nbsp;</td>
+												<!--<td width="50"></td>-->
+												<td width="50"><select name="select_retencion" style="width:50px;"></select></td>
 												<td width="50"></td>
 												<td width="195" colspan="2">Permitir&nbsp;Venta&nbsp;en&nbsp;moneda&nbsp;Extranjera</td>
 												<td width="180"><input type="checkbox" name="check_ventaext"></td>
