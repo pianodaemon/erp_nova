@@ -905,20 +905,26 @@ public class PocSpringDao implements PocInterfaceDao{
         );
         return hm_monedas;
     }
-
+    
+    
+    
+    //Obtener agentes de Ventas
     @Override
-    public ArrayList<HashMap<String, String>> getAgentes(Integer id_empresa, Integer id_sucursal) {
-        String sql_to_query = "SELECT cxc_agen.id, cxc_agen.nombre AS nombre_agente "
-                                +"FROM cxc_agen "
-                                +"JOIN gral_usr_suc ON gral_usr_suc.gral_usr_id=cxc_agen.gral_usr_id "
-                                +"JOIN gral_suc ON gral_suc.id=gral_usr_suc.gral_suc_id "
-                                +"WHERE gral_suc.empresa_id="+id_empresa+" ORDER BY cxc_agen.id;";
-
+    public ArrayList<HashMap<String, String>> getAgentes(Integer id_empresa, Integer id_sucursal, boolean obtener_todos) {
+        String sql_to_query = "";
+        
+        if(obtener_todos){
+            //Obtener todos. Esta es para que los registros historicos de pedidos y cotizaciones muestre los nombres de los agentes que ya no estan vigentes.
+            sql_to_query = "SELECT cxc_agen.id, cxc_agen.nombre AS nombre_agente FROM cxc_agen JOIN gral_usr_suc ON gral_usr_suc.gral_usr_id=cxc_agen.gral_usr_id JOIN gral_suc ON gral_suc.id=gral_usr_suc.gral_suc_id WHERE gral_suc.empresa_id=? ORDER BY cxc_agen.id;";
+        }else{
+            //Obtener solo los NO eliminados. Esta es para cuando se está creando un nuevo pedido o cotización, no debe mostrar los ya eliminados.
+            sql_to_query = "SELECT cxc_agen.id, cxc_agen.nombre AS nombre_agente FROM cxc_agen JOIN gral_usr_suc ON gral_usr_suc.gral_usr_id=cxc_agen.gral_usr_id JOIN gral_suc ON gral_suc.id=gral_usr_suc.gral_suc_id WHERE cxc_agen.borrado_logico=false and gral_suc.empresa_id=? ORDER BY cxc_agen.id;";
+        }
         //System.out.println("Obtener agentes:"+sql_to_query);
 
         ArrayList<HashMap<String, String>> hm_vendedor = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
-            new Object[]{}, new RowMapper(){
+            new Object[]{new Integer(id_empresa)}, new RowMapper(){
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, String> row = new HashMap<String, String>();
@@ -930,7 +936,6 @@ public class PocSpringDao implements PocInterfaceDao{
         );
         return hm_vendedor;
     }
-
 
 
     @Override

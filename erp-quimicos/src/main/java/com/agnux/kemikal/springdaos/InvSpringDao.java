@@ -107,7 +107,7 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm_par;
     }
-
+    
     
     
     
@@ -140,6 +140,37 @@ public class InvSpringDao implements InvInterfaceDao{
         return hm_ieps;
     }
 
+    
+    
+    
+    //Obtiene todas las tasas de Retención del Iva
+    @Override
+    public ArrayList<HashMap<String, String>> getTasasRetencionIva(Integer idEmp, Integer idSuc) {
+        String sql_to_query="";
+        if(idSuc>0){
+            //Filtrar por sucursal
+            sql_to_query = "SELECT id, titulo, tasa FROM gral_imptos_ret  WHERE borrado_logico=false AND gral_emp_id="+idEmp+" AND gral_suc_id="+idSuc+";";
+        }else{
+            //No filtrar por sucursal
+            sql_to_query = "SELECT id, titulo, tasa FROM gral_imptos_ret  WHERE borrado_logico=false AND gral_emp_id="+idEmp+";";
+        }
+        
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        ArrayList<HashMap<String, String>> hm_ieps = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("titulo",rs.getString("titulo"));
+                    row.put("tasa",StringHelper.roundDouble(rs.getString("tasa"),2));
+                    return row;
+                }
+            }
+        );
+        return hm_ieps;
+    }
     
     
 
@@ -594,7 +625,8 @@ public class InvSpringDao implements InvInterfaceDao{
                 + "inv_prod.inv_prod_presentacion_id AS presentacion_id, "
                 + "inv_prod.flete,"
                 + "inv_prod.no_clie, "
-                + "inv_prod.gral_mon_id as mon_id "
+                + "inv_prod.gral_mon_id as mon_id,"
+                + "inv_prod.gral_imptos_ret_id as impto_ret_id "
         + "FROM inv_prod  "
         + "LEFT JOIN cxp_prov ON cxp_prov.id=inv_prod.cxp_prov_id "
         + "WHERE inv_prod.id=?;";
@@ -646,6 +678,8 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("flete",String.valueOf(rs.getBoolean("flete")));
                     row.put("no_clie",rs.getString("no_clie"));
                     row.put("mon_id",String.valueOf(rs.getInt("mon_id")));
+                    row.put("impto_ret_id",String.valueOf(rs.getInt("impto_ret_id")));
+                    
                     return row;
                 }
             }

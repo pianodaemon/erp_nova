@@ -23,6 +23,7 @@ public interface InvInterfaceDao {
     public ArrayList<HashMap<String, String>> getInvParametros(Integer idEmp);
     //Obtiene todos los impuestos del ieps(Impuesto Especial sobre Productos y Servicios)
     public ArrayList<HashMap<String, String>> getIeps(Integer idEmp, Integer idSuc);
+    public ArrayList<HashMap<String, String>> getTasasRetencionIva(Integer idEmp, Integer idSuc);
     
     public String selectFunctionForApp_MovimientosInventario(String campos_data, String extra_data_array);
     public ArrayList<HashMap<String, String>> getBuscadorProductos(String sku, String tipo, String descripcion,Integer id_empresa);

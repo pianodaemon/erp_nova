@@ -625,11 +625,6 @@ public final class PdfAjusteInventario {
             Font smallBoldFont = new Font(Font.FontFamily.HELVETICA, 8, Font.BOLD, BaseColor.WHITE);
             Double suma_costo_ajuste = 0.00;
             
-            //Font small = new Font(Font.FontFamily.COURIER,6,Font.NORMAL,BaseColor.BLACK);
-            //Font smallBoldFont1 = new Font(Font.FontFamily.HELVETICA, 7, Font.BOLD, BaseColor.WHITE);
-            //Font smallBoldFontBlack = new Font(Font.FontFamily.HELVETICA, 8, Font.BOLD, BaseColor.BLACK);
-            //Font largeFont = new Font(Font.FontFamily.HELVETICA,8,Font.NORMAL,BaseColor.BLACK);
-            
             float [] widths = {
                 2.5f,     //codigo
                 5f,   //descripcion
@@ -637,7 +632,9 @@ public final class PdfAjusteInventario {
                 2f,   //Presentacion
                 2f,     //cant. ajuste
                 0.5f,   //simbolo moneda
-                2f    //costo Ajuste
+                2f,    //costo Unitario
+                0.5f,   //simbolo moneda
+                2f    //costo total ajuste
            };
             PdfPTable table = new PdfPTable(widths);
             PdfPCell cell;
@@ -649,38 +646,46 @@ public final class PdfAjusteInventario {
             
             cell = new PdfPCell(new Paragraph("Código",smallBoldFont));
             cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setUseDescender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             cell.setBackgroundColor(BaseColor.BLACK);
             table.addCell(cell);
             
             cell = new PdfPCell(new Paragraph("Descripción",smallBoldFont));
             cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setUseDescender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             cell.setBackgroundColor(BaseColor.BLACK);
             table.addCell(cell);
             
-            
             cell = new PdfPCell(new Paragraph("Unidad",smallBoldFont));
             cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setUseDescender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             cell.setBackgroundColor(BaseColor.BLACK);
             table.addCell(cell);
             
             cell = new PdfPCell(new Paragraph("Presentación",smallBoldFont));
             cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setUseDescender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             cell.setBackgroundColor(BaseColor.BLACK);
             table.addCell(cell);
             
-            cell = new PdfPCell(new Paragraph("Cant. Ajuste",smallBoldFont));
+            cell = new PdfPCell(new Paragraph("Cantidad",smallBoldFont));
+            cell.setUseAscender(true);
+            cell.setUseDescender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell.setBackgroundColor(BaseColor.BLACK);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("Costo Unitario",smallBoldFont));
+            cell.setColspan(2);
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setUseDescender(true);
@@ -688,7 +693,7 @@ public final class PdfAjusteInventario {
             cell.setBackgroundColor(BaseColor.BLACK);
             table.addCell(cell);
             
-            cell = new PdfPCell(new Paragraph("Costo Ajuste",smallBoldFont));
+            cell = new PdfPCell(new Paragraph("Costo Total",smallBoldFont));
             cell.setColspan(2);
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -729,15 +734,29 @@ public final class PdfAjusteInventario {
                 cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
                 table.addCell(cell);
                 
-                //costo del ajuste
+                //Moneda costo Unitario del ajuste
                 cell = new PdfPCell(new Paragraph("$", smallFont));
                 cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
                 cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                 cell.setBorderWidthRight(0);
                 table.addCell(cell);
                 
-                //costo del ajuste
+                //Costo Unitario del ajuste
                 cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(map.get("costo_ajuste")), smallFont));
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                cell.setBorderWidthLeft(0);
+                table.addCell(cell);
+                
+                //Moneda costo Total del ajuste
+                cell = new PdfPCell(new Paragraph("$", smallFont));
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                cell.setBorderWidthRight(0);
+                table.addCell(cell);
+                
+                //Costo Total de la partida del Ajuste
+                cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(map.get("costo_partida")), smallFont));
                 cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
                 cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                 cell.setBorderWidthLeft(0);
@@ -748,34 +767,12 @@ public final class PdfAjusteInventario {
                 }
             }
             
-           
-           
             cell = new PdfPCell(new Paragraph("", smallFont));
             cell.setBorderWidthBottom(0);
             cell.setBorderWidthTop(1);
             cell.setBorderWidthRight(0);
             cell.setBorderWidthLeft(0);
             cell.setColspan(7);
-            cell.setFixedHeight(6);
-            table.addCell(cell);
-            
-           
-            cell = new PdfPCell(new Paragraph("", smallFont));
-            cell.setColspan(3);
-            cell.setBorderWidthBottom(0);
-            cell.setBorderWidthTop(0);
-            cell.setBorderWidthRight(0);
-            cell.setBorderWidthLeft(0);
-            table.addCell(cell);
-            
-            cell = new PdfPCell(new Paragraph("Costo total", smallBoldFontBlack));
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            cell.setColspan(2);
-            cell.setBorderWidthBottom(0);
-            cell.setBorderWidthTop(0);
-            cell.setBorderWidthRight(0);
-            cell.setBorderWidthLeft(0);
             table.addCell(cell);
             
             cell = new PdfPCell(new Paragraph("$", smallBoldFontBlack));

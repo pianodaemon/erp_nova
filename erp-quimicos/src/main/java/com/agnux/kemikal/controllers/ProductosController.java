@@ -346,6 +346,7 @@ public class ProductosController {
         jsonretorno.put("Clases", this.getInvDao().getProducto_Clases(id_empresa));
         jsonretorno.put("Impuestos", this.getInvDao().getEntradas_Impuestos());
         jsonretorno.put("Ieps", this.getInvDao().getIeps(id_empresa, id_suc));
+        jsonretorno.put("ImptosRet", this.getInvDao().getTasasRetencionIva(id_empresa, id_suc));
         jsonretorno.put("Unidades",this.getInvDao().getProducto_Unidades());
         //jsonretorno.put("ProdTipos", tiposProducto);
         jsonretorno.put("Ingredientes", ingredientes);
@@ -539,6 +540,7 @@ public class ProductosController {
             @RequestParam(value="select_grupo", required=false) String select_grupo,
             @RequestParam(value="select_ieps", required=false) String select_ieps,
             @RequestParam(value="select_iva", required=false) String select_iva,
+            @RequestParam(value="select_retencion", required=false) String select_retencion,
             @RequestParam(value="select_moneda", required=false) String select_moneda,
             @RequestParam(value="select_linea", required=false) String select_linea,
             @RequestParam(value="select_marca", required=false) String select_marca,
@@ -704,7 +706,8 @@ public class ProductosController {
                     select_pres_default+"___"+//42
                     check_flete+"___"+//43
                     no_clie+"___"+//44
-                    select_moneda;//45
+                    select_moneda+"___"+//45
+                    select_retencion;//46
             
             succes = this.getInvDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
             

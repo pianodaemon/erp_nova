@@ -191,8 +191,9 @@ public class PocPedidosAutorizaController {
         userDat = this.getHomeDao().getUserById(id_usuario);
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        boolean obtener_todos_los_agentes=true;
         
-        agentes = this.getPocDao().getAgentes(id_empresa, id_sucursal);
+        agentes = this.getPocDao().getAgentes(id_empresa, id_sucursal, obtener_todos_los_agentes);
         
         jsonretorno.put("Agentes", agentes);
         return jsonretorno;
@@ -213,8 +214,8 @@ public class PocPedidosAutorizaController {
         ArrayList<HashMap<String, String>> valorIva = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> tipoCambioActual = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> tc = new HashMap<String, String>();
-        
         HashMap<String, String> userDat = new HashMap<String, String>();
+        boolean obtener_todos_los_agentes=true;
         
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
@@ -237,7 +238,7 @@ public class PocPedidosAutorizaController {
         jsonretorno.put("iva", valorIva);
         jsonretorno.put("Monedas", this.getPocDao().getMonedas());
         jsonretorno.put("Tc", tipoCambioActual);
-        jsonretorno.put("Vendedores", this.getPocDao().getAgentes(id_empresa, id_sucursal));
+        jsonretorno.put("Vendedores", this.getPocDao().getAgentes(id_empresa, id_sucursal, obtener_todos_los_agentes));
         jsonretorno.put("Condiciones", this.getPocDao().getCondicionesDePago());
         jsonretorno.put("MetodosPago", this.getPocDao().getMetodosPago());
         

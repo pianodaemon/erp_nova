@@ -203,12 +203,13 @@ public class CotizacionesController {
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
         Integer id_agente = Integer.parseInt(userDat.get("empleado_id"));
+        boolean obtener_todos_los_agentes=true;
         
         extra = this.getPocDao().getUserRol(id_usuario);
         extra.put("id_agente", String.valueOf(id_agente));
         arrayExtra.add(0,extra);
         
-        agentes = this.getPocDao().getAgentes(id_empresa, id_sucursal);
+        agentes = this.getPocDao().getAgentes(id_empresa, id_sucursal, obtener_todos_los_agentes);
         
         jsonretorno.put("Extra", arrayExtra);
         jsonretorno.put("Agentes", agentes);
@@ -294,6 +295,7 @@ public class CotizacionesController {
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
         String dirImgProd="";
+        boolean obtener_todos_los_agentes=false;
         
         //Aqui se obtienen los parametros de la facturacion, nos intersa saber si se debe permitir cambiar_unidad_medida
         parametros = this.getPocDao().getPocPedido_Parametros(id_empresa, id_sucursal);
@@ -309,6 +311,8 @@ public class CotizacionesController {
                 DatosCliPros = this.getPocDao().getCotizacion_DatosProspecto(Integer.parseInt(id_cotizacion));
             }
             datosGrid = this.getPocDao().getCotizacion_DatosGrid(Integer.parseInt(id_cotizacion));
+            
+            obtener_todos_los_agentes=true;
         }
         
         
@@ -329,7 +333,7 @@ public class CotizacionesController {
         jsonretorno.put("Monedas", monedas);
         jsonretorno.put("Extras", arrayExtra);
         jsonretorno.put("Tc", tipoCambioActual);
-        jsonretorno.put("Agentes", this.getPocDao().getAgentes(id_empresa, id_sucursal));
+        jsonretorno.put("Agentes", this.getPocDao().getAgentes(id_empresa, id_sucursal, obtener_todos_los_agentes));
         jsonretorno.put("Incoterms", this.getPocDao().getCotizacion_Incoterms(id_empresa, Integer.parseInt(id_cotizacion)));
         
         return jsonretorno;

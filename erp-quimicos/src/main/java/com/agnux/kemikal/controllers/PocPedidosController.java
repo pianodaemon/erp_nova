@@ -174,13 +174,15 @@ public class PocPedidosController {
         HashMap<String, String> userDat = new HashMap<String, String>();
         ArrayList<HashMap<String, String>> agentes = new ArrayList<HashMap<String, String>>();
         
-        //decodificar id de usuario
+        //Decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
         userDat = this.getHomeDao().getUserById(id_usuario);
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
         
-        agentes = this.getPocDao().getAgentes(id_empresa, id_sucursal);
+        boolean obtener_todos_los_agentes=true;
+        
+        agentes = this.getPocDao().getAgentes(id_empresa, id_sucursal, obtener_todos_los_agentes);
         
         jsonretorno.put("Agentes", agentes);
         return jsonretorno;
@@ -243,6 +245,8 @@ public class PocPedidosController {
         HashMap<String, String> parametros = new HashMap<String, String>();
         HashMap<String, String> userDat = new HashMap<String, String>();
         
+        boolean obtener_todos_los_agentes=false;
+        
         //Decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
         userDat = this.getHomeDao().getUserById(id_usuario);
@@ -257,6 +261,12 @@ public class PocPedidosController {
         if( !id_pedido.equals("0")  ){
             datosPedido = this.getPocDao().getPocPedido_Datos(Integer.parseInt(id_pedido));
             datosGrid = this.getPocDao().getPocPedido_DatosGrid(Integer.parseInt(id_pedido));
+            
+            //1;"COTIZACION",  4;"PEDIDO"
+            if(Integer.parseInt(datosPedido.get(0).get("proceso_flujo_id"))!=1 && Integer.parseInt(datosPedido.get(0).get("proceso_flujo_id"))!=4){
+                //Esto es para permitir obtener los datos de los agentes eliminados, ya que se debe mostrar en los pedidos historicos
+                obtener_todos_los_agentes=true;
+            }
             
             if(userDat.get("transportista").toLowerCase().equals("true")){
                 //Aqui solo entra cuando la emprsa es transportista
@@ -306,7 +316,7 @@ public class PocPedidosController {
         jsonretorno.put("EdoDest", estadosDestino);
         jsonretorno.put("MunDest", municipiosDestino);
         jsonretorno.put("Monedas", this.getPocDao().getMonedas());
-        jsonretorno.put("Vendedores", this.getPocDao().getAgentes(id_empresa, id_sucursal));
+        jsonretorno.put("Vendedores", this.getPocDao().getAgentes(id_empresa, id_sucursal, obtener_todos_los_agentes));
         jsonretorno.put("Condiciones", this.getPocDao().getCondicionesDePago());
         jsonretorno.put("MetodosPago", this.getPocDao().getMetodosPago());
         jsonretorno.put("Almacenes", this.getPocDao().getPocPedido_Almacenes(id_sucursal));
