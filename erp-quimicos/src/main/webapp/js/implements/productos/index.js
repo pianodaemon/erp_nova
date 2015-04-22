@@ -1047,6 +1047,7 @@ $(function() {
 		var $select_iva = $('#forma-product-window').find('select[name=select_iva]');
 		var $select_ieps = $('#forma-product-window').find('select[name=select_ieps]');
 		var $select_moneda = $('#forma-product-window').find('select[name=select_moneda]');
+		var $select_retencion = $('#forma-product-window').find('select[name=select_retencion]');
 		
 		var $check_noserie = $('#forma-product-window').find('input[name=check_noserie]');
 		var $check_nom = $('#forma-product-window').find('input[name=check_nom]');
@@ -1457,6 +1458,17 @@ $(function() {
 				ieps_hmtl += '<option value="' + ieps['id'] + '"  >' + ieps['titulo'] + '</option>';
 			});
 			$select_ieps.append(ieps_hmtl);
+			
+			
+			//Alimentando select de retencion de iva
+			$select_retencion.children().remove();
+			var ret_iva_hmtl = '<option value="0">[------]</option>';
+			var primer_selec=0;
+			$.each(entry['ImptosRet'],function(entryIndex,ieps){
+				ret_iva_hmtl += '<option value="' + ieps['id'] + '"  >' + ieps['titulo'] + '</option>';
+			});
+			$select_retencion.append(ret_iva_hmtl);
+			
 			
 			//Alimentando select de monedas
 			$select_moneda.children().remove();
@@ -2029,6 +2041,7 @@ $(function() {
 				var $select_iva = $('#forma-product-window').find('select[name=select_iva]');
 				var $select_ieps = $('#forma-product-window').find('select[name=select_ieps]');
 				var $select_moneda = $('#forma-product-window').find('select[name=select_moneda]');
+				var $select_retencion = $('#forma-product-window').find('select[name=select_retencion]');
 				
 				var $check_noserie = $('#forma-product-window').find('input[name=check_noserie]');
 				var $check_nom = $('#forma-product-window').find('input[name=check_nom]');
@@ -2618,6 +2631,18 @@ $(function() {
 						}
 					});
 					$select_ieps.append(ieps_hmtl);
+					
+					//Alimentando select de retencion de iva
+					$select_retencion.children().remove();
+					var ret_iva_hmtl = '<option value="0">[------]</option>';
+					$.each(entry['ImptosRet'],function(entryIndex,ivaret){
+						if(parseInt(entry['Producto'][0]['impto_ret_id'])==parseInt(ivaret['id'])){
+							ret_iva_hmtl += '<option value="' + ivaret['id'] + '" selected="yes">' + ivaret['titulo'] + '</option>';
+						}else{
+							ret_iva_hmtl += '<option value="' + ivaret['id'] + '"  >' + ivaret['titulo'] + '</option>';
+						}
+					});
+					$select_retencion.append(ret_iva_hmtl);
 					
 					
 					$select_moneda.children().remove();
