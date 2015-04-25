@@ -806,6 +806,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         Double montoTotal=0.0;
         Double sumaDescuento=0.0;
         Double sumaSubtotalConDescuento=0.0;
+        Double sumaRetencionesDePartidas=0.0;
         
         for (int x=0; x<=conceptos.size()-1;x++){
             LinkedHashMap<String,String> con = conceptos.get(x);
@@ -816,6 +817,8 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
             sumaImporteIeps = sumaImporteIeps + Double.parseDouble(StringHelper.roundDouble(con.get("importe_ieps"),4));
             sumaImpuesto = sumaImpuesto + Double.parseDouble(StringHelper.roundDouble(con.get("importe_impuesto"),4));
             tasa_retencion = Double.parseDouble(StringHelper.roundDouble(con.get("tasa_retencion"),2));
+            
+            sumaRetencionesDePartidas = sumaRetencionesDePartidas + Double.parseDouble(StringHelper.roundDouble(con.get("importe_ret"),4));
         }
         
         //System.out.println("Canculando Totales de la Factura");
@@ -826,6 +829,9 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
             monto_retencion = sumaImporte * tasa_retencion;
             montoTotal = sumaImporte + sumaImporteIeps + sumaImpuesto - monto_retencion;
         }
+        
+        //Sumar el acumulado de retencion de las partidas
+        monto_retencion = monto_retencion + sumaRetencionesDePartidas;
         
         this.setSubtotalConDescuento(StringHelper.roundDouble(sumaSubtotalConDescuento,2));
         this.setMontoDescuento(StringHelper.roundDouble(sumaDescuento,2));
@@ -942,12 +948,14 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     
     //Éste método se utiliza para CFD y CFDI con Timbre Fiscal
     @Override
-    public ArrayList<LinkedHashMap<String, String>> getImpuestosRetenidosFacturaXml() {
+    public ArrayList<LinkedHashMap<String, String>> getImpuestosRetenidosFacturaXml(ArrayList<LinkedHashMap<String,String>> conceptos) {
         ArrayList<LinkedHashMap<String, String>>  impuestos = new ArrayList<LinkedHashMap<String, String>>();
         LinkedHashMap<String,String> impuesto = new LinkedHashMap<String,String>();
+        
         impuesto.put("impuesto", "IVA");
         impuesto.put("importe", this.getImpuestoRetenido());
         impuesto.put("tasa", this.getTasaRetencion());
+        
         impuestos.add(impuesto);
         
         return impuestos;
@@ -1222,7 +1230,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     
     
     
-    //obtiene la lista de conceptos para cfdi con Buzon Fiscal
+    //Obtiene la lista de conceptos para cfdi con Buzon Fiscal
     @Override
     public ArrayList<LinkedHashMap<String, String>> getListaConceptosCfdi(Integer id_factura, String rfcEmisor) {
         
@@ -1401,6 +1409,10 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                 + "(erp_prefacturas_detalles.valor_ieps * 100::double precision) AS tasa_ieps, "
                 //+ "((erp_prefacturas_detalles.cant_facturar * erp_prefacturas_detalles.precio_unitario) * erp_prefacturas_detalles.valor_ieps) AS importe_ieps, "
                 + "((erp_prefacturas_detalles.cant_facturar * (CASE WHEN "+ permitir_descuento +"::boolean=true THEN (CASE WHEN erp_prefacturas_detalles.descto IS NULL THEN erp_prefacturas_detalles.precio_unitario ELSE (CASE WHEN erp_prefacturas_detalles.descto>0 THEN (erp_prefacturas_detalles.precio_unitario - (erp_prefacturas_detalles.precio_unitario * (erp_prefacturas_detalles.descto::double precision/100))) ELSE erp_prefacturas_detalles.precio_unitario END) END) ELSE erp_prefacturas_detalles.precio_unitario END)) * erp_prefacturas_detalles.valor_ieps) AS importe_ieps, "
+                
+                + "(erp_prefacturas_detalles.tasa_ret * 100::double precision) AS tasa_ret, "
+                + "((erp_prefacturas_detalles.cant_facturar * (CASE WHEN "+ permitir_descuento +"::boolean=true THEN (CASE WHEN erp_prefacturas_detalles.descto IS NULL THEN erp_prefacturas_detalles.precio_unitario ELSE (CASE WHEN erp_prefacturas_detalles.descto>0 THEN (erp_prefacturas_detalles.precio_unitario - (erp_prefacturas_detalles.precio_unitario * (erp_prefacturas_detalles.descto::double precision/100))) ELSE erp_prefacturas_detalles.precio_unitario END) END) ELSE erp_prefacturas_detalles.precio_unitario END)) * erp_prefacturas_detalles.tasa_ret) AS importe_ret, "
+                
                 + "erp_prefacturas_detalles.tipo_impuesto_id AS id_impto,"
                 + "(erp_prefacturas_detalles.valor_imp * 100::double precision) AS tasa_impuesto,"
                 //+ "(((erp_prefacturas_detalles.cant_facturar * erp_prefacturas_detalles.precio_unitario) + ((erp_prefacturas_detalles.cant_facturar * erp_prefacturas_detalles.precio_unitario) * erp_prefacturas_detalles.valor_ieps)) * erp_prefacturas_detalles.valor_imp) AS importe_impuesto, "
@@ -1443,6 +1455,9 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     row.put("id_ieps",String.valueOf(rs.getInt("id_ieps")));
                     row.put("tasa_ieps",StringHelper.roundDouble(rs.getDouble("tasa_ieps"),2) );
                     row.put("importe_ieps",StringHelper.roundDouble(rs.getDouble("importe_ieps"),4) );
+                    row.put("tasa_ret",StringHelper.roundDouble(rs.getDouble("tasa_ret"),2) );
+                    row.put("importe_ret",StringHelper.roundDouble(rs.getDouble("importe_ret"),4) );
+                    
                     row.put("etiqueta_ieps",rs.getString("etiqueta_ieps"));
                     row.put("descto",StringHelper.roundDouble(rs.getDouble("descto"),4) );
                     row.put("precio_unitario_con_descto",StringHelper.roundDouble(rs.getDouble("precio_unitario_con_descto"),4) );

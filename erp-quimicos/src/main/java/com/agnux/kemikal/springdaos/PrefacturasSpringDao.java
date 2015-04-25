@@ -296,26 +296,28 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
         
         String sql_query = ""
         + "SELECT erp_prefacturas_detalles.id as id_detalle,"
-                + "erp_prefacturas_detalles.producto_id,"
-                + "inv_prod.sku,"
-                + "inv_prod.descripcion as titulo,"
-                + "(CASE WHEN inv_prod_unidades.id IS NULL THEN 0 ELSE inv_prod_unidades.id END) AS unidad_id,"
-                + "(CASE WHEN inv_prod_unidades.titulo IS NULL THEN '' ELSE inv_prod_unidades.titulo END) as unidad,"
-                + "(CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS decimales,"
-                + "(CASE WHEN inv_prod_presentaciones.id IS NULL THEN 0 ELSE inv_prod_presentaciones.id END) as id_presentacion,"
-                + "(CASE WHEN inv_prod_presentaciones.titulo IS NULL THEN '' ELSE inv_prod_presentaciones.titulo END) AS presentacion,"
-                + "erp_prefacturas_detalles.cantidad AS cant_pedido,"
-                + "erp_prefacturas_detalles.cant_facturado AS cant_facturado,"
-                + "(erp_prefacturas_detalles.cantidad::double precision - erp_prefacturas_detalles.cant_facturado::double precision) AS cant_pendiente,"
-                + "erp_prefacturas_detalles.facturado,"
-                + "erp_prefacturas_detalles.precio_unitario,"
-                + "(erp_prefacturas_detalles.cantidad * erp_prefacturas_detalles.precio_unitario) AS importe, "
-                + "erp_prefacturas_detalles.tipo_impuesto_id,"
-                + "erp_prefacturas_detalles.valor_imp, "
-                + "erp_prefacturas_detalles.gral_ieps_id,"
-                + "(erp_prefacturas_detalles.valor_ieps * 100) AS valor_ieps, "
-                + "gral_mon.descripcion as moneda, "
-                + "erp_prefacturas_detalles.descto "
+            + "erp_prefacturas_detalles.producto_id,"
+            + "inv_prod.sku,"
+            + "inv_prod.descripcion as titulo,"
+            + "(CASE WHEN inv_prod_unidades.id IS NULL THEN 0 ELSE inv_prod_unidades.id END) AS unidad_id,"
+            + "(CASE WHEN inv_prod_unidades.titulo IS NULL THEN '' ELSE inv_prod_unidades.titulo END) as unidad,"
+            + "(CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS decimales,"
+            + "(CASE WHEN inv_prod_presentaciones.id IS NULL THEN 0 ELSE inv_prod_presentaciones.id END) as id_presentacion,"
+            + "(CASE WHEN inv_prod_presentaciones.titulo IS NULL THEN '' ELSE inv_prod_presentaciones.titulo END) AS presentacion,"
+            + "erp_prefacturas_detalles.cantidad AS cant_pedido,"
+            + "erp_prefacturas_detalles.cant_facturado AS cant_facturado,"
+            + "(erp_prefacturas_detalles.cantidad::double precision - erp_prefacturas_detalles.cant_facturado::double precision) AS cant_pendiente,"
+            + "erp_prefacturas_detalles.facturado,"
+            + "erp_prefacturas_detalles.precio_unitario,"
+            + "(erp_prefacturas_detalles.cantidad * erp_prefacturas_detalles.precio_unitario) AS importe, "
+            + "erp_prefacturas_detalles.tipo_impuesto_id,"
+            + "erp_prefacturas_detalles.valor_imp, "
+            + "erp_prefacturas_detalles.gral_ieps_id,"
+            + "(erp_prefacturas_detalles.valor_ieps * 100) AS valor_ieps, "
+            + "gral_mon.descripcion as moneda, "
+            + "erp_prefacturas_detalles.descto, "
+            + "erp_prefacturas_detalles.gral_imptos_ret_id as ret_id,"
+            + "(erp_prefacturas_detalles.tasa_ret * 100) AS ret_tasa "
         + "FROM erp_prefacturas "
         + "JOIN erp_prefacturas_detalles on erp_prefacturas_detalles.prefacturas_id=erp_prefacturas.id "
         + "LEFT JOIN gral_mon on gral_mon.id = erp_prefacturas.moneda_id "
@@ -353,6 +355,8 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                     row.put("ieps_id",String.valueOf(rs.getInt("gral_ieps_id")));
                     row.put("valor_ieps",StringHelper.roundDouble(rs.getString("valor_ieps"),2));
                     row.put("descto",StringHelper.roundDouble(rs.getDouble("descto"),4) );
+                    row.put("ret_id",String.valueOf(rs.getInt("ret_id")));
+                    row.put("ret_tasa",StringHelper.roundDouble(rs.getString("ret_tasa"),2));
                     
                     return row;
                 }
@@ -463,10 +467,7 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
     
     
     
-    
-    
-    
-    //obtiene todas la monedas
+    //Obtiene todas la monedas
     @Override
     public ArrayList<HashMap<String, Object>> getMonedas() {
         String sql_to_query = "SELECT id, descripcion FROM  gral_mon WHERE borrado_logico=FALSE AND ventas=TRUE ORDER BY id ASC;";
@@ -486,22 +487,12 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
         return hm_monedas;
     }
     
-
-    
-
-    
-    
     
     @Override
     public ArrayList<HashMap<String, Object>> getVendedores(Integer id_empresa, Integer id_sucursal) {
-        //String sql_to_query = "SELECT id,nombre_pila||' '||apellido_paterno||' '||apellido_materno AS nombre_vendedor FROM erp_empleados WHERE borrado_logico=FALSE AND vendedor=TRUE AND empresa_id="+id_empresa+" AND sucursal_id="+id_sucursal;
-        
-        String sql_to_query = "SELECT cxc_agen.id,  "
-                                        +"cxc_agen.nombre AS nombre_vendedor "
-                                +"FROM cxc_agen "
-                                +"JOIN gral_usr_suc ON gral_usr_suc.gral_usr_id=cxc_agen.gral_usr_id "
-                                +"JOIN gral_suc ON gral_suc.id=gral_usr_suc.gral_suc_id "
-                                +"WHERE gral_suc.empresa_id="+id_empresa+" ORDER BY cxc_agen.id;";
+        String sql_to_query = ""
+        + "SELECT cxc_agen.id, cxc_agen.nombre AS nombre_vendedor FROM cxc_agen JOIN gral_usr_suc ON gral_usr_suc.gral_usr_id=cxc_agen.gral_usr_id JOIN gral_suc ON gral_suc.id=gral_usr_suc.gral_suc_id "
+        +"WHERE gral_suc.empresa_id="+id_empresa+" ORDER BY cxc_agen.id;";
         
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, Object>> hm_vendedor = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
@@ -510,7 +501,7 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, Object> row = new HashMap<String, Object>();
-                    row.put("id",rs.getString("id")  );
+                    row.put("id",rs.getString("id"));
                     row.put("nombre_vendedor",rs.getString("nombre_vendedor"));
                     return row;
                 }
@@ -603,40 +594,41 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
             where=" AND cxc_clie.alias ilike '%"+cadena.toUpperCase()+"%'";
 	}
 	
-	String sql_query = "SELECT "
-                                    +"sbt.id,"
-                                    +"sbt.numero_control,"
-                                    +"sbt.rfc,"
-                                    +"sbt.razon_social,"
-                                    +"sbt.direccion,"
-                                    +"sbt.moneda_id,"
-                                    +"gral_mon.descripcion as moneda, "
-                                    +"sbt.cxc_agen_id,"
-                                    +"sbt.terminos_id, "
-                                    +"sbt.empresa_immex, "
-                                    +"sbt.tasa_ret_immex, "
-                                    +"sbt.cta_pago_mn, "
-                                    +"sbt.cta_pago_usd "
-                            +"FROM(SELECT cxc_clie.id,"
-                                            +"cxc_clie.numero_control,"
-                                            +"cxc_clie.rfc, "
-                                            +"cxc_clie.razon_social,"
-                                            +"cxc_clie.calle||' '||cxc_clie.numero||', '||cxc_clie.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo||' C.P. '||cxc_clie.cp as direccion, "
-                                            +"cxc_clie.moneda as moneda_id, "
-                                            +"cxc_clie.cxc_agen_id, "
-                                            +"cxc_clie.dias_credito_id AS terminos_id, "
-                                            +"cxc_clie.empresa_immex, "
-                                            +"(CASE WHEN cxc_clie.tasa_ret_immex IS NULL THEN 0 ELSE cxc_clie.tasa_ret_immex/100 END) AS tasa_ret_immex, "
-                                            + "cxc_clie.cta_pago_mn,"
-                                            + "cxc_clie.cta_pago_usd  "
-                                    +"FROM cxc_clie "
-                                    + "JOIN gral_pais ON gral_pais.id = cxc_clie.pais_id "
-                                    + "JOIN gral_edo ON gral_edo.id = cxc_clie.estado_id "
-                                    + "JOIN gral_mun ON gral_mun.id = cxc_clie.municipio_id "
-                                    +" WHERE empresa_id ="+id_empresa+"  AND sucursal_id="+id_sucursal
-                                    + " AND cxc_clie.borrado_logico=false  "+where+" "
-                            +") AS sbt "
-                            +"LEFT JOIN gral_mon on gral_mon.id = sbt.moneda_id;";
+	String sql_query = ""
+        + "SELECT "
+                +"sbt.id,"
+                +"sbt.numero_control,"
+                +"sbt.rfc,"
+                +"sbt.razon_social,"
+                +"sbt.direccion,"
+                +"sbt.moneda_id,"
+                +"gral_mon.descripcion as moneda, "
+                +"sbt.cxc_agen_id,"
+                +"sbt.terminos_id, "
+                +"sbt.empresa_immex, "
+                +"sbt.tasa_ret_immex, "
+                +"sbt.cta_pago_mn, "
+                +"sbt.cta_pago_usd "
+        +"FROM(SELECT cxc_clie.id,"
+                        +"cxc_clie.numero_control,"
+                        +"cxc_clie.rfc, "
+                        +"cxc_clie.razon_social,"
+                        +"cxc_clie.calle||' '||cxc_clie.numero||', '||cxc_clie.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo||' C.P. '||cxc_clie.cp as direccion, "
+                        +"cxc_clie.moneda as moneda_id, "
+                        +"cxc_clie.cxc_agen_id, "
+                        +"cxc_clie.dias_credito_id AS terminos_id, "
+                        +"cxc_clie.empresa_immex, "
+                        +"(CASE WHEN cxc_clie.tasa_ret_immex IS NULL THEN 0 ELSE cxc_clie.tasa_ret_immex/100 END) AS tasa_ret_immex, "
+                        + "cxc_clie.cta_pago_mn,"
+                        + "cxc_clie.cta_pago_usd  "
+                +"FROM cxc_clie "
+                + "JOIN gral_pais ON gral_pais.id = cxc_clie.pais_id "
+                + "JOIN gral_edo ON gral_edo.id = cxc_clie.estado_id "
+                + "JOIN gral_mun ON gral_mun.id = cxc_clie.municipio_id "
+                +" WHERE empresa_id ="+id_empresa+"  AND sucursal_id="+id_sucursal
+                + " AND cxc_clie.borrado_logico=false  "+where+" "
+        +") AS sbt "
+        +"LEFT JOIN gral_mon on gral_mon.id = sbt.moneda_id;";
         
         ArrayList<HashMap<String, Object>> hm_cli = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_query,  
@@ -669,40 +661,42 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
     //buscador de clientes
     @Override
     public ArrayList<HashMap<String, Object>> getDatosClienteByNoCliente(String no_control,  Integer id_empresa, Integer id_sucursal) {
-	String sql_query = "SELECT "
-                                    +"sbt.id,"
-                                    +"sbt.numero_control,"
-                                    +"sbt.rfc,"
-                                    +"sbt.razon_social,"
-                                    +"sbt.direccion,"
-                                    +"sbt.moneda_id,"
-                                    +"gral_mon.descripcion as moneda, "
-                                    +"sbt.cxc_agen_id,"
-                                    +"sbt.terminos_id, "
-                                    +"sbt.empresa_immex, "
-                                    +"sbt.tasa_ret_immex, "
-                                    +"sbt.cta_pago_mn, "
-                                    +"sbt.cta_pago_usd "
-                            +"FROM(SELECT cxc_clie.id,"
-                                            +"cxc_clie.numero_control,"
-                                            +"cxc_clie.rfc, "
-                                            +"cxc_clie.razon_social,"
-                                            +"cxc_clie.calle||' '||cxc_clie.numero||', '||cxc_clie.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo||' C.P. '||cxc_clie.cp as direccion, "
-                                            +"cxc_clie.moneda as moneda_id, "
-                                            +"cxc_clie.cxc_agen_id, "
-                                            +"cxc_clie.dias_credito_id AS terminos_id, "
-                                            +"cxc_clie.empresa_immex, "
-                                            +"(CASE WHEN cxc_clie.tasa_ret_immex IS NULL THEN 0 ELSE cxc_clie.tasa_ret_immex/100 END) AS tasa_ret_immex, "
-                                            + "cxc_clie.cta_pago_mn,"
-                                            + "cxc_clie.cta_pago_usd  "
-                                    +"FROM cxc_clie "
-                                    + "JOIN gral_pais ON gral_pais.id = cxc_clie.pais_id "
-                                    + "JOIN gral_edo ON gral_edo.id = cxc_clie.estado_id "
-                                    + "JOIN gral_mun ON gral_mun.id = cxc_clie.municipio_id "
-                                    +" WHERE empresa_id ="+id_empresa+"  AND sucursal_id="+id_sucursal
-                                    + " AND cxc_clie.borrado_logico=false  AND cxc_clie.numero_control='"+no_control.toUpperCase()+"'"
-                            +") AS sbt "
-                            +"LEFT JOIN gral_mon on gral_mon.id = sbt.moneda_id;";
+	String sql_query = ""
+        + "SELECT "
+            +"sbt.id,"
+            +"sbt.numero_control,"
+            +"sbt.rfc,"
+            +"sbt.razon_social,"
+            +"sbt.direccion,"
+            +"sbt.moneda_id,"
+            +"gral_mon.descripcion as moneda, "
+            +"sbt.cxc_agen_id,"
+            +"sbt.terminos_id, "
+            +"sbt.empresa_immex, "
+            +"sbt.tasa_ret_immex, "
+            +"sbt.cta_pago_mn, "
+            +"sbt.cta_pago_usd "
+        +"FROM("
+            + "SELECT cxc_clie.id,"
+                +"cxc_clie.numero_control,"
+                +"cxc_clie.rfc, "
+                +"cxc_clie.razon_social,"
+                +"cxc_clie.calle||' '||cxc_clie.numero||', '||cxc_clie.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo||' C.P. '||cxc_clie.cp as direccion, "
+                +"cxc_clie.moneda as moneda_id, "
+                +"cxc_clie.cxc_agen_id, "
+                +"cxc_clie.dias_credito_id AS terminos_id, "
+                +"cxc_clie.empresa_immex, "
+                +"(CASE WHEN cxc_clie.tasa_ret_immex IS NULL THEN 0 ELSE cxc_clie.tasa_ret_immex/100 END) AS tasa_ret_immex, "
+                + "cxc_clie.cta_pago_mn,"
+                + "cxc_clie.cta_pago_usd  "
+            +"FROM cxc_clie "
+            + "JOIN gral_pais ON gral_pais.id = cxc_clie.pais_id "
+            + "JOIN gral_edo ON gral_edo.id = cxc_clie.estado_id "
+            + "JOIN gral_mun ON gral_mun.id = cxc_clie.municipio_id "
+            +" WHERE empresa_id ="+id_empresa+"  AND sucursal_id="+id_sucursal
+            + " AND cxc_clie.borrado_logico=false  AND cxc_clie.numero_control='"+no_control.toUpperCase()+"'"
+        +") AS sbt "
+        +"LEFT JOIN gral_mon on gral_mon.id = sbt.moneda_id;";
         
         ArrayList<HashMap<String, Object>> hm_cli = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_query,  
@@ -769,18 +763,18 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
 	}
         
         String sql_to_query = ""
-                + "SELECT "
-				+"inv_prod.id,"
-				+"inv_prod.sku,"
-                                +"inv_prod.descripcion, "
-                                + "inv_prod.unidad_id, "
-                                + "inv_prod_unidades.titulo AS unidad, "
-				+"inv_prod_tipos.titulo AS tipo,"
-                                + "inv_prod_unidades.decimales "
-		+"FROM inv_prod "
-                + "LEFT JOIN inv_prod_tipos ON inv_prod_tipos.id=inv_prod.tipo_de_producto_id "
-                + "LEFT JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id "
-                + "WHERE inv_prod.empresa_id="+id_empresa+" AND inv_prod.borrado_logico=false "+where+" ORDER BY inv_prod.descripcion;";
+        + "SELECT "
+            +"inv_prod.id,"
+            +"inv_prod.sku,"
+            +"inv_prod.descripcion, "
+            +"inv_prod.unidad_id, "
+            +"inv_prod_unidades.titulo AS unidad, "
+            +"inv_prod_tipos.titulo AS tipo,"
+            +"inv_prod_unidades.decimales "
+        +"FROM inv_prod "
+        +"LEFT JOIN inv_prod_tipos ON inv_prod_tipos.id=inv_prod.tipo_de_producto_id "
+        +"LEFT JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id "
+        +"WHERE inv_prod.empresa_id="+id_empresa+" AND inv_prod.borrado_logico=false "+where+" ORDER BY inv_prod.descripcion;";
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         
         ArrayList<HashMap<String, String>> hm_datos_productos = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
@@ -807,20 +801,20 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
     //obtener las presentaciones de un producto para de una empresa
     @Override
     public ArrayList<HashMap<String, Object>> get_presentaciones_producto(String sku, Integer id_empresa) {
-	String sql_query = "SELECT "
-                                +"inv_prod.id,"
-                                +"inv_prod.sku,"
-                                +"inv_prod.descripcion AS titulo,"
-                                +"(CASE WHEN inv_prod_unidades.titulo IS NULL THEN '' ELSE inv_prod_unidades.titulo END) AS unidad,"
-                                +"(CASE WHEN inv_prod_presentaciones.id IS NULL THEN 0 ELSE inv_prod_presentaciones.id END) AS id_presentacion,"
-                                +"(CASE WHEN inv_prod_presentaciones.titulo IS NULL THEN '' ELSE inv_prod_presentaciones.titulo END) AS presentacion, "
-                                +"(CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS  decimales "
-                        +"FROM inv_prod "
-                        +"LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "
-                        +"LEFT JOIN inv_prod_pres_x_prod on inv_prod_pres_x_prod.producto_id = inv_prod.id "
-                        +"LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = inv_prod_pres_x_prod.presentacion_id "
-                        +"WHERE  empresa_id = "+id_empresa+" AND inv_prod.sku ILIKE '"+sku+"';";
-        
+	String sql_query = ""
+        + "SELECT "
+            +"inv_prod.id,"
+            +"inv_prod.sku,"
+            +"inv_prod.descripcion AS titulo,"
+            +"(CASE WHEN inv_prod_unidades.titulo IS NULL THEN '' ELSE inv_prod_unidades.titulo END) AS unidad,"
+            +"(CASE WHEN inv_prod_presentaciones.id IS NULL THEN 0 ELSE inv_prod_presentaciones.id END) AS id_presentacion,"
+            +"(CASE WHEN inv_prod_presentaciones.titulo IS NULL THEN '' ELSE inv_prod_presentaciones.titulo END) AS presentacion, "
+            +"(CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS  decimales "
+        +"FROM inv_prod "
+        +"LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "
+        +"LEFT JOIN inv_prod_pres_x_prod on inv_prod_pres_x_prod.producto_id = inv_prod.id "
+        +"LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = inv_prod_pres_x_prod.presentacion_id "
+        +"WHERE  empresa_id = "+id_empresa+" AND inv_prod.sku ILIKE '"+sku+"';";
         
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_query,  
@@ -851,31 +845,31 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
     public HashMap<String, Object> getPrecioUnitario(Integer id_cliente, Integer id_producto, Integer id_pres,Integer id_empresa, Integer id_sucursal ) {
         HashMap<String, Object> pu2 = new HashMap<String, Object>();
         
-        String sql_to_query = "SELECT count(erp_cotizacions_detalles.precio_unitario) "
-                            + "FROM erp_cotizacions "
-                            + "JOIN erp_cotizacions_detalles ON erp_cotizacions_detalles.cotizacions_id = erp_cotizacions.id "
-                            + "WHERE erp_cotizacions.cliente_id = "+id_cliente
-                            + " AND erp_cotizacions.empresa_id ="+id_empresa
-                            + " AND erp_cotizacions.sucursal_id ="+id_sucursal
-                            + " AND erp_cotizacions.status_id = 1 "
-                            + " AND erp_cotizacions_detalles.producto_id = "+id_producto
-                            + " AND erp_cotizacions_detalles.presentacion_id = "+id_pres;
+        String sql_to_query = ""
+        + "SELECT count(erp_cotizacions_detalles.precio_unitario) "
+        + "FROM erp_cotizacions "
+        + "JOIN erp_cotizacions_detalles ON erp_cotizacions_detalles.cotizacions_id = erp_cotizacions.id "
+        + "WHERE erp_cotizacions.cliente_id = "+id_cliente
+        + " AND erp_cotizacions.empresa_id ="+id_empresa
+        + " AND erp_cotizacions.sucursal_id ="+id_sucursal
+        + " AND erp_cotizacions.status_id=1 "
+        + " AND erp_cotizacions_detalles.producto_id = "+id_producto
+        + " AND erp_cotizacions_detalles.presentacion_id = "+id_pres;
         
         int rowCount = this.getJdbcTemplate().queryForInt(sql_to_query);
         
         if(rowCount > 0){
             String sql_query = ""
-                    + "SELECT erp_cotizacions_detalles.precio_unitario, "
-                                + "erp_cotizacions_detalles.moneda_id "
-                    + "FROM erp_cotizacions "
-                    + "JOIN erp_cotizacions_detalles ON erp_cotizacions_detalles.cotizacions_id = erp_cotizacions.id "
-                    + "WHERE erp_cotizacions.cliente_id = "+id_cliente
-                    + " AND erp_cotizacions.empresa_id ="+id_empresa
-                    + " AND erp_cotizacions.sucursal_id ="+id_sucursal
-                    + " AND erp_cotizacions.status_id = 1 "
-                    + " AND erp_cotizacions_detalles.producto_id = "+id_producto
-                    + " AND erp_cotizacions_detalles.presentacion_id = "+id_pres
-                    + " ORDER BY erp_cotizacions_detalles.momento_creacion DESC LIMIT 1;";
+            + "SELECT erp_cotizacions_detalles.precio_unitario,erp_cotizacions_detalles.moneda_id "
+            + "FROM erp_cotizacions "
+            + "JOIN erp_cotizacions_detalles ON erp_cotizacions_detalles.cotizacions_id = erp_cotizacions.id "
+            + "WHERE erp_cotizacions.cliente_id = "+id_cliente
+            + " AND erp_cotizacions.empresa_id ="+id_empresa
+            + " AND erp_cotizacions.sucursal_id ="+id_sucursal
+            + " AND erp_cotizacions.status_id = 1 "
+            + " AND erp_cotizacions_detalles.producto_id = "+id_producto
+            + " AND erp_cotizacions_detalles.presentacion_id = "+id_pres
+            + " ORDER BY erp_cotizacions_detalles.momento_creacion DESC LIMIT 1;";
             
             //System.out.println("Obtiene precio_unitario:"+ sql_query);
             
@@ -958,7 +952,9 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                 + "fac_rems_detalles.costo_promedio, "
                 + "fac_rems_detalles.gral_ieps_id,"
                 + "(fac_rems_detalles.valor_ieps * 100) AS valor_ieps, "
-                + "(CASE WHEN "+ permitir_descuento +"::boolean=true THEN (CASE WHEN fac_rems_detalles.descto IS NULL THEN 0 ELSE fac_rems_detalles.descto END) ELSE 0 END) AS descto "
+                + "(CASE WHEN "+ permitir_descuento +"::boolean=true THEN (CASE WHEN fac_rems_detalles.descto IS NULL THEN 0 ELSE fac_rems_detalles.descto END) ELSE 0 END) AS descto,"
+                + "fac_rems_detalles.gral_imptos_ret_id as ret_id,"
+                + "(fac_rems_detalles.tasa_ret * 100) AS ret_tasa "
          + "FROM fac_rems_detalles "
          + "LEFT JOIN inv_prod on inv_prod.id = fac_rems_detalles.inv_prod_id "
          + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = fac_rems_detalles.inv_prod_unidad_id "
@@ -990,8 +986,10 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                     
                     row.put("ieps_id",String.valueOf(rs.getInt("gral_ieps_id")));
                     row.put("valor_ieps",StringHelper.roundDouble(rs.getString("valor_ieps"),2));
-                    
                     row.put("descto",StringHelper.roundDouble(rs.getDouble("descto"),4) );
+                    row.put("ret_id",String.valueOf(rs.getInt("ret_id")));
+                    row.put("ret_tasa",StringHelper.roundDouble(rs.getString("ret_tasa"),2));
+                    
                     /*
                     System.out.println(rs.getString("moneda")+"  "
                             + ""+rs.getString("sku")+"  "
@@ -1013,37 +1011,37 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
     @Override
     public ArrayList<HashMap<String, Object>> getDatosRemision(Integer id_remision) {
 	String sql_query = ""
-                + "SELECT "
-                    + "fac_rems.folio AS folio_remision,"
-                    + "fac_rems.folio_pedido,"
-                    + "fac_rems.orden_compra,"
-                    + "gral_mon.iso_4217_anterior AS mon_iso4217_anterior, "
-                    + "fac_rems.fac_metodos_pago_id,"
-                    + "fac_rems.cxc_clie_df_id,"
-                    + "(CASE WHEN fac_rems.cxc_clie_df_id > 1 THEN "
-                        + "sbtdf.calle||' '||sbtdf.numero_interior||' '||sbtdf.numero_exterior||', '||sbtdf.colonia||', '||sbtdf.municipio||', '||sbtdf.estado||', '||sbtdf.pais||' C.P. '||sbtdf.cp "
-                    + "ELSE "
-                        + "cxc_clie.calle||' '||cxc_clie.numero||', '||cxc_clie.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo||' C.P. '||cxc_clie.cp "
-                    + "END ) AS direccion,"
-                    + "(CASE WHEN fac_rems.fac_metodos_pago_id=2 OR fac_rems.fac_metodos_pago_id=3 THEN "
-                                + "fac_rems.no_cuenta "
-                        + "ELSE "
-                                + "(CASE WHEN fac_rems.moneda_id=1 THEN cxc_clie.cta_pago_mn "
-                                      + "WHEN fac_rems.moneda_id=2 THEN cxc_clie.cta_pago_usd "
-                                + "ELSE '' " 
-                                + "END ) "
-                    + "END) AS no_cuenta,"
-                    + "cxc_clie.cxc_clie_tipo_adenda_id AS adenda_id, "
-                    + "(CASE WHEN fac_rems.monto_descto>0 THEN true ELSE false END) AS pdescto, "
-                    + "(CASE WHEN fac_rems.motivo_descto IS NULL THEN '' ELSE fac_rems.motivo_descto END) AS mdescto "
-                + "FROM fac_rems "
-                + "JOIN cxc_clie ON cxc_clie.id = fac_rems.cxc_clie_id "
-                + "LEFT JOIN gral_pais ON gral_pais.id = cxc_clie.pais_id "
-                + "LEFT JOIN gral_edo ON gral_edo.id = cxc_clie.estado_id "
-                + "LEFT JOIN gral_mun ON gral_mun.id = cxc_clie.municipio_id "
-                + "LEFT JOIN (SELECT cxc_clie_df.id, (CASE WHEN cxc_clie_df.calle IS NULL THEN '' ELSE cxc_clie_df.calle END) AS calle, (CASE WHEN cxc_clie_df.numero_interior IS NULL THEN '' ELSE (CASE WHEN cxc_clie_df.numero_interior IS NULL OR cxc_clie_df.numero_interior='' THEN '' ELSE 'NO.INT.'||cxc_clie_df.numero_interior END)  END) AS numero_interior, (CASE WHEN cxc_clie_df.numero_exterior IS NULL THEN '' ELSE (CASE WHEN cxc_clie_df.numero_exterior IS NULL OR cxc_clie_df.numero_exterior='' THEN '' ELSE 'NO.EXT.'||cxc_clie_df.numero_exterior END )  END) AS numero_exterior, (CASE WHEN cxc_clie_df.colonia IS NULL THEN '' ELSE cxc_clie_df.colonia END) AS colonia,(CASE WHEN gral_mun.id IS NULL OR gral_mun.id=0 THEN '' ELSE gral_mun.titulo END) AS municipio,(CASE WHEN gral_edo.id IS NULL OR gral_edo.id=0 THEN '' ELSE gral_edo.titulo END) AS estado,(CASE WHEN gral_pais.id IS NULL OR gral_pais.id=0 THEN '' ELSE gral_pais.titulo END) AS pais,(CASE WHEN cxc_clie_df.cp IS NULL THEN '' ELSE cxc_clie_df.cp END) AS cp  FROM cxc_clie_df LEFT JOIN gral_pais ON gral_pais.id = cxc_clie_df.gral_pais_id LEFT JOIN gral_edo ON gral_edo.id = cxc_clie_df.gral_edo_id LEFT JOIN gral_mun ON gral_mun.id = cxc_clie_df.gral_mun_id ) AS sbtdf ON sbtdf.id = fac_rems.cxc_clie_df_id "
-                + "LEFT JOIN gral_mon ON gral_mon.id = fac_rems.moneda_id  "
-                + "WHERE fac_rems.id="+id_remision;
+        + "SELECT "
+            + "fac_rems.folio AS folio_remision,"
+            + "fac_rems.folio_pedido,"
+            + "fac_rems.orden_compra,"
+            + "gral_mon.iso_4217_anterior AS mon_iso4217_anterior, "
+            + "fac_rems.fac_metodos_pago_id,"
+            + "fac_rems.cxc_clie_df_id,"
+            + "(CASE WHEN fac_rems.cxc_clie_df_id > 1 THEN "
+                + "sbtdf.calle||' '||sbtdf.numero_interior||' '||sbtdf.numero_exterior||', '||sbtdf.colonia||', '||sbtdf.municipio||', '||sbtdf.estado||', '||sbtdf.pais||' C.P. '||sbtdf.cp "
+            + "ELSE "
+                + "cxc_clie.calle||' '||cxc_clie.numero||', '||cxc_clie.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo||' C.P. '||cxc_clie.cp "
+            + "END ) AS direccion,"
+            + "(CASE WHEN fac_rems.fac_metodos_pago_id=2 OR fac_rems.fac_metodos_pago_id=3 THEN "
+                        + "fac_rems.no_cuenta "
+                + "ELSE "
+                        + "(CASE WHEN fac_rems.moneda_id=1 THEN cxc_clie.cta_pago_mn "
+                                + "WHEN fac_rems.moneda_id=2 THEN cxc_clie.cta_pago_usd "
+                        + "ELSE '' " 
+                        + "END ) "
+            + "END) AS no_cuenta,"
+            + "cxc_clie.cxc_clie_tipo_adenda_id AS adenda_id, "
+            + "(CASE WHEN fac_rems.monto_descto>0 THEN true ELSE false END) AS pdescto, "
+            + "(CASE WHEN fac_rems.motivo_descto IS NULL THEN '' ELSE fac_rems.motivo_descto END) AS mdescto "
+        + "FROM fac_rems "
+        + "JOIN cxc_clie ON cxc_clie.id = fac_rems.cxc_clie_id "
+        + "LEFT JOIN gral_pais ON gral_pais.id = cxc_clie.pais_id "
+        + "LEFT JOIN gral_edo ON gral_edo.id = cxc_clie.estado_id "
+        + "LEFT JOIN gral_mun ON gral_mun.id = cxc_clie.municipio_id "
+        + "LEFT JOIN (SELECT cxc_clie_df.id, (CASE WHEN cxc_clie_df.calle IS NULL THEN '' ELSE cxc_clie_df.calle END) AS calle, (CASE WHEN cxc_clie_df.numero_interior IS NULL THEN '' ELSE (CASE WHEN cxc_clie_df.numero_interior IS NULL OR cxc_clie_df.numero_interior='' THEN '' ELSE 'NO.INT.'||cxc_clie_df.numero_interior END)  END) AS numero_interior, (CASE WHEN cxc_clie_df.numero_exterior IS NULL THEN '' ELSE (CASE WHEN cxc_clie_df.numero_exterior IS NULL OR cxc_clie_df.numero_exterior='' THEN '' ELSE 'NO.EXT.'||cxc_clie_df.numero_exterior END )  END) AS numero_exterior, (CASE WHEN cxc_clie_df.colonia IS NULL THEN '' ELSE cxc_clie_df.colonia END) AS colonia,(CASE WHEN gral_mun.id IS NULL OR gral_mun.id=0 THEN '' ELSE gral_mun.titulo END) AS municipio,(CASE WHEN gral_edo.id IS NULL OR gral_edo.id=0 THEN '' ELSE gral_edo.titulo END) AS estado,(CASE WHEN gral_pais.id IS NULL OR gral_pais.id=0 THEN '' ELSE gral_pais.titulo END) AS pais,(CASE WHEN cxc_clie_df.cp IS NULL THEN '' ELSE cxc_clie_df.cp END) AS cp  FROM cxc_clie_df LEFT JOIN gral_pais ON gral_pais.id = cxc_clie_df.gral_pais_id LEFT JOIN gral_edo ON gral_edo.id = cxc_clie_df.gral_edo_id LEFT JOIN gral_mun ON gral_mun.id = cxc_clie_df.gral_mun_id ) AS sbtdf ON sbtdf.id = fac_rems.cxc_clie_df_id "
+        + "LEFT JOIN gral_mon ON gral_mon.id = fac_rems.moneda_id  "
+        + "WHERE fac_rems.id="+id_remision;
         
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_query,  
@@ -1068,13 +1066,5 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
         );
         return hm;
     }
-    
-    
-    
-    
-    
-    
-    
-    
     
 }

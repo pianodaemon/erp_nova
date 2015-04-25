@@ -261,7 +261,7 @@ public class PocPedidosController {
         if( !id_pedido.equals("0")  ){
             datosPedido = this.getPocDao().getPocPedido_Datos(Integer.parseInt(id_pedido));
             datosGrid = this.getPocDao().getPocPedido_DatosGrid(Integer.parseInt(id_pedido));
-            
+            System.out.println("proceso_flujo_id="+datosPedido.get(0).get("proceso_flujo_id"));
             //1;"COTIZACION",  4;"PEDIDO"
             if(Integer.parseInt(datosPedido.get(0).get("proceso_flujo_id"))!=1 && Integer.parseInt(datosPedido.get(0).get("proceso_flujo_id"))!=4){
                 //Esto es para permitir obtener los datos de los agentes eliminados, ya que se debe mostrar en los pedidos historicos
@@ -869,6 +869,9 @@ public class PocPedidosController {
             @RequestParam(value="vdescto", required=false) String[] vdescto,
             @RequestParam(value="idIeps", required=false) String[] idIeps,
             @RequestParam(value="tasaIeps", required=false) String[] tasaIeps,
+            @RequestParam(value="ret_id", required=false) String[] ret_id,
+            @RequestParam(value="ret_tasa", required=false) String[] ret_tasa,
+            
             @RequestParam(value="cantidad", required=false) String[] cantidad,
             @RequestParam(value="costo", required=false) String[] costo,
             @RequestParam(value="noTr", required=false) String[] noTr,
@@ -935,7 +938,7 @@ public class PocPedidosController {
                 String id_user_autoriza = (partida[2].trim().equals("0"))?partida[2]:Base64Coder.decodeString(StringHelper.isNullString(String.valueOf(partida[2])));
                 
                 select_umedida[i] = StringHelper.verificarSelect(select_umedida[i]);
-                arreglo[i]= "'"+eliminado[i] +"___" + iddetalle[i] +"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + id_impuesto[i] +"___" + cantidad[i] +"___" + costo[i] + "___"+valor_imp[i] + "___"+noTr[i] + "___"+seleccionado[i]+ "___" + select_umedida[i] + "___" + idIeps[i] + "___" + tasaIeps[i]+ "___"+ vdescto[i] +"___"+ idcot[i] +"___"+ iddetcot[i] +"___"+stat_reg+"___"+precio_autorizado+"___"+id_user_autoriza+"___"+reqauth[i]+"___"+salvar_registro[i]+"'";
+                arreglo[i]= "'"+eliminado[i] +"___" + iddetalle[i] +"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + id_impuesto[i] +"___" + cantidad[i] +"___" + costo[i] + "___"+valor_imp[i] + "___"+noTr[i] + "___"+seleccionado[i]+ "___" + select_umedida[i] + "___" + idIeps[i] + "___" + tasaIeps[i]+ "___"+ vdescto[i] +"___"+ idcot[i] +"___"+ iddetcot[i] +"___"+stat_reg+"___"+precio_autorizado+"___"+id_user_autoriza+"___"+reqauth[i]+"___"+salvar_registro[i] +"___"+ ret_id[i] +"___"+ ret_tasa[i] +"'";
                 //System.out.println(arreglo[i]);
             }
             

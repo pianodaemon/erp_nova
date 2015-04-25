@@ -258,6 +258,10 @@ public class PocSpringDao implements PocInterfaceDao{
             + "poc_pedidos_detalle.valor_imp,"
             + "poc_pedidos_detalle.gral_ieps_id,"
             + "(poc_pedidos_detalle.valor_ieps * 100) AS valor_ieps, "
+                
+            + "poc_pedidos_detalle.gral_imptos_ret_id as ret_id,"
+            + "(poc_pedidos_detalle.tasa_ret * 100) AS ret_tasa, "
+                
             + "(CASE WHEN poc_pedidos_detalle.backorder=TRUE OR poc_pedidos_detalle.requisicion=TRUE THEN 'checked' ELSE '' END) AS valor_check, "
             + "(CASE WHEN poc_pedidos_detalle.backorder=TRUE THEN 1 ELSE 0 END) AS valor_selecionado, "
             + "(poc_pedidos_detalle.cantidad - poc_pedidos_detalle.reservado) AS cant_produccion, "
@@ -304,6 +308,8 @@ public class PocSpringDao implements PocInterfaceDao{
                     
                     row.put("ieps_id",String.valueOf(rs.getInt("gral_ieps_id")));
                     row.put("valor_ieps",StringHelper.roundDouble(rs.getString("valor_ieps"),2));
+                    row.put("ret_id",String.valueOf(rs.getInt("ret_id")));
+                    row.put("ret_tasa",StringHelper.roundDouble(rs.getString("ret_tasa"),2));
                     
                     //Valores para el PDF
                     row.put("etiqueta_ieps",rs.getString("etiqueta_ieps"));
@@ -920,7 +926,7 @@ public class PocSpringDao implements PocInterfaceDao{
             //Obtener solo los NO eliminados. Esta es para cuando se está creando un nuevo pedido o cotización, no debe mostrar los ya eliminados.
             sql_to_query = "SELECT cxc_agen.id, cxc_agen.nombre AS nombre_agente FROM cxc_agen JOIN gral_usr_suc ON gral_usr_suc.gral_usr_id=cxc_agen.gral_usr_id JOIN gral_suc ON gral_suc.id=gral_usr_suc.gral_suc_id WHERE cxc_agen.borrado_logico=false and gral_suc.empresa_id=? ORDER BY cxc_agen.id;";
         }
-        //System.out.println("Obtener agentes:"+sql_to_query);
+        System.out.println("Obtener agentes:"+sql_to_query);
 
         ArrayList<HashMap<String, String>> hm_vendedor = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -1500,31 +1506,33 @@ public class PocSpringDao implements PocInterfaceDao{
         }
         
         sql_query = ""
-            + "SELECT "
-                    +"inv_prod.id,"
-                    +"inv_prod.sku,"
-                    +"inv_prod.descripcion AS titulo,"
-                    +"inv_prod.gral_impto_id AS id_impto_prod,"
-                    +"inv_prod.unidad_id,"                
-                    +"(CASE WHEN inv_prod.gral_impto_id=0 THEN 0 ELSE gral_imptos.iva_1 END) AS valor_impto_prod, "
-                    +"(CASE WHEN inv_prod.ieps=0 THEN 0 ELSE gral_ieps.id END) AS ieps_id, "
-                    +"(CASE WHEN inv_prod.ieps=0 THEN 0 ELSE gral_ieps.tasa END) AS ieps_tasa, "
-                    
-                    +"(CASE WHEN inv_prod.descripcion_larga IS NULL THEN '' ELSE inv_prod.descripcion_larga END) AS descripcion_larga,"
-                    +"(CASE WHEN inv_prod.archivo_img='' THEN '' ELSE inv_prod.archivo_img END) AS archivo_img,"
-                    +"(CASE WHEN inv_prod_unidades.titulo IS NULL THEN '' ELSE inv_prod_unidades.titulo END) AS unidad,"
-                    +"(CASE WHEN inv_prod_presentaciones.id IS NULL THEN 0 ELSE inv_prod_presentaciones.id END) AS id_presentacion,"
-                    +"(CASE WHEN inv_prod_presentaciones.titulo IS NULL THEN '' ELSE inv_prod_presentaciones.titulo END) AS presentacion, "
-                    +"(CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS  decimales, "
-                    +precio+" "
-            +"FROM inv_prod "
-            +"LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "
-            +"LEFT JOIN inv_prod_pres_x_prod on inv_prod_pres_x_prod.producto_id = inv_prod.id "
-            +"LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = inv_prod_pres_x_prod.presentacion_id "
-            +"LEFT JOIN gral_imptos ON gral_imptos.id=inv_prod.gral_impto_id "
-            +"LEFT JOIN gral_ieps ON gral_ieps.id=inv_prod.ieps "
-            +"LEFT JOIN inv_pre ON (inv_pre.inv_prod_id=inv_prod.id AND inv_pre.inv_prod_presentacion_id=inv_prod_pres_x_prod.presentacion_id AND inv_pre.borrado_logico=false) "
-            +"WHERE  inv_prod.empresa_id = "+id_empresa+" AND inv_prod.sku ILIKE '"+sku+"' AND inv_prod.borrado_logico=false;";
+        + "SELECT "
+                +"inv_prod.id,"
+                +"inv_prod.sku,"
+                +"inv_prod.descripcion AS titulo,"
+                +"inv_prod.gral_impto_id AS id_impto_prod,"
+                +"inv_prod.unidad_id,"                
+                +"(CASE WHEN inv_prod.gral_impto_id=0 THEN 0 ELSE gral_imptos.iva_1 END) AS valor_impto_prod, "
+                +"(CASE WHEN inv_prod.ieps=0 THEN 0 ELSE gral_ieps.id END) AS ieps_id, "
+                +"(CASE WHEN inv_prod.ieps=0 THEN 0 ELSE gral_ieps.tasa END) AS ieps_tasa, "
+                +"(CASE WHEN inv_prod.gral_imptos_ret_id=0 THEN 0 ELSE gral_imptos_ret.id END) AS ret_id, "
+                +"(CASE WHEN inv_prod.gral_imptos_ret_id=0 THEN 0 ELSE gral_imptos_ret.tasa END) AS ret_tasa, "
+                +"(CASE WHEN inv_prod.descripcion_larga IS NULL THEN '' ELSE inv_prod.descripcion_larga END) AS descripcion_larga,"
+                +"(CASE WHEN inv_prod.archivo_img='' THEN '' ELSE inv_prod.archivo_img END) AS archivo_img,"
+                +"(CASE WHEN inv_prod_unidades.titulo IS NULL THEN '' ELSE inv_prod_unidades.titulo END) AS unidad,"
+                +"(CASE WHEN inv_prod_presentaciones.id IS NULL THEN 0 ELSE inv_prod_presentaciones.id END) AS id_presentacion,"
+                +"(CASE WHEN inv_prod_presentaciones.titulo IS NULL THEN '' ELSE inv_prod_presentaciones.titulo END) AS presentacion, "
+                +"(CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS  decimales, "
+                +precio+" "
+        +"FROM inv_prod "
+        +"LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "
+        +"LEFT JOIN inv_prod_pres_x_prod on inv_prod_pres_x_prod.producto_id = inv_prod.id "
+        +"LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = inv_prod_pres_x_prod.presentacion_id "
+        +"LEFT JOIN gral_imptos ON gral_imptos.id=inv_prod.gral_impto_id "
+        +"LEFT JOIN gral_ieps ON gral_ieps.id=inv_prod.ieps "
+        +"LEFT JOIN gral_imptos_ret ON gral_imptos_ret.id=inv_prod.gral_imptos_ret_id "
+        +"LEFT JOIN inv_pre ON (inv_pre.inv_prod_id=inv_prod.id AND inv_pre.inv_prod_presentacion_id=inv_prod_pres_x_prod.presentacion_id AND inv_pre.borrado_logico=false) "
+        +"WHERE  inv_prod.empresa_id = "+id_empresa+" AND inv_prod.sku ILIKE '"+sku+"' AND inv_prod.borrado_logico=false;";
         
         //System.out.println("getPresentacionesProducto: "+sql_query);
         
@@ -1539,7 +1547,8 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("valor_impto_prod",StringHelper.roundDouble(rs.getString("valor_impto_prod"),2));
                     row.put("ieps_id",String.valueOf(rs.getInt("ieps_id")));
                     row.put("ieps_tasa",StringHelper.roundDouble(rs.getString("ieps_tasa"),2));
-                    
+                    row.put("ret_id",String.valueOf(rs.getInt("ret_id")));
+                    row.put("ret_tasa",StringHelper.roundDouble(rs.getString("ret_tasa"),2));
                     row.put("sku",rs.getString("sku"));
                     row.put("titulo",rs.getString("titulo"));
                     row.put("descripcion_larga",rs.getString("descripcion_larga"));
@@ -2059,7 +2068,6 @@ public class PocSpringDao implements PocInterfaceDao{
         String id_impto_clie="0";
         String valor_impto_clie="0.00";
         
-        
         if(tipo_cliente==2){
             //si el cliente es extranjero, hay que obtener el valor del iva tasa cero
             //idImpuesto=4 Exento 0%
@@ -2122,7 +2130,8 @@ public class PocSpringDao implements PocInterfaceDao{
             rowmap.put("tc", map.get("tc"));
             rowmap.put("ieps_id", map.get("ieps_id"));
             rowmap.put("ieps_tasa", map.get("ieps_tasa"));
-            
+            rowmap.put("ret_id", map.get("ret_id"));
+            rowmap.put("ret_tasa", map.get("ret_tasa"));
             //System.out.println("id:"+rowmap.get("id")+"|sku:"+rowmap.get("sku")+"|titulo:"+rowmap.get("titulo")+"|unidad:"+rowmap.get("unidad")+"|idPres:"+rowmap.get("id_presentacion")+"|Pres:"+rowmap.get("presentacion")+"|noDec:"+rowmap.get("decimales")+"|precio:"+rowmap.get("precio")+"|exisLp:"+rowmap.get("exis_prod_lp")+"|idMon:"+rowmap.get("id_moneda")+"|tc:"+rowmap.get("tc")+"|idImpto:"+rowmap.get("id_impto")+"|valImpto:"+rowmap.get("valor_impto"));
             
             ArrayHmPres.add(rowmap);

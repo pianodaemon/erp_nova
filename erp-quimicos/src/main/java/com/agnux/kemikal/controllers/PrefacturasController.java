@@ -579,6 +579,8 @@ public class PrefacturasController {
             @RequestParam(value="idIeps", required=false) String[] idIeps,
             @RequestParam(value="tasaIeps", required=false) String[] tasaIeps,
             @RequestParam(value="vdescto", required=false) String[] vdescto,
+            @RequestParam(value="ret_id", required=false) String[] ret_id,
+            @RequestParam(value="ret_tasa", required=false) String[] ret_tasa,
             
             @RequestParam(value="id_remision", required=false) String[] id_remision,
             @RequestParam(value="id_df", required=false) String id_df,
@@ -643,7 +645,7 @@ public class PrefacturasController {
         arreglo = new String[eliminado.length];
         
         for(int i=0; i<eliminado.length; i++) {
-            arreglo[i]= "'"+eliminado[i] +"___" + iddetalle[i] +"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + id_impuesto[i] +"___" + cantidad[i] +"___" + StringHelper.removerComas(costo[i]) + "___"+valor_imp[i]+"___" + id_remision[i]+"___"+costo_promedio[i]+"___"+idUnidad[i] + "___" + idIeps[i] + "___" + tasaIeps[i] + "___" + vdescto[i] +"'";
+            arreglo[i]= "'"+eliminado[i] +"___" + iddetalle[i] +"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + id_impuesto[i] +"___" + cantidad[i] +"___" + StringHelper.removerComas(costo[i]) + "___"+valor_imp[i]+"___" + id_remision[i]+"___"+costo_promedio[i]+"___"+idUnidad[i] + "___" + idIeps[i] + "___" + tasaIeps[i] + "___" + vdescto[i] +"___"+ ret_id[i] +"___"+ ret_tasa[i] +"'";
             //arreglo[i]= "'"+eliminado[i] +"___" + iddetalle[i] +"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + id_impuesto +"___" + cantidad[i] +"___" + costo[i]+"'";
             //System.out.println(arreglo[i]);
         }
@@ -722,7 +724,7 @@ public class PrefacturasController {
                         iva = this.getFacdao().getIvas();
                         
                         conceptos = this.getFacdao().getListaConceptosFacturaXml(id_prefactura);
-                        impRetenidos = this.getFacdao().getImpuestosRetenidosFacturaXml();
+                        impRetenidos = this.getFacdao().getImpuestosRetenidosFacturaXml(conceptos);
                         impTrasladados = this.getFacdao().getImpuestosTrasladadosFacturaXml(id_sucursal, conceptos, ieps, iva);//Lo del Ieps solo se le esta pasando para que no marque error(Ya no se ha desarrollado soporte para CFD)
                         dataFacturaCliente = this.getFacdao().getDataFacturaXml(id_prefactura);
                         leyendas = this.getFacdao().getLeyendasEspecialesCfdi(id_empresa);
@@ -846,9 +848,8 @@ public class PrefacturasController {
                             ieps = this.getFacdao().getIeps(id_empresa);
                             iva = this.getFacdao().getIvas();
                             
-                            
                             conceptos = this.getFacdao().getListaConceptosXmlCfdiTf(id_prefactura, permitir_descto.trim().toLowerCase());
-                            impRetenidos = this.getFacdao().getImpuestosRetenidosFacturaXml();
+                            impRetenidos = this.getFacdao().getImpuestosRetenidosFacturaXml(conceptos);
                             impTrasladados = this.getFacdao().getImpuestosTrasladadosFacturaXml(id_sucursal, conceptos, ieps, iva);
                             leyendas = this.getFacdao().getLeyendasEspecialesCfdi(id_empresa);
                             dataFacturaCliente = this.getFacdao().getDataFacturaXml(id_prefactura);
