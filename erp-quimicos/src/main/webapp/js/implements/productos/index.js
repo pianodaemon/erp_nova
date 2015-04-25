@@ -2005,9 +2005,7 @@ $(function() {
 			
 			if(accion_mode == 'edit'){
 				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getProducto.json';
-					$arreglo = {'id_producto':id_to_show,
-									'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
-								};
+				var $arreglo = {'id_producto':id_to_show, 'iu': $('#lienzo_recalculable').find('input[name=iu]').val() };
 				
 				//variables del catalogo
 				var $incluye_produccion = $('#forma-product-window').find('input[name=incluye_pro]');
@@ -2234,7 +2232,7 @@ $(function() {
 						var remove = function() {$(this).remove();};
 						$('#forma-product-overlay').fadeOut(remove);
 						jAlert("Producto actualizado", 'Atencion!');
-						$get_datos_grid();
+						//$get_datos_grid();
 					}else{
 						// Desaparece todas las interrogaciones si es que existen
 						$('#forma-product-window').find('div.interrogacion').css({'display':'none'});
