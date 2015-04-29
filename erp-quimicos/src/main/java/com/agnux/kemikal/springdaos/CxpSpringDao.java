@@ -1625,25 +1625,29 @@ public class CxpSpringDao implements CxpInterfaceDao{
     //buscar datos por Numero de Proveedor
     @Override
     public ArrayList<HashMap<String, String>> getDatosProveedorByNoProv(String noProveedor, Integer id_empresa) {
-
-        String sql_to_query = "SELECT DISTINCT  cxp_prov.id, "
-                                + "cxp_prov.rfc, "
-                                + "cxp_prov.folio AS no_proveedor, "
-                                + "cxp_prov.razon_social, "
-                                + "cxp_prov.calle||' '||cxp_prov.numero||', '|| cxp_prov.colonia||', '||(CASE WHEN gral_mun.titulo IS NULL THEN '' ELSE gral_mun.titulo END)||', '||(CASE WHEN gral_edo.titulo IS NULL THEN '' ELSE gral_edo.titulo END)||', '||(CASE WHEN gral_pais.titulo IS NULL THEN '' ELSE gral_pais.titulo END) ||' C.P. '||cxp_prov.cp as direccion, "
-                                + "cxp_prov.proveedortipo_id,"
-                                + "cxp_prov.dias_credito_id,  "
-                                + "cxp_prov.moneda_id "
-                            + "FROM cxp_prov "
-                            + "LEFT JOIN gral_pais ON gral_pais.id = cxp_prov.pais_id "
-                            + "LEFT JOIN gral_edo ON gral_edo.id = cxp_prov.estado_id "
-                            + "LEFT JOIN gral_mun ON gral_mun.id = cxp_prov.municipio_id  "
-                            + "WHERE empresa_id="+id_empresa+" "
-                            + "AND cxp_prov.borrado_logico=false "
-                            + "AND cxp_prov.folio='"+noProveedor.toUpperCase()+"' LIMIT 1;";
+        
+        String sql_to_query = ""
+        + "SELECT DISTINCT  "
+            + "cxp_prov.id, "
+            + "cxp_prov.rfc, "
+            + "cxp_prov.folio AS no_proveedor, "
+            + "cxp_prov.razon_social, "
+            + "cxp_prov.calle||' '||cxp_prov.numero||', '|| cxp_prov.colonia||', '||(CASE WHEN gral_mun.titulo IS NULL THEN '' ELSE gral_mun.titulo END)||', '||(CASE WHEN gral_edo.titulo IS NULL THEN '' ELSE gral_edo.titulo END)||', '||(CASE WHEN gral_pais.titulo IS NULL THEN '' ELSE gral_pais.titulo END) ||' C.P. '||cxp_prov.cp as direccion, "
+            + "cxp_prov.proveedortipo_id,"
+            + "cxp_prov.dias_credito_id,  "
+            + "cxp_prov.moneda_id,"
+            + "cxp_prov.impuesto AS iva_id,"
+            + "(CASE WHEN gral_imptos.iva_1 is null THEN 0 ELSE gral_imptos.iva_1 END) AS iva_tasa "
+        + "FROM cxp_prov "
+        + "LEFT JOIN gral_pais ON gral_pais.id = cxp_prov.pais_id "
+        + "LEFT JOIN gral_edo ON gral_edo.id = cxp_prov.estado_id "
+        + "LEFT JOIN gral_mun ON gral_mun.id = cxp_prov.municipio_id  "
+        + "LEFT JOIN gral_imptos ON gral_imptos.id=cxp_prov.impuesto "
+        + "WHERE empresa_id="+id_empresa+" "
+        + "AND cxp_prov.borrado_logico=false "
+        + "AND cxp_prov.folio='"+noProveedor.toUpperCase()+"' LIMIT 1;";
 
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
-
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -1658,6 +1662,8 @@ public class CxpSpringDao implements CxpInterfaceDao{
                     row.put("proveedortipo_id",rs.getString("proveedortipo_id"));
                     row.put("dias_credito_id",String.valueOf(rs.getInt("dias_credito_id")));
                     row.put("moneda_id",String.valueOf(rs.getInt("moneda_id")));
+                    row.put("iva_id",String.valueOf(rs.getInt("iva_id")));
+                    row.put("iva_tasa",StringHelper.roundDouble(String.valueOf(rs.getDouble("iva_tasa")),2));
                     return row;
                 }
             }
