@@ -4940,7 +4940,10 @@ join log_tarifa_clase on log_tarifa_clase.id=log_tarifa_tipo.log_tarifa_clase_id
         + "FROM log_tarifario_venta "
         + "join cxc_clie on cxc_clie.id=log_tarifario_venta.cxc_clie_id "
         + "where log_tarifario_venta.id=?;";
-  
+        
+        System.out.println("identificador: "+id);
+        System.out.println("sql_query: "+sql_query);
+        
         ArrayList<HashMap<String, Object>> hm_rtipo = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_query,
             new Object[]{new Integer(id)}, new RowMapper() {

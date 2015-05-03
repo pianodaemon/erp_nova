@@ -1217,6 +1217,24 @@ public class CxpSpringDao implements CxpInterfaceDao{
     
     
     
+    @Override
+    public ArrayList<HashMap<String, String>> getTasaRetencionIsr(Integer IdEmpresa) {
+        String sql_to_query = "SELECT DISTINCT tasa_retencion FROM gral_emp WHERE id=? LIMIT 1;";
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        ArrayList<HashMap<String, String>> hm_tasa_ret_isr = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(IdEmpresa)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("tasa_ret_isr",StringHelper.roundDouble(rs.getString("tasa_retencion"),2));
+                    return row;
+                }
+            }
+        );
+        return hm_tasa_ret_isr;
+    }
+    
     
     @Override
     public ArrayList<HashMap<String, String>> getFleteras(Integer id_empresa, Integer id_sucursal) {
@@ -1241,28 +1259,49 @@ public class CxpSpringDao implements CxpInterfaceDao{
     
     @Override
     public ArrayList<HashMap<String, String>> getProvFacturas_Datos(Integer id) {
-        String sql_to_query = "SELECT cxp_facturas.id, "
-                                + "cxp_facturas.cxc_prov_id, "
-                                + "cxp_facturas.serie_folio as factura, "
-                                + "cxp_facturas.flete, "
-                                + "cxp_facturas.subtotal, "
-                                + "cxp_facturas.iva, "
-                                + "cxp_facturas.retencion, "
-                                + "cxp_facturas.monto_total as total, "
-                                + "cxp_facturas.moneda_id, "
-                                + "cxp_facturas.tipo_cambio, "
-                                + "to_char(cxp_facturas.fecha_factura,'yyyy-mm-dd' ) as fecha_factura,"
-                                + "(CASE WHEN cxp_facturas.cancelacion=FALSE THEN 0 ELSE 1 END) AS cancelado, "
-                                + "cxp_facturas.empresa_id, "
-                                + "cxp_facturas.numero_guia, "
-                                + "cxp_facturas.orden_compra, "
-                                + "cxp_facturas.observaciones, "
-                                + "cxp_facturas.fletera_id, "
-                                + "cxp_facturas.dias_credito_id, "
-                                + "cxp_facturas.tipo_factura_proveedor, "
-                                + "(CASE WHEN cancelacion=FALSE THEN '' ELSE 'CANCELADO' END) AS estado " 
-                            + "FROM cxp_facturas "
-                            +"WHERE id="+ id + ";";
+        String sql_to_query = ""
+        + "SELECT cxp_facturas.id, "
+            + "cxp_facturas.cxc_prov_id, "
+            + "cxp_facturas.serie_folio as factura, "
+            + "cxp_facturas.flete, "
+            + "cxp_facturas.subtotal, "
+            + "cxp_facturas.iva, "
+            + "cxp_facturas.retencion, "
+            + "cxp_facturas.monto_total as total, "
+            + "cxp_facturas.moneda_id, "
+            + "cxp_facturas.tipo_cambio, "
+            + "to_char(cxp_facturas.fecha_factura,'yyyy-mm-dd' ) as fecha_factura,"
+            + "(CASE WHEN cxp_facturas.cancelacion=FALSE THEN 0 ELSE 1 END) AS cancelado, "
+            + "cxp_facturas.empresa_id, "
+            + "cxp_facturas.numero_guia, "
+            + "cxp_facturas.orden_compra, "
+            + "cxp_facturas.observaciones, "
+            + "cxp_facturas.fletera_id, "
+            + "cxp_facturas.dias_credito_id, "
+            + "cxp_facturas.tipo_factura_proveedor, "
+            + "(CASE WHEN cxp_facturas.cancelacion=FALSE THEN '' ELSE 'CANCELADO' END) AS estado, " 
+            + "cxp_prov.rfc, "
+            + "cxp_prov.razon_social, "
+            + "cxp_prov.folio as no_prov, "
+            /*
+            + "cxp_prov.calle||' '||cxp_prov.numero||', '||cxp_prov.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo ||' C.P. '||cxp_prov.cp as direccion, "
+            + "cxp_prov.calle,"
+            + "cxp_prov.numero,"
+            + "cxp_prov.colonia,"
+            + "gral_mun.titulo AS municipio,"
+            + "gral_edo.titulo AS estado,"
+            + "gral_pais.titulo AS pais,"
+            + "cxp_prov.telefono1 as telefono, "
+            + "cxp_prov.cp, "
+            */
+            + "cxp_prov.proveedortipo_id,"
+            + "cxp_prov.impuesto as iva_id "
+        + "FROM cxp_facturas "
+        + "left join cxp_prov on cxp_prov.id=cxp_facturas.cxc_prov_id "
+        + "JOIN gral_pais ON gral_pais.id=cxp_prov.pais_id "
+        + "JOIN gral_edo ON gral_edo.id=cxp_prov.estado_id "
+        + "JOIN gral_mun ON gral_mun.id=cxp_prov.municipio_id "
+        +"WHERE cxp_facturas.id="+ id + ";";
         
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, String>> hm_datos_entrada = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
@@ -1272,7 +1311,6 @@ public class CxpSpringDao implements CxpInterfaceDao{
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, String> row = new HashMap<String, String>();
                     row.put("id",String.valueOf(rs.getInt("id")));
-                    row.put("cxc_prov_id",String.valueOf(rs.getInt("cxc_prov_id")));
                     row.put("empresa_id",String.valueOf(rs.getInt("empresa_id")));
                     row.put("fletera_id",String.valueOf(rs.getInt("fletera_id")));
                     row.put("dias_credito_id",String.valueOf(rs.getInt("dias_credito_id")));
@@ -1290,6 +1328,14 @@ public class CxpSpringDao implements CxpInterfaceDao{
                     row.put("retencion",StringHelper.roundDouble(rs.getString("retencion"),2));
                     row.put("total",StringHelper.roundDouble(rs.getString("total"),2));
                     row.put("estado",rs.getString("estado"));
+                    row.put("cancelado",rs.getString("cancelado"));
+                    
+                    row.put("cxc_prov_id",String.valueOf(rs.getInt("cxc_prov_id")));
+                    row.put("rfc",rs.getString("rfc"));
+                    row.put("razon_social",rs.getString("razon_social"));
+                    row.put("no_prov",rs.getString("no_prov"));
+                    row.put("proveedortipo_id",rs.getString("proveedortipo_id"));
+                    row.put("iva_id",rs.getString("iva_id"));
                     return row;
                 }
             }
@@ -1351,20 +1397,23 @@ public class CxpSpringDao implements CxpInterfaceDao{
     @Override
     public ArrayList<HashMap<String, String>> getProvFacturas_DatosGrid(Integer id) {
         String sql_to_query = ""
-        + "SELECT codigo_producto, "
-            + "descripcion, "
-            + "unidad_medida, "
-            + "presentacion, "
-            + "cantidad, "
-            + "costo_unitario, "
-            + "(cantidad * costo_unitario) AS importe, "
-            + "gral_imp_id, "
-            + "valor_imp, "
-            + "gral_ieps_id,"
-            + "valor_ieps,"
-            + "(CASE WHEN gral_ieps_id>0 THEN ((costo_unitario * cantidad) * valor_ieps) ELSE 0 END) AS importe_ieps "
-        + "FROM cxp_facturas_detalle "
-        + "WHERE cxp_facturas_id="+ id + " ORDER BY id;";
+        + "SELECT "
+            + "cxp_fac_det.id as det_id, "
+            + "cxp_fac_det.codigo_producto, "
+            + "cxp_fac_det.descripcion, "
+            + "cxp_fac_det.unidad_medida, "
+            + "cxp_fac_det.presentacion, "
+            + "cxp_fac_det.cantidad, "
+            + "cxp_fac_det.costo_unitario, "
+            + "(cxp_fac_det.cantidad * cxp_fac_det.costo_unitario) AS importe, "
+            + "cxp_fac_det.gral_imp_id, "
+            + "cxp_fac_det.valor_imp, "
+            + "(((cxp_fac_det.cantidad * cxp_fac_det.costo_unitario::double precision) + (CASE WHEN cxp_fac_det.gral_ieps_id>0 THEN ((cxp_fac_det.costo_unitario * cxp_fac_det.cantidad::double precision) * cxp_fac_det.valor_ieps::double precision) ELSE 0 END)) * cxp_fac_det.valor_imp) as iva_importe, "
+            + "cxp_fac_det.gral_ieps_id,"
+            + "cxp_fac_det.valor_ieps,"
+            + "(CASE WHEN cxp_fac_det.gral_ieps_id>0 THEN ((cxp_fac_det.costo_unitario * cxp_fac_det.cantidad::double precision) * cxp_fac_det.valor_ieps::double precision) ELSE 0 END) AS importe_ieps "
+        + "FROM cxp_facturas_detalle as cxp_fac_det "
+        + "WHERE cxp_fac_det.cxp_facturas_id="+ id + " ORDER BY cxp_fac_det.id;";
         
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, String>> hm_datos_entrada = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
@@ -1373,18 +1422,21 @@ public class CxpSpringDao implements CxpInterfaceDao{
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("det_id",rs.getString("det_id"));
                     row.put("codigo_producto",rs.getString("codigo_producto"));
                     row.put("descripcion",rs.getString("descripcion"));
                     row.put("unidad_medida",rs.getString("unidad_medida"));
                     row.put("presentacion",rs.getString("presentacion"));
-                    row.put("gral_imp_id",rs.getString("gral_imp_id"));
-                    row.put("cantidad",StringHelper.roundDouble(rs.getString("cantidad"),2));
-                    row.put("costo_unitario",StringHelper.roundDouble(rs.getString("costo_unitario"),2));
-                    row.put("importe",StringHelper.roundDouble(rs.getString("importe"),2));
-                    row.put("valor_imp",StringHelper.roundDouble( rs.getString("valor_imp"),2));
+                    row.put("cantidad",StringHelper.roundDouble(rs.getString("cantidad"),4));
+                    row.put("costo_unitario",StringHelper.roundDouble(rs.getString("costo_unitario"),4));
+                    row.put("importe",StringHelper.roundDouble(rs.getString("importe"),4));
                     row.put("ieps_id",rs.getString("gral_ieps_id"));
                     row.put("valor_ieps",StringHelper.roundDouble(rs.getString("valor_ieps"),4));
                     row.put("importe_ieps",StringHelper.roundDouble(rs.getString("importe_ieps"),4));
+                    row.put("gral_imp_id",rs.getString("gral_imp_id"));
+                    row.put("valor_imp",StringHelper.roundDouble(rs.getString("valor_imp"),2));
+                    row.put("iva_importe",StringHelper.roundDouble(rs.getString("iva_importe"),4));
+
                     return row;
                 }
             }
@@ -1583,20 +1635,24 @@ public class CxpSpringDao implements CxpInterfaceDao{
             where +=" AND (cxp_prov.razon_social ilike '%"+razon_social.toUpperCase()+"%' OR cxp_prov.clave_comercial ilike '%"+razon_social.toUpperCase()+"%')";
 	}
 
-        String sql_to_query = "SELECT DISTINCT  "
-                                + "cxp_prov.id, "
-                                + "cxp_prov.rfc, "
-                                + "cxp_prov.folio AS no_proveedor, "
-                                + "cxp_prov.razon_social, "
-                                + "cxp_prov.calle||' '||cxp_prov.numero||', '|| cxp_prov.colonia||', '||(CASE WHEN gral_mun.titulo IS NULL THEN '' ELSE gral_mun.titulo END)||', '||(CASE WHEN gral_edo.titulo IS NULL THEN '' ELSE gral_edo.titulo END)||', '||(CASE WHEN gral_pais.titulo IS NULL THEN '' ELSE gral_pais.titulo END) ||' C.P. '||cxp_prov.cp as direccion, "
-                                + "cxp_prov.proveedortipo_id,"
-                                + "cxp_prov.dias_credito_id,  "
-                                + "cxp_prov.moneda_id "
-                            + "FROM cxp_prov "
-                            + "JOIN gral_pais ON gral_pais.id = cxp_prov.pais_id "
-                            + "JOIN gral_edo ON gral_edo.id = cxp_prov.estado_id "
-                            + "JOIN gral_mun ON gral_mun.id = cxp_prov.municipio_id  "
-                            + "WHERE empresa_id="+id_empresa+" AND cxp_prov.borrado_logico=false "+where;
+        String sql_to_query = ""
+        + "SELECT DISTINCT  "
+            + "cxp_prov.id, "
+            + "cxp_prov.rfc, "
+            + "cxp_prov.folio AS no_proveedor, "
+            + "cxp_prov.razon_social, "
+            + "cxp_prov.calle||' '||cxp_prov.numero||', '|| cxp_prov.colonia||', '||(CASE WHEN gral_mun.titulo IS NULL THEN '' ELSE gral_mun.titulo END)||', '||(CASE WHEN gral_edo.titulo IS NULL THEN '' ELSE gral_edo.titulo END)||', '||(CASE WHEN gral_pais.titulo IS NULL THEN '' ELSE gral_pais.titulo END) ||' C.P. '||cxp_prov.cp as direccion, "
+            + "cxp_prov.proveedortipo_id,"
+            + "cxp_prov.dias_credito_id,  "
+            + "cxp_prov.moneda_id, "
+            + "cxp_prov.impuesto AS iva_id,"
+            + "(CASE WHEN gral_imptos.iva_1 is null THEN 0 ELSE gral_imptos.iva_1 END) AS iva_tasa "
+        + "FROM cxp_prov "
+        + "JOIN gral_pais ON gral_pais.id = cxp_prov.pais_id "
+        + "JOIN gral_edo ON gral_edo.id = cxp_prov.estado_id "
+        + "JOIN gral_mun ON gral_mun.id = cxp_prov.municipio_id  "
+        + "LEFT JOIN gral_imptos ON gral_imptos.id=cxp_prov.impuesto "
+        + "WHERE empresa_id="+id_empresa+" AND cxp_prov.borrado_logico=false "+where;
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         
         ArrayList<HashMap<String, String>> hm_datos_proveedor = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
@@ -1613,6 +1669,8 @@ public class CxpSpringDao implements CxpInterfaceDao{
                     row.put("proveedortipo_id",rs.getString("proveedortipo_id"));
                     row.put("dias_credito_id",String.valueOf(rs.getInt("dias_credito_id")));
                     row.put("moneda_id",String.valueOf(rs.getInt("moneda_id")));
+                    row.put("iva_id",String.valueOf(rs.getInt("iva_id")));
+                    row.put("iva_tasa",StringHelper.roundDouble(String.valueOf(rs.getDouble("iva_tasa")),2));
                     return row;
                 }
             }
@@ -3447,4 +3505,306 @@ public class CxpSpringDao implements CxpInterfaceDao{
         return hm;
     }
 
+    
+    
+    @Override
+    public ArrayList<HashMap<String, String>> getBuscadorProductos(String sku, String tipo, String descripcion, Integer id_empresa) {
+        String where = "";
+	if(!sku.equals("")){
+		where=" AND inv_prod.sku ilike '%"+sku+"%'";
+	}
+        
+	if(!tipo.equals("0")){
+		where +=" AND inv_prod.tipo_de_producto_id="+tipo;
+	}
+        
+	if(!descripcion.equals("")){
+		where +=" AND inv_prod.descripcion ilike '%"+descripcion+"%'";
+	}
+        
+        String sql_to_query = ""
+                + "SELECT "
+                    +"inv_prod.id,"
+                    +"inv_prod.sku,"
+                    +"inv_prod.descripcion, "
+                    + "inv_prod.unidad_id, "
+                    + "inv_prod_unidades.titulo AS unidad, "
+                    +"inv_prod_tipos.titulo AS tipo,"
+                    + "inv_prod_unidades.decimales "
+		+"FROM inv_prod "
+                + "LEFT JOIN inv_prod_tipos ON inv_prod_tipos.id=inv_prod.tipo_de_producto_id "
+                + "LEFT JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id "
+                + "WHERE inv_prod.empresa_id="+id_empresa+" "
+                + "AND inv_prod.borrado_logico=false "+where+" "
+                + "ORDER BY inv_prod.descripcion;";
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        
+        //System.out.println("sql_to_query: "+sql_to_query);
+
+        ArrayList<HashMap<String, String>> hm_datos_productos = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("sku",rs.getString("sku"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("unidad_id",String.valueOf(rs.getInt("unidad_id")));
+                    row.put("unidad",rs.getString("unidad"));
+                    row.put("tipo",rs.getString("tipo"));
+                    row.put("decimales",String.valueOf(rs.getInt("decimales")));
+                    return row;
+                }
+            }
+        );
+        return hm_datos_productos;
+    }
+
+    
+    
+
+    @Override
+    public ArrayList<HashMap<String, String>> getEntradas_PresentacionesProducto(String sku, Integer id_empresa) {
+        String sql_to_query = ""
+        + "SELECT "
+            +"inv_prod.id,"
+            +"inv_prod.sku,"
+            +"inv_prod.descripcion as titulo,"
+            +"inv_prod_unidades.titulo as unidad,"
+            +"inv_prod_presentaciones.id as id_presentacion,"
+            +"inv_prod_presentaciones.titulo as presentacion, "
+            +"(CASE WHEN inv_prod.ieps=0 THEN 0 ELSE gral_ieps.id END) AS ieps_id, "
+            +"(CASE WHEN inv_prod.ieps=0 THEN 0 ELSE (gral_ieps.tasa::double precision/100) END) AS ieps_tasa, "
+            +"(CASE WHEN inv_prod.gral_imptos_ret_id=0 THEN 0 ELSE gral_imptos_ret.id END) AS ret_id, "
+            +"(CASE WHEN inv_prod.gral_imptos_ret_id=0 THEN 0 ELSE (gral_imptos_ret.tasa::double precision/100) END) AS ret_tasa "
+        +"FROM inv_prod "
+        +"LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "
+        +"LEFT JOIN inv_prod_pres_x_prod on inv_prod_pres_x_prod.producto_id = inv_prod.id "
+        +"LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = inv_prod_pres_x_prod.presentacion_id "
+        +"LEFT JOIN gral_ieps ON gral_ieps.id=inv_prod.ieps "
+        +"LEFT JOIN gral_imptos_ret ON gral_imptos_ret.id=inv_prod.gral_imptos_ret_id "
+        +"where inv_prod.sku ILIKE '"+sku+"' AND inv_prod.borrado_logico=false AND inv_prod.empresa_id="+id_empresa;
+
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+
+        ArrayList<HashMap<String, String>> hm_presentaciones = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("sku",rs.getString("sku"));
+                    row.put("titulo",rs.getString("titulo"));
+                    row.put("unidad",rs.getString("unidad"));
+                    row.put("id_presentacion",rs.getString("id_presentacion"));
+                    row.put("presentacion",rs.getString("presentacion"));
+                    row.put("ieps_id",rs.getString("ieps_id"));
+                    row.put("ieps_tasa",StringHelper.roundDouble(rs.getString("ieps_tasa"),4));
+                    row.put("ret_id",String.valueOf(rs.getInt("ret_id")));
+                    row.put("ret_tasa",StringHelper.roundDouble(rs.getString("ret_tasa"),4));
+                    return row;
+                }
+            }
+        );
+        return hm_presentaciones;
+    }
+
+    
+    
+    
+        
+    //metodos para aplicativo de facturas de proveedores
+    @Override
+    public ArrayList<HashMap<String, Object>> getCxpFacturas2_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
+        String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
+        String sql_to_query = ""
+        + "SELECT cxp_facturas.id, "
+            + "cxp_facturas.serie_folio AS factura, "
+            + "(case when cxp_facturas.tipo_factura_proveedor=1 then 'COMPRAS' when cxp_facturas.tipo_factura_proveedor=2 then 'SERVICIOS U HONORARIOS' when cxp_facturas.tipo_factura_proveedor=3 then 'OTROS INSUMOS' when cxp_facturas.tipo_factura_proveedor=4 then 'FLETES' else '' end) as tipo,"
+            + "cxp_prov.razon_social AS proveedor, "
+            + "gral_mon.descripcion_abr AS moneda, "
+            + "cxp_facturas.monto_total AS total, "
+            + "to_char(cxp_facturas.fecha_factura,'dd/mm/yyyy') AS fecha_factura, "
+            + "(CASE WHEN cxp_facturas.cancelacion=FALSE THEN '' ELSE 'CANCELADO' END) AS estado " 
+        + "FROM cxp_facturas "
+        + "JOIN cxp_prov ON cxp_prov.id=cxp_facturas.cxc_prov_id "
+        + "JOIN gral_mon ON gral_mon.id=cxp_facturas.moneda_id " 
+        +"JOIN ("+sql_busqueda+") as subt on subt.id=cxp_facturas.id "
+        + "ORDER  BY "+orderBy+" "+asc+" LIMIT ? OFFSET ?";
+                        
+        //System.out.println("sql_to_query: "+sql_to_query);
+        
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query, 
+            new Object[]{data_string,new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("factura",rs.getString("factura"));
+                    row.put("tipo",rs.getString("tipo"));
+                    row.put("proveedor",rs.getString("proveedor"));
+                    row.put("moneda",rs.getString("moneda"));
+                    row.put("total",StringHelper.AgregaComas(StringHelper.roundDouble(rs.getString("total"),2)));
+                    row.put("fecha_factura",rs.getString("fecha_factura"));
+                    row.put("estado",rs.getString("estado"));
+                    return row;
+                }
+            }
+        );
+        return hm; 
+    }
+    
+    
+    
+    @Override
+    public ArrayList<HashMap<String, String>> getCxpFacturas2_Datos(Integer id) {
+        String sql_to_query = ""
+        + "SELECT cxp_facturas.id, "
+            + "cxp_facturas.cxc_prov_id, "
+            + "cxp_facturas.serie_folio as factura, "
+            + "cxp_facturas.flete, "
+            + "cxp_facturas.subtotal, "
+            + "cxp_facturas.iva, "
+            + "cxp_facturas.retencion, "
+            + "cxp_facturas.monto_total as total, "
+            + "cxp_facturas.moneda_id, "
+            + "cxp_facturas.tipo_cambio, "
+            + "to_char(cxp_facturas.fecha_factura,'yyyy-mm-dd' ) as fecha_factura,"
+            + "(CASE WHEN cxp_facturas.cancelacion=FALSE THEN 0 ELSE 1 END) AS cancelado, "
+            + "cxp_facturas.empresa_id, "
+            + "cxp_facturas.numero_guia, "
+            + "cxp_facturas.orden_compra, "
+            + "cxp_facturas.observaciones, "
+            + "cxp_facturas.fletera_id, "
+            + "cxp_facturas.dias_credito_id, "
+            + "cxp_facturas.tipo_factura_proveedor, "
+            + "(CASE WHEN cxp_facturas.cancelacion=FALSE THEN '' ELSE 'CANCELADO' END) AS estado, " 
+            + "cxp_prov.rfc, "
+            + "cxp_prov.razon_social, "
+            + "cxp_prov.folio as no_prov, "
+            /*
+            + "cxp_prov.calle||' '||cxp_prov.numero||', '||cxp_prov.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo ||' C.P. '||cxp_prov.cp as direccion, "
+            + "cxp_prov.calle,"
+            + "cxp_prov.numero,"
+            + "cxp_prov.colonia,"
+            + "gral_mun.titulo AS municipio,"
+            + "gral_edo.titulo AS estado,"
+            + "gral_pais.titulo AS pais,"
+            + "cxp_prov.telefono1 as telefono, "
+            + "cxp_prov.cp, "
+            */
+            + "cxp_prov.proveedortipo_id,"
+            + "cxp_prov.impuesto as iva_id "
+        + "FROM cxp_facturas "
+        + "left join cxp_prov on cxp_prov.id=cxp_facturas.cxc_prov_id "
+        + "JOIN gral_pais ON gral_pais.id=cxp_prov.pais_id "
+        + "JOIN gral_edo ON gral_edo.id=cxp_prov.estado_id "
+        + "JOIN gral_mun ON gral_mun.id=cxp_prov.municipio_id "
+        +"WHERE cxp_facturas.id="+ id + ";";
+        
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        ArrayList<HashMap<String, String>> hm_datos_entrada = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("empresa_id",String.valueOf(rs.getInt("empresa_id")));
+                    row.put("fletera_id",String.valueOf(rs.getInt("fletera_id")));
+                    row.put("dias_credito_id",String.valueOf(rs.getInt("dias_credito_id")));
+                    row.put("tipo_factura_proveedor",String.valueOf(rs.getInt("tipo_factura_proveedor")));
+                    row.put("factura",rs.getString("factura"));
+                    row.put("moneda_id",rs.getString("moneda_id"));
+                    row.put("fecha_factura",rs.getString("fecha_factura"));
+                    row.put("numero_guia",rs.getString("numero_guia"));
+                    row.put("orden_compra",rs.getString("orden_compra"));
+                    row.put("observaciones",rs.getString("observaciones"));
+                    row.put("tipo_cambio",StringHelper.roundDouble(rs.getString("tipo_cambio"),4));
+                    row.put("flete",StringHelper.roundDouble(rs.getString("flete"),2));
+                    row.put("subtotal",StringHelper.roundDouble(rs.getString("subtotal"),2));
+                    row.put("iva",StringHelper.roundDouble(rs.getString("iva"),2));
+                    row.put("retencion",StringHelper.roundDouble(rs.getString("retencion"),2));
+                    row.put("total",StringHelper.roundDouble(rs.getString("total"),2));
+                    row.put("estado",rs.getString("estado"));
+                    row.put("cancelado",rs.getString("cancelado"));
+                    
+                    row.put("cxc_prov_id",String.valueOf(rs.getInt("cxc_prov_id")));
+                    row.put("rfc",rs.getString("rfc"));
+                    row.put("razon_social",rs.getString("razon_social"));
+                    row.put("no_prov",rs.getString("no_prov"));
+                    row.put("proveedortipo_id",rs.getString("proveedortipo_id"));
+                    row.put("iva_id",rs.getString("iva_id"));
+                    return row;
+                }
+            }
+        );
+        return hm_datos_entrada; 
+    }
+    
+    
+
+    @Override
+    public ArrayList<HashMap<String, String>> getCxpFacturas2_DatosGrid(Integer id) {
+        String sql_to_query = ""
+        + "SELECT "
+            + "cxp_fac_det.id as det_id, "
+            + "cxp_fac_det.inv_prod_id as prod_id, "
+            + "cxp_fac_det.inv_prod_pres_id as pres_id, "
+            + "cxp_fac_det.codigo_producto, "
+            + "cxp_fac_det.descripcion, "
+            + "cxp_fac_det.unidad_medida, "
+            + "cxp_fac_det.presentacion, "
+            + "cxp_fac_det.cantidad, "
+            + "cxp_fac_det.costo_unitario, "
+            + "(cxp_fac_det.cantidad * cxp_fac_det.costo_unitario) AS importe, "
+            + "cxp_fac_det.gral_imp_id, "
+            + "cxp_fac_det.valor_imp, "
+            + "(((cxp_fac_det.cantidad * cxp_fac_det.costo_unitario::double precision) + (CASE WHEN cxp_fac_det.gral_ieps_id>0 THEN ((cxp_fac_det.costo_unitario * cxp_fac_det.cantidad::double precision) * cxp_fac_det.valor_ieps::double precision) ELSE 0 END)) * cxp_fac_det.valor_imp) as iva_importe, "
+            + "cxp_fac_det.gral_ieps_id,"
+            + "cxp_fac_det.valor_ieps,"
+            + "(CASE WHEN cxp_fac_det.gral_ieps_id>0 THEN ((cxp_fac_det.costo_unitario * cxp_fac_det.cantidad::double precision) * cxp_fac_det.valor_ieps::double precision) ELSE 0 END) AS importe_ieps, "
+            + "cxp_fac_det.gral_imptos_ret_id as ret_id,"
+            + "cxp_fac_det.tasa_ret as ret_tasa,"
+            + "(CASE WHEN cxp_fac_det.gral_imptos_ret_id>0 THEN ((cxp_fac_det.costo_unitario * cxp_fac_det.cantidad::double precision) * cxp_fac_det.tasa_ret::double precision) ELSE 0 END) AS ret_importe "
+        + "FROM cxp_facturas_detalle as cxp_fac_det "
+        + "WHERE cxp_fac_det.cxp_facturas_id="+ id + " ORDER BY cxp_fac_det.id;";
+        
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        ArrayList<HashMap<String, String>> hm_datos_entrada = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("det_id",rs.getString("det_id"));
+                    row.put("prod_id",rs.getString("prod_id"));
+                    row.put("pres_id",rs.getString("pres_id"));
+                    row.put("codigo_producto",rs.getString("codigo_producto"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("unidad_medida",rs.getString("unidad_medida"));
+                    row.put("presentacion",rs.getString("presentacion"));
+                    row.put("cantidad",StringHelper.roundDouble(rs.getString("cantidad"),4));
+                    row.put("costo_unitario",StringHelper.roundDouble(rs.getString("costo_unitario"),4));
+                    row.put("importe",StringHelper.roundDouble(rs.getString("importe"),4));
+                    row.put("ieps_id",rs.getString("gral_ieps_id"));
+                    row.put("valor_ieps",StringHelper.roundDouble(rs.getString("valor_ieps"),4));
+                    row.put("importe_ieps",StringHelper.roundDouble(rs.getString("importe_ieps"),4));
+                    row.put("gral_imp_id",rs.getString("gral_imp_id"));
+                    row.put("valor_imp",StringHelper.roundDouble(rs.getString("valor_imp"),2));
+                    row.put("iva_importe",StringHelper.roundDouble(rs.getString("iva_importe"),4));
+                    row.put("ret_id",String.valueOf(rs.getInt("ret_id")));
+                    row.put("ret_tasa",StringHelper.roundDouble(rs.getString("ret_tasa"),4));
+                    row.put("ret_importe",StringHelper.roundDouble(rs.getString("ret_importe"),4));
+                    return row;
+                }
+            }
+        );
+        return hm_datos_entrada;  
+    }
+    
+    
 }
