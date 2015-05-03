@@ -25,6 +25,7 @@ public interface CxpInterfaceDao {
     public ArrayList<HashMap<String, String>> getImpuestos();
     public ArrayList<HashMap<String, String>> getValoriva(Integer id_sucursal);
     public ArrayList<HashMap<String, String>> getTasaFletes();
+    public ArrayList<HashMap<String, String>> getTasaRetencionIsr(Integer IdEmpresa);
     public ArrayList<HashMap<String, String>> getFleteras(Integer id_empresa, Integer id_sucursal);
     public ArrayList<HashMap<String, String>> getIeps(Integer idEmp, Integer idSuc);
     
@@ -142,4 +143,15 @@ public interface CxpInterfaceDao {
     
     //Metodos para Reporte Pagos Diarios
     public ArrayList<HashMap<String, String>> getPagosDiaria(String fecha_inicial, String fecha_final, String proveedor, Integer tipo_prov, Integer id_empresa);
+    
+    
+    
+    public ArrayList<HashMap<String, String>> getBuscadorProductos(String sku, String tipo, String descripcion, Integer id_empresa);
+    public ArrayList<HashMap<String, String>> getEntradas_PresentacionesProducto(String sku, Integer id_empresa);
+    
+    
+    //Metodo para grid de Facturas de proveedores version 2 para logistik
+    public ArrayList<HashMap<String, Object>> getCxpFacturas2_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
+    public ArrayList<HashMap<String, String>> getCxpFacturas2_Datos(Integer id);
+    public ArrayList<HashMap<String, String>> getCxpFacturas2_DatosGrid(Integer id);
 }
