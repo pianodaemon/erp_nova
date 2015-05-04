@@ -3627,13 +3627,15 @@ public class CxpSpringDao implements CxpInterfaceDao{
             + "gral_mon.descripcion_abr AS moneda, "
             + "cxp_facturas.monto_total AS total, "
             + "to_char(cxp_facturas.fecha_factura,'dd/mm/yyyy') AS fecha_factura, "
-            + "(CASE WHEN cxp_facturas.cancelacion=FALSE THEN '' ELSE 'CANCELADO' END) AS estado " 
+            //+ "(CASE WHEN cxp_facturas.cancelacion=FALSE THEN '' ELSE 'CANCELADO' END) AS estado " 
+            + "(CASE WHEN cxp_facturas.estatus=0 THEN '' WHEN cxp_facturas.estatus=1 THEN 'PAGO PARCIAL' WHEN cxp_facturas.estatus=2 THEN 'PAGADO' WHEN cxp_facturas.estatus=3 THEN 'CANCELADO' ELSE 'CANCELADO' END) AS estado " 
         + "FROM cxp_facturas "
         + "JOIN cxp_prov ON cxp_prov.id=cxp_facturas.cxc_prov_id "
         + "JOIN gral_mon ON gral_mon.id=cxp_facturas.moneda_id " 
         +"JOIN ("+sql_busqueda+") as subt on subt.id=cxp_facturas.id "
         + "ORDER  BY "+orderBy+" "+asc+" LIMIT ? OFFSET ?";
-                        
+                
+        //-- 0=Nuevo, 1=Pago Parcial, 2=Pagado, 3=Cancelado
         //System.out.println("sql_to_query: "+sql_to_query);
         
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
@@ -3681,7 +3683,8 @@ public class CxpSpringDao implements CxpInterfaceDao{
             + "cxp_facturas.fletera_id, "
             + "cxp_facturas.dias_credito_id, "
             + "cxp_facturas.tipo_factura_proveedor, "
-            + "(CASE WHEN cxp_facturas.cancelacion=FALSE THEN '' ELSE 'CANCELADO' END) AS estado, " 
+            + "(CASE WHEN cxp_facturas.cancelacion=FALSE THEN '' ELSE 'CANCELADO' END) AS estado,"
+            + "cxp_facturas.estatus, " 
             + "cxp_prov.rfc, "
             + "cxp_prov.razon_social, "
             + "cxp_prov.folio as no_prov, "
@@ -3730,6 +3733,7 @@ public class CxpSpringDao implements CxpInterfaceDao{
                     row.put("retencion",StringHelper.roundDouble(rs.getString("retencion"),2));
                     row.put("total",StringHelper.roundDouble(rs.getString("total"),2));
                     row.put("estado",rs.getString("estado"));
+                    row.put("estatus",rs.getString("estatus"));
                     row.put("cancelado",rs.getString("cancelado"));
                     
                     row.put("cxc_prov_id",String.valueOf(rs.getInt("cxc_prov_id")));
