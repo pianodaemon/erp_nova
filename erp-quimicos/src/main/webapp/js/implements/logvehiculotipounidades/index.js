@@ -161,6 +161,18 @@ $(function() {
 	}
 	
 	
+	$aplica_evento_blur_input_numerico = function($campo, etiqueta_campo){
+		$campo.blur(function(e){
+			$validar_numero_puntos($(this), etiqueta_campo);
+			
+			if($(this).val().trim()==''){
+				$(this).val(0);
+			}
+			$(this).val(parseFloat($(this).val()).toFixed(2));
+		});
+	}
+	
+	
 	var quitar_comas= function($valor){
 		$valor = $valor+'';
 		return $valor.split(',').join('');
@@ -232,10 +244,20 @@ $(function() {
 		//campos de la vista
 		var $campo_id = $('#forma-logvehiculotipounidades-window').find('input[name=identificador]'); 
 		var $titulo = $('#forma-logvehiculotipounidades-window').find('input[name=titulo]');
-		var $volumen_inicio = $('#forma-logvehiculotipounidades-window').find('input[name=volumeninicio]');
-		var $volumen_fin = $('#forma-logvehiculotipounidades-window').find('input[name=volumenfin]');
-		var $kg_inicio = $('#forma-logvehiculotipounidades-window').find('input[name=kginicio]');
-		var $kg_fin = $('#forma-logvehiculotipounidades-window').find('input[name=kgfin]');
+		var $vol_ini = $('#forma-logvehiculotipounidades-window').find('input[name=vol_ini]');
+		var $vol_fin = $('#forma-logvehiculotipounidades-window').find('input[name=vol_fin]');
+		var $kg_ini = $('#forma-logvehiculotipounidades-window').find('input[name=kg_ini]');
+		var $kg_fin = $('#forma-logvehiculotipounidades-window').find('input[name=kg_fin]');
+		var $carton_ini = $('#forma-logvehiculotipounidades-window').find('input[name=carton_ini]');
+		var $carton_fin = $('#forma-logvehiculotipounidades-window').find('input[name=carton_fin]');
+		var $tarima_ini = $('#forma-logvehiculotipounidades-window').find('input[name=tarima_ini]');
+		var $tarima_fin = $('#forma-logvehiculotipounidades-window').find('input[name=tarima_fin]');
+		
+		var $select_um_vol = $('#forma-logtarifariocostos-window').find('select[name=select_um_vol]');
+		var $select_um_kg = $('#forma-logtarifariocostos-window').find('select[name=select_um_kg]');
+		var $select_um_carton = $('#forma-logtarifariocostos-window').find('select[name=select_um_carton]');
+		var $select_um_tarima = $('#forma-logtarifariocostos-window').find('select[name=select_um_tarima]');
+		
 		//botones		
 		var $cerrar_plugin = $('#forma-logvehiculotipounidades-window').find('#close');
 		var $cancelar_plugin = $('#forma-logvehiculotipounidades-window').find('#boton_cancelar');
@@ -243,25 +265,41 @@ $(function() {
 		
 
 		$campo_id.attr({'value' : 0});
-		$volumen_inicio.val('0.00');
-		$volumen_fin.val('0.00');
-		$kg_inicio.val('0.00');
+		$vol_ini.val('0.00');
+		$vol_fin.val('0.00');
+		$kg_ini.val('0.00');
 		$kg_fin.val('0.00');
 		
 		//Permitir solo numeros y punto
-		$permitir_solo_numeros($volumen_inicio);
-		$permitir_solo_numeros($volumen_fin);
-		$permitir_solo_numeros($kg_inicio);
+		$permitir_solo_numeros($vol_ini);
+		$permitir_solo_numeros($vol_fin);
+		$permitir_solo_numeros($kg_ini);
 		$permitir_solo_numeros($kg_fin);
+		$permitir_solo_numeros($carton_ini);
+		$permitir_solo_numeros($carton_fin);
+		$permitir_solo_numeros($tarima_ini);
+		$permitir_solo_numeros($tarima_fin);
 		
 		//Aplicar envento focus
-		$aplica_evento_focus_input_numerico($volumen_inicio);
-		$aplica_evento_focus_input_numerico($volumen_fin);
-		$aplica_evento_focus_input_numerico($kg_inicio);
-		$aplica_evento_focus_input_numerico($kg_fin)
+		$aplica_evento_focus_input_numerico($vol_ini);
+		$aplica_evento_focus_input_numerico($vol_fin);
+		$aplica_evento_focus_input_numerico($kg_ini);
+		$aplica_evento_focus_input_numerico($kg_fin);
+		$aplica_evento_focus_input_numerico($carton_ini);
+		$aplica_evento_focus_input_numerico($carton_fin);
+		$aplica_evento_focus_input_numerico($tarima_ini);
+		$aplica_evento_focus_input_numerico($tarima_fin);
 		
-
-		$volumen_inicio.blur(function(){
+		$aplica_evento_blur_input_numerico($vol_ini, "Volumen&nbsp;m&#179;&nbsp;Inicial");
+		$aplica_evento_blur_input_numerico($vol_fin, "Volumen&nbsp;m&#179;&nbsp;Final");
+		$aplica_evento_blur_input_numerico($kg_ini, "Kg.&nbsp;Inicial");
+		$aplica_evento_blur_input_numerico($kg_fin, "Kg.&nbsp;Final");
+		$aplica_evento_blur_input_numerico($carton_ini, "Carton&nbsp;Inicial");
+		$aplica_evento_blur_input_numerico($carton_fin, "Carton&nbsp;Final");
+		$aplica_evento_blur_input_numerico($tarima_ini, "Tarima&nbsp;Inicial");
+		$aplica_evento_blur_input_numerico($tarima_fin, "Tarima&nbsp;Inicial");
+		/*
+		$vol_ini.blur(function(){
 			$validar_numero_puntos($(this), "Volumen&nbsp;m&#179;");
 			if($(this).val().trim()==''){
 				$(this).val(0);
@@ -269,7 +307,7 @@ $(function() {
 			$(this).val(parseFloat($(this).val()).toFixed(2));
 		});
 		
-		$volumen_fin.blur(function(){
+		$vol_fin.blur(function(){
 			$validar_numero_puntos($(this), "Volumen&nbsp;m&#179;");
 			if($(this).val().trim()==''){
 				$(this).val(0);
@@ -277,7 +315,7 @@ $(function() {
 			$(this).val(parseFloat($(this).val()).toFixed(2));
 		});
 		
-		$kg_inicio.blur(function(){
+		$kg_ini.blur(function(){
 			$validar_numero_puntos($(this), "Kilogramos.");
 			if($(this).val().trim()==''){
 				$(this).val(0);
@@ -292,7 +330,7 @@ $(function() {
 			}
 			$(this).val(parseFloat($(this).val()).toFixed(2));
 		});
-
+		*/
        
 		var respuestaProcesada = function(data){
 			if ( data['success'] == "true" ){
@@ -311,10 +349,10 @@ $(function() {
 					tmp = data['success'].split('___')[element];
 					longitud = tmp.split(':');
 					if( longitud.length > 1 ){
-                                            $('#forma-logvehiculotipounidades-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
-                                            .parent()
-                                            .css({'display':'block'})
-                                            .easyTooltip({tooltipId: "easyTooltip2",content: tmp.split(':')[1]});
+						$('#forma-logvehiculotipounidades-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
+						.parent()
+						.css({'display':'block'})
+						.easyTooltip({tooltipId: "easyTooltip2",content: tmp.split(':')[1]});
 					}
 				}
 			}
@@ -353,21 +391,19 @@ $(function() {
 		if(accion_mode == 'cancel'){
                      
 			var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/' + 'logicDelete.json';
-			$arreglo = {'id':id_to_show,
-						'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
-						};
+			$arreglo = {'id':id_to_show, 'iu': $('#lienzo_recalculable').find('input[name=iu]').val() };
 			jConfirm('Realmente desea eliminar el Tipo de Unidad seleccionado', 'Dialogo de confirmacion', function(r) {
-                            if (r){
-                                $.post(input_json,$arreglo,function(entry){
-                                        if ( entry['success'] == '1' ){
-                                                jAlert("El Tipo de Unidad fue eliminado exitosamente", 'Atencion!');
-                                                $get_datos_grid();
-                                        }
-                                        else{
-                                                jAlert("El Tipo de Unidad no puede ser eliminado", 'Atencion!');
-                                        }
-                                },"json");
-                            }
+				if (r){
+					$.post(input_json,$arreglo,function(entry){
+						if ( entry['success'] == '1' ){
+							jAlert("El Tipo de Unidad fue eliminado exitosamente", 'Atencion!');
+							$get_datos_grid();
+						}
+						else{
+							jAlert("El Tipo de Unidad no puede ser eliminado", 'Atencion!');
+						}
+					},"json");
+				}
 			});
                     
 		}else{
@@ -388,59 +424,51 @@ $(function() {
 			//campos de la vista
 			var $campo_id = $('#forma-logvehiculotipounidades-window').find('input[name=identificador]'); 
 			var $titulo = $('#forma-logvehiculotipounidades-window').find('input[name=titulo]');
-			var $volumen_inicio = $('#forma-logvehiculotipounidades-window').find('input[name=volumeninicio]');
-			var $volumen_fin = $('#forma-logvehiculotipounidades-window').find('input[name=volumenfin]');
-			var $kg_inicio = $('#forma-logvehiculotipounidades-window').find('input[name=kginicio]');
-			var $kg_fin = $('#forma-logvehiculotipounidades-window').find('input[name=kgfin]');
+			var $vol_ini = $('#forma-logvehiculotipounidades-window').find('input[name=vol_ini]');
+			var $vol_fin = $('#forma-logvehiculotipounidades-window').find('input[name=vol_fin]');
+			var $kg_ini = $('#forma-logvehiculotipounidades-window').find('input[name=kg_ini]');
+			var $kg_fin = $('#forma-logvehiculotipounidades-window').find('input[name=kg_fin]');
+			var $carton_ini = $('#forma-logvehiculotipounidades-window').find('input[name=carton_ini]');
+			var $carton_fin = $('#forma-logvehiculotipounidades-window').find('input[name=carton_fin]');
+			var $tarima_ini = $('#forma-logvehiculotipounidades-window').find('input[name=tarima_ini]');
+			var $tarima_fin = $('#forma-logvehiculotipounidades-window').find('input[name=tarima_fin]');
 			
-			//Permitir solo numeros y punto
-			$permitir_solo_numeros($volumen_inicio);
-			$permitir_solo_numeros($volumen_fin);
-			$permitir_solo_numeros($kg_inicio);
-			$permitir_solo_numeros($kg_fin);
-			
-			//Aplicar envento focus
-			$aplica_evento_focus_input_numerico($volumen_inicio);
-			$aplica_evento_focus_input_numerico($volumen_fin);
-			$aplica_evento_focus_input_numerico($kg_inicio);
-			$aplica_evento_focus_input_numerico($kg_fin)
-			
-			$volumen_inicio.blur(function(){
-			$validar_numero_puntos($(this), "Volumen&nbsp;m&#179;");
-			if($(this).val().trim()==''){
-				$(this).val(0);
-			}
-			$(this).val(parseFloat($(this).val()).toFixed(2));
-			});
-			
-			$volumen_fin.blur(function(){
-				$validar_numero_puntos($(this), "Volumen&nbsp;m&#179;");
-				if($(this).val().trim()==''){
-					$(this).val(0);
-				}
-				$(this).val(parseFloat($(this).val()).toFixed(2));
-			});
-			
-			$kg_inicio.blur(function(){
-				$validar_numero_puntos($(this), "Kilogramos.");
-				if($(this).val().trim()==''){
-					$(this).val(0);
-				}
-				$(this).val(parseFloat($(this).val()).toFixed(2));
-			});
-			
-			$kg_fin.blur(function(){
-				$validar_numero_puntos($(this), "Kilogramos.");
-				if($(this).val().trim()==''){
-					$(this).val(0);
-				}
-				$(this).val(parseFloat($(this).val()).toFixed(2));
-			});
-				
 			//botones                        
 			var $cerrar_plugin = $('#forma-logvehiculotipounidades-window').find('#close');
 			var $cancelar_plugin = $('#forma-logvehiculotipounidades-window').find('#boton_cancelar');
 			var $submit_actualizar = $('#forma-logvehiculotipounidades-window').find('#submit');
+			
+			
+			//Permitir solo numeros y punto
+			$permitir_solo_numeros($vol_ini);
+			$permitir_solo_numeros($vol_fin);
+			$permitir_solo_numeros($kg_ini);
+			$permitir_solo_numeros($kg_fin);
+			$permitir_solo_numeros($carton_ini);
+			$permitir_solo_numeros($carton_fin);
+			$permitir_solo_numeros($tarima_ini);
+			$permitir_solo_numeros($tarima_fin);
+			
+			//Aplicar envento focus
+			$aplica_evento_focus_input_numerico($vol_ini);
+			$aplica_evento_focus_input_numerico($vol_fin);
+			$aplica_evento_focus_input_numerico($kg_ini);
+			$aplica_evento_focus_input_numerico($kg_fin);
+			$aplica_evento_focus_input_numerico($carton_ini);
+			$aplica_evento_focus_input_numerico($carton_fin);
+			$aplica_evento_focus_input_numerico($tarima_ini);
+			$aplica_evento_focus_input_numerico($tarima_fin);
+			
+			$aplica_evento_blur_input_numerico($vol_ini, "Volumen&nbsp;m&#179;&nbsp;Inicial");
+			$aplica_evento_blur_input_numerico($vol_fin, "Volumen&nbsp;m&#179;&nbsp;Final");
+			$aplica_evento_blur_input_numerico($kg_ini, "Kg.&nbsp;Inicial");
+			$aplica_evento_blur_input_numerico($kg_fin, "Kg.&nbsp;Final");
+			$aplica_evento_blur_input_numerico($carton_ini, "Carton&nbsp;Inicial");
+			$aplica_evento_blur_input_numerico($carton_fin, "Carton&nbsp;Final");
+			$aplica_evento_blur_input_numerico($tarima_ini, "Tarima&nbsp;Inicial");
+			$aplica_evento_blur_input_numerico($tarima_fin, "Tarima&nbsp;Inicial");
+			
+			
 			
 			if(accion_mode == 'edit'){
                             
@@ -455,8 +483,7 @@ $(function() {
 						var remove = function() {$(this).remove();};
 						$('#forma-logvehiculotipounidades-overlay').fadeOut(remove);
 						jAlert("Los datos se han actualizado.", 'Atencion!');
-                                                $get_datos_grid();
-						
+						//$get_datos_grid();
 					}
 					else{
 						// Desaparece todas las interrogaciones si es que existen
@@ -482,12 +509,16 @@ $(function() {
 				
 				//aqui se cargan los campos al editar
 				$.post(input_json,$arreglo,function(entry){
-					$campo_id.attr({'value' : entry['VehiculoTipoUnidades']['0']['id']});
-					$titulo.attr({'value' : entry['VehiculoTipoUnidades']['0']['titulo']});
-					$volumen_inicio.attr({'value' : entry['VehiculoTipoUnidades']['0']['volumen_inicio']});
-					$volumen_fin.attr({'value' : entry['VehiculoTipoUnidades']['0']['volumen_fin']});
-					$kg_inicio.attr({'value' : entry['VehiculoTipoUnidades']['0']['kg_inicio']});
-					$kg_fin.attr({'value' : entry['VehiculoTipoUnidades']['0']['kg_fin']});
+					$campo_id.attr({'value' : entry['VehiculoTipoUnidades'][0]['id']});
+					$titulo.attr({'value' : entry['VehiculoTipoUnidades'][0]['titulo']});
+					$vol_ini.attr({'value' : entry['VehiculoTipoUnidades'][0]['volumen_inicio']});
+					$vol_fin.attr({'value' : entry['VehiculoTipoUnidades'][0]['volumen_fin']});
+					$kg_ini.attr({'value' : entry['VehiculoTipoUnidades'][0]['kg_inicio']});
+					$kg_fin.attr({'value' : entry['VehiculoTipoUnidades'][0]['kg_fin']});
+					$carton_ini.attr({'value' : entry['VehiculoTipoUnidades'][0]['carton_inicio']});
+					$carton_fin.attr({'value' : entry['VehiculoTipoUnidades'][0]['carton_fin']});
+					$tarima_ini.attr({'value' : entry['VehiculoTipoUnidades'][0]['tarima_inicio']});
+					$tarima_fin.attr({'value' : entry['VehiculoTipoUnidades'][0]['tarima_fin']});
 					
 					$titulo.focus();
 				 },"json");//termina llamada json
