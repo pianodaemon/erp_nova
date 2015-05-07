@@ -3580,7 +3580,7 @@ join log_tarifa_clase on log_tarifa_clase.id=log_tarifa_tipo.log_tarifa_clase_id
         );
         return dato_vehiculotipocaja;
     }
-
+    
     
     //Obtiene datos para el grid del Catalogo de Vehiculo Tipo Caja
     @Override
@@ -3620,7 +3620,7 @@ join log_tarifa_clase on log_tarifa_clase.id=log_tarifa_tipo.log_tarifa_clase_id
     //Obtiene datos de Vehiculo Tipo Unidades
     @Override
     public ArrayList<HashMap<String, String>> getVehiculoTipoUnidades_Datos(Integer id) {
-        String sql_to_query = "SELECT id,titulo,volumen_inicio,volumen_fin,kg_inicio,kg_fin FROM log_vehiculo_tipo WHERE id="+id;
+        String sql_to_query = "SELECT id,titulo,volumen_inicio,volumen_fin,kg_inicio,kg_fin, carton_inicio, carton_fin, tarima_inicio, tarima_fin FROM log_vehiculo_tipo WHERE id="+id;
         
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -3634,6 +3634,10 @@ join log_tarifa_clase on log_tarifa_clase.id=log_tarifa_tipo.log_tarifa_clase_id
                     row.put("volumen_fin",StringHelper.roundDouble(rs.getDouble("volumen_fin"),2));
                     row.put("kg_inicio",StringHelper.roundDouble(rs.getDouble("kg_inicio"),2));
                     row.put("kg_fin",StringHelper.roundDouble(rs.getDouble("kg_fin"),2));
+                    row.put("carton_inicio",StringHelper.roundDouble(rs.getDouble("carton_inicio"),2));
+                    row.put("carton_fin",StringHelper.roundDouble(rs.getDouble("carton_fin"),2));
+                    row.put("tarima_inicio",StringHelper.roundDouble(rs.getDouble("tarima_inicio"),2));
+                    row.put("tarima_fin",StringHelper.roundDouble(rs.getDouble("tarima_fin"),2));
                     return row;
                 }
             }
@@ -3672,8 +3676,30 @@ join log_tarifa_clase on log_tarifa_clase.id=log_tarifa_tipo.log_tarifa_clase_id
             }
         );
         return hm; 
-    }    
+    }
     
+    
+    
+    //Obtiene las unidades de medida 
+    @Override
+    public ArrayList<HashMap<String, String>> getVehiculoTipoUnidades_UnidadesDeMedida() {
+	String sql_query = "SELECT id,titulo,decimales from inv_prod_unidades where borrado_logico=false order by titulo;";
+
+        ArrayList<HashMap<String, String>> hm_unidades = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",rs.getString("id"));
+                    row.put("titulo",rs.getString("titulo"));
+                    row.put("no_dec",String.valueOf(rs.getInt("decimales")));
+                    return row;
+                }
+            }
+        );
+        return hm_unidades;
+    }
     
     
     
@@ -4456,12 +4482,17 @@ join log_tarifa_clase on log_tarifa_clase.id=log_tarifa_tipo.log_tarifa_clase_id
                 + "log_vehiculo_tipo.volumen_fin AS volumen_fin, " 
                 + "log_vehiculo_tipo.kg_inicio AS kg_inicio , "
                 + "log_vehiculo_tipo.kg_fin AS kg_fin, " 
-                + "(case when log_ruta_tipo_unidad.costo is null then 0 else log_ruta_tipo_unidad.costo end) AS costo "
+                + "log_vehiculo_tipo.carton_inicio AS carton_ini, " 
+                + "log_vehiculo_tipo.carton_fin AS carton_fin, " 
+                + "log_vehiculo_tipo.tarima_inicio AS tarima_ini, " 
+                + "log_vehiculo_tipo.tarima_fin AS tarima_fin, " 
+                + "(case when log_ruta_tipo_unidad.costo is null then 0 else log_ruta_tipo_unidad.costo end) AS costo,"
+                + "(case when log_ruta_tipo_unidad.costo_hot_shot is null then 0 else log_ruta_tipo_unidad.costo_hot_shot end) AS costo_hs "
         + "FROM log_vehiculo_tipo "
         + "left join  log_ruta_tipo_unidad on (log_ruta_tipo_unidad.log_vehiculo_tipo_id=log_vehiculo_tipo.id and log_ruta_tipo_unidad.log_ruta_id="+id+") "
         + "WHERE borrado_logico=false and log_vehiculo_tipo.gral_emp_id ="+id_empresa+" "
         + "ORDER BY log_ruta_tipo_unidad.id ";
-                
+        
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         //System.out.println("Obteniendo minigrid_tiposunidad :::"+ sql_to_query);
         ArrayList<HashMap<String, Object>> hm_header = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
@@ -4477,7 +4508,12 @@ join log_tarifa_clase on log_tarifa_clase.id=log_tarifa_tipo.log_tarifa_clase_id
                     row.put("volumen_fin",StringHelper.roundDouble(rs.getDouble("volumen_fin"),2));
                     row.put("kg_inicio",StringHelper.roundDouble(rs.getDouble("kg_inicio"),2));
                     row.put("kg_fin",StringHelper.roundDouble(rs.getDouble("kg_fin"),2));
+                    row.put("carton_ini",StringHelper.roundDouble(rs.getDouble("carton_ini"),2));
+                    row.put("carton_fin",StringHelper.roundDouble(rs.getDouble("carton_fin"),2));
+                    row.put("tarima_ini",StringHelper.roundDouble(rs.getDouble("tarima_ini"),2));
+                    row.put("tarima_fin",StringHelper.roundDouble(rs.getDouble("tarima_fin"),2));
                     row.put("costo",StringHelper.roundDouble(rs.getDouble("costo"),2));
+                    row.put("costo_hs",StringHelper.roundDouble(rs.getDouble("costo_hs"),2));
                     return row;
                 }
             }

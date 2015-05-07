@@ -114,11 +114,11 @@ public interface LogInterfaceDao {
     //Metodos para el catalogo de Vehiculo Marca
     public ArrayList<HashMap<String, String>> getVehiculoMarca_Datos(Integer id);
     public ArrayList<HashMap<String, Object>> getVehiculoMarca_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
-
+    
     //Metodos para el catalogo de Vehiculo Tipo Rodada
     public ArrayList<HashMap<String, String>> getVehiculoTipoRodada_Datos(Integer id);
     public ArrayList<HashMap<String, Object>> getVehiculoTipoRodada_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
-
+    
     //Metodos para el catalogo de Vehiculo Tipo Caja
     public ArrayList<HashMap<String, String>> getVehiculoTipoCaja_Datos(Integer id);
     public ArrayList<HashMap<String, Object>> getVehiculoTipoCaja_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
@@ -126,6 +126,7 @@ public interface LogInterfaceDao {
     //Metodos para el catalogo de Vehiculo Tipo Unidades
     public ArrayList<HashMap<String, String>> getVehiculoTipoUnidades_Datos(Integer id);
     public ArrayList<HashMap<String, Object>> getVehiculoTipoUnidades_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
+    public ArrayList<HashMap<String, String>> getVehiculoTipoUnidades_UnidadesDeMedida();
     
     //app = 188 Aplicativo Captura de Numero de Facturas(LOG)
     public ArrayList<HashMap<String, Object>> getLogRegCarga_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);

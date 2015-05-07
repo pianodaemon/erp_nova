@@ -108,7 +108,7 @@ public class LogVehiculoTipoUnidadesController {
             @RequestParam(value="id", required=true) Integer id,
             @RequestParam(value="iu", required=true) String id_user_cod,
             Model model
-            ){
+        ){
         
         log.log(Level.INFO, "Ejecutando getVehiculoTipoUnidadesJson de {0}", LogVehiculoTipoUnidadesController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
@@ -127,6 +127,7 @@ public class LogVehiculoTipoUnidadesController {
         
        //datos datosVehiculoTipoUnidades es lo que me trajo de la consulta y los pone en el json
        jsonretorno.put("VehiculoTipoUnidades", datosVehiculoTipoUnidades);
+       jsonretorno.put("UM", this.getLogDao().getVehiculoTipoUnidades_UnidadesDeMedida());
      
         
         return jsonretorno;
@@ -207,14 +208,19 @@ public class LogVehiculoTipoUnidadesController {
     public @ResponseBody HashMap<String, String> editJson(
             @RequestParam(value="identificador", required=true) Integer id,
             @RequestParam(value="titulo", required=true) String titulo,
-            @RequestParam(value="volumeninicio", required=true) String volumeninicio,
-            @RequestParam(value="volumenfin", required=true) String volumenfin,
-            @RequestParam(value="kginicio", required=true) String kginicio,
-            @RequestParam(value="kgfin", required=true) String kgfin,
+            @RequestParam(value="vol_ini", required=true) String volumeninicio,
+            @RequestParam(value="vol_fin", required=true) String volumenfin,
+            @RequestParam(value="kg_ini", required=true) String kginicio,
+            @RequestParam(value="kg_fin", required=true) String kgfin,
+            @RequestParam(value="carton_ini", required=true) String carton_ini,
+            @RequestParam(value="carton_fin", required=true) String carton_fin,
+            @RequestParam(value="tarima_ini", required=true) String tarima_ini,
+            @RequestParam(value="tarima_fin", required=true) String tarima_fin,
             @ModelAttribute("user") UserSessionData user,
             Model model
-            ) {
-        
+        ) {
+                        
+                        
         HashMap<String, String> jsonretorno = new HashMap<String, String>();
         HashMap<String, String> succes = new HashMap<String, String>();
         Integer app_selected = 187; //Vehiculo Tipo Unidades
@@ -231,8 +237,7 @@ public class LogVehiculoTipoUnidadesController {
             command_selected = "edit";
         }
         
-        
-        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id+"___"+titulo.toUpperCase()+"___"+volumeninicio+"___"+volumenfin+"___"+kginicio+"___"+kgfin;
+        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id+"___"+titulo.toUpperCase()+"___"+volumeninicio+"___"+volumenfin+"___"+kginicio+"___"+kgfin+"___"+ carton_ini +"___"+ carton_fin +"___"+ tarima_ini +"___"+ tarima_fin;
         
         succes = this.getLogDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
         //System.out.println("ESTO TRAE SUCEESSSS"+succes);
