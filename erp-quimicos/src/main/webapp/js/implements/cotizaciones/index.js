@@ -1580,6 +1580,9 @@ $(function() {
 					
 					//asigna espacios en blanco a todos los input de la fila eliminada
 					$(this).parent().parent().find('input').val(' ');
+					$(this).parent().parent().find('input[name=statusreg]').val('0&&&0&&&0');
+					$(this).parent().parent().find('input[name=reqauth]').val('false');
+					$(this).parent().parent().find('input[name=success]').val('false');
 					
 					//asigna un 0 al input eliminado como bandera para saber que esta eliminado
 					$(this).parent().find('.elim'+ tr).val(0);//cambiar valor del campo a 0 para indicar que se ha elimnado
