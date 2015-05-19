@@ -252,13 +252,9 @@
 															   <td width="90"><INPUT TYPE="text" name="cap_peso_uni" style="width:90px;"></td>
 															   <td width="25"></td>
 														  <tr>
-															  
-															  
 														  <tr>
 															   <td colspan="13" height="7"></td>
 														  </tr>
-														  
-														  
 														  <tr class="gral">
 															   <td width="75">No.&nbsp;Operador</td>
 															   <td width="90"><input type="text" name="no_operador" style="width:90px;"></td>
@@ -271,12 +267,33 @@
 															   <td width="25"></td>
 															   <td width="45"></td>
 															   -->
-															   <td width="90">Tipo de Unidad</td>
+															   <td width="90">Tipo&nbsp;de&nbsp;Unidad</td>
 															   <td width="90">
 																   <input type="hidden" name="id_tipo_uni">
 																	<INPUT TYPE="text" name="tipo_unidad" style="width:90px;">
 															   </td>
 															   <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_tunidad"></div></td>
+														  <tr>
+														  <tr>
+															   <td colspan="13" height="7"></td>
+														  </tr>
+														  <tr class="gral">
+															   <td width="75">Tipo&nbsp;de&nbsp;viaje</td>
+															   <td width="90">
+																   <select name="select_tipo_dist" style="width:90px;"></select>
+																   <input type="hidden" name="tipo_dist_seleccionado" value="0">
+															   </td>
+															   <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_tdist"></div></td>
+															   <td width="65"></td>
+															   <td width="65"></td>
+															   <td width="25"></td>
+															   <td width="30"></td>
+															   <td width="70"></td>
+															   <td width="25"></td>
+															   <td width="50"></td>
+															   <td width="90"></td>
+															   <td width="90"></td>
+															   <td width="25"></td>
 														  <tr>
 													 </table>
 												</td>
