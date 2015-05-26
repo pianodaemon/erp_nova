@@ -359,7 +359,7 @@ $(function() {
 							tr_prod += '</td>';
 							
 							tr_prod += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="75">';
-								tr_prod += '<input type="text" name="cant_litro" id="cant_litro'+trCount+'" value="'+ parseFloat(cantidad_litro).toFixed(4) +'" readOnly="true" style="width:71px; text-align:right;">';
+								tr_prod += '<input type="text" name="cant_litro" id="cant_litro'+trCount+'" value="'+ parseFloat(cantidad_litro).toFixed(entry['Detalle'][i]['no_dec']) +'" readOnly="true" style="width:71px; text-align:right;">';
 							tr_prod += '</td>';
 							
 						tr_prod += '</tr>';
