@@ -3999,25 +3999,28 @@ public class InvSpringDao implements InvInterfaceDao{
     //obtiene detalles del la orden pre-subensamble
     @Override
     public ArrayList<HashMap<String, String>> getInvDetalleOrdPreSuben(String id) {
-        String sql_query = "select iop.id, "
-                                + "iop.cantidad, "
-                                + "iop.inv_prod_presentacion_id AS presentacion_id,"
-                                + "inv_prod.sku,"
-                                + "(CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS no_dec  "
-                            + "FROM inv_ord_subensamble_detalle AS iop "
-                            + "JOIN inv_prod ON inv_prod.id=iop.inv_prod_id_subensamble  "
-                            + "JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id  "
-                            + "where iop.inv_ord_subensamble_id="+id;
+        String sql_query = ""
+        + "select iop.id, "
+            + "iop.cantidad, "
+            + "iop.inv_prod_presentacion_id AS presentacion_id,"
+            + "inv_prod.sku,"
+            + "inv_prod.densidad,"
+            + "(CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS no_dec  "
+        + "FROM inv_ord_subensamble_detalle AS iop "
+        + "JOIN inv_prod ON inv_prod.id=iop.inv_prod_id_subensamble "
+        + "JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id  "
+        + "where iop.inv_ord_subensamble_id=? order by iop.id;";
         
         //System.out.println("getInvDetalleOrdPreSuben: "+sql_query);
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
-            new Object[]{}, new RowMapper() {
+            new Object[]{new Integer(id)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, String> row = new HashMap<String, String>();
                     row.put("id",String.valueOf(rs.getInt("id")));
                     row.put("sku",rs.getString("sku"));
+                    row.put("densidad",StringHelper.roundDouble(rs.getDouble("densidad"), 4));
                     row.put("presentacion_id",String.valueOf(rs.getInt("presentacion_id")));
                     row.put("cantidad",StringHelper.roundDouble(rs.getDouble("cantidad"), rs.getInt("no_dec")));
                     return row;
@@ -4033,22 +4036,24 @@ public class InvSpringDao implements InvInterfaceDao{
     @Override
     public ArrayList<HashMap<String, String>> getInvOrdPreSubenDatosProductos(String sku, Integer id_empresa) {
         String sql_to_query = ""
-                + "SELECT inv_prod.id, "
-                    + "inv_prod.sku, "
-                    + "inv_prod.descripcion, "
-                    + "inv_prod_unidades.titulo, "
-                    + "(CASE WHEN inv_prod.inv_prod_presentacion_id IS NULL THEN 0 ELSE inv_prod.inv_prod_presentacion_id END) AS id_pres_def,"
-                    + "(CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS no_dec "
-                + "FROM inv_prod  "
-                + "JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id "
-                + "WHERE inv_prod.sku ILIKE '"+sku+"' AND inv_prod.tipo_de_producto_id IN (1,2,3,8);";
-                /*
-                Solo se hace busqueda de estos tipos de productos Formulados
-                1;"Prod. Terminado"
-                2;"Prod. Intermedio"
-                3;"Kit"
-                8;"Prod. en Desarrollo"
-                */
+        + "SELECT inv_prod.id, "
+            + "inv_prod.sku, "
+            + "inv_prod.descripcion, "
+            + "inv_prod.densidad, "
+            + "inv_prod_unidades.titulo, "
+            + "(CASE WHEN inv_prod.inv_prod_presentacion_id IS NULL THEN 0 ELSE inv_prod.inv_prod_presentacion_id END) AS id_pres_def,"
+            + "(CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS no_dec "
+        + "FROM inv_prod  "
+        + "JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id "
+        + "WHERE inv_prod.sku='"+sku+"' AND inv_prod.tipo_de_producto_id IN (1,2,3,8);";
+        /*
+        Solo se hace busqueda de estos tipos de productos Formulados
+        1;"Prod. Terminado"
+        2;"Prod. Intermedio"
+        3;"Kit"
+        8;"Prod. en Desarrollo"
+        */
+        
         //System.out.println(sql_to_query);
         ArrayList<HashMap<String, String>> hm_datos_productos = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -4059,6 +4064,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("id",String.valueOf(rs.getInt("id")));
                     row.put("sku",rs.getString("sku"));
                     row.put("descripcion",rs.getString("descripcion"));
+                    row.put("densidad",StringHelper.roundDouble(rs.getDouble("densidad"),4));
                     row.put("titulo",rs.getString("titulo"));
                     row.put("id_pres_def",String.valueOf(rs.getInt("id_pres_def")));
                     row.put("no_dec",String.valueOf(rs.getInt("no_dec")));
@@ -4074,25 +4080,48 @@ public class InvSpringDao implements InvInterfaceDao{
     @Override
     public ArrayList<HashMap<String, String>> getInvOrdPreSubenDatosComProd(String sku) {
         String sql_to_query = ""
-                + "SELECT inv_prod.id, "
-                    + "inv_prod.sku, "
-                    + "inv_prod.descripcion, "
-                    + "inv_prod_unidades.titulo AS utitulo, "
-                    + "tmp.cantidad,"
-                    + "inv_prod.inv_prod_presentacion_id AS id_pres_def,"
-                    + "(CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS no_dec,"
-                    + "(CASE WHEN inv_prod_presentaciones.titulo IS NULL THEN '' ELSE inv_prod_presentaciones.titulo END) AS presentacion "
-                + "FROM inv_prod "
-                + "JOIN ( "
-                        + "SELECT inv_kit.producto_elemento_id, "
-                            + "inv_kit.cantidad "
-                        + "FROM ( SELECT id FROM inv_prod WHERE inv_prod.sku ilike '"+sku+"') as tmp1 "
-                        + "JOIN inv_kit ON tmp1.id=inv_kit.producto_kit_id "
-                + ") as tmp ON tmp.producto_elemento_id=inv_prod.id "
-                + "JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id "
-                + "LEFT JOIN inv_prod_presentaciones ON inv_prod_presentaciones.id=inv_prod.inv_prod_presentacion_id;";
-
-        //System.out.println(sql_to_query);
+        + "SELECT inv_prod.id, "
+            + "inv_prod.sku, "
+            + "inv_prod.descripcion, "
+            + "inv_prod_unidades.titulo AS utitulo, "
+            + "inv_prod.densidad,"
+            + "tmp.cantidad,"
+            + "inv_prod.inv_prod_presentacion_id AS id_pres_def,"
+            + "(CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS no_dec,"
+            + "(CASE WHEN inv_prod_presentaciones.titulo IS NULL THEN '' ELSE inv_prod_presentaciones.titulo END) AS presentacion "
+        + "FROM inv_prod "
+        + "JOIN ( "
+                + "SELECT inv_kit.producto_elemento_id, inv_kit.cantidad "
+                + "FROM ( SELECT id FROM inv_prod WHERE inv_prod.sku ilike '"+sku+"') as tmp1 "
+                + "JOIN inv_kit ON tmp1.id=inv_kit.producto_kit_id "
+        + ") as tmp ON tmp.producto_elemento_id=inv_prod.id "
+        + "JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id "
+        + "LEFT JOIN inv_prod_presentaciones ON inv_prod_presentaciones.id=inv_prod.inv_prod_presentacion_id;";
+        
+        
+        /*
+        SELECT inv_prod.id, 
+                inv_prod.sku, 
+                inv_prod.descripcion, 
+                inv_prod_unidades.titulo AS utitulo, 
+                inv_prod.densidad,
+                tmp.cantidad,
+                inv_prod.inv_prod_presentacion_id AS id_pres_def,
+                (CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS no_dec,
+                (CASE WHEN inv_prod_presentaciones.titulo IS NULL THEN '' ELSE inv_prod_presentaciones.titulo END) AS presentacion 
+        FROM inv_prod 
+        JOIN ( 
+                SELECT inv_kit.producto_elemento_id, inv_kit.cantidad 
+                FROM ( SELECT id FROM inv_prod WHERE inv_prod.sku ilike 'PKA213') as tmp1 
+                JOIN inv_kit ON tmp1.id=inv_kit.producto_kit_id 
+        ) as tmp ON tmp.producto_elemento_id=inv_prod.id 
+        JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id 
+        LEFT JOIN inv_prod_presentaciones ON inv_prod_presentaciones.id=inv_prod.inv_prod_presentacion_id;
+         */
+        
+        
+        System.out.println(sql_to_query);
+        
         ArrayList<HashMap<String, String>> hm_datos_productos = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -4104,6 +4133,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("descripcion",rs.getString("descripcion"));
                     row.put("utitulo",rs.getString("utitulo"));
                     row.put("presentacion",rs.getString("presentacion"));
+                    row.put("densidad",StringHelper.roundDouble(rs.getDouble("densidad"),4));
                     row.put("cantidad",StringHelper.roundDouble(rs.getDouble("cantidad"),rs.getInt("no_dec")));
                     row.put("id_pres_def_comp",String.valueOf(rs.getInt("id_pres_def")));
                     row.put("no_dec",String.valueOf(rs.getInt("no_dec")));
@@ -4172,7 +4202,7 @@ public class InvSpringDao implements InvInterfaceDao{
     //obtiene datos del InvCom
     @Override
     public ArrayList<HashMap<String, String>> getInvOrdSuben_Datos(String id) {
-        String sql_query = "select * from inv_ord_subensamble where id="+id;
+        String sql_query = "select id, folio, comentarios,estatus, to_char(momento_creacion,'dd/mm/yyyy') as fecha from inv_ord_subensamble where id="+id;
 
         //System.out.println("getInvOrdSuben_Datos: "+sql_query);
 
@@ -4181,15 +4211,12 @@ public class InvSpringDao implements InvInterfaceDao{
             new Object[]{}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
-
                     HashMap<String, String> row = new HashMap<String, String>();
                     row.put("id",String.valueOf(rs.getInt("id")));
                     row.put("folio",rs.getString("folio"));
                     row.put("comentarios",rs.getString("comentarios"));
                     row.put("estatus",String.valueOf(rs.getInt("estatus")));
-                    row.put("fecha",String.valueOf(rs.getDate("momento_creacion")));
-                    //row.put("comoponente", getInvOrdPreSubenDatosComponentesPorProducto(String.valueOf(rs.getString("sku"))));
-
+                    row.put("fecha",String.valueOf(rs.getString("fecha")));
                     return row;
                 }
             }
@@ -4217,7 +4244,7 @@ public class InvSpringDao implements InvInterfaceDao{
                 + "LEFT JOIN inv_prod_presentaciones ON inv_prod_presentaciones.id=iop.inv_prod_presentacion_id "
                 + "WHERE iop.inv_ord_subensamble_id="+id;
 
-        //System.out.println("getInvDetalleOrdSuben: "+sql_query);
+        System.out.println("getInvDetalleOrdSuben: "+sql_query);
 
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
@@ -4271,7 +4298,7 @@ public class InvSpringDao implements InvInterfaceDao{
                 + "JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id; ";
                 
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
-        //System.out.println(sql_to_query);
+        System.out.println("getInvOrdPreSubenDatosComponentesPorProducto: "+ sql_to_query);
         ArrayList<HashMap<String, String>> hm_datos_productos = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -8725,13 +8752,179 @@ public class InvSpringDao implements InvInterfaceDao{
                     //row.put("direccion",rs.getString("direccion"));
                     row.put("moneda_id",rs.getString("moneda_id"));
                     row.put("moneda",rs.getString("moneda"));
-
                     return row;
                 }
             }
         );
         return hm_cli;
     }
+    
+    
+    
+    
+    /**********************************************************************************************
+    METODOS PARA ORDENES DE PRODUCCION DE SUBENSAMBLE VERSION 2
+    ESTA VERSION CONTEMPLA EL USO DE DENSIDADES PARA CONVERSIONES DE KILOS A LITROS Y VICEVERSA
+    **********************************************************************************************/
+    //update inv_ord_subensamble_detalle set inv_prod_unidad_id=(select inv_prod_unidades.id from inv_prod_unidades where inv_prod_unidades.titulo ilike '%KILO%' limit 1);
+    //update inv_ord_subensamble_detalle set densidad=(select inv_prod.densidad from inv_prod where inv_prod.id=inv_ord_subensamble_detalle.inv_prod_id_subensamble limit 1);
+
+    
+    //Ontiene el detalle de la orden de pre-subensamble
+    @Override
+    public ArrayList<HashMap<String, String>> getInvOrdPreSuben2_Detalle(String id) {
+        String sql_query = ""
+        + "select "
+            + "iop.id, "
+            + "iop.cantidad, "
+            + "(iop.cantidad/iop.densidad::double precision) as cantidad_l, "
+            + "iop.inv_prod_presentacion_id AS presentacion_id,"
+            + "iop.densidad,"
+            + "inv_prod.id as prod_id,"
+            + "inv_prod.sku, "
+            + "inv_prod.descripcion, "
+            + "inv_prod_unidades.titulo as unidad, "
+            + "(case when inv_prod_unidades.decimales IS NULL then 0 else inv_prod_unidades.decimales end) AS no_dec,"
+            + "(CASE WHEN inv_prod_presentaciones.titulo IS NULL THEN '' ELSE inv_prod_presentaciones.titulo END) AS presentacion "
+        + "from inv_ord_subensamble_detalle AS iop "
+        + "join inv_prod ON inv_prod.id=iop.inv_prod_id_subensamble "
+        + "left join inv_prod_unidades on inv_prod_unidades.id=iop.inv_prod_unidad_id  "
+        + "left join inv_prod_presentaciones on inv_prod_presentaciones.id=iop.inv_prod_presentacion_id "
+        + "where iop.inv_ord_subensamble_id=? order by iop.id;";
+        
+        System.out.println("Identificador: "+id);
+        System.out.println("getInvOrdPreSuben2_Detalle: "+sql_query);
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{new Integer(id)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("presentacion_id",String.valueOf(rs.getInt("presentacion_id")));
+                    row.put("prod_id",String.valueOf(rs.getInt("prod_id")));
+                    row.put("sku",rs.getString("sku"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("unidad",rs.getString("unidad"));
+                    row.put("presentacion",rs.getString("presentacion"));
+                    row.put("densidad",StringHelper.roundDouble(rs.getDouble("densidad"), 4));
+                    row.put("cantidad",StringHelper.roundDouble(rs.getDouble("cantidad"), rs.getInt("no_dec")));
+                    row.put("cantidad_l",StringHelper.roundDouble(rs.getDouble("cantidad_l"), rs.getInt("no_dec")));
+                    row.put("no_dec",String.valueOf(rs.getInt("no_dec")));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    @Override
+    public ArrayList<HashMap<String, String>> getInvOrdPreSuben2_DatosFormula(Integer id_detalle) {
+        String sql_to_query = ""
+        + "select "
+            + "inv_prod.id, "
+            + "inv_prod.sku, "
+            + "inv_prod.descripcion, "
+            + "inv_prod_unidades.titulo AS utitulo, "
+            + "inv_prod.densidad, "
+            + "iosd_formula.cantidad_kg, "
+            + "inv_prod.inv_prod_presentacion_id AS id_pres_def, "
+            + "(CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS no_dec, "
+            + "(CASE WHEN inv_prod_presentaciones.titulo IS NULL THEN '' ELSE inv_prod_presentaciones.titulo END) AS presentacion "
+        + "from inv_ord_subensamble_detalle_formula as iosd_formula "
+        + "join inv_prod on inv_prod.id=iosd_formula.inv_prod_id "
+        + "join inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id "
+        + "left join inv_prod_presentaciones ON inv_prod_presentaciones.id=iosd_formula.inv_prod_presentacion_id "
+        + "where iosd_formula.inv_ord_subensamble_detalle_id=? order by iosd_formula.id;";
+        
+        System.out.println("id_detalle: "+id_detalle);
+        System.out.println(sql_to_query);
+        
+        ArrayList<HashMap<String, String>> hm_datos_productos = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(id_detalle)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("sku",rs.getString("sku"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("utitulo",rs.getString("utitulo"));
+                    row.put("presentacion",rs.getString("presentacion"));
+                    row.put("densidad",StringHelper.roundDouble(rs.getDouble("densidad"),4));
+                    row.put("cantidad",StringHelper.roundDouble(rs.getDouble("cantidad_kg"),rs.getInt("no_dec")));
+                    row.put("id_pres_def_comp",String.valueOf(rs.getInt("id_pres_def")));
+                    row.put("no_dec",String.valueOf(rs.getInt("no_dec")));
+                    return row;
+                }
+            }
+        );
+        return hm_datos_productos;
+    }
+    
+    
+    @Override
+    public ArrayList<HashMap<String, String>> getInvOrdSubensamble2_DatosFormula(String id) {
+        
+        String sql_to_query = ""
+        + "select "
+            + "sbt2.id, "
+            + "sbt2.sku, "
+            + "sbt2.descripcion, "
+            + "sbt2.utitulo, "
+            + "sbt2.presentacion,"
+            + "sbt2.no_dec, "
+            + "sbt2.densidad, "
+            + "sbt2.cant_mp_kg,"
+            + "(sbt2.cant_mp_kg/sbt2.densidad::double precision) as cant_mp_lt "
+        + "from("
+            + "select sbt.id,sbt.sku,sbt.descripcion,sbt.utitulo,sbt.presentacion,sbt.no_dec, sbt.densidad, sum(sbt.cant_mp_kg) as cant_mp_kg "
+            + "from( "
+                + "SELECT  "
+                    + "inv_prod.id, "
+                    + "inv_prod.sku,  "
+                    + "inv_prod.descripcion,  "
+                    + "inv_prod_unidades.titulo AS utitulo, "
+                    + "(CASE WHEN inv_prod_presentaciones.titulo IS NULL THEN '' ELSE inv_prod_presentaciones.titulo END) AS presentacion,"
+                    + "(CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS no_dec,"
+                    + "iosd_formula.densidad,"
+                    + "(iosd.cantidad * iosd_formula.cantidad_kg) as cant_mp_kg  "
+                + "FROM inv_ord_subensamble_detalle as iosd "
+                + "join inv_ord_subensamble_detalle_formula as iosd_formula on iosd_formula.inv_ord_subensamble_detalle_id=iosd.id "
+                + "join inv_prod on inv_prod.id=iosd_formula.inv_prod_id "
+                + "left join inv_prod_presentaciones on inv_prod_presentaciones.id=iosd_formula.inv_prod_presentacion_id "
+                + "join inv_prod_unidades on inv_prod_unidades.id=inv_prod.unidad_id "
+                + "where iosd.inv_ord_subensamble_id=? "
+            + ") as sbt "
+            + "group by sbt.id,sbt.sku,sbt.descripcion,sbt.utitulo,sbt.presentacion,sbt.no_dec,sbt.densidad "
+        + ") as sbt2 "
+        + "order by sbt2.sku;";
+        
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        System.out.println("id: "+ id);
+        System.out.println("getInvOrdSubensamble2_DatosFormula: "+ sql_to_query);
+        ArrayList<HashMap<String, String>> hm_datos_productos = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(id)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("sku",rs.getString("sku"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("utitulo",rs.getString("utitulo"));
+                    row.put("pres_comp",rs.getString("presentacion"));
+                    row.put("no_dec",String.valueOf(rs.getInt("no_dec")));
+                    row.put("cantidad",StringHelper.roundDouble(rs.getDouble("cant_mp_kg"),rs.getInt("no_dec")));
+                    row.put("cant_mp_lt",StringHelper.roundDouble(rs.getDouble("cant_mp_lt"),rs.getInt("no_dec")));
+                    row.put("densidad",StringHelper.roundDouble(rs.getDouble("densidad"),4));
+                    return row;
+                }
+            }
+        );
+        return hm_datos_productos;
+    }
+
     
     
 }

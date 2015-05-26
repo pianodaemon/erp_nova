@@ -3,6 +3,7 @@
  * and open the template in the editor.
  */
 package com.agnux.kemikal.reportes;
+
 import com.agnux.common.helpers.StringHelper;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
@@ -12,19 +13,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import org.apache.commons.lang.StringEscapeUtils;
-/**
- *
- * @author paco mora
- */
-public class pdfOrdenSubensamble {
+
+public class pdfOrdenSubensamble2 {
     //--variables para pdf--
     private String imagen;
     
     private String telefono;
     //----------------------
     
-    public pdfOrdenSubensamble(HashMap<String, String> datos_empresa, HashMap<String, String> datos_entrada, ArrayList<HashMap<String, String>> lista_productos, ArrayList<HashMap<String, String>> lista_componentes, String fileout, String ruta_imagen) throws URISyntaxException {
-        
+    public pdfOrdenSubensamble2(HashMap<String, String> datos_empresa, HashMap<String, String> datos_entrada, ArrayList<HashMap<String, String>> lista_productos, ArrayList<HashMap<String, String>> lista_componentes, String fileout, String ruta_imagen) throws URISyntaxException {
         Font smallsmall = new Font(Font.FontFamily.HELVETICA,5,Font.NORMAL,BaseColor.BLACK);
         Font smallFont = new Font(Font.FontFamily.HELVETICA,7,Font.NORMAL,BaseColor.BLACK);
         Font smallBoldFont = new Font(Font.FontFamily.HELVETICA,8,Font.BOLD,BaseColor.BLACK);
@@ -72,9 +69,9 @@ public class pdfOrdenSubensamble {
             /*decomentar ahorita*/
             cadena = tipo_documento + "&" + 
                     datos_entrada.get("folio") + "&" + 
-                    StringHelper.capitalizaString(datos_empresa.get("emp_municipio")) + ", " + StringHelper.capitalizaString(datos_empresa.get("emp_estado")) + "\n" + datos_entrada.get("fecha");
+                    StringHelper.capitalizaString(datos_empresa.get("emp_municipio")) + ", " + StringHelper.capitalizaString(datos_empresa.get("emp_estado"))  + "&" + 
+                    datos_entrada.get("fecha");
                     
-            
             cell = new PdfPCell(cepdf.addContent(cadena));
             cell.setBorder(0);
             //cell.setRowspan(13);
@@ -258,6 +255,21 @@ public class pdfOrdenSubensamble {
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             table.addCell(cell);
             
+            cell = new PdfPCell(new Paragraph("FECHA",smallBoldFont));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setUseDescender(true);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell.setBackgroundColor(BaseColor.BLACK);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph(temp[3],sont));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setUseDescender(true);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            table.addCell(cell);
+            
             //celda vacia
             cell = new PdfPCell(new Paragraph(" ", smallFont));
             cell.setBorder(0);
@@ -283,7 +295,7 @@ public class pdfOrdenSubensamble {
             
             
             //float [] widths = {2f, 5.5f, 3f, 2f, 1.5f, 2f,2f,2f,2f};
-            float [] widths = {3.5f, 7.5f, 4.5f,4f};
+            float [] widths = {3f, 6f, 4f, 2.5f, 3f, 3f};
             PdfPTable table = new PdfPTable(widths);
             PdfPCell cell;
 
@@ -293,7 +305,7 @@ public class pdfOrdenSubensamble {
             table.setHeaderRows(1);
             
             cell = new PdfPCell(new Paragraph("Subensambles",largeFont));
-            cell.setColspan(4);
+            cell.setColspan(6);
             cell.setUseDescender(true);
             cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
             cell.setBorderWidthRight(0);
@@ -327,7 +339,7 @@ public class pdfOrdenSubensamble {
             cell.setBackgroundColor(BaseColor.BLACK);
             table.addCell(cell);
             
-            cell = new PdfPCell(new Paragraph("CANT.",smallBoldFont));
+            cell = new PdfPCell(new Paragraph("DENSIDAD",smallBoldFont));
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setUseDescender(true);
@@ -335,6 +347,21 @@ public class pdfOrdenSubensamble {
             cell.setBackgroundColor(BaseColor.BLACK);
             table.addCell(cell);
             
+            cell = new PdfPCell(new Paragraph("KILOS",smallBoldFont));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setUseDescender(true);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell.setBackgroundColor(BaseColor.BLACK);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("LITROS",smallBoldFont));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setUseDescender(true);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell.setBackgroundColor(BaseColor.BLACK);
+            table.addCell(cell);
             
             it = conceptos.iterator();
             while(it.hasNext()){
@@ -375,8 +402,31 @@ public class pdfOrdenSubensamble {
                 cell.setBorderWidthTop(b);
                 table.addCell(cell);
                 
-                //CANTIDAD
+                
+                //DENSIDAD
+                cell = new PdfPCell(new Paragraph(esteAtributoSeDejoNulo(map.get("densidad")), smallFont));
+                cell.setRightIndent(3);
+                cell.setUseAscender(true);
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setUseDescender(true);
+                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                cell.setBorderWidthBottom(a);
+                cell.setBorderWidthTop(b);
+                table.addCell(cell);
+                
+                //CANTIDAD KILOS
                 cell = new PdfPCell(new Paragraph(esteAtributoSeDejoNulo(map.get("cantidad")), smallFont));
+                cell.setRightIndent(3);
+                cell.setUseAscender(true);
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setUseDescender(true);
+                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                cell.setBorderWidthBottom(a);
+                cell.setBorderWidthTop(b);
+                table.addCell(cell);
+                
+                //CANTIDAD LITROS
+                cell = new PdfPCell(new Paragraph(esteAtributoSeDejoNulo(map.get("cantidad_l")), smallFont));
                 cell.setRightIndent(3);
                 cell.setUseAscender(true);
                 cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
@@ -388,7 +438,7 @@ public class pdfOrdenSubensamble {
             }
             
             cell = new PdfPCell(new Paragraph("Productos materia prima",largeFont));
-            cell.setColspan(4);
+            cell.setColspan(6);
             cell.setUseDescender(true);
             cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
             cell.setBorderWidthRight(0);
@@ -422,7 +472,23 @@ public class pdfOrdenSubensamble {
             cell.setBackgroundColor(BaseColor.BLACK);
             table.addCell(cell);
             
-            cell = new PdfPCell(new Paragraph("CANT.",smallBoldFont));
+            cell = new PdfPCell(new Paragraph("DENSIDAD",smallBoldFont));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setUseDescender(true);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell.setBackgroundColor(BaseColor.BLACK);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("KILOS",smallBoldFont));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setUseDescender(true);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell.setBackgroundColor(BaseColor.BLACK);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("CANT. INV.",smallBoldFont));
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setUseDescender(true);
@@ -468,8 +534,30 @@ public class pdfOrdenSubensamble {
                 cell.setBorderWidthTop(b);
                 table.addCell(cell);
                 
-                //CANTIDAD
+                //DENSIDAD
+                cell = new PdfPCell(new Paragraph(esteAtributoSeDejoNulo(map.get("densidad")), smallFont));
+                cell.setRightIndent(3);
+                cell.setUseAscender(true);
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setUseDescender(true);
+                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                cell.setBorderWidthBottom(a);
+                cell.setBorderWidthTop(b);
+                table.addCell(cell);
+                
+                //CANTIDAD KILO
                 cell = new PdfPCell(new Paragraph(esteAtributoSeDejoNulo(map.get("cantidad")), smallFont));
+                cell.setRightIndent(3);
+                cell.setUseAscender(true);
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setUseDescender(true);
+                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                cell.setBorderWidthBottom(a);
+                cell.setBorderWidthTop(b);
+                table.addCell(cell);
+                
+                //CANTIDAD LITRO
+                cell = new PdfPCell(new Paragraph(esteAtributoSeDejoNulo(map.get("cant_mp_lt")), smallFont));
                 cell.setRightIndent(3);
                 cell.setUseAscender(true);
                 cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
@@ -481,7 +569,7 @@ public class pdfOrdenSubensamble {
             }
             
             cell = new PdfPCell(new Paragraph("", smallBoldFontBlack));
-            cell.setColspan(4);
+            cell.setColspan(6);
             cell.setBorderWidthRight(0);
             cell.setBorderWidthLeft(0);
             cell.setBorderWidthTop(0);
@@ -499,11 +587,7 @@ public class pdfOrdenSubensamble {
         }
     }
     
-    
-    
-    
     public String esteAtributoSeDejoNulo(String atributo){
          return (atributo != null) ? (atributo) : new String();
     }
-
 }

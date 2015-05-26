@@ -3,8 +3,6 @@
  * and open the template in the editor.
  */
 package com.agnux.kemikal.controllers;
-import com.agnux.kemikal.interfacedaos.InvInterfaceDao;
-
 import com.agnux.cfd.v2.Base64Coder;
 import com.agnux.common.helpers.FileHelper;
 import com.agnux.common.helpers.StringHelper;
@@ -13,6 +11,7 @@ import com.agnux.common.obj.ResourceProject;
 import com.agnux.common.obj.UserSessionData;
 import com.agnux.kemikal.interfacedaos.GralInterfaceDao;
 import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
+import com.agnux.kemikal.interfacedaos.InvInterfaceDao;
 import com.agnux.kemikal.reportes.pdfOrdenSubensamble;
 import com.itextpdf.text.DocumentException;
 import java.io.BufferedInputStream;
@@ -28,19 +27,13 @@ import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  *
@@ -411,6 +404,5 @@ public class InvOrdSubensambleController {
         FileHelper.delete(fileout);
         
         return null;
-        
     }
 }

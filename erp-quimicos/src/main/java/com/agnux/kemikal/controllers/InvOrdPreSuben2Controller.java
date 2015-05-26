@@ -3,6 +3,7 @@
  * and open the template in the editor.
  */
 package com.agnux.kemikal.controllers;
+
 import com.agnux.cfd.v2.Base64Coder;
 import com.agnux.common.helpers.FileHelper;
 import com.agnux.common.helpers.StringHelper;
@@ -37,12 +38,15 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 /**
  *
- * @author paco mora
+ * @author Noe Martinez
+ * gpmarsan@hotmail.com
+ * 21/mayo/2015
+ * 
  */
 @Controller
 @SessionAttributes({"user"})
-@RequestMapping("/invordpresuben/")
-public class InvOrdPreSubenController {
+@RequestMapping("/invordpresuben2/")
+public class InvOrdPreSuben2Controller {
     ResourceProject resource = new ResourceProject();
     private static final Logger log  = Logger.getLogger(InvOrdPreSubenController.class.getName());
     
@@ -84,7 +88,7 @@ public class InvOrdPreSubenController {
         infoConstruccionTabla.put("momento_creacion", "Fecha:100");
         infoConstruccionTabla.put("almacen", "Almacen:220");
         
-        ModelAndView x = new ModelAndView("invordpresuben/startup", "title", "Pre-Orden de Producci&oacute;n de Subensamble");
+        ModelAndView x = new ModelAndView("invordpresuben2/startup", "title", "Pre-Orden de Producci&oacute;n de Subensamble");
         
         x = x.addObject("layoutheader", resource.getLayoutheader());
         x = x.addObject("layoutmenu", resource.getLayoutmenu());
@@ -99,9 +103,6 @@ public class InvOrdPreSubenController {
         
         //codificar id de usuario
         String codificado = Base64Coder.encodeString(userId);
-        
-        //decodificar id de usuario
-        //String decodificado = Base64Coder.decodeString(codificado);
         
         //id de usuario codificado
         x = x.addObject("iu", codificado);
@@ -186,7 +187,7 @@ public class InvOrdPreSubenController {
         
         if(!id.equals("0")){
             datosInvOrdSub = this.getInvDao().getInvOrdPreSuben_Datos(id);
-            detalleOrden = this.getInvDao().getInvDetalleOrdPreSuben(id);
+            detalleOrden = this.getInvDao().getInvOrdPreSuben2_Detalle(id);
         }
         
         almacenes = this.getInvDao().getAlmacenes2(id_empresa);
@@ -266,6 +267,25 @@ public class InvOrdPreSubenController {
         jsonretorno.put("Producto", producto);
         jsonretorno.put("CompProducto", componentes);
         jsonretorno.put("Presentaciones", presentaciones);
+        
+        return jsonretorno;
+    }
+    
+    
+    
+    //Buscador de de productos
+    @RequestMapping(method = RequestMethod.POST, value="/getDatosEdiProductoFormulado.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> get_datos_edit_producto_formuladoJson(
+            @RequestParam(value="id_det", required=true) Integer id_detalle,
+            @RequestParam(value="id_prod", required=true) Integer id_producto,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+        ) {
+        System.out.println("Busqueda historico de formula");
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        
+        jsonretorno.put("CompProducto", this.getInvDao().getInvOrdPreSuben2_DatosFormula(id_detalle));
+        jsonretorno.put("Presentaciones", this.getInvDao().getProducto_PresentacionesON(id_producto));
         
         return jsonretorno;
     }
@@ -477,6 +497,5 @@ public class InvOrdPreSubenController {
         FileHelper.delete(fileout);
         
         return null;
-        
     }
 }

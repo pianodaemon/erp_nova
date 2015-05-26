@@ -355,4 +355,8 @@ public interface InvInterfaceDao {
     public ArrayList<HashMap<String, Object>> getBuscadorClientes(String cadena, Integer filtro, Integer id_empresa, Integer id_sucursal);
     public ArrayList<HashMap<String, Object>> getDatosClienteByNoCliente(String no_control, Integer id_empresa, Integer id_sucursal);
     
+    //Metodos para Ordenes de produccion de subensamble version 2
+    public ArrayList<HashMap<String, String>> getInvOrdPreSuben2_Detalle(String id);
+    public ArrayList<HashMap<String, String>> getInvOrdPreSuben2_DatosFormula(Integer id_detalle);
+    public ArrayList<HashMap<String, String>> getInvOrdSubensamble2_DatosFormula(String id);
 }

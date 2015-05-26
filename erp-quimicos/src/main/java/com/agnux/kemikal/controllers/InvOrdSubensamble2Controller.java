@@ -3,6 +3,7 @@
  * and open the template in the editor.
  */
 package com.agnux.kemikal.controllers;
+
 import com.agnux.cfd.v2.Base64Coder;
 import com.agnux.common.helpers.FileHelper;
 import com.agnux.common.helpers.StringHelper;
@@ -12,7 +13,7 @@ import com.agnux.common.obj.UserSessionData;
 import com.agnux.kemikal.interfacedaos.GralInterfaceDao;
 import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
 import com.agnux.kemikal.interfacedaos.InvInterfaceDao;
-import com.agnux.kemikal.reportes.pdfOrdenSubensamble;
+import com.agnux.kemikal.reportes.pdfOrdenSubensamble2;
 import com.itextpdf.text.DocumentException;
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -27,7 +28,6 @@ import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -35,16 +35,20 @@ import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+
 /**
  *
- * @author paco mora
+ * @author Noe Martinez
+ * gpmarsan@hotmail.com
+ * 22/mayo/2015
+ * 
  */
 @Controller
 @SessionAttributes({"user"})
-@RequestMapping("/invordpresuben/")
-public class InvOrdPreSubenController {
+@RequestMapping("/invordsubensamble2/")
+public class InvOrdSubensamble2Controller {
     ResourceProject resource = new ResourceProject();
-    private static final Logger log  = Logger.getLogger(InvOrdPreSubenController.class.getName());
+    private static final Logger log  = Logger.getLogger(InvOrdSubensambleController.class.getName());
     
     @Autowired
     @Qualifier("daoInv")
@@ -75,7 +79,7 @@ public class InvOrdPreSubenController {
             @ModelAttribute("user") UserSessionData user
             )throws ServletException, IOException {
         
-        log.log(Level.INFO, "Ejecutando starUp de {0}", InvOrdPreSubenController.class.getName());
+        log.log(Level.INFO, "Ejecutando starUp de {0}", InvOrdSubensambleController.class.getName());
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
         
         infoConstruccionTabla.put("id", "Acciones:90");
@@ -84,7 +88,7 @@ public class InvOrdPreSubenController {
         infoConstruccionTabla.put("momento_creacion", "Fecha:100");
         infoConstruccionTabla.put("almacen", "Almacen:220");
         
-        ModelAndView x = new ModelAndView("invordpresuben/startup", "title", "Pre-Orden de Producci&oacute;n de Subensamble");
+        ModelAndView x = new ModelAndView("invordsubensamble2/startup", "title", "Producci&oacute;n de Subemsamble");
         
         x = x.addObject("layoutheader", resource.getLayoutheader());
         x = x.addObject("layoutmenu", resource.getLayoutmenu());
@@ -112,8 +116,8 @@ public class InvOrdPreSubenController {
     
     
     
-    @RequestMapping(value="/getAllInvOrdPreSuben.json", method = RequestMethod.POST)
-    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getAllInvOrdPreSubenJson(
+    @RequestMapping(value="/getAllInvOrdSubensamble.json", method = RequestMethod.POST)
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getAllInvOrdSubensambleJson(
            @RequestParam(value="orderby", required=true) String orderby,
            @RequestParam(value="desc", required=true) String desc,
            @RequestParam(value="items_por_pag", required=true) int items_por_pag,
@@ -127,8 +131,8 @@ public class InvOrdPreSubenController {
         HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
         HashMap<String,String> has_busqueda = StringHelper.convert2hash(StringHelper.ascii2string(cadena_busqueda));
         
-        //aplicativo pre-subensamble
-        Integer app_selected = 55;
+        //aplicativo tipos de poliza
+        Integer app_selected = 58;
         
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
@@ -152,7 +156,7 @@ public class InvOrdPreSubenController {
         int offset = resource.__get_inicio_offset(items_por_pag, pag_start);
         
         //obtiene los registros para el grid, de acuerdo a los parametros de busqueda
-        jsonretorno.put("Data", this.getInvDao().getInvOrdPreSubenGrid(data_string, offset, items_por_pag, orderby, desc));
+        jsonretorno.put("Data", this.getInvDao().getInvOrdSubenGrid(data_string, offset, items_por_pag, orderby, desc));
         //obtiene el hash para los datos que necesita el datagrid
         jsonretorno.put("DataForGrid", dataforpos.formaHashForPos(dataforpos));
         
@@ -160,117 +164,100 @@ public class InvOrdPreSubenController {
     }
     
     
+    
+    
+    
+    
+    
+    //actualizar estatus a enterado
+    @RequestMapping(method = RequestMethod.POST, value="/getActualizarEstatus.json")
+    public @ResponseBody HashMap<String, String> editJson(
+            @RequestParam(value="id_subensamble", required=true) String id_subensamble,
+            @RequestParam(value="estatus", required=true) Integer estatus,
+            @RequestParam(value="iu", required=true) String id_user_cod,
+            Model model
+            ) {
+        
+        HashMap<String, String> jsonretorno = new HashMap<String, String>();
+        //HashMap<String, String> succes = new HashMap<String, String>();
+        Integer app_selected = 58;
+        String command_selected = "actualiza_estatus";
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
+        String arreglo[];
+        String extra_data_array = "'sin datos'";
+        String actualizo = "0";
+        
+        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_subensamble+"___"+estatus;
+        /*
+        succes = this.getInvDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
+        log.log(Level.INFO, "despues de validacion {0}", String.valueOf(succes.get("success")));
+        if( String.valueOf(succes.get("success")).equals("true") ){
+            actualizo = this.getInvDao().selectFunctionForApp_MovimientosInventario(data_string, extra_data_array);
+        }*/
+        
+        actualizo = this.getInvDao().selectFunctionForApp_MovimientosInventario(data_string, extra_data_array);
+        
+        jsonretorno.put("success",String.valueOf(actualizo));
+        
+        log.log(Level.INFO, "Salida Actualiza estatus {0}", String.valueOf(jsonretorno.get("success")));
+        return jsonretorno;
+    }
+    
+    
+    
+    
     //este es solo para probar
     @RequestMapping(method = RequestMethod.POST, value="/getInvOrdSub.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getInvOrdSubJson(
             @RequestParam(value="id", required=true) String id,
-            @RequestParam(value="iu", required=true) String id_user,
             Model model
             ) {
         
-        log.log(Level.INFO, "Ejecutando getInvOrdSub de {0}", InvOrdPreSubenController.class.getName());
+        log.log(Level.INFO, "Ejecutando getInvOrdSub de {0}", InvOrdSubensambleController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         ArrayList<HashMap<String, String>> datosInvOrdSub = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> detalleOrden = new ArrayList<HashMap<String, String>>();
-        ArrayList<HashMap<String, String>> almacenes = new ArrayList<HashMap<String, String>>();
-        ArrayList<HashMap<String, String>> arrayTiposProducto = new ArrayList<HashMap<String, String>>();
-        HashMap<String, String> userDat = new HashMap<String, String>();
-        ArrayList<HashMap<String, String>> arrayExtra = new ArrayList<HashMap<String, String>>();
-        HashMap<String, String> extra = new HashMap<String, String>();
+        ArrayList<HashMap<String, String>> lista_componentes = new ArrayList<HashMap<String, String>>();
         
-        //decodificar id de usuario
-        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
-        userDat = this.getHomeDao().getUserById(id_usuario);
-        
-        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
-        
-        if(!id.equals("0")){
-            datosInvOrdSub = this.getInvDao().getInvOrdPreSuben_Datos(id);
-            detalleOrden = this.getInvDao().getInvDetalleOrdPreSuben(id);
+        if(! id.equals("0")  ){
+            datosInvOrdSub = this.getInvDao().getInvOrdSuben_Datos(id);
+            //detalleOrden = this.getInvDao().getInvDetalleOrdSuben(id);
+            detalleOrden = this.getInvDao().getInvOrdPreSuben2_Detalle(id);
+            lista_componentes = this.getInvDao().getInvOrdSubensamble2_DatosFormula(id);
         }
-        
-        almacenes = this.getInvDao().getAlmacenes2(id_empresa);
-        extra = this.getInvDao().getInvOrdPreSuben_IdAlmacenProd(id_empresa);
-        arrayExtra.add(0,extra);
-        arrayTiposProducto=this.getInvDao().getProducto_Tipos();
         
         jsonretorno.put("InvOrdSub", datosInvOrdSub);
         jsonretorno.put("Detalle", detalleOrden);
-        jsonretorno.put("Almacenes", almacenes);
-        jsonretorno.put("Extras", arrayExtra);
-        jsonretorno.put("ProdTipos", arrayTiposProducto);
+        jsonretorno.put("componentes", lista_componentes);
         
         return jsonretorno;
     }
     
-    
-    //Buscador de de productos
-    @RequestMapping(method = RequestMethod.POST, value="/get_buscador_productos.json")
-    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getBuscadorProductosIngredientesJson(
-            @RequestParam(value="sku", required=true) String sku,
-            @RequestParam(value="tipo", required=true) String tipo,
-            @RequestParam(value="descripcion", required=true) String descripcion,
-            @RequestParam(value="iu", required=true) String id_user,
+    //obtienetipos de productos
+    @RequestMapping(method = RequestMethod.POST, value="/getProductoTipos.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getDataLineasJson(
+            @RequestParam(value="iu", required=true) String id_user_cod,
             Model model
-        ) {
-       
-        System.out.println("Busqueda de producto");
+            ) {
        
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
-        HashMap<String, String> userDat = new HashMap<String, String>();
+        //ArrayList<HashMap<String, String>> arrayLineas = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> arrayTiposProducto = new ArrayList<HashMap<String, String>>();
+        //HashMap<String, String> cadenaLineas = new HashMap<String, String>();
+       
         //decodificar id de usuario
-        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
-        userDat = this.getHomeDao().getUserById(id_usuario);
-        
-        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
-        
-        jsonretorno.put("Productos", this.getInvDao().getBuscadorProductos(sku, tipo, descripcion,id_empresa));
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
+       
+        arrayTiposProducto=this.getInvDao().getProducto_Tipos();
+       
+        //cadenaLineas.put("cad_lineas", genera_treeview( this.getInvDao().getProducto_Lineas() ));
+        //arrayLineas.add(cadenaLineas);
+        //jsonretorno.put("Lines",arrayLineas);
+        jsonretorno.put("prodTipos", arrayTiposProducto);
        
         return jsonretorno;
     }
-    
-    
-    
-    
-    //Buscador de de productos
-    @RequestMapping(method = RequestMethod.POST, value="/get_datos_producto.json")
-    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> get_datos_productoJson(
-            @RequestParam(value="sku", required=true) String sku,
-            @RequestParam(value="iu", required=true) String id_user,
-            Model model
-        ) {
-        System.out.println("Busqueda de producto producto formulado");
-        
-        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
-        HashMap<String, String> userDat = new HashMap<String, String>();
-        ArrayList<HashMap<String, String>> presentaciones = new ArrayList<HashMap<String, String>>();
-        ArrayList<HashMap<String, String>> producto = new ArrayList<HashMap<String, String>>();
-        ArrayList<HashMap<String, String>> componentes = new ArrayList<HashMap<String, String>>();
-        
-        //decodificar id de usuario
-        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
-        userDat = this.getHomeDao().getUserById(id_usuario);
-        //System.out.println("Busqueda de producto");
-        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
-        Integer id_producto = 0;
-        
-        producto = this.getInvDao().getInvOrdPreSubenDatosProductos(sku, id_empresa);
-        componentes = this.getInvDao().getInvOrdPreSubenDatosComProd(sku);
-        
-        if(producto.size()>0){
-            id_producto = Integer.parseInt(producto.get(0).get("id"));
-        }
-        
-        presentaciones = this.getInvDao().getProducto_PresentacionesON(id_producto);
-        
-        jsonretorno.put("Producto", producto);
-        jsonretorno.put("CompProducto", componentes);
-        jsonretorno.put("Presentaciones", presentaciones);
-        
-        return jsonretorno;
-    }
-    
-    
     
     
     //crear y editar
@@ -279,51 +266,29 @@ public class InvOrdPreSubenController {
             @RequestParam(value="identificador", required=true) String id,
             @RequestParam(value="folio", required=true) String folio,
             @RequestParam(value="observaciones", required=false) String observaciones,
-            @RequestParam(value="accion_proceso", required=false) String accion_proceso,
-            @RequestParam(value="select_almacen", required=false) String select_almacen,
-            @RequestParam(value="eliminado", required=false) String[] eliminado,
-            @RequestParam(value="id_prod_grid", required=false) String[] id_prod_grid,
-            @RequestParam(value="cantidad", required=false) String[] cantidad,
-            @RequestParam(value="select_pres", required=false) String[] select_pres,
+            @RequestParam(value="estatus", required=false) String estatus,
             Model model,@ModelAttribute("user") UserSessionData user
-            ) {
+        ) {
         
         HashMap<String, String> jsonretorno = new HashMap<String, String>();
         HashMap<String, String> succes = new HashMap<String, String>();
-        Integer app_selected = 55;
+        Integer app_selected = 58;
         String command_selected = "new";
         Integer id_usuario= user.getUserId();//variable para el id  del usuario
         int no_partida = 0;
         String arreglo[];
         String extra_data_array = "'sin datos'";
-        arreglo = new String[eliminado.length];
         String actualizo = "0";
         
-        if(eliminado.length > 0){
-            for(int i=0; i<eliminado.length; i++) { 
-                if(Integer.parseInt(eliminado[i]) != 0){
-                    no_partida++;//si no esta eliminado incrementa el contador de partidas
-                }
-                arreglo[i]= "'"+no_partida+"___"+cantidad[i]+"___"+id_prod_grid[i]+"___"+eliminado[i]+"___"+select_pres[i]+"'";
-            }
-            //serializar el arreglo
-            extra_data_array = StringUtils.join(arreglo, ",");
-        }else{
-            extra_data_array ="'sin datos'";
-        }
         
         if( id.equals("0") ){
             command_selected = "new";
         }else{
-            if(accion_proceso.equals("edit")){
-                command_selected = "edit";
-            }else{
-                command_selected = "confirm";
-            }
+            command_selected = "edit";
         }
         
-        //                      1                   2                       3           4          5              6                   7
-        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id+"___"+folio+"___"+observaciones+"___"+select_almacen;
+        //                      1                   2                       3           4          5              6                 7
+        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id+"___"+folio+"___"+observaciones+"___"+estatus;
         
         succes = this.getInvDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
         
@@ -339,7 +304,6 @@ public class InvOrdPreSubenController {
     }
     
     
-    
     //cambiar a borrado logico un registro
     @RequestMapping(method = RequestMethod.POST, value="/logicDelete.json")
     public @ResponseBody HashMap<String, String> logicDeleteJson(
@@ -353,7 +317,7 @@ public class InvOrdPreSubenController {
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
         
-        Integer app_selected = 55;
+        Integer app_selected = 58;
         String command_selected = "delete";
         String extra_data_array = "'sin datos'";
         String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id;
@@ -363,40 +327,6 @@ public class InvOrdPreSubenController {
         
         return jsonretorno;
     }
-    
-    
-    
-    
-    
-    //ccancelar orden de produccion
-    @RequestMapping(method = RequestMethod.POST, value="/getCancelarOrden.json")
-    public @ResponseBody HashMap<String, String> getCancelarOrdenJson(
-            @RequestParam(value="id_subensamble", required=true) String id_subensamble,
-            @RequestParam(value="iu", required=true) String id_user_cod,
-            Model model
-            ) {
-        
-        HashMap<String, String> jsonretorno = new HashMap<String, String>();
-        
-        Integer app_selected = 55;
-        String command_selected = "cancela_orden";
-        //decodificar id de usuario
-        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
-        String arreglo[];
-        String extra_data_array = "'sin datos'";
-        String actualizo = "0";
-        
-        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_subensamble;
-        
-        actualizo = this.getInvDao().selectFunctionForApp_MovimientosInventario(data_string, extra_data_array);
-        
-        jsonretorno.put("success",String.valueOf(actualizo));
-        
-        log.log(Level.INFO, "Salida Cancela Orden de Produccion {0}", String.valueOf(jsonretorno.get("success")));
-        return jsonretorno;
-    }
-    
-    
     
     
     @RequestMapping(value = "/get_genera_pdf_ordensubensamble/{id_orden}/{iu}/out.json", method = RequestMethod.GET ) 
@@ -432,7 +362,6 @@ public class InvOrdPreSubenController {
         String ruta_imagen = this.getGralDao().getImagesDir()+rfc_empresa+"_logo.png";
         File file_dir_tmp = new File(dir_tmp);
         String file_name = "ORDEN_PRODUCC_"+rfc_empresa+".pdf";
-        
         //ruta de archivo de salida
         String fileout = file_dir_tmp +"/"+  file_name;
         
@@ -447,21 +376,22 @@ public class InvOrdPreSubenController {
         datos_empresa.put("emp_cp", this.getGralDao().getCpDomicilioFiscalEmpresaEmisora(id_empresa));
         
         
-        datosOrdenSuben = this.getInvDao().getInvOrdPreSuben_Datos(id_orden);
+        datosOrdenSuben = this.getInvDao().getInvOrdSuben_Datos(id_orden);
         
-        datos_entrada.put("serie_folio", String.valueOf(datosOrdenSuben.get(0).get("serie_folio")));
+        datos_entrada.put("folio", String.valueOf(datosOrdenSuben.get(0).get("folio")));
         datos_entrada.put("fecha", String.valueOf(datosOrdenSuben.get(0).get("fecha")));
         datos_entrada.put("comentarios",String.valueOf(datosOrdenSuben.get(0).get("comentarios")));
         
-        lista_productos = datosOrdenSuben;
+        lista_productos = this.getInvDao().getInvOrdPreSuben2_Detalle(id_orden);
         
-        lista_componentes = this.getInvDao().getInvOrdPreSubenDatosComponentesPorProducto(id_orden);
+        lista_componentes = this.getInvDao().getInvOrdSubensamble2_DatosFormula(id_orden);
         //obtiene el listado de productos para el pdf
         //lista_productos = this.getInvDao().getEntradas_DatosGrid(id_entrada);
         
         //instancia a la clase que construye el pdf del reporte de facturas
         
-        pdfOrdenSubensamble ent = new pdfOrdenSubensamble(datos_empresa, datos_entrada,lista_productos,lista_componentes, fileout, ruta_imagen);
+        pdfOrdenSubensamble2 ent = new pdfOrdenSubensamble2(datos_empresa, datos_entrada,lista_productos,lista_componentes, fileout, ruta_imagen);
+        
         
         System.out.println("Recuperando archivo: " + fileout);
         File file = new File(fileout);
