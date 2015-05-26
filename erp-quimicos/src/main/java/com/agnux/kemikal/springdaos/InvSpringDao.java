@@ -8792,8 +8792,8 @@ public class InvSpringDao implements InvInterfaceDao{
         + "left join inv_prod_presentaciones on inv_prod_presentaciones.id=iop.inv_prod_presentacion_id "
         + "where iop.inv_ord_subensamble_id=? order by iop.id;";
         
-        System.out.println("Identificador: "+id);
-        System.out.println("getInvOrdPreSuben2_Detalle: "+sql_query);
+        //System.out.println("Identificador: "+id);
+        //System.out.println("getInvOrdPreSuben2_Detalle: "+sql_query);
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
             new Object[]{new Integer(id)}, new RowMapper() {
@@ -8837,8 +8837,8 @@ public class InvSpringDao implements InvInterfaceDao{
         + "left join inv_prod_presentaciones ON inv_prod_presentaciones.id=iosd_formula.inv_prod_presentacion_id "
         + "where iosd_formula.inv_ord_subensamble_detalle_id=? order by iosd_formula.id;";
         
-        System.out.println("id_detalle: "+id_detalle);
-        System.out.println(sql_to_query);
+        //System.out.println("id_detalle: "+id_detalle);
+        //System.out.println(sql_to_query);
         
         ArrayList<HashMap<String, String>> hm_datos_productos = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -8876,7 +8876,8 @@ public class InvSpringDao implements InvInterfaceDao{
             + "sbt2.no_dec, "
             + "sbt2.densidad, "
             + "sbt2.cant_mp_kg,"
-            + "(sbt2.cant_mp_kg/sbt2.densidad::double precision) as cant_mp_lt "
+            + "(case when sbt2.utitulo ilike 'KILO%' then sbt2.cant_mp_kg else sbt2.cant_mp_kg/sbt2.densidad::double precision end) as cant_mp_lt "
+            //+ "(sbt2.cant_mp_kg/sbt2.densidad::double precision) as cant_mp_lt "
         + "from("
             + "select sbt.id,sbt.sku,sbt.descripcion,sbt.utitulo,sbt.presentacion,sbt.no_dec, sbt.densidad, sum(sbt.cant_mp_kg) as cant_mp_kg "
             + "from( "
@@ -8901,8 +8902,8 @@ public class InvSpringDao implements InvInterfaceDao{
         + "order by sbt2.sku;";
         
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
-        System.out.println("id: "+ id);
-        System.out.println("getInvOrdSubensamble2_DatosFormula: "+ sql_to_query);
+        //System.out.println("id: "+ id);
+        //System.out.println("getInvOrdSubensamble2_DatosFormula: "+ sql_to_query);
         ArrayList<HashMap<String, String>> hm_datos_productos = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{new Integer(id)}, new RowMapper(){
