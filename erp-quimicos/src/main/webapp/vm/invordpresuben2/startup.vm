@@ -134,11 +134,9 @@
 												<td width="390" colspan="4" rowspan="3">
 													<textarea name="observaciones" rows="1" cols="60" style="width:390px; resize:none;"></textarea>
 												</td>
-												<td width="5">&nbsp;</td>
 											</tr>
 											<tr>
-												<td colspan="6"  height="8"></td>
-												<td width="5"  height="8"></td>
+												<td colspan="10"  height="8"></td>
 											</tr>
 											
 											<tr>
@@ -154,7 +152,6 @@
 												<td width="360" colspan="4"></td>
 												-->
 												
-												<td width="5">&nbsp;</td>
 											</tr>
 
 											<tr>
@@ -168,7 +165,6 @@
 												<td width="85" height="8"></td>
 												<td width="85" height="8"></td>
 												<td width="85" height="8"></td>
-												<td width="5" height="8"></td>
 											</tr>
 											
 											
@@ -186,10 +182,9 @@
 												<td width="60"><a href="busca_producto">(Buscar)</a></td>
 												<td width="85"><input type="button" id="confirmar_orden" value="Confirmar" style="width:80px; font-weight: bold;"></td>
 												<td width="85" align="right"><input type="button" id="cancelar_orden" value="Cancelar" style="width:80px; font-weight: bold;"></td>
-												<td width="5">&nbsp;</td>
 											</tr>
 											<tr>
-												<td colspan="11" height="8"></td>
+												<td colspan="10" height="8"></td>
 											</tr>
 											<tr>
 												<td width="5"></td>
@@ -216,15 +211,11 @@
 														</table>
 													</div>
 												</td>
-												<td width="5">&nbsp;</td>
 											</tr>
 											<tr>
-												<td colspan="11">
+												<td colspan="10">
 													&nbsp;&nbsp;Componentes
 													<table border="0" id="grid_prodid_compid" style="display:none;" >
-														<!--<tr>
-														
-														</tr>-->
 													</table>
 												</td>
 											</tr>
@@ -234,18 +225,18 @@
 													<table >
 														<thead>
 															<tr>
-																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="25">#</td>
-																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="100">C&oacute;digo</td>
-																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="230">Nombre&nbsp;del&nbsp;Producto</td>
-																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="90">Unidad</td>
-																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="100">Pres.&nbsp;Default</td>
-																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="50">Densidad</td>
-																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="75">Cant.&nbsp;Kilo</td>
-																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="90">Descontar&nbsp;Inv.</td>
+																<td class="grid" style="background-color:rgb(180,180,180); border-botton:0px none;" width="25">#</td>
+																<td class="grid" style="background-color:rgb(180,180,180); border-botton:0px none;" width="100">C&oacute;digo</td>
+																<td class="grid" style="background-color:rgb(180,180,180); border-botton:0px none;" width="230">Nombre&nbsp;del&nbsp;Producto</td>
+																<td class="grid" style="background-color:rgb(180,180,180); border-botton:0px none;" width="90">Unidad</td>
+																<td class="grid" style="background-color:rgb(180,180,180); border-botton:0px none;" width="100">Pres.&nbsp;Default</td>
+																<td class="grid" style="background-color:rgb(180,180,180); border-botton:0px none;" width="50">Densidad</td>
+																<td class="grid" style="background-color:rgb(180,180,180); border-botton:0px none;" width="75">Cant.&nbsp;Kilo</td>
+																<td class="grid" style="background-color:rgb(180,180,180); border-botton:0px none;" width="90">Descontar&nbsp;Inv.</td>
 															</tr>
 														</thead>
 													</table>
-													<div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width:785; height: 90px; border:1px solid #C1DAD7 !important;">	
+													<div style="overflow:scroll; overflow-x:hidden; overflow-y:auto; width:785; height:90px; border:1px solid #C1DAD7 !important;">	
 														<table>
 															<tbody id="grid_productos_complementos" style="background-color: #FFFFFF;" valign="top">
 												
@@ -253,7 +244,6 @@
 														</table>
 													</div>
 												</td>
-												<td width="5">&nbsp;</td>
 											</tr>
 											
 											<tr>
@@ -284,7 +274,6 @@
 														</table>
 													</div>
 												</td>
-												<td width="5"></td>
 											</tr>
 											
                                         </table>
