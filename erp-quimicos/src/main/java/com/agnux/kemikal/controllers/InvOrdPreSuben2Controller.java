@@ -305,8 +305,9 @@ public class InvOrdPreSuben2Controller {
             @RequestParam(value="id_prod_grid", required=false) String[] id_prod_grid,
             @RequestParam(value="cantidad", required=false) String[] cantidad,
             @RequestParam(value="select_pres", required=false) String[] select_pres,
+            @RequestParam(value="densidad", required=false) String[] densidad,
             Model model,@ModelAttribute("user") UserSessionData user
-            ) {
+        ) {
         
         HashMap<String, String> jsonretorno = new HashMap<String, String>();
         HashMap<String, String> succes = new HashMap<String, String>();
@@ -324,7 +325,7 @@ public class InvOrdPreSuben2Controller {
                 if(Integer.parseInt(eliminado[i]) != 0){
                     no_partida++;//si no esta eliminado incrementa el contador de partidas
                 }
-                arreglo[i]= "'"+no_partida+"___"+cantidad[i]+"___"+id_prod_grid[i]+"___"+eliminado[i]+"___"+select_pres[i]+"'";
+                arreglo[i]= "'"+no_partida+"___"+cantidad[i]+"___"+id_prod_grid[i]+"___"+eliminado[i]+"___"+select_pres[i]+"___"+densidad[i]+"'";
             }
             //serializar el arreglo
             extra_data_array = StringUtils.join(arreglo, ",");

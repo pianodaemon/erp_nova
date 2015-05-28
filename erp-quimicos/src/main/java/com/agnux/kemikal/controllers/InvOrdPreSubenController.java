@@ -286,7 +286,7 @@ public class InvOrdPreSubenController {
             @RequestParam(value="cantidad", required=false) String[] cantidad,
             @RequestParam(value="select_pres", required=false) String[] select_pres,
             Model model,@ModelAttribute("user") UserSessionData user
-            ) {
+        ) {
         
         HashMap<String, String> jsonretorno = new HashMap<String, String>();
         HashMap<String, String> succes = new HashMap<String, String>();
@@ -299,12 +299,16 @@ public class InvOrdPreSubenController {
         arreglo = new String[eliminado.length];
         String actualizo = "0";
         
+        //Esta variable se declara solo para cumplir con los parametros que se está pasando al procedimiento.
+        //Esto debido a que existen dos programas, la versión 2 si maneja la densidad(InvOrdPreSuben2Controller)
+        String densidad="0";
+        
         if(eliminado.length > 0){
             for(int i=0; i<eliminado.length; i++) { 
                 if(Integer.parseInt(eliminado[i]) != 0){
                     no_partida++;//si no esta eliminado incrementa el contador de partidas
                 }
-                arreglo[i]= "'"+no_partida+"___"+cantidad[i]+"___"+id_prod_grid[i]+"___"+eliminado[i]+"___"+select_pres[i]+"'";
+                arreglo[i]= "'"+no_partida+"___"+cantidad[i]+"___"+id_prod_grid[i]+"___"+eliminado[i]+"___"+select_pres[i]+"___"+densidad+"'";
             }
             //serializar el arreglo
             extra_data_array = StringUtils.join(arreglo, ",");
