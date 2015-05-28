@@ -366,6 +366,7 @@ $(function() {
 							tr_prod += '<a href="elimina_producto" id="eliminaprod'+ id_prod +'"><div id="eliminar'+ trCount +'" class="onmouseOutEliminar" style="width:24px; background-position:center;"/></a>';
 							tr_prod += '<input type="hidden" name="eliminado" id="eliminado" value="1">';//el 1 significa que el registro no ha sido eliminado
 							tr_prod += '<input type="hidden" name="id_det" id="id_det" value="'+ id_det +'">';
+							tr_prod += '<input type="hidden" name="noDec'+ id_prod +'" id="noDec" value="'+ noDec +'">';
 						tr_prod += '</td>';
 						tr_prod += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="100">';
 							tr_prod += '<input type="hidden" name="id_prod_grid" id="id_prod_grid" value="'+ id_prod +'">';
@@ -383,14 +384,16 @@ $(function() {
 							tr_prod += '<select name="select_pres" class="select_pres'+ trCount +'" style="width:98px;"></select>';
 						tr_prod += '</td>';
 						
-						tr_prod += '<td class="grid1" id="td_densidad'+ id_prod +'" style="font-size:11px; border:1px solid #C1DAD7;" width="50">'+ parseFloat(densidad).toFixed(4) +'</td>';
-						
-						tr_prod += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="75">';
-							tr_prod += '<input type="text" name="cantidad" id="cantidad'+id_prod+'" value="'+ parseFloat(cantidad).toFixed(4)+'" style="width:72px;">';
+						tr_prod += '<td class="grid1" style="font-size:11px; border:1px solid #C1DAD7;" width="50">';
+							tr_prod += '<input type="text" name="densidad" id="densidad'+id_prod+'" value="'+ parseFloat(densidad).toFixed(noDec)+'" style="width:48px;">';
 						tr_prod += '</td>';
 						
 						tr_prod += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="75">';
-							tr_prod += '<input type="text" name="cant_litro" id="cant_litro'+id_prod+'" value="'+ parseFloat(cantidad_litro).toFixed(4) +'" style="width:71px;">';
+							tr_prod += '<input type="text" name="cantidad" id="cantidad'+id_prod+'" value="'+ parseFloat(cantidad).toFixed(noDec)+'" style="width:72px;">';
+						tr_prod += '</td>';
+						
+						tr_prod += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="75">';
+							tr_prod += '<input type="text" name="cant_litro" id="cant_litro'+id_prod+'" value="'+ parseFloat(cantidad_litro).toFixed(noDec) +'" style="width:71px;">';
 						tr_prod += '</td>';
 					tr_prod += '</tr>';
 					
@@ -411,7 +414,50 @@ $(function() {
 					$grid_productos.find('select.select_pres'+ trCount).append(pres_hmtl);
                     
                     
-                    //al iniciar el campo tiene un  caracter en blanco, al obtener el foco se elimina el  espacio por comillas
+                    
+                    //Al iniciar el campo tiene un  caracter en blanco, al obtener el foco se elimina el  espacio por comillas
+                    $grid_productos.find('#densidad'+id_prod).focus(function(e){
+                        if($(this).val().trim() == ''){
+                            $(this).val('');
+                        }else{
+							if(parseFloat($(this).val().trim()) <= 0){
+								$(this).val('');
+							}
+						}
+                    });
+                    
+                    //Validar campo cantidad, solo acepte numeros y punto
+                    $grid_productos.find('#densidad'+id_prod).keypress(function(e){
+                        // Permitir  numeros, borrar, suprimir, TAB, puntos, comas
+                        if (e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
+                            return true;
+                        }else {
+                            return false;
+                        }
+                    });
+                    
+                    
+                    $grid_productos.find('#densidad'+id_prod).blur(function(e){
+						var no_dec = $grid_productos.find('input[name=noDec'+id_prod+']').val();
+						
+                        if($grid_productos.find('#densidad'+id_prod).val().trim()==""){
+                            $grid_productos.find('#densidad'+id_prod).val(0);
+                        }
+                        $grid_productos.find('#densidad'+id_prod).val(parseFloat($grid_productos.find('#densidad'+id_prod).val()).toFixed(4));
+                        
+                        //alert("td_densidad: "+$grid_productos.find('#densidad'+id_prod).val());
+                        
+                        if(parseFloat($grid_productos.find('#densidad'+id_prod).val())>0){
+							//Convertir los Kilos a Litros
+							$grid_productos.find('#cant_litro'+id_prod).val(parseFloat(parseFloat($grid_productos.find('#cantidad'+id_prod).val()) / parseFloat($grid_productos.find('#densidad'+id_prod).val())).toFixed(no_dec));
+						}
+                        
+                        //$suma_cantidades();
+                    });
+                    
+                    
+                    
+                    //Al iniciar el campo tiene un  caracter en blanco, al obtener el foco se elimina el  espacio por comillas
                     $grid_productos.find('#cantidad'+id_prod).focus(function(e){
                         if(($(this).val().trim() == '') || (parseInt($(this).val().trim())==0)){
                             $(this).val('');
@@ -435,11 +481,11 @@ $(function() {
                         //Redondear de acuerdo al numero de decimales de la unidad de medida.
                         $grid_productos.find('#cantidad'+id_prod).val(parseFloat($grid_productos.find('#cantidad'+id_prod).val()).toFixed(noDec));
                         
-                        //alert("td_densidad: "+$grid_productos.find('#td_densidad'+id_prod).html());
+                        //alert("td_densidad: "+$grid_productos.find('#densidad'+id_prod).val());
                         
-                        if(parseFloat($grid_productos.find('#td_densidad'+id_prod).html())>0){
+                        if(parseFloat($grid_productos.find('#densidad'+id_prod).val())>0){
 							//Convertir los Kilos a Litros
-							$grid_productos.find('#cant_litro'+id_prod).val(parseFloat(parseFloat($grid_productos.find('#cantidad'+id_prod).val()) / parseFloat($grid_productos.find('#td_densidad'+id_prod).html())).toFixed(noDec));
+							$grid_productos.find('#cant_litro'+id_prod).val(parseFloat(parseFloat($grid_productos.find('#cantidad'+id_prod).val()) / parseFloat($grid_productos.find('#densidad'+id_prod).val())).toFixed(noDec));
 						}
                         
                         $suma_cantidades();
@@ -453,9 +499,9 @@ $(function() {
                         //Redondear de acuerdo al numero de decimales de la unidad de medida.
                         $grid_productos.find('#cantidad'+id_prod).val(parseFloat($grid_productos.find('#cantidad'+id_prod).val()).toFixed(noDec));
                         
-                        if(parseFloat($grid_productos.find('#td_densidad'+id_prod).html())>0){
+                        if(parseFloat($grid_productos.find('#densidad'+id_prod).val())>0){
 							//Convertir los Kilos a Litros
-							$grid_productos.find('#cant_litro'+id_prod).val(parseFloat(parseFloat($grid_productos.find('#cantidad'+id_prod).val()) / parseFloat($grid_productos.find('#td_densidad'+id_prod).html())).toFixed(noDec));
+							$grid_productos.find('#cant_litro'+id_prod).val(parseFloat(parseFloat($grid_productos.find('#cantidad'+id_prod).val()) / parseFloat($grid_productos.find('#densidad'+id_prod).val())).toFixed(noDec));
 						}
                         
                         $suma_cantidades();
@@ -482,9 +528,9 @@ $(function() {
                         //Redondear de acuerdo al numero de decimales de la unidad de medida.
                         $grid_productos.find('#cant_litro'+id_prod).val(parseFloat($grid_productos.find('#cant_litro'+id_prod).val()).toFixed(noDec));
                         
-                        if(parseFloat($grid_productos.find('#td_densidad'+id_prod).html())>0){
+                        if(parseFloat($grid_productos.find('#densidad'+id_prod).val())>0){
 							//Convertir los Kilos a Litros
-							$grid_productos.find('#cantidad'+id_prod).val(parseFloat(parseFloat($grid_productos.find('#cant_litro'+id_prod).val()) * parseFloat($grid_productos.find('#td_densidad'+id_prod).html())).toFixed(noDec));
+							$grid_productos.find('#cantidad'+id_prod).val(parseFloat(parseFloat($grid_productos.find('#cant_litro'+id_prod).val()) * parseFloat($grid_productos.find('#densidad'+id_prod).val())).toFixed(noDec));
 						}
                         
                         $suma_cantidades();
@@ -498,9 +544,9 @@ $(function() {
                         //Redondear de acuerdo al numero de decimales de la unidad de medida.
                         $grid_productos.find('#cant_litro'+id_prod).val(parseFloat($grid_productos.find('#cant_litro'+id_prod).val()).toFixed(noDec));
                         
-                        if(parseFloat($grid_productos.find('#td_densidad'+id_prod).html())>0){
+                        if(parseFloat($grid_productos.find('#densidad'+id_prod).val())>0){
 							//Convertir los Kilos a Litros
-							$grid_productos.find('#cantidad'+id_prod).val(parseFloat(parseFloat($grid_productos.find('#cant_litro'+id_prod).val()) * parseFloat($grid_productos.find('#td_densidad'+id_prod).html())).toFixed(noDec));
+							$grid_productos.find('#cantidad'+id_prod).val(parseFloat(parseFloat($grid_productos.find('#cant_litro'+id_prod).val()) * parseFloat($grid_productos.find('#densidad'+id_prod).val())).toFixed(noDec));
 						}
                         
                         $suma_cantidades();
@@ -718,16 +764,16 @@ $(function() {
 		$grid_componentes.find('tr').each(function (index0){
 			var $suma_cantidad_comp_kg = $(this).find('#cantidadcomp');
 			var $suma_cantidad_comp_litro = $(this).find('#cant_comp_litro');
-			var $td_densidad = $(this).find('#td_densidad');
+			var $densidad = $(this).find('#densidad');
 			var $unidad_comp = $(this).find('#unidadcomp');
 			
 			
 			if(parseInt($(this).find('#eliminadocomp').val()) != 0){
-				if(parseFloat($td_densidad.html())>0){
+				if(parseFloat($densidad.val())>0){
 					if(/^KILO*|KILOGRAMO$/.test($unidad_comp.val().trim().toUpperCase())){
 						cantidad_mp_litro = $suma_cantidad_comp_kg.val();
 					}else{
-						cantidad_mp_litro = parseFloat($suma_cantidad_comp_kg.val())/parseFloat($td_densidad.html());
+						cantidad_mp_litro = parseFloat($suma_cantidad_comp_kg.val())/parseFloat($densidad.val());
 					}
 				}
 				$suma_cantidad_comp_litro.val(parseFloat(cantidad_mp_litro).toFixed(4));
