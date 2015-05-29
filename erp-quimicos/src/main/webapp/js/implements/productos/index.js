@@ -1804,17 +1804,22 @@ $(function() {
 		
 		//Quita cero al obtener el enfoque, si es mayor a 0 entonces no hace nada
 		$densidad.focus(function(e){
-			if(parseFloat($densidad.val())<1){
+			if(parseFloat($densidad.val())<0.00001){
 				$densidad.val('');
 			}
 		});
 		
-		//Pone cero al perder el enfoque, cuando no se ingresa un valor o cuando el valor es igual a cero, si hay un valor mayor que cero no hace nada
+		//Pone Uno al perder el enfoque, cuando no se ingresa un valor o cuando el valor es igual a cero, si hay un valor mayor que cero no hace nada
 		$densidad.blur(function(e){
-			if(parseFloat($densidad.val())==1||$densidad.val()==""){
+			if($densidad.val().trim()==""){
 				$densidad.val(1);
+			}else{
+				if(parseFloat($densidad.val())<=0){
+					$densidad.val(1);
+				}
 			}
-		});	
+			$densidad.val(parseFloat($densidad.val()).toFixed(4));
+		});
 		
 		$valor_maximo.keypress(function(e){
 			// Permitir  numeros, borrar, suprimir, TAB, puntos, comas
@@ -3019,20 +3024,24 @@ $(function() {
 					}
 				});
 				
-				//quita cero al obtener el enfoque, si es mayor a 0 entonces no hace nada
+				//Quita cero al obtener el enfoque, si es mayor a 0 entonces no hace nada
 				$densidad.focus(function(e){
-					if(parseFloat($densidad.val())<1){
+					if(parseFloat($densidad.val())<0.00001){
 						$densidad.val('');
 					}
 				});
 				
-				//pone cero al perder el enfoque, cuando no se ingresa un valor o cuando el valor es igual a cero, si hay un valor mayor que cero no hace nada
+				//Pone Uno al perder el enfoque, cuando no se ingresa un valor o cuando el valor es igual a cero, si hay un valor mayor que cero no hace nada
 				$densidad.blur(function(e){
-					if(parseFloat($densidad.val())==1||$densidad.val()==""){
+					if($densidad.val().trim()==""){
 						$densidad.val(1);
+					}else{
+						if(parseFloat($densidad.val())<=0){
+							$densidad.val(1);
+						}
 					}
-				});	
-				
+					$densidad.val(parseFloat($densidad.val()).toFixed(4));
+				});
 				
 				$valor_maximo.keypress(function(e){
 					// Permitir  numeros, borrar, suprimir, TAB, puntos, comas

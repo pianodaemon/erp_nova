@@ -302,7 +302,7 @@ $(function() {
 	
         
         //Agregar nuevo producto formulado al grid
-		$agrega_producto_al_grid = function(id_det, id_prod,sku,titulo,unidad, noDec, componentes, cantidad, idPresDef, arrayPres, procesoFlujo, densidad){
+		$agrega_producto_al_grid = function(id_det, id_prod,sku,titulo,unidad, noDec, componentes, cantidad, idPresDef, arrayPres, procesoFlujo, densidad, estatus){
             var $id_prod = $('#forma-invordpresuben-window').find('input[name=id_producto]');
             var $sku_prod = $('#forma-invordpresuben-window').find('input[name=productosku]');
             var $nombre_prod = $('#forma-invordpresuben-window').find('input[name=titulo_producto]');
@@ -385,7 +385,7 @@ $(function() {
 						tr_prod += '</td>';
 						
 						tr_prod += '<td class="grid1" style="font-size:11px; border:1px solid #C1DAD7;" width="50">';
-							tr_prod += '<input type="text" name="densidad" id="densidad'+id_prod+'" value="'+ parseFloat(densidad).toFixed(noDec)+'" style="width:48px;">';
+							tr_prod += '<input type="text" name="densidad" id="densidad'+id_prod+'" value="'+ parseFloat(densidad).toFixed(4)+'" style="width:48px;">';
 						tr_prod += '</td>';
 						
 						tr_prod += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="75">';
@@ -399,6 +399,11 @@ $(function() {
 					
                     $grid_productos.append(tr_prod);
                     
+                    if(parseInt(estatus)>=1){
+						$grid_productos.find('#densidad'+id_prod).attr("readonly", true);
+						$grid_productos.find('#cantidad'+id_prod).attr("readonly", true);
+						$grid_productos.find('#cant_litro'+id_prod).attr("readonly", true);
+					}
                     
 					$grid_productos.find('select.select_pres'+ trCount).children().remove();
 					var pres_hmtl='';
@@ -634,6 +639,7 @@ $(function() {
 								tr_complemento += '</td>';
 								
 								tr_complemento += '<td class="grid1" id="td_densidad" style="font-size:11px; border:1px solid #C1DAD7;" width="50">'+ parseFloat(componentes[i]['densidad']).toFixed(4) +'</td>';
+								tr_complemento += '<td class="grid1" id="td_densidad_promedio" style="font-size:11px; border:1px solid #C1DAD7;" width="65">'+ parseFloat(componentes[i]['densidad_promedio']).toFixed(4) +'</td>';
 								
 								tr_complemento += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="75">';
 									var cantidad_mp_kg = parseFloat(componentes[i]['cantidad'])*parseFloat(cantidad);
@@ -643,6 +649,7 @@ $(function() {
 								
 								var cantidad_mp_litro=0;
 								
+								/*
 								if(parseFloat(componentes[i]['densidad'])>0){
 									if(/^KILO*|KILOGRAMO$/.test(componentes[i]['utitulo'].trim().toUpperCase())){
 										cantidad_mp_litro = cantidad_mp_kg;
@@ -654,6 +661,7 @@ $(function() {
 								tr_complemento += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="75">';
 									tr_complemento += '<input type="text" name="cant_comp_litro" id="cant_comp_litro" value="'+ parseFloat(cantidad_mp_litro).toFixed(4) +'" style="width:71px;  text-align:right;">';
 								tr_complemento += '</td>';
+								*/
 							tr_complemento += '</tr>';
                             $grid_componentes.append(tr_complemento);
                         }else{
@@ -677,6 +685,7 @@ $(function() {
                                 tr_ids += '<input type="hidden" name="eliminadogridid" id="eliminadogridid" value="1">';
                                 tr_ids += '<input type="hidden" name="cantidad_prd_comp" id="cantidad_prd_comp" value="'+parseFloat(componentes[i]['cantidad']).toFixed(4)+'">';
                                 tr_ids += '<input type="hidden" name="id_comp_grid" id="id_comp_grid" value="'+ componentes[i]['id'] +'">';
+                                tr_ids += '<input type="hidden" name="comp_grid_densidad_prom" id="comp_grid_densidad_prom" value="'+ parseFloat(componentes[i]['densidad_promedio']).toFixed(4) +'">';
                         tr_ids += '</td>';
                         tr_ids += '</tr>';
                         
@@ -687,6 +696,11 @@ $(function() {
                     
                     //asignar el enfoque
 					$grid_productos.find('#cantidad'+id_prod).focus();
+					
+					if(parseInt(procesoFlujo)<=1){
+						//LLamada a la funcion que calcula la densidad promedio del producto sumbensamble(Producto Formulado)
+						$calcula_densidad_promedio_producto_subensamble();
+					}
             }else{
                 if(parseInt(encontrado)==1){
 					jAlert('El producto ya se encuentra en el listado, seleccione otro diferente.', 'Atencion!', function(r) { 
@@ -699,6 +713,42 @@ $(function() {
 	
 	
 	
+	//Funcion para calcular la densidad promedio del producto formulado
+	$calcula_densidad_promedio_producto_subensamble = function(){
+		var $grid_productos = $('#forma-invordpresuben-window').find('#grid_productos');
+		var $grid_componentes = $('#forma-invordpresuben-window').find('#grid_productos_complementos');
+		var $grid_ids = $('#forma-invordpresuben-window').find('#grid_prodid_compid');
+		
+		$grid_productos.find('tr').each(function (index3){
+			var id_subensamble = $(this).find('#id_prod_grid').val();//Id del Producto formulado
+			var $densidad_subensamble = $(this).find('input[name=densidad]');//Densidad promedio del Producto formulado
+			var $cantidad_kg_subensamble = $(this).find('input[name=cantidad]');//Cantidad en Kg del Producto formulado
+			var $cant_litro_subensamble = $(this).find('input[name=cant_litro]');//Cantidad en Litros del Producto formulado
+			var noDec = $(this).find('#noDec').val();//Id del Producto formulado
+			
+			var suma_densidad_subensamble = 0;
+			
+			if(parseInt($(this).find('#eliminado').val()) != 0){
+				$grid_ids.find('tr').each(function (index2){
+					var ids_id_subensamble = $(this).find('#id_prod_gridid').val();//Id del Producto formulado
+					var ids_comp_grid_densidad_prom = $(this).find('#comp_grid_densidad_prom').val();
+					
+					if( parseInt(ids_id_subensamble) == parseInt(id_subensamble) ){
+						suma_densidad_subensamble = parseFloat(suma_densidad_subensamble) + parseFloat(ids_comp_grid_densidad_prom);
+					}
+				});
+			}
+			
+			//Se le asigna la densidad al producto subensamble
+			$densidad_subensamble.val(parseFloat(suma_densidad_subensamble).toFixed(4));
+			
+			if(parseFloat($densidad_subensamble.val())>0){
+				//Convertir los Kilos a Litros
+				$cant_litro_subensamble.val(parseFloat(parseFloat($cantidad_kg_subensamble.val()) / parseFloat($densidad_subensamble.val())).toFixed(noDec));
+			}
+		});
+	}
+	
 	
 	$suma_cantidades = function(){
 		var $grid_productos = $('#forma-invordpresuben-window').find('#grid_productos');
@@ -708,31 +758,37 @@ $(function() {
 		$grid_componentes.find('tr').each(function (index1){
 			if(parseInt($(this).find('#eliminadocomp').val()) != 0){
 				var $id_prod_comp = 0;
-				var $id_prod_comp = $(this).find('#id_comp_grid').val();
+				var $id_prod_comp = $(this).find('#id_comp_grid').val();//Id de producto materia prima
 				var $suma_cantidad_comp_kg = $(this).find('#cantidadcomp');
 				var $suma_cantidad_comp_litro = $(this).find('#cant_comp_litro');
 				var $td_densidad = $(this).find('#td_densidad');
+				var $td_densidad_promedio_mp = $(this).find('#td_densidad_promedio');
 				var $unidad_comp = $(this).find('#unidadcomp');
 				var suma_componente=0;
 				var cantidad_mp_litro=0;
-				
+				var suma_densidad_promedio_mp=0;
 				
 				$grid_ids.find('tr').each(function (index2){
-					var ids_id_subensamble = $(this).find('#id_prod_gridid').val();
-					var ids_id_componente = $(this).find('#id_comp_grid').val();
+					var ids_id_subensamble = $(this).find('#id_prod_gridid').val();//Id del Producto formulado
+					var ids_id_componente = $(this).find('#id_comp_grid').val();//Id de producto materia prima
 					var ids_cantidad_comp = $(this).find('#cantidad_prd_comp').val();
+					var ids_comp_grid_densidad_prom = $(this).find('#comp_grid_densidad_prom').val();
 					
 					if(parseInt($(this).find('#eliminadogridid').val()) != 0){
 						if( parseInt($id_prod_comp) == parseInt(ids_id_componente) ){
-							
 							$grid_productos.find('tr').each(function (index3){
-								var id_subensamble = $(this).find('#id_prod_grid').val();
+								var id_subensamble = $(this).find('#id_prod_grid').val();//Id del Producto formulado
+								var $densidad_subensamble = $(this).find('input[name=densidad]');//Densidad promedio del Producto formulado
 								var cantidad_subensamble = $(this).find('input[name=cantidad]').val();
 								
 								if(parseInt($(this).find('#eliminado').val()) != 0){
 									if( parseInt(ids_id_subensamble) == parseInt(id_subensamble) ){
 										suma_componente += parseFloat(ids_cantidad_comp) * parseFloat(cantidad_subensamble);
 										$suma_cantidad_comp_kg.val(parseFloat(suma_componente).toFixed(4));
+										
+										suma_densidad_promedio_mp += parseFloat(ids_comp_grid_densidad_prom);
+										
+										$td_densidad_promedio_mp.html(parseFloat(suma_densidad_promedio_mp).toFixed(4));
 									}
 								}
 							});
@@ -741,6 +797,7 @@ $(function() {
 					}
 				});
 				
+				/*
 				if(parseInt($(this).find('#eliminadocomp').val()) != 0){
 					if(parseFloat($td_densidad.html())>0){
 						if(/^KILO*|KILOGRAMO$/.test($unidad_comp.val().trim().toUpperCase())){
@@ -751,6 +808,7 @@ $(function() {
 					}
 					$suma_cantidad_comp_litro.val(parseFloat(cantidad_mp_litro).toFixed(4));
 				}
+				*/
 			}
 			
 			if(parseFloat($(this).find('#cantidadcomp').val()) <= 0 ){
@@ -759,29 +817,6 @@ $(function() {
 				$(this).show();
 			}
 		});
-		
-		/*
-		$grid_componentes.find('tr').each(function (index0){
-			var $suma_cantidad_comp_kg = $(this).find('#cantidadcomp');
-			var $suma_cantidad_comp_litro = $(this).find('#cant_comp_litro');
-			var $densidad = $(this).find('#densidad');
-			var $unidad_comp = $(this).find('#unidadcomp');
-			
-			
-			if(parseInt($(this).find('#eliminadocomp').val()) != 0){
-				if(parseFloat($densidad.val())>0){
-					if(/^KILO*|KILOGRAMO$/.test($unidad_comp.val().trim().toUpperCase())){
-						cantidad_mp_litro = $suma_cantidad_comp_kg.val();
-					}else{
-						cantidad_mp_litro = parseFloat($suma_cantidad_comp_kg.val())/parseFloat($densidad.val());
-					}
-				}
-				$suma_cantidad_comp_litro.val(parseFloat(cantidad_mp_litro).toFixed(4));
-			}
-		});
-		*/
-		
-		
 	}
 
 	
@@ -801,7 +836,7 @@ $(function() {
 						idPres = entry['Producto']['0']['id_pres_def'];
 					}
 					
-					$agrega_producto_al_grid(id_detalle, entry['Producto']['0']['id'],entry['Producto']['0']['sku'],entry['Producto']['0']['descripcion'],entry['Producto']['0']['titulo'], entry['Producto']['0']['no_dec'], entry['CompProducto'], cantidad,  idPres, entry['Presentaciones'], procesoFlujo, entry['Producto']['0']['densidad']);
+					$agrega_producto_al_grid(id_detalle, entry['Producto']['0']['id'],entry['Producto']['0']['sku'],entry['Producto']['0']['descripcion'],entry['Producto']['0']['titulo'], entry['Producto']['0']['no_dec'], entry['CompProducto'], cantidad,  idPres, entry['Presentaciones'], procesoFlujo, entry['Producto']['0']['densidad'], 0);
 				}else{
 					jAlert('El c&oacute;digo del producto ingresado no es Formulado &oacute; no existe, pruebe ingrese otro diferente.', 'Atencion!', function(r) { 
 						$('#forma-invordpresuben-window').find('input[name=productosku]').val('');
@@ -1062,14 +1097,14 @@ $(function() {
         
 	
 	//Obtener datos de los productos de la orden de produccion
-	var $get_datos_edit_produccion = function(id_detalle, id_producto, sku, descripcion, unidad, no_dec, pres_id, cantidad, densidad, proceso_flujo_id){
-		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDatosEdiProductoFormulado.json';
+	var $get_datos_edit_produccion = function(id_detalle, id_producto, sku, descripcion, unidad, no_dec, pres_id, cantidad, densidad, proceso_flujo_id, estatus){
+		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDatosEditProductoFormulado.json';
 		$arreglo = {'id_det':id_detalle, 'id_prod':id_producto, 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() }
 		
 		$.post(input_json,$arreglo,function(entry2){
 			if(parseInt(entry2['CompProducto'].length) > 0 ){
 				
-				$agrega_producto_al_grid(id_detalle, id_producto, sku, descripcion, unidad, no_dec, entry2['CompProducto'], cantidad, pres_id, entry2['Presentaciones'], proceso_flujo_id, densidad);
+				$agrega_producto_al_grid(id_detalle, id_producto, sku, descripcion, unidad, no_dec, entry2['CompProducto'], cantidad, pres_id, entry2['Presentaciones'], proceso_flujo_id, densidad, estatus);
 				
 			}else{
 				jAlert('El c&oacute;digo del producto ingresado no es Formulado &oacute; no existe, pruebe ingrese otro diferente.', 'Atencion!', function(r) { 
@@ -1264,7 +1299,7 @@ $(function() {
 					$select_almacen.append(almacen_hmtl);
 					
 					for(var i in entry['Detalle']){
-						$get_datos_edit_produccion(entry['Detalle'][i]['id'], entry['Detalle'][i]['prod_id'], entry['Detalle'][i]['sku'], entry['Detalle'][i]['descripcion'], entry['Detalle'][i]['unidad'], entry['Detalle'][i]['no_dec'], entry['Detalle'][i]['presentacion_id'], entry['Detalle'][i]['cantidad'], entry['Detalle'][i]['densidad'], entry['InvOrdSub']['0']['proceso_flujo_id']);
+						$get_datos_edit_produccion(entry['Detalle'][i]['id'], entry['Detalle'][i]['prod_id'], entry['Detalle'][i]['sku'], entry['Detalle'][i]['descripcion'], entry['Detalle'][i]['unidad'], entry['Detalle'][i]['no_dec'], entry['Detalle'][i]['presentacion_id'], entry['Detalle'][i]['cantidad'], entry['Detalle'][i]['densidad'], entry['InvOrdSub']['0']['proceso_flujo_id'], entry['InvOrdSub']['0']['estatus']);
 					}
 					
 

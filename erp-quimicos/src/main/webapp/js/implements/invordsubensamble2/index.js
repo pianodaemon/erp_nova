@@ -386,12 +386,15 @@ $(function() {
 								tr_complemento += '<input type="text" name="prescomp" id="prescomp_'+idProdComp+'"class="borde_oculto" value="'+ entry['componentes'][i]['pres_comp'] +'" readOnly="true" style="width:98px;">';
 							tr_complemento += '</td>';
 							tr_complemento += '<td class="grid1" id="td_densidad" style="font-size:11px; border:1px solid #C1DAD7;" width="50">'+ parseFloat(entry['componentes'][i]['densidad']).toFixed(4) +'</td>';
+							tr_complemento += '<td class="grid1" id="td_densidad" style="font-size:11px; border:1px solid #C1DAD7;" width="65">'+ parseFloat(entry['componentes'][i]['densidad_promedio']).toFixed(4) +'</td>';
 							tr_complemento += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="75">';
 								tr_complemento += '<input type="text" name="cantidadcomp" id="cantidadcomp_'+idProdComp+'" value="'+ parseFloat(entry['componentes'][i]['cantidad']).toFixed(4) +'" readOnly="true" style="width:73px; text-align:right;">';
 							tr_complemento += '</td>';
+							/*
 							tr_complemento += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="75">';
 								tr_complemento += '<input type="text" name="cant_comp_litro" id="cant_comp_litro" value="'+ parseFloat(entry['componentes'][i]['cant_mp_lt']).toFixed(4) +'" style="width:71px; text-align:right;">';
 							tr_complemento += '</td>';
+							*/
 						tr_complemento += '</tr>';
 
 						$grid_componentes.append(tr_complemento);
