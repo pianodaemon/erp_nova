@@ -195,7 +195,7 @@ public interface InvInterfaceDao {
     public ArrayList<HashMap<String, String>> getInvOrdPreSuben_Datos(String id);
     public ArrayList<HashMap<String, String>> getInvDetalleOrdPreSuben(String id);
     public ArrayList<HashMap<String, String>> getInvOrdPreSubenDatosProductos(String sku,Integer id_empresa);
-    public ArrayList<HashMap<String, String>> getInvOrdPreSubenDatosComProd(String sku);
+    public ArrayList<HashMap<String, String>> getInvOrdPreSubenDatosComProd(String sku, Integer id_empresa);
     public HashMap<String, String> getInvOrdPreSuben_IdAlmacenProd(Integer id_empresa);
     
     //catalogo de InvOrdSuben(Orden Subensamble)

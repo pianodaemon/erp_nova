@@ -256,17 +256,14 @@ public class InvOrdPreSuben2Controller {
         Integer id_producto = 0;
         
         producto = this.getInvDao().getInvOrdPreSubenDatosProductos(sku, id_empresa);
-        componentes = this.getInvDao().getInvOrdPreSubenDatosComProd(sku);
         
         if(producto.size()>0){
             id_producto = Integer.parseInt(producto.get(0).get("id"));
         }
         
-        presentaciones = this.getInvDao().getProducto_PresentacionesON(id_producto);
-        
         jsonretorno.put("Producto", producto);
-        jsonretorno.put("CompProducto", componentes);
-        jsonretorno.put("Presentaciones", presentaciones);
+        jsonretorno.put("CompProducto", this.getInvDao().getInvOrdPreSubenDatosComProd(sku, id_empresa));
+        jsonretorno.put("Presentaciones", presentaciones = this.getInvDao().getProducto_PresentacionesON(id_producto));
         
         return jsonretorno;
     }
@@ -274,7 +271,7 @@ public class InvOrdPreSuben2Controller {
     
     
     //Buscador de de productos
-    @RequestMapping(method = RequestMethod.POST, value="/getDatosEdiProductoFormulado.json")
+    @RequestMapping(method = RequestMethod.POST, value="/getDatosEditProductoFormulado.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> get_datos_edit_producto_formuladoJson(
             @RequestParam(value="id_det", required=true) Integer id_detalle,
             @RequestParam(value="id_prod", required=true) Integer id_producto,
@@ -491,7 +488,7 @@ public class InvOrdPreSuben2Controller {
         response.setBufferSize(size);
         response.setContentLength(size);
         response.setContentType("application/pdf");
-        response.setHeader("Content-Disposition","attachment; filename=\"" + file.getCanonicalPath() +"\"");
+        response.setHeader("Content-Disposition","attachment; filename=\"" + file.getName() +"\"");
         FileCopyUtils.copy(bis, response.getOutputStream());  	
         response.flushBuffer();
         

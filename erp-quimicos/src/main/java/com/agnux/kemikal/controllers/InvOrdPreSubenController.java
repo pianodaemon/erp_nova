@@ -255,7 +255,7 @@ public class InvOrdPreSubenController {
         Integer id_producto = 0;
         
         producto = this.getInvDao().getInvOrdPreSubenDatosProductos(sku, id_empresa);
-        componentes = this.getInvDao().getInvOrdPreSubenDatosComProd(sku);
+        componentes = this.getInvDao().getInvOrdPreSubenDatosComProd(sku, id_empresa);
         
         if(producto.size()>0){
             id_producto = Integer.parseInt(producto.get(0).get("id"));

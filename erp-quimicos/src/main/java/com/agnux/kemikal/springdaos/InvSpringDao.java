@@ -666,7 +666,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("requiere_nom",String.valueOf(rs.getBoolean("requiere_nom")));
                     row.put("estatus",String.valueOf(rs.getBoolean("estatus")));
                     row.put("proveedor",rs.getString("proveedor"));
-                    row.put("densidad",StringHelper.roundDouble(rs.getString("densidad"),2));
+                    row.put("densidad",StringHelper.roundDouble(rs.getString("densidad"),4));
                     row.put("valor_maximo",StringHelper.roundDouble(rs.getDouble("valor_maximo"),2));
                     row.put("valor_minimo",StringHelper.roundDouble(rs.getDouble("valor_minimo"),2));
                     row.put("punto_reorden",StringHelper.roundDouble(rs.getDouble("punto_reorden"),2));
@@ -4078,13 +4078,14 @@ public class InvSpringDao implements InvInterfaceDao{
     
     
     @Override
-    public ArrayList<HashMap<String, String>> getInvOrdPreSubenDatosComProd(String sku) {
+    public ArrayList<HashMap<String, String>> getInvOrdPreSubenDatosComProd(String sku, Integer id_empresa) {
         String sql_to_query = ""
         + "SELECT inv_prod.id, "
             + "inv_prod.sku, "
             + "inv_prod.descripcion, "
             + "inv_prod_unidades.titulo AS utitulo, "
             + "inv_prod.densidad,"
+            + "(inv_prod.densidad * tmp.cantidad::double precision) as densidad_promedio, "
             + "tmp.cantidad,"
             + "inv_prod.inv_prod_presentacion_id AS id_pres_def,"
             + "(CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS no_dec,"
@@ -4092,35 +4093,13 @@ public class InvSpringDao implements InvInterfaceDao{
         + "FROM inv_prod "
         + "JOIN ( "
                 + "SELECT inv_kit.producto_elemento_id, inv_kit.cantidad "
-                + "FROM ( SELECT id FROM inv_prod WHERE inv_prod.sku ilike '"+sku+"') as tmp1 "
+                + "FROM (SELECT id FROM inv_prod WHERE upper(inv_prod.sku)='"+sku.trim().toUpperCase()+"' and empresa_id="+id_empresa+") as tmp1 "
                 + "JOIN inv_kit ON tmp1.id=inv_kit.producto_kit_id "
         + ") as tmp ON tmp.producto_elemento_id=inv_prod.id "
         + "JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id "
         + "LEFT JOIN inv_prod_presentaciones ON inv_prod_presentaciones.id=inv_prod.inv_prod_presentacion_id;";
         
-        
-        /*
-        SELECT inv_prod.id, 
-                inv_prod.sku, 
-                inv_prod.descripcion, 
-                inv_prod_unidades.titulo AS utitulo, 
-                inv_prod.densidad,
-                tmp.cantidad,
-                inv_prod.inv_prod_presentacion_id AS id_pres_def,
-                (CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS no_dec,
-                (CASE WHEN inv_prod_presentaciones.titulo IS NULL THEN '' ELSE inv_prod_presentaciones.titulo END) AS presentacion 
-        FROM inv_prod 
-        JOIN ( 
-                SELECT inv_kit.producto_elemento_id, inv_kit.cantidad 
-                FROM ( SELECT id FROM inv_prod WHERE inv_prod.sku ilike 'PKA213') as tmp1 
-                JOIN inv_kit ON tmp1.id=inv_kit.producto_kit_id 
-        ) as tmp ON tmp.producto_elemento_id=inv_prod.id 
-        JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id 
-        LEFT JOIN inv_prod_presentaciones ON inv_prod_presentaciones.id=inv_prod.inv_prod_presentacion_id;
-         */
-        
-        
-        System.out.println(sql_to_query);
+        //System.out.println(sql_to_query);
         
         ArrayList<HashMap<String, String>> hm_datos_productos = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -4134,6 +4113,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("utitulo",rs.getString("utitulo"));
                     row.put("presentacion",rs.getString("presentacion"));
                     row.put("densidad",StringHelper.roundDouble(rs.getDouble("densidad"),4));
+                    row.put("densidad_promedio",StringHelper.roundDouble(rs.getDouble("densidad_promedio"),4));
                     row.put("cantidad",StringHelper.roundDouble(rs.getDouble("cantidad"),rs.getInt("no_dec")));
                     row.put("id_pres_def_comp",String.valueOf(rs.getInt("id_pres_def")));
                     row.put("no_dec",String.valueOf(rs.getInt("no_dec")));
@@ -8827,6 +8807,7 @@ public class InvSpringDao implements InvInterfaceDao{
             + "inv_prod.descripcion, "
             + "inv_prod_unidades.titulo AS utitulo, "
             + "inv_prod.densidad, "
+            + "(inv_prod.densidad * iosd_formula.cantidad_kg::double precision) as densidad_promedio, "
             + "iosd_formula.cantidad_kg, "
             + "inv_prod.inv_prod_presentacion_id AS id_pres_def, "
             + "(CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS no_dec, "
@@ -8852,6 +8833,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("utitulo",rs.getString("utitulo"));
                     row.put("presentacion",rs.getString("presentacion"));
                     row.put("densidad",StringHelper.roundDouble(rs.getDouble("densidad"),4));
+                    row.put("densidad_promedio",StringHelper.roundDouble(rs.getDouble("densidad_promedio"),4));
                     row.put("cantidad",StringHelper.roundDouble(rs.getDouble("cantidad_kg"),rs.getInt("no_dec")));
                     row.put("id_pres_def_comp",String.valueOf(rs.getInt("id_pres_def")));
                     row.put("no_dec",String.valueOf(rs.getInt("no_dec")));
@@ -8875,11 +8857,12 @@ public class InvSpringDao implements InvInterfaceDao{
             + "sbt2.presentacion,"
             + "sbt2.no_dec, "
             + "sbt2.densidad, "
+            + "sbt2.densidad_promedio, "
             + "sbt2.cant_mp_kg,"
             + "(case when sbt2.utitulo ilike 'KILO%' then sbt2.cant_mp_kg else sbt2.cant_mp_kg/sbt2.densidad::double precision end) as cant_mp_lt "
             //+ "(sbt2.cant_mp_kg/sbt2.densidad::double precision) as cant_mp_lt "
         + "from("
-            + "select sbt.id,sbt.sku,sbt.descripcion,sbt.utitulo,sbt.presentacion,sbt.no_dec, sbt.densidad, sum(sbt.cant_mp_kg) as cant_mp_kg "
+            + "select sbt.id,sbt.sku,sbt.descripcion,sbt.utitulo,sbt.presentacion,sbt.no_dec, sbt.densidad, sbt.densidad_promedio, sum(sbt.cant_mp_kg) as cant_mp_kg "
             + "from( "
                 + "SELECT  "
                     + "inv_prod.id, "
@@ -8889,6 +8872,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     + "(CASE WHEN inv_prod_presentaciones.titulo IS NULL THEN '' ELSE inv_prod_presentaciones.titulo END) AS presentacion,"
                     + "(CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS no_dec,"
                     + "iosd_formula.densidad,"
+                    + "(iosd_formula.densidad * iosd_formula.cantidad_kg::double precision) as densidad_promedio,"
                     + "(iosd.cantidad * iosd_formula.cantidad_kg) as cant_mp_kg  "
                 + "FROM inv_ord_subensamble_detalle as iosd "
                 + "join inv_ord_subensamble_detalle_formula as iosd_formula on iosd_formula.inv_ord_subensamble_detalle_id=iosd.id "
@@ -8897,7 +8881,7 @@ public class InvSpringDao implements InvInterfaceDao{
                 + "join inv_prod_unidades on inv_prod_unidades.id=inv_prod.unidad_id "
                 + "where iosd.inv_ord_subensamble_id=? "
             + ") as sbt "
-            + "group by sbt.id,sbt.sku,sbt.descripcion,sbt.utitulo,sbt.presentacion,sbt.no_dec,sbt.densidad "
+            + "group by sbt.id,sbt.sku,sbt.descripcion,sbt.utitulo,sbt.presentacion,sbt.no_dec,sbt.densidad,sbt.densidad_promedio "
         + ") as sbt2 "
         + "order by sbt2.sku;";
         
@@ -8919,6 +8903,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("cantidad",StringHelper.roundDouble(rs.getDouble("cant_mp_kg"),rs.getInt("no_dec")));
                     row.put("cant_mp_lt",StringHelper.roundDouble(rs.getDouble("cant_mp_lt"),rs.getInt("no_dec")));
                     row.put("densidad",StringHelper.roundDouble(rs.getDouble("densidad"),4));
+                    row.put("densidad_promedio",StringHelper.roundDouble(rs.getDouble("densidad_promedio"),4));
                     return row;
                 }
             }
