@@ -231,8 +231,9 @@
 																<td class="grid" style="background-color:rgb(180,180,180); border-botton:0px none;" width="90">Unidad</td>
 																<td class="grid" style="background-color:rgb(180,180,180); border-botton:0px none;" width="100">Pres.&nbsp;Default</td>
 																<td class="grid" style="background-color:rgb(180,180,180); border-botton:0px none;" width="50">Densidad</td>
-																<td class="grid" style="background-color:rgb(180,180,180); border-botton:0px none;" width="75">Cant.&nbsp;Kilo</td>
-																<td class="grid" style="background-color:rgb(180,180,180); border-botton:0px none;" width="90">Descontar&nbsp;Inv.</td>
+																<td class="grid" style="background-color:rgb(180,180,180); border-botton:0px none;" width="65">Dens.&nbsp;Prom.</td>
+																<td class="grid" style="background-color:rgb(180,180,180); border-botton:0px none;" width="90">Cant.&nbsp;Kilo</td>
+																<!--<td class="grid" style="background-color:rgb(180,180,180); border-botton:0px none;" width="90">Descontar&nbsp;Inv.</td>-->
 															</tr>
 														</thead>
 													</table>
