@@ -37,7 +37,7 @@ $(function() {
 	
 	
 	//aqui va el titulo del catalogo
-	$('#barra_titulo').find('#td_titulo').append('Orden de Producci&oacute;n de Subemsamble');
+	$('#barra_titulo').find('#td_titulo').append('Pre-Orden de Producci&oacute;n de Subensamble');
 	
 	//barra para el buscador 
 	$('#barra_buscador').append($('#lienzo_recalculable').find('.tabla_buscador'));
@@ -610,7 +610,7 @@ $(function() {
                         trCount++;
                         $skuexiste = 0;
                         $grid_componentes.find('tr').each(function (index){
-                            if($(this).find('#skucomp').val() == componentes[i]['sku']){
+                            if($(this).find('#skucomp').val()==componentes[i]['sku']){
                                 $skuexiste = 1;
                             }
                         });
@@ -618,50 +618,50 @@ $(function() {
                         if($skuexiste == 0){
                             var tr_complemento='';
 							tr_complemento += '<tr>';
-								tr_complemento += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="25">';
+								tr_complemento += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="100">';
 									tr_complemento += '<input type="hidden" name="id_prod_comp" id="id_prod_comp" value="'+id_prod+'">';//el 1 significa que el registro no ha sido eliminado
 									tr_complemento += '<input type="hidden" name="eliminadocomp" id="eliminadocomp" value="1">';
-								tr_complemento += '</td>';
-								tr_complemento += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="100">';
 									tr_complemento += '<input type="hidden" name="id_comp_grid" id="id_comp_grid" value="'+ componentes[i]['id'] +'">';
 									tr_complemento += '<INPUT TYPE="text" id="skucomp" name="skucomp'+ id_prod +'" value="'+ componentes[i]['sku'] +'" class="borde_oculto" style="width:96px;" readOnly="true">';
 								tr_complemento += '</td>';
-								tr_complemento += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="230">';
-									tr_complemento += '<INPUT TYPE="text" id="titulocomp" name="titulocomp'+ id_prod +'" value="'+ componentes[i]['descripcion'] +'" class="borde_oculto" style="width:228px;" readOnly="true">';
+								tr_complemento += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="210">';
+									tr_complemento += '<INPUT TYPE="text" id="titulocomp" name="titulocomp'+ id_prod +'" value="'+ componentes[i]['descripcion'] +'" class="borde_oculto" style="width:208px;" readOnly="true">';
 								tr_complemento += '</td>';
 								
 								tr_complemento += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
 									tr_complemento += '<INPUT TYPE="text" name="unidadcomp" id="unidadcomp" class="borde_oculto" value="'+ componentes[i]['utitulo'] +'" readOnly="true" style="width:88px;">';
 								tr_complemento += '</td>';
 								
-								tr_complemento += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="100">';
-									tr_complemento += '<INPUT TYPE="text" name="prescomp" class="borde_oculto" value="'+ componentes[i]['presentacion'] +'" readOnly="true" style="width:98px;">';
+								tr_complemento += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
+									tr_complemento += '<INPUT TYPE="text" name="prescomp" class="borde_oculto" value="'+ componentes[i]['presentacion'] +'" readOnly="true" style="width:88px;">';
 								tr_complemento += '</td>';
 								
 								tr_complemento += '<td class="grid1" id="td_densidad" style="font-size:11px; border:1px solid #C1DAD7;" width="50">'+ parseFloat(componentes[i]['densidad']).toFixed(4) +'</td>';
 								tr_complemento += '<td class="grid1" id="td_densidad_promedio" style="font-size:11px; border:1px solid #C1DAD7;" width="65">'+ parseFloat(componentes[i]['densidad_promedio']).toFixed(4) +'</td>';
 								
-								tr_complemento += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="75">';
+								tr_complemento += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="70">';
 									var cantidad_mp_kg = parseFloat(componentes[i]['cantidad'])*parseFloat(cantidad);
-                                    tr_complemento += '<INPUT TYPE="text" name="cantidadcomp" id="cantidadcomp" value="'+ parseFloat(cantidad_mp_kg).toFixed(parseInt(componentes[i]['no_dec'])) +'" style="width:72px; text-align:right;">';
+                                    tr_complemento += '<INPUT TYPE="text" name="cantidadcomp" id="cantidadcomp" value="'+ parseFloat(cantidad_mp_kg).toFixed(parseInt(componentes[i]['no_dec'])) +'" style="width:68px; text-align:right;">';
                                     tr_complemento += '<INPUT TYPE="hidden" name="cantidunitaria" id="cantidunitaria" value="'+parseFloat(componentes[i]['cantidad']).toFixed(componentes[i]['no_dec'])+'" >';
 								tr_complemento += '</td>';
 								
 								var cantidad_mp_litro=0;
 								
-								/*
 								if(parseFloat(componentes[i]['densidad'])>0){
+									cantidad_mp_litro = parseFloat(cantidad_mp_kg)/parseFloat(componentes[i]['densidad']);
+									/*
 									if(/^KILO*|KILOGRAMO$/.test(componentes[i]['utitulo'].trim().toUpperCase())){
 										cantidad_mp_litro = cantidad_mp_kg;
 									}else{
 										cantidad_mp_litro = parseFloat(cantidad_mp_kg)/parseFloat(componentes[i]['densidad']);
 									}
+									*/
 								}
 								
-								tr_complemento += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="75">';
-									tr_complemento += '<input type="text" name="cant_comp_litro" id="cant_comp_litro" value="'+ parseFloat(cantidad_mp_litro).toFixed(4) +'" style="width:71px;  text-align:right;">';
+								tr_complemento += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="70">';
+									tr_complemento += '<input type="text" name="cant_comp_litro" id="cant_comp_litro" value="'+ parseFloat(cantidad_mp_litro).toFixed(4) +'" style="width:68px; text-align:right;">';
 								tr_complemento += '</td>';
-								*/
+								
 							tr_complemento += '</tr>';
                             $grid_componentes.append(tr_complemento);
                         }else{
@@ -797,8 +797,10 @@ $(function() {
 					}
 				});
 				
-				/*
+				
 				if(parseInt($(this).find('#eliminadocomp').val()) != 0){
+					cantidad_mp_litro = parseFloat($suma_cantidad_comp_kg.val())/parseFloat($td_densidad.html());
+					/*
 					if(parseFloat($td_densidad.html())>0){
 						if(/^KILO*|KILOGRAMO$/.test($unidad_comp.val().trim().toUpperCase())){
 							cantidad_mp_litro = $suma_cantidad_comp_kg.val();
@@ -806,9 +808,10 @@ $(function() {
 							cantidad_mp_litro = parseFloat($suma_cantidad_comp_kg.val())/parseFloat($td_densidad.html());
 						}
 					}
+					*/
 					$suma_cantidad_comp_litro.val(parseFloat(cantidad_mp_litro).toFixed(4));
 				}
-				*/
+				
 			}
 			
 			if(parseFloat($(this).find('#cantidadcomp').val()) <= 0 ){
