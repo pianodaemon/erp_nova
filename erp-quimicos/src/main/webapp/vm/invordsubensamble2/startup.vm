@@ -121,23 +121,20 @@
                                     <div id="tabx-1" class="contenidoPes">
                                         <table border="0" class="gral">
 											<tr>
-												<td width="5"></td>
 												<td width="50">Folio</td>
 												<td width="150">
 													<INPUT TYPE="text" name="folio" style="width:90px;" readOnly="true">
 												</td>
 												<td width="40">&nbsp;</td>
 												<td width="85">Observaciones</td>
-												<td width="360" colspan="2">
-												<textarea name="observaciones" rows="2" cols="60" style="width:340px; resize:none;"></textarea>
-											</td>
-											<td width="5">&nbsp;</td>
+												<td width="485" colspan="2">
+													<textarea name="observaciones" rows="2" cols="60" style="width:485px; resize:none;"></textarea>
+												</td>
 											</tr>
 											<tr>
-												<td colspan="8">&nbsp;</td>
+												<td colspan="5">&nbsp;</td>
 											</tr>
 											<tr>
-												<td width="5"></td>
 												<td width="50">Estatus</td>
 												<td width="150">
 													<SELECT NAME="estatus" style="width:150px;"></option>
@@ -145,95 +142,84 @@
 												</td>
 												<td width="40">&nbsp;</td>
 												<td width="85">&nbsp;</td>
-												<td width="360" colspan="2">
-													<INPUT TYPE="button" id="pdf_orden" value="PDF" style="width:90px; font-weight: bold;">
+												<td width="480" colspan="2">
+													<INPUT TYPE="button" id="pdf_orden" value="PDF" style="width:90px; font-weight:bold;">
 												</td>
-												<td width="5">&nbsp;</td>
 											</tr>
 											<tr>
-												<td colspan="8">&nbsp;</td>
+												<td colspan="5">&nbsp;</td>
 											</tr>
 											<tr>
-												<td width="5"></td>
-												<td colspan="6" style="border-top:1px solid #C1DAD7; border-bottom:1px solid #C1DAD7; border-left:1px solid #FFFFFF; border-right:1px solid #FFFFFF;">
-													<table >
+												<td colspan="5" style="border-top:1px solid #C1DAD7; border-bottom:1px solid #C1DAD7; border-left:1px solid #FFFFFF; border-right:1px solid #FFFFFF;">
+													<table style="margin:0; padding:0;">
 														<thead>
 															<tr>
 																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="100">C&oacute;digo</td>
-																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="230">Nombre&nbsp;del&nbsp;Producto</td>
-																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="90">Unidad&nbsp;Producto</td>
-																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="100">Presentaci&oacute;n</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="254">Nombre&nbsp;del&nbsp;Producto</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="100">Unidad&nbsp;Producto</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="110">Presentaci&oacute;n</td>
 																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="50">Densidad</td>
 																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="75">Cant.&nbsp;Kilo</td>
 																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="90">Cant.&nbsp;Litro</td>
 															</tr>
 														</thead>
-													</table>
-													<div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width:785; height: 70px; border:1px solid #C1DAD7 !important;">	
-														<table>
-															<tbody id="grid_productos" style="background-color: #FFFFFF;" valign="top">
-																
-															</tbody>
-														</table>
-													</div>
-												</td>
-												
-												<td width="5">&nbsp;</td>
-											</tr>
-											<tr>
-												<td colspan="8">
-												&nbsp;&nbsp;Componentes
-												<table border="0" id="grid_prodid_compid" style="display:none;" >
-													<!--<tr>
-													
-													</tr>-->
-												</table>
-											</td>
-											</tr>
-											<tr>
-												<td width="5"></td>
-												
-												<td colspan="6" style="border-top:1px solid #C1DAD7; border-bottom:1px solid #C1DAD7; border-left:1px solid #FFFFFF; border-right:1px solid #FFFFFF;">
-													<table >
-														<thead>
-															<!--
+														<tbody>
 															<tr>
-																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="110">&nbsp;C&oacute;digo</td>
-																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="300">&nbsp;Nombre del Producto</td>
-																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="105">&nbsp;Unidad</td>
-																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="135">&nbsp;Presentaci&oacute;n&nbsp;Default</td>
-																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="110">&nbsp;Cantidad</td>
+																<td colspan="8">
+																	<div style="overflow:scroll; overflow-x:hidden; overflow-y:auto; height:70px; border:1px solid #C1DAD7 !important;">	
+																		<table style="margin:0; padding:0;">
+																			<tbody id="grid_productos" style="background-color: #FFFFFF;" valign="top">
+																				
+																			</tbody>
+																		</table>
+																	</div>
+																</td>
 															</tr>
-															-->
+														</tbody>
+													</table>
+												</td>
+											</tr>
+											<tr>
+												<td colspan="5">
+													&nbsp;&nbsp;Componentes
+													<table border="0" id="grid_prodid_compid" style="display:none;" >
+													</table>
+												</td>
+											</tr>
+											<tr>
+												<td colspan="5" style="border-top:1px solid #C1DAD7; border-bottom:1px solid #C1DAD7; border-left:1px solid #FFFFFF; border-right:1px solid #FFFFFF; margin:0; padding:0;">
+													<table style="margin:0; padding:0;">
+														<thead>
 															<tr>
 																<td class="grid" style="background-color:rgb(180,180,180); border-botton:0px none;" width="100">C&oacute;digo</td>
-																<td class="grid" style="background-color:rgb(180,180,180); border-botton:0px none;" width="230">Nombre&nbsp;del&nbsp;Producto</td>
+																<td class="grid" style="background-color:rgb(180,180,180); border-botton:0px none;" width="215">Nombre&nbsp;del&nbsp;Producto</td>
 																<td class="grid" style="background-color:rgb(180,180,180); border-botton:0px none;" width="90">Unidad</td>
-																<td class="grid" style="background-color:rgb(180,180,180); border-botton:0px none;" width="100">Pres.&nbsp;Default</td>
+																<td class="grid" style="background-color:rgb(180,180,180); border-botton:0px none;" width="90">Pres.&nbsp;Default</td>
 																<td class="grid" style="background-color:rgb(180,180,180); border-botton:0px none;" width="50">Densidad</td>
 																<td class="grid" style="background-color:rgb(180,180,180); border-botton:0px none;" width="65">Dens.&nbsp;Prom.</td>
-																<td class="grid" style="background-color:rgb(180,180,180); border-botton:0px none;" width="90">Cant.&nbsp;Kilo</td>
-																<!--<td class="grid" style="background-color:rgb(180,180,180); border-botton:0px none;" width="90">Descontar&nbsp;Inv.</td>-->
+																<td class="grid" style="background-color:rgb(180,180,180); border-botton:0px none;" width="75">Cant.&nbsp;Kilo</td>
+																<td class="grid" style="background-color:rgb(180,180,180); border-botton:0px none;" width="90">Cant.&nbsp;Litro</td>
 															</tr>
 														</thead>
+														<tbody>
+															<tr>
+																<td colspan="8">
+																	<div style="overflow:scroll; overflow-x: hidden; overflow-y:auto; height:138px; border:1px solid #C1DAD7 !important; margin:0; padding:0;">	
+																		<table style="margin:0; padding:0;">
+																			<tbody id="grid_productos_complementos" style="background-color: #FFFFFF;" valign="top">
+																				
+																			</tbody>
+																		</table>
+																	</div>
+																</td>
+															</tr>
+														</tbody>
 													</table>
-													<div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width:785; height: 90px; border:1px solid #C1DAD7 !important;">	
-														<table>
-															<tbody id="grid_productos_complementos" style="background-color: #FFFFFF;" valign="top">
-												
-															</tbody>
-														</table>
-													</div>
 												</td>
-											
-											
-												<td width="5">&nbsp;</td>
 											</tr>
 											
-											
 											<tr>
-												<td width="5"></td>
-												<td colspan="6">
+												<td colspan="5">
 													<div id="div_warning_grid"  style="width:800px; height:100px; display:none;">
 														<table border="0">
 															<tr>
@@ -259,9 +245,7 @@
 														</table>
 													</div>
 												</td>
-												<td width="5"></td>
 											</tr>
-											
                                         </table>
                                     </div>
 									
