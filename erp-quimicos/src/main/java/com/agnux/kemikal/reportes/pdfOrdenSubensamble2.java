@@ -295,7 +295,7 @@ public class pdfOrdenSubensamble2 {
             
             
             //float [] widths = {2f, 5.5f, 3f, 2f, 1.5f, 2f,2f,2f,2f};
-            float [] widths = {3f, 6f, 4f, 2.5f, 3f, 3f};
+            float [] widths = {3f, 6f, 4f, 2.5f, 3f, 3f, 3f};
             PdfPTable table = new PdfPTable(widths);
             PdfPCell cell;
 
@@ -305,7 +305,7 @@ public class pdfOrdenSubensamble2 {
             table.setHeaderRows(1);
             
             cell = new PdfPCell(new Paragraph("Subensambles",largeFont));
-            cell.setColspan(6);
+            cell.setColspan(7);
             cell.setUseDescender(true);
             cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
             cell.setBorderWidthRight(0);
@@ -329,6 +329,7 @@ public class pdfOrdenSubensamble2 {
             cell.setUseDescender(true);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             cell.setBackgroundColor(BaseColor.BLACK);
+            cell.setColspan(2);
             table.addCell(cell);
             
             cell = new PdfPCell(new Paragraph("UNIDAD",smallBoldFont));
@@ -390,6 +391,7 @@ public class pdfOrdenSubensamble2 {
                     cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                     cell.setBorderWidthBottom(a);
                     cell.setBorderWidthTop(b);
+                    cell.setColspan(2);
                     table.addCell(cell);
                 }
                 
@@ -438,7 +440,7 @@ public class pdfOrdenSubensamble2 {
             }
             
             cell = new PdfPCell(new Paragraph("Productos materia prima",largeFont));
-            cell.setColspan(6);
+            cell.setColspan(7);
             cell.setUseDescender(true);
             cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
             cell.setBorderWidthRight(0);
@@ -480,7 +482,7 @@ public class pdfOrdenSubensamble2 {
             cell.setBackgroundColor(BaseColor.BLACK);
             table.addCell(cell);
             
-            cell = new PdfPCell(new Paragraph("DENS. RPOM.",smallBoldFont));
+            cell = new PdfPCell(new Paragraph("DENS. PROM.",smallBoldFont));
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setUseDescender(true);
@@ -495,15 +497,15 @@ public class pdfOrdenSubensamble2 {
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             cell.setBackgroundColor(BaseColor.BLACK);
             table.addCell(cell);
-            /*
-            cell = new PdfPCell(new Paragraph("CANT. INV.",smallBoldFont));
+            
+            cell = new PdfPCell(new Paragraph("LITROS",smallBoldFont));
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setUseDescender(true);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             cell.setBackgroundColor(BaseColor.BLACK);
             table.addCell(cell);
-            */
+            
             it = componentes.iterator();
             while(it.hasNext()){
                 HashMap<String,String> map = (HashMap<String,String>)it.next();
@@ -575,7 +577,6 @@ public class pdfOrdenSubensamble2 {
                 cell.setBorderWidthTop(b);
                 table.addCell(cell);
                 
-                /*
                 //CANTIDAD LITRO
                 cell = new PdfPCell(new Paragraph(esteAtributoSeDejoNulo(map.get("cant_mp_lt")), smallFont));
                 cell.setRightIndent(3);
@@ -586,11 +587,10 @@ public class pdfOrdenSubensamble2 {
                 cell.setBorderWidthBottom(a);
                 cell.setBorderWidthTop(b);
                 table.addCell(cell);
-                */
             }
             
             cell = new PdfPCell(new Paragraph("", smallBoldFontBlack));
-            cell.setColspan(6);
+            cell.setColspan(7);
             cell.setBorderWidthRight(0);
             cell.setBorderWidthLeft(0);
             cell.setBorderWidthTop(0);
