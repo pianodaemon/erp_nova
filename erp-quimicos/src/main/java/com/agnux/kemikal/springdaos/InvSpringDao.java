@@ -8036,6 +8036,7 @@ public class InvSpringDao implements InvInterfaceDao{
 	+"  as foo(  "
 		+"  codigo character varying,  "
 		+"  descripcion character varying,  "
+                +"  unidad character varying,  "
 		+"  existencia double precision,  "
 		+"  referencia character varying,  "
 		+"  tipo_movimiento character varying,  "
@@ -8057,6 +8058,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     HashMap<String, String> row = new HashMap<String, String>();
                     row.put("codigo",rs.getString("codigo"));
                     row.put("descripcion",rs.getString("descripcion"));
+                    row.put("unidad",rs.getString("unidad"));
                     row.put("existencia",StringHelper.roundDouble(rs.getString("existencia"),2));
                     row.put("referencia",rs.getString("referencia"));
                     row.put("tipo_movimiento",rs.getString("tipo_movimiento"));
