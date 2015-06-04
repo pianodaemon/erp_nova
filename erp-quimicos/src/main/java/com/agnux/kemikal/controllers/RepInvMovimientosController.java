@@ -47,7 +47,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 @SessionAttributes({"user"})
 @RequestMapping("/repinvmovimientos/")
 public class RepInvMovimientosController {
-    private static final Logger log  = Logger.getLogger(InvRepExisController.class.getName());
+    private static final Logger log  = Logger.getLogger(RepInvMovimientosController.class.getName());
     ResourceProject resource = new ResourceProject();
 
     @Autowired
@@ -284,7 +284,7 @@ public class RepInvMovimientosController {
 
 
         File file_dir_tmp = new File(dir_tmp);
-        System.out.println("Directorio temporal: "+file_dir_tmp.getCanonicalPath());
+        //System.out.println("Directorio temporal: "+file_dir_tmp.getCanonicalPath());
 
         String file_name = "REPMOVIMIENTOS_"+rfc+"_"+fecha_inicial+"_"+fecha_final+".pdf";
 
@@ -298,27 +298,17 @@ public class RepInvMovimientosController {
         //instancia a la clase que construye el pdf del reporte de facturas
         PdfReporteMovimientos x = new PdfReporteMovimientos( fileout,ruta_imagen,razon_social_empresa,fecha_inicial,fecha_final,lista_movimientos);
 
-        System.out.println("Recuperando archivo: " + fileout);
+        //System.out.println("Recuperando archivo: " + fileout);
         File file = new File(fileout);
         int size = (int) file.length(); // Tamaño del archivo
         BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
         response.setBufferSize(size);
         response.setContentLength(size);
         response.setContentType("application/pdf");
-        response.setHeader("Content-Disposition","attachment; filename=\"" + file.getCanonicalPath() +"\"");
+        response.setHeader("Content-Disposition","attachment; filename=\"" + file.getName() +"\"");
         FileCopyUtils.copy(bis, response.getOutputStream());
         response.flushBuffer();
 
         return null;
     }
-
-
-
-
-
-
-
-
-
-
 }
