@@ -92,7 +92,7 @@ public class InvRepExisController {
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
         
         
-        ModelAndView x = new ModelAndView("repinvexis/startup", "title", "Existencias en Inventario");
+        ModelAndView x = new ModelAndView("invrepexis/startup", "title", "Existencias en Inventario");
         
         x = x.addObject("layoutheader", resource.getLayoutheader());
         x = x.addObject("layoutmenu", resource.getLayoutmenu());
