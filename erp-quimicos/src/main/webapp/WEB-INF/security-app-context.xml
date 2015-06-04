@@ -222,7 +222,7 @@ xmlns:beans="http://www.springframework.org/schema/beans"
         <intercept-url pattern="/controllers/ctbrepbalanzacomp/startup.agnux" access="ROLE_ADMIN,ROLE_CTB_REP_BALANZA_COMP" />
         <intercept-url pattern="/controllers/ctbrepbalancegnl/startup.agnux" access="ROLE_ADMIN,ROLE_CTB_REP_BALANCE_GRAL" />
         
-        <intercept-url pattern="/controllers/repinvexis/startup.agnux" access="ROLE_ADMIN,ROLE_CONSULTAS_ALMACEN" /><!--Noe-->
+        <intercept-url pattern="/controllers/invrepexis/startup.agnux" access="ROLE_ADMIN,ROLE_CONSULTAS_ALMACEN" /><!--Noe-->
         <intercept-url pattern="/controllers/repfacturacion/startup.agnux" access="ROLE_ADMIN,ROLE_REPORTE_FACTURAS" /><!--Noe-->
         <intercept-url pattern="/controllers/repedoctacliente/startup.agnux" access="ROLE_ADMIN,ROLE_REPORTE_EDO_CTA_CLIENTE" /><!--Noe-->
         <intercept-url pattern="/controllers/invrepcomprasnetasporproducto/startup.agnux" access="ROLE_ADMIN,ROLE_COMPRAS_NETAS_PRODUCTO" /><!--Noe-->
