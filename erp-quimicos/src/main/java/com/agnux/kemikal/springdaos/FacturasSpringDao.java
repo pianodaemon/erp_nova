@@ -849,7 +849,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     
     
     
-    //obtiene la lista de conceptos para la factura para CFD
+    //Obtiene la lista de conceptos para la factura para CFD
     @Override
     public ArrayList<LinkedHashMap<String, String>> getListaConceptosFacturaXml(Integer id_prefactura) {
         String sql_query = "SELECT sku,"
@@ -3265,6 +3265,9 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     row.put("precio_unitario_con_descto", "0");
                     row.put("importe_del_descto", "0");
                     row.put("importe_con_descto", "0");
+                    
+                    row.put("tasa_ret","0");
+                    row.put("importe_ret","0");
                     return row;
                 }
             }
