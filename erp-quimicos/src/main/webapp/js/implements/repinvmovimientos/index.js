@@ -471,40 +471,38 @@ $(function() {
                         var valor_salida   = 0.0;
                         var tmp=0;
                         var trr='';
+                        
                         //alert("este s el codigo:  "+codigo);
                         if(entry['Movimientos'].length > 0 ){
                             var codigo = entry['Movimientos']['0']['codigo'];
 
                             trr += '<tr>';
-                            trr += '<td width="100px" colspan="2">Codigo: '+codigo+'</td>';
-                            trr += '<td width="300px" colspan="2">Descripcion: '+entry['Movimientos']['0']['descripcion']+'</td>';
+                            trr += '<td width="100px" colspan="2"><b>Codigo: '+codigo+'</b></td>';
+                            trr += '<td width="300px" colspan="2"><b>Descripcion: '+entry['Movimientos']['0']['descripcion']+'</b></td>';
                             trr += '<td width="200px">&nbsp;</td>';
                             trr += '<td width="100px">&nbsp;</td>';
-                            trr += '<td width="100px" align="right">Existencia&nbsp;Inicial:</td>';
-                            trr += '<td width="100px" align="right">'+entry['Movimientos']['0']['existencia']+'</td>';
+                            trr += '<td width="100px">&nbsp;</td>';
+                            trr += '<td width="100px" align="right"><b>Existencia&nbsp;Inicial</b></td>';
+                            trr += '<td width="100px" align="right"><b>'+entry['Movimientos']['0']['existencia']+'</b></td>';
                             trr += '</tr>';
+                            
                             $.each(entry['Movimientos'],function(entryIndex,Movimentos){
-
-
                                 trr += '<tr>';
                                 trr += '<td width="100px" align="center">'+Movimentos['referencia']+'</td>';
                                 trr += '<td width="300px" align="left">'+Movimentos['tipo_movimiento']+'</td>';
                                 trr += '<td width="100px" align="center">'+Movimentos['fecha_movimiento']+'</td>';
                                 trr += '<td width="200px" align="left">'+Movimentos['sucursal']+'</td>';
                                 trr += '<td width="200px" align="left">'+Movimentos['almacen']+'</td>';
+                                trr += '<td width="100px" align="left">'+Movimentos['unidad']+'</td>';
                                 trr += '<td width="100px" align="right">'+Movimentos['cantidad']+'</td>';
                                 trr += '<td width="100px" align="right">'+Movimentos['costo']+'</td>';
                                 trr += '<td width="100px" align="right">'+Movimentos['existencia_actual']+'</td>';
                                 trr += '</tr>';
-
-
+                                
                                 suma_cantidad  = parseFloat(suma_cantidad)  + parseFloat(Movimentos['cantidad']);
                                 valor_unitario = parseFloat(valor_unitario) + parseFloat(Movimentos['costo']);
                                 valor_entrada  = parseFloat(valor_entrada)  + parseFloat(Movimentos['costo']);
                                 valor_salida   = parseFloat(valor_salida )  + parseFloat(Movimentos['costo']);
-
-
-
                             });
 
 
