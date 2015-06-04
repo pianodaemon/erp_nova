@@ -94,9 +94,9 @@
 							<td width="80"><INPUT TYPE="text" id="date" name="fecha_final" style="width:80px;" ></td>
 
 							<td width="30">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-							<td width="50"><INPUT TYPE="button" id="boton_busqueda" value="Buscar"></td>
+							<td width="50"><INPUT TYPE="button" id="boton_busqueda" value="Buscar" style="width:80px;"></td>
 							<td width="15"></td>
-							<td width="50"><INPUT TYPE="button" id="boton_genera_pdf" value="Generar PDF"></td>
+							<td width="50"><INPUT TYPE="button" id="boton_genera_pdf" value="PDF" style="width:80px;"></td>
 						</tr>
 					</table>
                 </td>
@@ -118,6 +118,7 @@
 									<td width="100px">Fecha&nbsp;</td>
 									<td width="200px">Sucursal&nbsp;</td>
 									<td width="200px">Almacen&nbsp;</td>
+									<td width="100px">Unidad&nbsp;</td>
 									<td width="100px">Cantidad&nbsp;</td>
 									<td width="100px">Costo</td>
 									<td width="100px">Existencia</td>
