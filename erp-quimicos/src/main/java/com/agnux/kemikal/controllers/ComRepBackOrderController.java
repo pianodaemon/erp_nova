@@ -43,7 +43,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 @SessionAttributes({"user"})
 @RequestMapping("/comrepbackorder/")
 public class ComRepBackOrderController {
-    private static final Logger log  = Logger.getLogger(RepInvExisController.class.getName());
+    private static final Logger log  = Logger.getLogger(InvRepExisController.class.getName());
     ResourceProject resource = new ResourceProject();
     
     @Autowired
@@ -114,7 +114,7 @@ public class ComRepBackOrderController {
             Model model
             ) {
         
-        log.log(Level.INFO, "Ejecutando getAlmacenesJson de {0}", RepInvExisController.class.getName());
+        log.log(Level.INFO, "Ejecutando getAlmacenesJson de {0}", InvRepExisController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         ArrayList<HashMap<String, String>> Almacenes = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> userDat = new HashMap<String, String>();

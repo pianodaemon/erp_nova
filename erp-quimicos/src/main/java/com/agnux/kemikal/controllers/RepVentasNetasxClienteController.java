@@ -139,7 +139,7 @@ public class RepVentasNetasxClienteController {
         
         
         
-        log.log(Level.INFO, "Ejecutando getVentasNetasxCliente de {0}", RepInvExisController.class.getName());
+        log.log(Level.INFO, "Ejecutando getVentasNetasxCliente de {0}", InvRepExisController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         
         HashMap<String, String> userDat = new HashMap<String, String>();

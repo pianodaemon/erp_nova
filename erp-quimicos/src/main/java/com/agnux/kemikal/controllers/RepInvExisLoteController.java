@@ -53,7 +53,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 @SessionAttributes({"user"})
 @RequestMapping("/repinvexislote/")
 public class RepInvExisLoteController {
-    private static final Logger log  = Logger.getLogger(RepInvExisController.class.getName());
+    private static final Logger log  = Logger.getLogger(InvRepExisController.class.getName());
     ResourceProject resource = new ResourceProject();
     
     @Autowired
@@ -90,7 +90,7 @@ public class RepInvExisLoteController {
             @ModelAttribute("user") UserSessionData user)
             throws ServletException, IOException {
         
-        log.log(Level.INFO, "Ejecutando starUp de {0}", RepInvExisController.class.getName());
+        log.log(Level.INFO, "Ejecutando starUp de {0}", InvRepExisController.class.getName());
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
         
         
@@ -127,7 +127,7 @@ public class RepInvExisLoteController {
             Model model
             ) {
         
-        log.log(Level.INFO, "Ejecutando getAlmacenesJson de {0}", RepInvExisController.class.getName());
+        log.log(Level.INFO, "Ejecutando getAlmacenesJson de {0}", InvRepExisController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         ArrayList<HashMap<String, String>> Almacenes = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
@@ -165,7 +165,7 @@ public class RepInvExisLoteController {
             Model model
             ) {
         
-        log.log(Level.INFO, "Ejecutando getExistenciasJson de {0}", RepInvExisController.class.getName());
+        log.log(Level.INFO, "Ejecutando getExistenciasJson de {0}", InvRepExisController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         ArrayList<HashMap<String, String>> existencias = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> medidas_etiqueta = new ArrayList<HashMap<String, String>>();

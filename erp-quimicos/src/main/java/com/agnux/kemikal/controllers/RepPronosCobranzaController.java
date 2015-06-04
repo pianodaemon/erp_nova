@@ -130,7 +130,7 @@ public class RepPronosCobranzaController {
         
         
         
-        log.log(Level.INFO, "Ejecutando getPronosticoDeCobranza de {0}", RepInvExisController.class.getName());
+        log.log(Level.INFO, "Ejecutando getPronosticoDeCobranza de {0}", InvRepExisController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         //ArrayList<HashMap<String, String>> Almacenes = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
