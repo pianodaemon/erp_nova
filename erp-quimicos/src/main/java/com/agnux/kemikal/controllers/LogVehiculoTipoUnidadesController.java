@@ -104,14 +104,14 @@ public class LogVehiculoTipoUnidadesController {
     
     
     @RequestMapping(method = RequestMethod.POST, value="/getVehiculoTipoUnidades.json")
-    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getVehiculoTipoUnidadesJson(
+    public @ResponseBody HashMap<String,Object> getVehiculoTipoUnidadesJson(
             @RequestParam(value="id", required=true) Integer id,
             @RequestParam(value="iu", required=true) String id_user_cod,
             Model model
         ){
         
         log.log(Level.INFO, "Ejecutando getVehiculoTipoUnidadesJson de {0}", LogVehiculoTipoUnidadesController.class.getName());
-        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        HashMap<String,Object> jsonretorno = new HashMap<String,Object>();
         HashMap<String, String> userDat = new HashMap<String, String>();
        
         ArrayList<HashMap<String, String>> datosVehiculoTipoUnidades = new ArrayList<HashMap<String, String>>(); 
@@ -127,7 +127,7 @@ public class LogVehiculoTipoUnidadesController {
         
        //datos datosVehiculoTipoUnidades es lo que me trajo de la consulta y los pone en el json
        jsonretorno.put("VehiculoTipoUnidades", datosVehiculoTipoUnidades);
-       jsonretorno.put("UM", this.getLogDao().getVehiculoTipoUnidades_UnidadesDeMedida());
+       jsonretorno.put("UM", this.getLogDao().getUnidadesDeMedida());
      
         
         return jsonretorno;

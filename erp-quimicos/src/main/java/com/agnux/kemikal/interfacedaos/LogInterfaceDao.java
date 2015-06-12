@@ -85,7 +85,11 @@ public interface LogInterfaceDao {
     public ArrayList<HashMap<String, Object>> getLoAdmViaje_Adicionales(Integer id);
     public ArrayList<HashMap<String, Object>> getLogAdmViaje_TiposDeRechazo(Integer id_empresa);
     public ArrayList<HashMap<String, Object>> getLogAdmViaje_TiposDeDistribucion();
+    public HashMap<String, Object> getLoAdmViaje_CantidadPorUnidadDeMEdida(Integer id_empresa, String no_clie, String no_carga, String no_pedido, String unidad_medida);
+    public HashMap<String, Object> getLoAdmViaje_TipoDeUnidad(Integer id_empresa, String tipo_dist, String unidad_medida, String cantidad);
+    public HashMap<String, Object> getLoAdmViaje_Costos(Integer id_empresa, String tipo_dist, Integer tipo_de_unidad_id, String unidad_medida, String cantidad);
     public HashMap<String, Object> getLoAdmViaje_PrecioVenta(String clase_tarifa_id, String volumen);
+    public ArrayList<HashMap<String, Object>> getDatosRuta_x_NoRuta2(String no_ruta, Integer tipo_de_unidad_id, String tipo_dist, Integer id_empresa, Integer id_sucursal);
     
     
     
@@ -98,7 +102,7 @@ public interface LogInterfaceDao {
     public ArrayList<HashMap<String, Object>> getDatosRuta_x_NoRuta1(String no_ruta, Integer id_empresa, Integer id_sucursal);
     
     public ArrayList<HashMap<String, Object>> getBuscadorRutas(String no_ruta, String nombre_ruta, String poblacion, Integer tipo_unidad, Integer id_empresa, Integer id_sucursal);
-    public ArrayList<HashMap<String, Object>> getDatosRuta_x_NoRuta(String no_ruta, Integer tipo_unidad, Integer id_empresa, Integer id_sucursal);
+    public ArrayList<HashMap<String, Object>> getDatosRuta_x_NoRuta(String no_ruta, Integer tipo_unidad, String tipo_distribucion, Integer id_empresa, Integer id_sucursal);
     public ArrayList<HashMap<String, Object>> getDatosRuta_Poblaciones(Integer id_ruta);
     
     //Obtiene el detalle de un Viaje para el programa de evidencias
@@ -127,7 +131,7 @@ public interface LogInterfaceDao {
     //Metodos para el catalogo de Vehiculo Tipo Unidades
     public ArrayList<HashMap<String, String>> getVehiculoTipoUnidades_Datos(Integer id);
     public ArrayList<HashMap<String, Object>> getVehiculoTipoUnidades_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
-    public ArrayList<HashMap<String, String>> getVehiculoTipoUnidades_UnidadesDeMedida();
+    public ArrayList<HashMap<String, Object>> getUnidadesDeMedida();
     
     //app = 188 Aplicativo Captura de Numero de Facturas(LOG)
     public ArrayList<HashMap<String, Object>> getLogRegCarga_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
