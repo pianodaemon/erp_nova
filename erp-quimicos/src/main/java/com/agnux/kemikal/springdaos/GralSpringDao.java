@@ -2396,17 +2396,17 @@ public class GralSpringDao implements GralInterfaceDao{
         );
         return hm;
     }
-
-
+    
+    
     @Override
     public String getCodigoProductoById(String id_producto) {
-        String sql_to_query = "select archivo_pdf from inv_prod where id="+id_producto+" limit 1";
-
-        System.out.println("Ejacutando Guardar:"+sql_to_query);
-
+        String sql_to_query = "select (case when archivo_pdf is null then '' else archivo_pdf end) as archivo_pdf from inv_prod where id="+id_producto+" limit 1";
+        
+        System.out.println("Buscar archivo PDF:"+sql_to_query);
+        
         String valor_retorno="";
         Map<String, Object> select = this.getJdbcTemplate().queryForMap(sql_to_query);
-
+        
         valor_retorno = select.get("archivo_pdf").toString();
 
         return valor_retorno;

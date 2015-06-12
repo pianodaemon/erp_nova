@@ -63,7 +63,7 @@ public class GralFichaTecnicaController {
     @RequestMapping(value="/startup.agnux")
     public ModelAndView startUp(HttpServletRequest request, HttpServletResponse response, 
             @ModelAttribute("user") UserSessionData user
-            )throws ServletException, IOException {
+        )throws ServletException, IOException {
         
         log.log(Level.INFO, "Ejecutando starUp de {0}", GralFichaTecnicaController.class.getName());
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
@@ -142,8 +142,52 @@ public class GralFichaTecnicaController {
         return jsonretorno;
     }
         
+        
+    //Buscar nombre de archivo para ficha tecnica
+    @RequestMapping(method = RequestMethod.POST, value="/getExisFichaTecnica.json")
+    public @ResponseBody HashMap<String,Object> getMovTiposJson(
+            @RequestParam(value="id", required=true) String id_prod,
+            @RequestParam(value="iu", required=true) String id_user_cod,
+            Model model
+        ) {
+        
+        HashMap<String,Object> jsonretorno = new HashMap<String,Object>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
+        
+        String file_name = this.getGralDao().getCodigoProductoById(id_prod);
+        
+        if(file_name.equals("")){
+            jsonretorno.put("exis", false);
+            jsonretorno.put("msj", "El producto no tiene relaci&oacute;n con algun archivo de ficha t&eacute;cnica.");
+        }else{
+            userDat = this.getHomeDao().getUserById(id_usuario);
+            Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+            String rfc_empresa=this.getGralDao().getRfcEmpresaEmisora(id_empresa);
+            
+            //ruta de archivo de salida
+            String fileout = this.getGralDao().getProdPdfDir()+ rfc_empresa+"/"+  file_name;
+            
+            //System.out.println("Recuperando archivo: " + fileout);
+            File file = new File(fileout);
+            
+            if (file.isFile()){
+                jsonretorno.put("exis", true);
+                jsonretorno.put("msj", "");
+            }else{
+                jsonretorno.put("exis", false);
+                jsonretorno.put("msj", "El archivo de ficha t&eacute;cnica no existe.");
+            }
+        }
+        
+        return jsonretorno;
+    }
     
-    //localhost:8080/com.mycompany_Kemikal_war_1.0-SNAPSHOT/controllers/logasignarutas/getPdfProduccion/1/NQ==/out.json
+        
+        
+        
     //Genera pdf de formulacion de
     @RequestMapping(value = "/getPdfFichaTecnica/{id}/{iu}/out.json", method = RequestMethod.GET ) 
     public ModelAndView getPdfFichaTecnicaJson(
@@ -164,18 +208,20 @@ public class GralFichaTecnicaController {
         String rfc_empresa=this.getGralDao().getRfcEmpresaEmisora(id_empresa);
         
         String file_name = this.getGralDao().getCodigoProductoById(id_ficha);
+        
         //ruta de archivo de salida
         String fileout = this.getGralDao().getProdPdfDir()+ rfc_empresa+"/"+  file_name;
         
         //System.out.println("Recuperando archivo: " + fileout);
         File file = new File(fileout);
-        if (file.exists()){
+        
+        if (file.isFile()){
             int size = (int) file.length(); // Tama√±o del archivo
             BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
             response.setBufferSize(size);
             response.setContentLength(size);
             response.setContentType("text/plain");
-            response.setHeader("Content-Disposition","attachment; filename=\"" + file.getCanonicalPath() +"\"");
+            response.setHeader("Content-Disposition","attachment; filename=\"" + file.getName() +"\"");
             FileCopyUtils.copy(bis, response.getOutputStream());
             response.flushBuffer();
         }
