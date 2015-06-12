@@ -118,110 +118,25 @@ $(function() {
 	
 	
 	
-        //Eventos del grid edicion,borrar!
+	
 	var carga_formaCC00_for_datagrid00 = function(id_to_show, accion_mode){
-            
-            var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
-                                            
-            var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/getPdfFichaTecnica/'+id_to_show+'/'+iu+'/out.json';
-            window.location.href=input_json;
-            
-		/*
-			//aqui  entra para editar un registro
-			var form_to_show = 'formaGralDocs';
-			
-			$('#' + form_to_show).each (function(){this.reset();});
-			var $forma_selected = $('#' + form_to_show).clone();
-			$forma_selected.attr({id : form_to_show + id_to_show});
-			
-			$(this).modalPanel_GralDocs();
-						
-			$('#forma-graldocs-window').css({"margin-left": -300, 	"margin-top": -200});
-                        $forma_selected.prependTo('#forma-graldocs-window');
-                        $forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
-                        
-
-                        //campos de la vista
-                        var $campo_id = $('#forma-graldocs-window').find('input[name=identificador]'); 
-                        //alert($campo_id);
-                        var $codigo001 = $('#forma-graldocs-window').find('input[name=codigo001]');
-                        var $codigo002 = $('#forma-graldocs-window').find('input[name=codigo002]');
-                        var $titulo= $('#forma-graldocs-window').find('input[name=titulo]');
-                        
-                        //alert($titulo.val());
-                        //botones                        
-                        var $cerrar_plugin = $('#forma-graldocs-window').find('#close');
-                        var $cancelar_plugin = $('#forma-graldocs-window').find('#boton_cancelar');
-                        var $submit_actualizar = $('#forma-graldocs-window').find('#submit');
-			
-			if(accion_mode == 'edit'){
-                            
-                            //aqui es el post que envia los datos a getPuestos.json
-				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getCodigo.json';
-				$arreglo = {
-                                    'id':id_to_show,
-                                    'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
-				};
-				
-				var respuestaProcesada = function(data){
-					if ( data['success'] == 'true' ){
-						var remove = function() {$(this).remove();};
-						$('#forma-graldocs-overlay').fadeOut(remove);
-						jAlert("Los datos se han actualizado.", 'Atencion!');
-                                                $get_datos_grid();
-						
-					}
-					else{
-						// Desaparece todas las interrogaciones si es que existen
-						$('#forma-graldocs-window').find('div.interrogacion').css({'display':'none'});
-						
-						var valor = data['success'].split('___');
-						//muestra las interrogaciones
-						for (var element in valor){
-							tmp = data['success'].split('___')[element];
-							longitud = tmp.split(':');
-							if( longitud.length > 1 ){
-								$('#forma-graldocs-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
-								.parent()
-								.css({'display':'block'})
-								.easyTooltip({tooltipId: "easyTooltip2",content: tmp.split(':')[1]});
-							}
-						}
-					}
-				}
-				
-				var options = {dataType :  'json', success : respuestaProcesada};
-				$forma_selected.ajaxForm(options);
-				
-				//aqui se cargan los campos al editar
-				$.post(input_json,$arreglo,function(entry){
-				// aqui van los campos de editar
-                                $campo_id.attr({'value' : entry['Titulo']['0']['id']});
-                                $codigo001.attr({'value' : entry['Codigos']['0']['codigo']});
-                                $codigo002.attr({'value':entry['Codigos']['1']['codigo']});
-                                $titulo.attr({'value':entry['Titulo']['0']['titulo']});
-				 },"json");//termina llamada json
-				
-				
-				
-				//Ligamos el boton cancelar al evento click para eliminar la forma
-				$cancelar_plugin.bind('click',function(){
-					var remove = function() {$(this).remove();};
-					$('#forma-graldocs-overlay').fadeOut(remove);
-				});
-				
-				$cerrar_plugin.bind('click',function(){
-					var remove = function() {$(this).remove();};
-					$('#forma-graldocs-overlay').fadeOut(remove);
-					$buscar.trigger('click');
-				});
-                                
-				
+		var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getExisFichaTecnica.json';
+		$arreglo2 = {'id':id_to_show, 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
+		$.post(input_json2,$arreglo2,function(entry2){
+			if(entry2['exis']){
+				var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
+												
+				var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/getPdfFichaTecnica/'+id_to_show+'/'+iu+'/out.json';
+				window.location.href=input_json;
+			}else{
+				jAlert(entry2['msj'], 'Atencion!');
 			}
-                        */
-		
+		},"json");//termina llamada json
 	}
-               
+	
+	
+	
+	
    $get_datos_grid = function(){
         var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAllProductosFichaTecnica.json';
 		
