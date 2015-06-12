@@ -133,6 +133,8 @@
 					<input type="hidden" name="accion">
 					<input type="hidden" name="usr_aut">
 					<input type="hidden" name="autorizado">
+					<input type="hidden" name="suma_tarimas" value="0">
+					<input type="hidden" name="suma_cajas" value="0">
 					
                     <div id="div_two" title="" class="logadmviaje_div_two">
                         <div class="columns on-2">
@@ -269,7 +271,7 @@
 															   -->
 															   <td width="90">Tipo&nbsp;de&nbsp;Unidad</td>
 															   <td width="90">
-																   <input type="hidden" name="id_tipo_uni">
+																   <input type="hidden" name="id_tipo_uni" value="0">
 																	<INPUT TYPE="text" name="tipo_unidad" style="width:90px;">
 															   </td>
 															   <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_tunidad"></div></td>
