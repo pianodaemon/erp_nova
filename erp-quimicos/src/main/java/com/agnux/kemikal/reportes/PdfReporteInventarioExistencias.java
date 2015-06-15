@@ -5,42 +5,23 @@
 package com.agnux.kemikal.reportes;
 
 
-import com.itextpdf.text.pdf.PdfContentByte;
-import com.itextpdf.text.pdf.PdfPCell;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfPageEventHelper;
-import com.itextpdf.text.pdf.PdfTemplate;
-import com.itextpdf.text.pdf.PdfWriter;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.Phrase;
-import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.ExceptionConverter;
-import com.itextpdf.text.Font;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.pdf.BaseFont;
-import com.itextpdf.text.pdf.ColumnText;
+import com.agnux.common.helpers.StringHelper;
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.*;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import com.agnux.common.helpers.StringHelper;
-import com.itextpdf.text.DocumentException;
-import java.io.FileNotFoundException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  *
  * @author pianodaemon
  */
 public final class PdfReporteInventarioExistencias {
-    
-
-    
     public PdfReporteInventarioExistencias(String fileout, ArrayList<HashMap<String, String>> lista_existencias, String razon_social_empresa, String fecha_actual, Integer tipo) throws DocumentException {	
         int tmp=0;                         
         int primer_registro=0;
@@ -780,7 +761,7 @@ public final class PdfReporteInventarioExistencias {
             doc.add(tabla);
             doc.close();
 	} catch (FileNotFoundException ex) {
-            Logger.getLogger(com.agnux.kemikal.reportes.PdfReporteCobrazaAgente.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(com.agnux.kemikal.reportes.PdfReporteInventarioExistencias.class.getName()).log(Level.SEVERE, null, ex);
 	}
 }
 
