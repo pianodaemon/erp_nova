@@ -426,6 +426,7 @@
 													<li class="topline"><a href="#">Kardex</a></li>
 													-->
 													<li class="topline"><a href="../invrepexis/startup.agnux">Inventario</a></li>
+													<li class="topline"><a href="../invrepexis2/startup.agnux">Inventario Versi&oacute;n 2</a></li>
 													<li class="topline"><a href="../repinvexislote/startup.agnux">Existencias en Lotes</a></li>
 													<li class="topline"><a href="../repinvexispres/startup.agnux">Existencias en Presentaciones</a></li>
 													<li class="topline"><a href="../invetiquetas/startup.agnux">Impresi&oacute;n de Etiquetas</a></li>
