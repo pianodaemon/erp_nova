@@ -273,6 +273,11 @@
 															   <td width="90">
 																   <input type="hidden" name="id_tipo_uni" value="0">
 																	<INPUT TYPE="text" name="tipo_unidad" style="width:90px;">
+																	
+																	
+																	<select name="select_tipo_inidad" style="width:180px;" title="Seleccionar el Tipo de Unidad de Transporte"></select>
+																	
+																	
 															   </td>
 															   <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_tunidad"></div></td>
 														  <tr>
