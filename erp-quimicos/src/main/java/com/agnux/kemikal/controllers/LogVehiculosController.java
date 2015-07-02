@@ -23,12 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -67,14 +62,15 @@ public class LogVehiculosController {
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
         
         infoConstruccionTabla.put("id", "Acciones:90");
-        infoConstruccionTabla.put("folio", "Folio:80");
+        infoConstruccionTabla.put("folio", "Folio:65");
         infoConstruccionTabla.put("marca", "Marca:130");
         infoConstruccionTabla.put("anio", "A&ntilde;o:50");
-        infoConstruccionTabla.put("clase", "Clase:70");
+        infoConstruccionTabla.put("clase", "Clase:60");
         infoConstruccionTabla.put("cap_volumen", "Cap. m&#179;:70");
         infoConstruccionTabla.put("cap_peso", "Cap. Kg.:70");
-        infoConstruccionTabla.put("tipo_caja", "Tipo Caja:150");
-        infoConstruccionTabla.put("transportista", "Transportista:230");
+        infoConstruccionTabla.put("tipo_unidad", "Tipo de Unidad:150");
+        infoConstruccionTabla.put("tipo_caja", "Tipo de Caja:150");
+        infoConstruccionTabla.put("transportista", "Transportista:250");
         
         ModelAndView x = new ModelAndView("logvehiculos/startup", "title", "Cat&aacute;logo de Unidades");
         

@@ -71,10 +71,15 @@ public class LogVehiculoTipoUnidadesController {
      
         infoConstruccionTabla.put("id", "Acciones:90");
         infoConstruccionTabla.put("titulo", "Tipo Unidades:200");
-        infoConstruccionTabla.put("volumen_inicio", "Cap. m&#179; Inicial:100");
-        infoConstruccionTabla.put("volumen_fin", "Cap. m&#179; Final:100");
-        infoConstruccionTabla.put("kg_inicio", "Cap. Kg. Inicial:100");
-        infoConstruccionTabla.put("kg_fin", "Cap. Kg. Final:100");
+        infoConstruccionTabla.put("volumen_inicio", "m&#179; Inicial:90");
+        infoConstruccionTabla.put("volumen_fin", "m&#179; Final:90");
+        infoConstruccionTabla.put("kg_inicio", "Kg. Inicial:90");
+        infoConstruccionTabla.put("kg_fin", "Kg. Final:90");
+        
+        infoConstruccionTabla.put("carton_inicio", "Carton Inicial:90");
+        infoConstruccionTabla.put("carton_fin", "Carton Final:90");
+        infoConstruccionTabla.put("tarima_inicio", "Tarima Inicial:90");
+        infoConstruccionTabla.put("tarima_fin", "Tarima Final:90");
         
         ModelAndView x = new ModelAndView("logvehiculotipounidades/startup", "title", "Cat&aacute;logo de Tipo de Unidades");
         

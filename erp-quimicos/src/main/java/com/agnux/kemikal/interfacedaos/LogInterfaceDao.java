@@ -72,8 +72,8 @@ public interface LogInterfaceDao {
     
     
     public Integer getUserRolAdmin(Integer id_user);
-    public ArrayList<HashMap<String, Object>> getBuscadorUnidades(String no_unidad, String marca, Integer id_empresa, Integer id_sucursal);
-    public ArrayList<HashMap<String, Object>> getDatosUnidadByNoUnidad(String no_unidad, Integer id_empresa, Integer id_sucursal);
+    public ArrayList<HashMap<String, Object>> getBuscadorUnidades(String no_unidad, String marca, Integer asigna_tipo_unidad, Integer tipo_unidad_id, Integer id_empresa, Integer id_sucursal);
+    public ArrayList<HashMap<String, Object>> getDatosUnidadByNoUnidad(String no_unidad, Integer asigna_tipo_unidad, Integer tipo_unidad_id, Integer id_empresa, Integer id_sucursal);
     public ArrayList<HashMap<String, Object>> getSucursales(Integer idEmp);
     public ArrayList<HashMap<String, Object>> getTransportistas(Integer idEmp, Integer idSuc);
     public ArrayList<HashMap<String, Object>> getLogAdmViaje_CargasPendientes(Integer id_empresa, Integer id_suc_user, String no_clie, String fecha_carga, String no_carga, String no_ped, String no_dest, String dest, String poblacion, Integer id_alm, Integer tipo_de_distribucion);
@@ -86,7 +86,7 @@ public interface LogInterfaceDao {
     public ArrayList<HashMap<String, Object>> getLogAdmViaje_TiposDeRechazo(Integer id_empresa);
     public ArrayList<HashMap<String, Object>> getLogAdmViaje_TiposDeDistribucion();
     public HashMap<String, Object> getLoAdmViaje_CantidadPorUnidadDeMEdida(Integer id_empresa, String no_clie, String no_carga, String no_pedido, String unidad_medida);
-    public HashMap<String, Object> getLoAdmViaje_TipoDeUnidad(Integer id_empresa, String tipo_dist, String unidad_medida, String cantidad);
+    public ArrayList<HashMap<String, Object>> getLoAdmViaje_TipoDeUnidad(Integer id_empresa, String unidad_medida, String cantidad);
     public HashMap<String, Object> getLoAdmViaje_Costos(Integer id_empresa, String tipo_dist, Integer tipo_de_unidad_id, String unidad_medida, String cantidad);
     public HashMap<String, Object> getLoAdmViaje_PrecioVenta(String clase_tarifa_id, String volumen);
     public ArrayList<HashMap<String, Object>> getDatosRuta_x_NoRuta2(String no_ruta, Integer tipo_de_unidad_id, String tipo_dist, Integer id_empresa, Integer id_sucursal);
@@ -104,6 +104,7 @@ public interface LogInterfaceDao {
     public ArrayList<HashMap<String, Object>> getBuscadorRutas(String no_ruta, String nombre_ruta, String poblacion, Integer tipo_unidad, Integer id_empresa, Integer id_sucursal);
     public ArrayList<HashMap<String, Object>> getDatosRuta_x_NoRuta(String no_ruta, Integer tipo_unidad, String tipo_distribucion, Integer id_empresa, Integer id_sucursal);
     public ArrayList<HashMap<String, Object>> getDatosRuta_Poblaciones(Integer id_ruta);
+    public ArrayList<HashMap<String, Object>> getDatosRuta_CostosPorPoblacion(String ids_mun, Integer tipo_de_unidad_id, Integer id_empresa, Integer id_sucursal);
     
     //Obtiene el detalle de un Viaje para el programa de evidencias
     public ArrayList<HashMap<String, Object>> getLoEvidencias_DatosGrid(Integer id);
