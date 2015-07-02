@@ -134,7 +134,8 @@
 					<input type="hidden" name="usr_aut">
 					<input type="hidden" name="autorizado">
 					<input type="hidden" name="suma_tarimas" value="0">
-					<input type="hidden" name="suma_cajas" value="0">
+					<input type="hidden" name="suma_cartones" value="0">
+					<input type="hidden" name="tipo_costeo" value="0">
 					
                     <div id="div_two" title="" class="logadmviaje_div_two">
                         <div class="columns on-2">
@@ -162,7 +163,7 @@
                                 <div class="fixed column" class="content_x" >
 									
                                     <div id="tabx-1" class="contenidoPes" style="padding-bottom:0px;!important;">
-                                        <table border="0" style="padding:0px;">
+                                        <table border="0" style="margin:0px; padding:0px;">
 											<tr>
 												<td width="765"></td>
 												<td width="10"></td>
@@ -182,7 +183,7 @@
 															   <td width="70"><input type="text" name="hora" value="" style="width:70px;"></td>
 															   <td width="25"></td>
 															   <td width="50">Sucursal</td>
-															   <td width="180" colspan="2"><select name="select_sucursal" style="width:180px;"></select></td>
+															   <td width="180" colspan="2"><select name="select_sucursal" style="width:182px;"></select></td>
 															   <!--<td width="100"></td>-->
 															   <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_idsuc"></div></td>
 														  <tr>
@@ -272,11 +273,9 @@
 															   <td width="90">Tipo&nbsp;de&nbsp;Unidad</td>
 															   <td width="90">
 																   <input type="hidden" name="id_tipo_uni" value="0">
-																	<INPUT TYPE="text" name="tipo_unidad" style="width:90px;">
+																	<INPUT TYPE="hidden" name="tipo_unidad" style="width:90px;">
 																	
-																	
-																	<select name="select_tipo_inidad" style="width:180px;" title="Seleccionar el Tipo de Unidad de Transporte"></select>
-																	
+																	<select name="select_tipo_unidad" style="width:92px;" title="Seleccionar el Tipo de Unidad de Transporte"></select>
 																	
 															   </td>
 															   <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_tunidad"></div></td>
@@ -353,7 +352,7 @@
 											</tr>
 
 											<tr>
-												<td colspan="3" style="padding:0px;">
+												<td colspan="3">
 													<table border="0">
 														<thead>
 															<tr>
@@ -415,7 +414,7 @@
 															<tr>
 																<td colspan="16">
 																	<div style="overflow:scroll; overflow-x:hidden; overflow-y:auto; width:100%; height:200px; border:1px solid #C1DAD7 !important;">
-																		 <table>
+																		 <table style="margin:0px; padding:0px;">
 																			  <tbody style="background-color:#ffffff;" valign="top" class="grid_partidas">
 																				   
 																			  </tbody>
@@ -458,7 +457,6 @@
 													</table>
 												</td>
 											</tr>
-
                                         </table>
                                     </div>
                                     <!--Termina tabx-1-->
@@ -470,15 +468,14 @@
 										<table border="0" style="margin:0px; padding:0px;">
 											
 											<tr>
-												<td width="515"></td>
+												<td width="847"></td>
 											</tr>
 											
 											<tr>
-												<td width="515" class="header_grid" style="border-top:1px solid #C1DAD7; border-bottom:1px solid #C1DAD7; border-left:1px solid #FFFFFF; border-right: 1px solid #FFFFFF; background-color:#D4D3D3;">&nbsp;&nbsp;&nbsp;Buscar y seleccionar la ruta</td>
+												<td width="847" class="header_grid" style="border-top:1px solid #C1DAD7; border-bottom:1px solid #C1DAD7; border-left:1px solid #FFFFFF; border-right: 1px solid #FFFFFF; background-color:#D4D3D3;">&nbsp;&nbsp;&nbsp;Buscar y seleccionar la ruta</td>
 											</tr>
 											<tr>
-												<td width="515">
-
+												<td width="847">
 													<table border="0" class="gral">
 														<tr><td colspan="11" height="10"></td></tr>
 														<tr>
@@ -494,17 +491,14 @@
 															<td width="50"><a  href="busca_ruta">(Buscar)</a></td>
 														</tr>
 													</table>
-
 												</td>
 											</tr>
 											
 											
 											<tr>
-												<td width="515" height="345" valign="top">
-												
-												
+												<td width="847" valign="top">
 													<!--Datos de la ruta seleccionada-->
-													<table border="0" class="gral">
+													<table border="0" class="gral" style="margin:0px; padding:0px;">
 														<tr>
 															<td width="10"></td>
 															<td width="50">Tipo&nbsp;Ruta</td>
@@ -516,15 +510,32 @@
 															<td width="40">Costo</td>
 															<td width="100"><INPUT TYPE="text" name="costo_ruta" style="width:100px;"></td>
 															<td width="50"></td>
+															<td width="50"></td>
+															<td width="50"></td>
+															<td width="50"></td>
+															<td width="50"></td>
+															<td width="50"></td>
+															<td width="50"></td>
+															<td width="55"></td>
 														</tr>
 														<tr>
 															<td colspan="9"></td>
+															<td width="50"></td>
+															<td width="50"></td>
+															<td width="50"></td>
+															<td width="50"></td>
+															<td width="50"></td>
+															<td width="50"></td>
+															<td width="50"></td>
+															<td width="55"></td>
 														</tr>
+														<!--720-->
+														
 														<tr>
 															<td width="10"></td>
 															<td colspan="8">
 																
-																<table border="0">
+																<table border="0" style="margin:0px; padding:0px;">
 																	<thead>
 																		<tr>
 																			<td height="8"></td>
@@ -539,9 +550,65 @@
 																	<tbody>
 																		<tr>
 																			<td>
-																				<div style="overflow:scroll; overflow-x:hidden; overflow-y:auto; width:100%; height:140px; border:1px solid #C1DAD7 !important;">	
-																					 <table class="gral">
+																				<div style="overflow:scroll; overflow-x:hidden; overflow-y:auto; width:100%; height:110px; border:1px solid #C1DAD7 !important;">	
+																					 <table class="gral" style="margin:0px; padding:0px;">
 																						  <tbody style="background-color:#ffffff;" valign="top" id="grid_poblaciones">
+																							   
+																						  </tbody>
+																					 </table>
+																				</div>
+																			</td>
+																		</tr>
+																	</tbody>
+																</table>
+															</td>
+															<td width="50"></td>
+															<td width="50"></td>
+															<td width="50"></td>
+															<td width="50"></td>
+															<td width="50"></td>
+															<td width="50"></td>
+															<td width="50"></td>
+															<td width="55"></td>
+														</tr>
+														<tr>
+															<td width="10"></td>
+															<td colspan="16">
+																<table border="0" id="tabla_destinos_internedios" style="margin:0px; padding:0px;">
+																	<thead>
+																		<tr>
+																			<td height="9" colspan="9"></td>
+																		</tr>
+																		<tr>
+																			<td class="grid" style="background-color:rgb(180, 180, 180); text-align:left;" colspan="5">Costos&nbsp;por&nbsp;Destino</td>
+																			<!--<td class="grid" style="background-color:rgb(180, 180, 180);" align="center" width="100" colspan="2">Costo&nbsp;Extra</td>-->
+																			<td class="grid" style="background-color:rgb(180, 180, 180);" align="center" width="105" colspan="4">Estad&iacute;a</td>
+																		</tr>
+																		<tr>
+																			<td class="grid" style="background-color:rgb(180, 180, 180);" align="center" width="80">No.&nbsp;Carga</td>
+																			<td class="grid" style="background-color:rgb(180, 180, 180);" align="center" width="80">No.&nbsp;Pedido</td>
+																			<td class="grid" style="background-color:rgb(180, 180, 180);" align="center" width="70">No.&nbsp;Dest.</td>
+																			<td class="grid" style="background-color:rgb(180, 180, 180);" align="center" width="180">Poblaci&oacute;n</td>
+																			<td class="grid" style="background-color:rgb(180, 180, 180);" align="center" width="70">Costo</td>
+																			<!--
+																			<td class="grid" style="background-color:rgb(180, 180, 180);" align="center" width="50">Foraneo</td>
+																			<td class="grid" style="background-color:rgb(180, 180, 180);" align="center" width="50">Local</td>
+																			-->
+																			<td class="grid" style="background-color:rgb(180, 180, 180);" align="center" width="28">#</td>
+																			<td class="grid" style="background-color:rgb(180, 180, 180);" align="center" width="50">D&iacute;as</td>
+																			<td class="grid" style="background-color:rgb(180, 180, 180);" align="center" width="50">Costo</td>
+																			<td class="grid" style="background-color:rgb(180, 180, 180);" align="center" width="65">Importe</td>
+																		</tr>
+																		<tr>
+																			<td height="2" colspan="9"></td>
+																		</tr>
+																	</thead>
+																	<tbody>
+																		<tr>
+																			<td colspan="9">
+																				<div style="overflow:scroll; overflow-x:hidden; overflow-y:auto; width:100%; height:162px; border:1px solid #C1DAD7 !important;">	
+																					 <table class="gral" style="margin:0px; padding:0px;">
+																						  <tbody style="background-color:#ffffff;" valign="top" id="grid_dest_inter">
 																							   
 																						  </tbody>
 																					 </table>
@@ -555,10 +622,9 @@
 														</tr>
 													</table>
 													
-												
-																									
 												</td>
 											</tr>
+											
                                         </table>
 										
 									</div>
@@ -625,7 +691,7 @@
 											
 											
 											<tr>
-												<td width="700" height="345" rowspan="2" valign="top">
+												<td width="700" height="354" rowspan="2" valign="top">
 													<!--Datos de los servicios adicionales-->
 													
 													<table border="0">
@@ -813,7 +879,7 @@
 															</tr>
 															<tr>
 																<td colspan="12">
-																	<div style="overflow:scroll; overflow-x:hidden; overflow-y:auto; width:100%; height:252px; border:1px solid #C1DAD7 !important;">	
+																	<div style="overflow:scroll; overflow-x:hidden; overflow-y:auto; width:100%; height:261px; border:1px solid #C1DAD7 !important;">	
 																		 <table class="gral">
 																			  <tbody style="background-color:#ffffff;" valign="top" id="grid_precios_venta">
 																				   
