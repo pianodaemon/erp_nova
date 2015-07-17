@@ -6,6 +6,7 @@ package com.agnux.kemikal.controllers;
 import com.agnux.kemikal.reportes.PdfReporteRemisiones;
 
 import com.agnux.cfd.v2.Base64Coder;
+import com.agnux.common.helpers.FileHelper;
 import com.agnux.common.helpers.StringHelper;
 import com.agnux.common.obj.ResourceProject;
 import com.agnux.common.obj.UserSessionData;
@@ -277,10 +278,14 @@ public class RepRemisionController {
         response.setBufferSize(size);
         response.setContentLength(size);
         response.setContentType("application/pdf");
-        response.setHeader("Content-Disposition","attachment; filename=\"" + file.getCanonicalPath() +"\"");
+        response.setHeader("Content-Disposition","attachment; filename=\"" + file.getName() +"\"");
         FileCopyUtils.copy(bis, response.getOutputStream());  	
         response.flushBuffer();
-        
+        try {
+            FileHelper.delete(fileout);
+        } catch (Exception ex) {
+            Logger.getLogger(RepRemisionController.class.getName()).log(Level.SEVERE, null, ex);
+        }
         return null;
     } 
     

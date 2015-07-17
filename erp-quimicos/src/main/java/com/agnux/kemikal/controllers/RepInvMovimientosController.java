@@ -3,6 +3,7 @@
  */
 package com.agnux.kemikal.controllers;
 import com.agnux.cfd.v2.Base64Coder;
+import com.agnux.common.helpers.FileHelper;
 import com.agnux.common.obj.ResourceProject;
 import com.agnux.common.obj.UserSessionData;
 import com.agnux.kemikal.interfacedaos.GralInterfaceDao;
@@ -308,7 +309,11 @@ public class RepInvMovimientosController {
         response.setHeader("Content-Disposition","attachment; filename=\"" + file.getName() +"\"");
         FileCopyUtils.copy(bis, response.getOutputStream());
         response.flushBuffer();
-
+        try {
+            FileHelper.delete(file_name);
+        } catch (Exception ex) {
+            Logger.getLogger(RepInvMovimientosController.class.getName()).log(Level.SEVERE, null, ex);
+        }
         return null;
     }
 }

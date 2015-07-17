@@ -1796,6 +1796,119 @@ public class LogSpringDao implements LogInterfaceDao{
     }
     
     
+    
+    
+    //Carga la tabla temporal con los datos del Documento
+    //Este metodo se utiliza en la carga de Archivo para Entradas al Almacen
+    @Override
+    public HashMap<String, String> getInsertLogEntradasAlmacenTmp(String data_string) {
+        HashMap<String, String> retorno = new HashMap<String, String>();
+        
+        String msj="";
+        int row=0;
+        String insertSql = "";
+        boolean cargar_registro=false;
+        
+        String param[] = data_string.split("___");
+        
+        
+        //no_carga
+        param[4] = (param[4]==null)?"":param[4];
+        //no_pedido
+        param[5] = (param[5]==null)?"":param[5];
+        //tipo_entrega
+        param[6] = (param[6]==null)?"":param[6];
+        //fecha_entrega
+        if(param[7].trim().equals("") || param[7]==null){
+            param[7]="2999-12-31";
+        }
+        
+        //no_cliente
+        param[8] = (param[8]==null)?"0":param[8];
+        //nombre_cliente
+        param[9] = (param[9]==null)?"":param[9];
+        //poblacion_cliente
+        param[10] = (param[10]==null)?"":param[10];
+        
+        //codigo_producto
+        if(param[11].trim().equals("")){
+            retorno.put("producto", "false___El producto no tiene c&oacute;digo. Revise el archivo.");
+            cargar_registro=false;
+        }else{
+            retorno.put("producto", "true___ .");
+            cargar_registro=true;
+        }
+        
+        //descripcion_producto
+        param[12] = (param[12]==null)?"":param[12];
+        
+        //Cantidad
+        if(param[13].trim().equals("") || param[13]==null){
+            param[13]="0";
+        }
+        
+        //unidad_medida
+        param[14] = (param[14]==null)?"":param[14];
+        
+        //Peso
+        if(param[15].trim().equals("") || param[15]==null){
+            param[15]="0";
+        }
+        
+        //Volumen
+        if(param[16].trim().equals("") || param[16]==null){
+            param[16]="0";
+        }
+        
+        //no_factura
+        param[17] = (param[17]==null)?"":param[17];
+        //monto_factura
+        param[18] = (param[18]==null)?"":param[18];
+        //fecha
+        param[19] = (param[19]==null)?"":param[19];
+        
+        //id_cliente
+        if(param[20].trim().equals("") || param[20]==null){
+            param[20]="0";
+        }
+        
+        //System.out.println("id_emp="+param[0]+"|id_suc="+param[1]+"|id_usuario="+param[2]+"|almacen="+param[3]+"|no_carga="+param[4]+"|no_pedido="+param[5]+"|tipo_entrega="+param[6]+"|fecha_entrega="+param[7]+"|no_cliente="+param[8]+"|nombre_cliente="+param[9]+"|poblacion_cliente="+param[10]+"|codigo_producto="+param[11]+"|descripcion_producto="+param[12]+"|Cantidad="+param[13]+"|unidad_medida="+param[14]+"|Peso="+param[15]+"|Volumen="+param[16]+"|no_factura="+param[17]+"|monto_factura="+param[18]+"|fecha="+param[19]+"|id_cliente="+param[20]);
+        
+        
+        if(cargar_registro){
+            try{
+                insertSql = "";
+                
+                //Cargar en la tabla INV_EXI_TMP
+                insertSql = "INSERT INTO log_carga_doc_tmp(gral_emp_id,gral_suc_id,user_id,alm_id,no_carga,no_pedido,tipo_entrega,fecha_entrega, cliente_id, no_dest,nombre_dest,poblacion_dest,codigo_prod,descripcion_prod,cantidad,unidad,peso,volumen,no_fac,monto_fac,fecha_carga,estatus) "
+                        + "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,true);";
+                //System.out.println("insertSql: "+insertSql);
+                
+                // define query arguments
+                Object[] params = new Object[] { new Integer(param[0]),new Integer(param[1]),new Integer(param[2]),new Integer(param[3]),param[4],param[5],param[6],param[7], new Integer(param[20]),param[8],param[9],param[10],param[11],param[12],param[13],param[14],param[15],param[16],param[17],param[18],param[19]};
+                
+                // define SQL types of the arguments
+                int[] types = new int[] {Types.SMALLINT,Types.SMALLINT,Types.SMALLINT,Types.SMALLINT,Types.VARCHAR,Types.VARCHAR,Types.VARCHAR,Types.DATE, Types.INTEGER, Types.VARCHAR,Types.VARCHAR,Types.VARCHAR,Types.VARCHAR,Types.VARCHAR,Types.VARCHAR,Types.VARCHAR,Types.VARCHAR,Types.VARCHAR,Types.VARCHAR,Types.VARCHAR,Types.DATE};
+                
+                // execute insert query to insert the data
+                // return number of row / rows processed by the executed query
+                row = this.getJdbcTemplate().update(insertSql, params, types);
+                
+                msj = "true___ .";
+                //System.out.println(row + " row inserted.");
+            } catch (Exception e) {
+                msj =  "false___No se cargo el registro debido a errores internos["+e.getMessage()+"]. Intente nuevamente.";
+            }
+        }else{
+            msj = "false___No se cargo el registro.";
+        }
+        
+        retorno.put("cargado", msj);
+        return retorno;
+    }
+    
+    
+    
     //Verifica que el documento con  las cargas no ha sido dado de alta anteriormente
     @Override
     public int getVerificarDocumento(Integer id_emp, Integer id_clie, String no_carga) {
@@ -4040,7 +4153,8 @@ public class LogSpringDao implements LogInterfaceDao{
             + "cxc_clie.razon_social as nombre_clie,"
             + "log_doc_carga.observaciones as observ,"
             + "log_doc_carga.log_status_id as stat_cga_id,"
-            + "(case when log_status.id is null then '' else log_status.titulo end) as status_cga "
+            + "(case when log_status.id is null then '' else log_status.titulo end) as status_cga,"
+            + "log_doc_carga.afecta_inv "
         + "from log_doc_carga "
         + "join log_doc on log_doc.id=log_doc_carga.log_doc_id  "
         + "join cxc_clie on cxc_clie.id=log_doc.cxc_clie_id  "
@@ -4064,6 +4178,7 @@ public class LogSpringDao implements LogInterfaceDao{
                     row.put("observ",rs.getString("observ"));
                     row.put("stat_cga_id",rs.getInt("stat_cga_id"));
                     row.put("status_cga",rs.getString("status_cga"));
+                    row.put("afecta_inv",rs.getBoolean("afecta_inv"));
                     return row;
                 }
             }
@@ -4328,6 +4443,7 @@ public class LogSpringDao implements LogInterfaceDao{
                     row.put("alm_id_rechazo",rs.getInt("inv_alm_id_rechazo"));
                     row.put("asignar_tipo_unidad",rs.getInt("asignar_tipo_unidad"));
                     row.put("tipo_costeo",rs.getInt("tipo_costeo"));
+                    row.put("afecta_inv_reg_carga",rs.getBoolean("afecta_inv_reg_carga"));
                     return row;
                 }
             }
@@ -5456,6 +5572,247 @@ public class LogSpringDao implements LogInterfaceDao{
             }
         );
         return hm_rtipo;
+    }
+    
+    
+    
+    
+    //Metodo que obtiene datos para el grid del Programa de Entradas al Almacen
+    @Override
+    public ArrayList<HashMap<String, Object>> getLogEntradaAlmacen_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
+        String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
+        
+	String sql_to_query = ""
+        + "SELECT "
+            + "log_entrada.id, "
+            + "log_entrada.folio, "
+            + "to_char(log_entrada.fecha::timestamp with time zone, 'dd/mm/yyyy') as fecha,  "
+            + "cxc_clie.razon_social as cliente, "
+            + "inv_alm.titulo as almacen "
+        + "FROM log_entrada "
+        + "JOIN cxc_clie ON cxc_clie.id=log_entrada.cxc_clie_id "
+        + "JOIN inv_alm ON inv_alm.id=log_entrada.inv_alm_id " 
+        +"JOIN ("+sql_busqueda+") AS sbt on sbt.id=log_entrada.id "
+        +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
+        
+        //System.out.println("Paginado Viajes: "+sql_to_query);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query, 
+            new Object[]{data_string, new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("folio",rs.getString("folio"));
+                    row.put("fecha",rs.getString("fecha"));
+                    row.put("cliente",rs.getString("cliente"));
+                    row.put("almacen",rs.getString("almacen"));
+                    return row;
+                }
+            }
+        );
+        return hm; 
+    }
+    
+    
+    
+    //Obtiene datos de la Entrada al Almacen
+    @Override
+    public ArrayList<HashMap<String, Object>> getLogEntradaAlmacen_Datos(Integer id) {
+        String sql_to_query = ""
+        + "select "
+            + "log_entrada.id,"
+            + "log_entrada.folio, "
+            + "log_entrada.observaciones, "
+            + "to_char(log_entrada.fecha::timestamp with time zone, 'yyyy-mm-dd') as fecha, "
+            + "log_entrada.inv_alm_id as alm_id, "
+            + "cxc_clie.id as clie_id, "
+            + "cxc_clie.numero_control as no_clie, "
+            + "cxc_clie.razon_social as nombre_clie,"
+            + "log_entrada.gral_suc_id as suc_id,"
+            + "log_entrada.log_tipo_distribucion_id as tipo_viaje_id, "
+            + "log_entrada.log_vehiculo_id as vehiculo_id, "
+            + "log_entrada.log_vehiculo_tipo_id as vehiculo_tipo_id, "
+            + "(case when log_vehiculos.id is null then '' else log_vehiculos.folio end) as no_unidad,"
+            + "(case when log_vehiculo_clase.id is null then '' else log_vehiculo_clase.titulo end) as clase,"
+            + "(case when log_vehiculo_marca.id is null then '' else log_vehiculo_marca.titulo end) as marca,"
+            + "log_entrada.no_economico, "
+            + "log_entrada.placas, "
+            + "log_entrada.log_ruta_id as ruta_id, "
+            + "log_entrada.costo_ruta, "
+            + "(case when log_ruta.id is null then '' else log_ruta.folio end) as no_ruta,"
+            + "(case when log_ruta.id is null then '' else log_ruta.titulo end) as titulo_ruta,"
+            + "(case when log_ruta.id is null then 0 else log_ruta.km end) as km_ruta,"
+            + "log_entrada.tipo_costeo "
+        + "from log_entrada "
+        + "join cxc_clie on cxc_clie.id=log_entrada.cxc_clie_id  "
+        + "left join log_vehiculos on log_vehiculos.id=log_entrada.log_vehiculo_id  "
+        + "left join log_vehiculo_clase on log_vehiculo_clase.id=log_entrada.log_vehiculo_clase_id  "
+        + "left join log_vehiculo_marca on log_vehiculo_marca.id=log_entrada.log_vehiculo_marca_id  "
+        + "left join log_ruta on log_ruta.id=log_entrada.log_ruta_id  "
+        + "where log_entrada.id=?";
+        
+        //System.out.println("id="+id);
+        //System.out.println("sql_to_query="+sql_to_query);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{ new Integer(id)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("folio",rs.getString("folio"));
+                    row.put("observaciones",rs.getString("observaciones"));
+                    row.put("fecha",rs.getString("fecha"));
+                    row.put("alm_id",rs.getInt("alm_id"));
+                    row.put("clie_id",rs.getInt("clie_id"));
+                    row.put("no_clie",rs.getString("no_clie"));
+                    row.put("nombre_clie",rs.getString("nombre_clie"));
+                    row.put("suc_id",rs.getInt("suc_id"));
+                    row.put("tipo_viaje_id",rs.getInt("tipo_viaje_id"));
+                    row.put("vehiculo_id",rs.getInt("vehiculo_id"));
+                    row.put("vehiculo_tipo_id",rs.getInt("vehiculo_tipo_id"));
+                    row.put("no_unidad",rs.getString("no_unidad"));
+                    row.put("clase",rs.getString("clase"));
+                    row.put("marca",rs.getString("marca"));
+                    row.put("no_economico",rs.getString("no_economico"));
+                    row.put("placas",rs.getString("placas"));
+                    row.put("ruta_id",rs.getInt("ruta_id"));
+                    row.put("costo_ruta",StringHelper.roundDouble(rs.getString("costo_ruta"),2));
+                    row.put("no_ruta",rs.getString("no_ruta"));
+                    row.put("titulo_ruta",rs.getString("titulo_ruta"));
+                    row.put("km_ruta",rs.getString("km_ruta"));
+                    row.put("tipo_costeo",rs.getInt("tipo_costeo"));
+          
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    //Obtener el detalle de la entrada
+    @Override
+    public ArrayList<HashMap<String, Object>> getLogEntradaAlmacen_Detalle(Integer id) {
+	String sql_query = ""
+        + "select "
+            + "log_entrada_det.id,"
+            + "inv_prod.sku as codigo,"
+            + "inv_prod.descripcion,"
+            + "(case when inv_prod_unidades.id is null then '' else inv_prod_unidades.titulo end) as unidad,"
+            + "cantidad,"
+            + "peso,"
+            + "volumen "
+        + "from log_entrada_det  "
+        + "join inv_prod on inv_prod.id=log_entrada_det.inv_prod_id "
+        + "left join inv_prod_unidades on inv_prod_unidades.id=log_entrada_det.inv_prod_unidad_id  "
+        + "where log_entrada_det.log_entrada_id=?;";
+        
+        //System.out.println("identificador: "+id);
+        //System.out.println("sql_query: "+sql_query);
+        
+        ArrayList<HashMap<String, Object>> hm_rtipo = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{new Integer(id)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("codigo",rs.getString("codigo"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("unidad",rs.getString("unidad"));
+                    row.put("cantidad",StringHelper.roundDouble(rs.getString("cantidad"),2));
+                    row.put("peso",StringHelper.roundDouble(rs.getString("peso"),2));
+                    row.put("volumen",StringHelper.roundDouble(rs.getString("volumen"),2));
+                    
+                    return row;
+                }
+            }
+        );
+        return hm_rtipo;
+    }
+    
+    
+    
+    //Obtiene datos de la Entrada al Almacen
+    @Override
+    public HashMap<String, Object> getLogEntradaAlmacen_DatosPdf(Integer id) {
+        String sql_to_query = ""
+        + "select "
+            + "log_entrada.folio, "
+            + "log_entrada.observaciones, "
+            + "to_char(log_entrada.fecha::timestamp with time zone, 'dd/mm/yyyy') as fecha, "
+            + "gral_suc.titulo as sucursal,"
+            + "inv_alm.titulo as almacen,"
+            + "cxc_clie.numero_control as no_clie, "
+            + "cxc_clie.razon_social as nombre_clie,"
+            + "log_tipo_distribucion.titulo as tipo_viaje, "
+            + "log_vehiculo_tipo.titulo as tipo_unidad, "
+            + "(case when log_vehiculos.id is null then '' else log_vehiculos.folio end) as no_unidad,"
+            + "(case when log_vehiculo_clase.id is null then '' else log_vehiculo_clase.titulo end) as clase,"
+                + "(case when log_vehiculo_tipo_rodada.id is null then '' else log_vehiculo_tipo_rodada.titulo end) as tipo_rodada,"
+            + "(case when log_vehiculo_marca.id is null then '' else log_vehiculo_marca.titulo end) as marca,"
+            + "log_entrada.no_economico, "
+            + "log_entrada.placas, "
+            + "log_entrada.costo_ruta, "
+            + "(case when log_ruta.id is null then '' else log_ruta.folio end) as no_ruta,"
+            + "(case when log_ruta.id is null then '' else log_ruta.titulo end) as titulo_ruta,"
+            + "(case when log_ruta.id is null then 0 else log_ruta.km end) as km_ruta,"
+            + "(case when cxp_prov.id is null then '' else cxp_prov.razon_social end) as transportista,"
+            + "(case when log_choferes.id is null then '' else log_choferes.nombre||' '||log_choferes.apellido_paterno||' '||log_choferes.apellido_materno end) as chofer "
+        + "from log_entrada "
+        + "join cxc_clie on cxc_clie.id=log_entrada.cxc_clie_id "
+        + "join gral_suc on gral_suc.id=log_entrada.gral_suc_id "
+        + "join inv_alm on inv_alm.id=log_entrada.inv_alm_id "
+        + "join log_tipo_distribucion on log_tipo_distribucion.id=log_entrada.log_tipo_distribucion_id "
+        + "join log_vehiculo_tipo on log_vehiculo_tipo.id=log_entrada.log_vehiculo_tipo_id "
+        + "left join log_vehiculos on log_vehiculos.id=log_entrada.log_vehiculo_id  "
+        + "left join log_vehiculo_clase on log_vehiculo_clase.id=log_entrada.log_vehiculo_clase_id "
+        + "left join log_vehiculo_marca on log_vehiculo_marca.id=log_entrada.log_vehiculo_marca_id "
+        + "left join log_vehiculo_tipo_rodada on log_vehiculo_tipo_rodada.id=log_vehiculos.log_vehiculo_tipo_rodada_id "
+        + "left join log_ruta on log_ruta.id=log_entrada.log_ruta_id  "
+        + "left join cxp_prov on cxp_prov.id=log_vehiculos.cxp_prov_id  "
+        + "left join log_choferes on log_choferes.id=log_vehiculos.log_chofer_id  "
+        + "where log_entrada.id=?";
+                
+        //System.out.println("id="+id);
+        //System.out.println("sql_to_query="+sql_to_query);
+        
+        HashMap<String, Object> hm_return = (HashMap<String, Object>) this.jdbcTemplate.queryForObject(
+            sql_to_query, 
+            new Object[]{new Integer(id)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("folio",rs.getString("folio"));
+                    row.put("observaciones",rs.getString("observaciones"));
+                    row.put("fecha",rs.getString("fecha"));
+                    row.put("sucursal",rs.getString("sucursal"));
+                    row.put("almacen",rs.getString("almacen"));
+                    row.put("no_clie",rs.getString("no_clie"));
+                    row.put("nombre_clie",rs.getString("nombre_clie"));
+                    row.put("tipo_viaje",rs.getString("tipo_viaje"));
+                    row.put("tipo_unidad",rs.getString("tipo_unidad"));
+                    row.put("no_unidad",rs.getString("no_unidad"));
+                    row.put("clase",rs.getString("clase"));
+                    row.put("tipo_rodada",rs.getString("tipo_rodada"));
+                    row.put("marca",rs.getString("marca"));
+                    row.put("no_economico",rs.getString("no_economico"));
+                    row.put("placas",rs.getString("placas"));
+                    row.put("costo_ruta",StringHelper.roundDouble(rs.getString("costo_ruta"),2));
+                    row.put("no_ruta",rs.getString("no_ruta"));
+                    row.put("titulo_ruta",rs.getString("titulo_ruta"));
+                    row.put("km_ruta",rs.getString("km_ruta"));
+                    
+                    row.put("transportista",rs.getString("transportista"));
+                    row.put("chofer",rs.getString("chofer"));
+          
+                    return row;
+                }
+            }
+        );
+        
+        return hm_return;
     }
     
     

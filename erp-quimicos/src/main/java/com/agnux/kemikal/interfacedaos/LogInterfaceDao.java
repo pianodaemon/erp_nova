@@ -68,7 +68,8 @@ public interface LogInterfaceDao {
     public HashMap<String, String> getInsertLogCargaDocTmp(String data_string);
     public String getUpdateDocInvExi(String campos_data, String extra_data_array);
     public int getVerificarDocumento(Integer id_emp, Integer id_clie, String no_carga);
-    
+    //Para carga de erchivo en entradas al almacen
+    public HashMap<String, String> getInsertLogEntradasAlmacenTmp(String data_string);
     
     
     public Integer getUserRolAdmin(Integer id_user);
@@ -181,4 +182,10 @@ public interface LogInterfaceDao {
     public ArrayList<HashMap<String, Object>> getTarifarioVentaPorRango_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
     public ArrayList<HashMap<String, Object>> getTarifarioVentaPorRango_Datos(Integer id);
     public ArrayList<HashMap<String, Object>> getTarifarioVentaPorRango_DatosGrid(Integer id);
+    
+    //Metodos para programa de Entradas al Almacen
+    public ArrayList<HashMap<String, Object>> getLogEntradaAlmacen_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
+    public ArrayList<HashMap<String, Object>> getLogEntradaAlmacen_Datos(Integer id);
+    public ArrayList<HashMap<String, Object>> getLogEntradaAlmacen_Detalle(Integer id);
+    public HashMap<String, Object> getLogEntradaAlmacen_DatosPdf(Integer id);
 }

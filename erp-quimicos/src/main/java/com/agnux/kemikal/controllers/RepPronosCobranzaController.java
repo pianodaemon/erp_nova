@@ -8,6 +8,7 @@ package com.agnux.kemikal.controllers;
  * @author valentin santos s.
  */
 import com.agnux.cfd.v2.Base64Coder;
+import com.agnux.common.helpers.FileHelper;
 import com.agnux.common.obj.ResourceProject;
 import com.agnux.common.obj.UserSessionData;
 import com.agnux.kemikal.interfacedaos.CxcInterfaceDao;
@@ -208,10 +209,14 @@ public class RepPronosCobranzaController {
         response.setBufferSize(size);
         response.setContentLength(size);
         response.setContentType("application/pdf");
-        response.setHeader("Content-Disposition","attachment; filename=\"" + file.getCanonicalPath() +"\"");
+        response.setHeader("Content-Disposition","attachment; filename=\"" + file.getName() +"\"");
         FileCopyUtils.copy(bis, response.getOutputStream());          
         response.flushBuffer();
-        
+        try {
+            FileHelper.delete(fileout);
+        } catch (Exception ex) {
+            Logger.getLogger(RepPronosCobranzaController.class.getName()).log(Level.SEVERE, null, ex);
+        }
         return null;
         
     }

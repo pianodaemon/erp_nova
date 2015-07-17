@@ -233,7 +233,7 @@ public class RepVentasAnualesClienteController {
         response.setBufferSize(size);
         response.setContentLength(size);
         response.setContentType("application/xls");
-        response.setHeader("Content-Disposition","attachment; filename=\"" + file.getCanonicalPath() +"\"");
+        response.setHeader("Content-Disposition","attachment; filename=\"" + file.getName() +"\"");
         FileCopyUtils.copy(bis, response.getOutputStream());  	
         response.flushBuffer();
         
