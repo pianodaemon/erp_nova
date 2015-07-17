@@ -237,6 +237,7 @@
 													<li class="topline"><a href="#">Captura de Movimiento</a></li>
 													-->
 													<li class="topline"><a href="../provfacturas/startup.agnux">Facturas de Proveedores</a></li>
+													<li class="topline"><a href="../cxpfacturas2/startup.agnux">Facturas de Proveedores 2</a></li>
 													<li class="topline"><a href="../proveedorespagos/startup.agnux">Pagos</a></li>
 													<li class="topline"><a href="../provnotascredito/startup.agnux">Nota de Cr&eacute;dito</a></li>
 													<li>
@@ -500,6 +501,9 @@
 													<li><a href="../logtarifario/startup.agnux">Tarifario por ruta</a></li>
 													<li><a href="../logtarifarioventa/startup.agnux">Tarifario de Venta por Poblaci&oacute;n</a></li>
 													<li><a href="../logtarifarioventaxrango/startup.agnux">Tarifario de Venta por Rango</a></li>
+													
+													<li><a href="../logtarifariocostos/startup.agnux">Tarifario de Costos</a></li>
+													
 												</ul>
 											</li>
 											
@@ -513,6 +517,7 @@
 													<li class="topline"><a href="../logevidencias/startup.agnux">Evidencias</a></li>
 													<li class="topline"><a href="../logcargadoc/startup.agnux">Carga de Documentos</a></li>
 													<li class="topline"><a href="../logregcarga/startup.agnux">Registro de Cargas</a></li>
+													<li class="topline"><a href="../logentradaalmacen/startup.agnux">Entradas al Almacen</a></li>
 												</ul>
 											</li>
 											
