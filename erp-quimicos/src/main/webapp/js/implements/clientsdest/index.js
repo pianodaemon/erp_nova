@@ -295,7 +295,7 @@ $(function() {
 		if($nocliente.val().trim() != ''){
 			//asignamos el numero de control al campo de busqueda
 			$cadena_buscar.val($nocliente.val());
-			if(razon_social_cliente == ''){
+			if($razoncliente.val().trim() == ''){
 				html+='<option value="1" selected="yes">No. de control</option>';
 			}else{
 				html+='<option value="1">No. de control</option>';
