@@ -152,7 +152,8 @@ xmlns:beans="http://www.springframework.org/schema/beans"
         ROLE_CXC_IEPS_COBRADO,
         ROLE_CXC_IEPS_COBRADO_X_CLIENTE,
         ROLE_CXP_IEPS_PAGADO,
-        ROLE_CXP_REP_PAGO_DIARIO" />
+        ROLE_CXP_REP_PAGO_DIARIO,
+        ROLE_IMPRESION_ETIQUETA_SALIDA" />
         
         <intercept-url pattern="/controllers/productos/startup.agnux" access="ROLE_ADMIN,ROLE_ALTA_PRODUCTO" />
         <intercept-url pattern="/controllers/proveedores/startup.agnux" access="ROLE_ADMIN,ROLE_ALTA_PROVEEDOR" />
@@ -209,7 +210,7 @@ xmlns:beans="http://www.springframework.org/schema/beans"
         <intercept-url pattern="/controllers/cxcrepiepscobrado/startup.agnux" access="ROLE_ADMIN,ROLE_CXC_IEPS_COBRADO" />
         <intercept-url pattern="/controllers/cxcrepiepsxcliente/startup.agnux" access="ROLE_ADMIN,ROLE_CXC_IEPS_COBRADO_X_CLIENTE" />
         <intercept-url pattern="/controllers/cxprepiepspagado/startup.agnux" access="ROLE_ADMIN,ROLE_CXP_IEPS_PAGADO" />
-        
+        <intercept-url pattern="/controllers/invordensalidaetiqueta/startup.agnux" access="ROLE_ADMIN,ROLE_IMPRESION_ETIQUETA_SALIDA" />
         
         <intercept-url pattern="/controllers/centrocostos/startup.agnux" access="ROLE_ADMIN,ROLE_CAT_CENTRO_COSTO" />
         <intercept-url pattern="/controllers/tipopolizas/startup.agnux" access="ROLE_ADMIN,ROLE_CAT_TIPO_POLIZA" />
