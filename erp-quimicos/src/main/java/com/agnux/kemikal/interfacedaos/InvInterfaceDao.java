@@ -359,4 +359,10 @@ public interface InvInterfaceDao {
     public ArrayList<HashMap<String, String>> getInvOrdPreSuben2_Detalle(String id);
     public ArrayList<HashMap<String, String>> getInvOrdPreSuben2_DatosFormula(Integer id_detalle);
     public ArrayList<HashMap<String, String>> getInvOrdSubensamble2_DatosFormula(String id);
+    
+    //APLICATIVO DE ORDENES DE SALIDA CON IMPRESION DE ETIQUETAS
+    public ArrayList<HashMap<String, Object>> getInvOrdenSalidaEtiqueta_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
+    public ArrayList<HashMap<String, Object>> getInvOrdenSalidaEtiqueta_Datos(Integer id_factura);
+    public ArrayList<HashMap<String, Object>> getInvOrdenSalidaEtiqueta_DatosGrid(Integer id_factura, boolean seleccionado);
+    public ArrayList<HashMap<String, Object>> AgentesDeVentas(Integer id_empresa, Integer id_sucursal);
 }

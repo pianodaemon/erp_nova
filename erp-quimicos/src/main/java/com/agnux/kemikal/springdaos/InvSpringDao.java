@@ -8915,4 +8915,249 @@ public class InvSpringDao implements InvInterfaceDao{
 
     
     
+    @Override
+    public ArrayList<HashMap<String, Object>> getInvOrdenSalidaEtiqueta_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
+        
+        String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
+        
+	String sql_to_query = "SELECT DISTINCT "
+                                    +"fac_docs.id, "
+                                    +"fac_docs.serie_folio, "
+                                    +"cxc_clie.razon_social as cliente, "
+                                    +"fac_docs.total, "
+                                    +"gral_mon.descripcion_abr AS moneda, "
+                                    +"to_char(fac_docs.momento_creacion,'dd/mm/yyyy') AS fecha_facturacion, "
+                                    +"to_char(fac_docs.fecha_vencimiento,'dd/mm/yyyy') AS fecha_venc, "
+                                    +"(CASE WHEN fac_docs.folio_pedido IS NULL THEN '' ELSE fac_docs.folio_pedido END ) AS folio_pedido, "
+                                    +"(CASE WHEN fac_docs.orden_compra IS NULL THEN '' ELSE fac_docs.orden_compra END) AS oc, "
+                                    +"(CASE WHEN fac_docs.cancelado=FALSE THEN (CASE WHEN erp_h_facturas.pagado=TRUE THEN 'PAGADO' ELSE '' END) ELSE 'CANCELADO' END) AS estado, "
+                                    +"(CASE WHEN fac_docs.cancelado=FALSE THEN (CASE WHEN erp_h_facturas.pagado=TRUE THEN to_char(fecha_ultimo_pago::timestamp with time zone,'dd/mm/yyyy') ELSE '' END) ELSE '' END) AS fecha_pago "
+                            +"FROM fac_docs  "
+                            +"JOIN erp_proceso on erp_proceso.id=fac_docs.proceso_id  "
+                            +"LEFT JOIN cxc_clie on cxc_clie.id=fac_docs.cxc_clie_id  "
+                            +"LEFT JOIN gral_mon ON gral_mon.id=fac_docs.moneda_id  "
+                            +"LEFT JOIN erp_h_facturas ON erp_h_facturas.serie_folio=fac_docs.serie_folio "
+        +"JOIN ("+sql_busqueda+") as subt on subt.id=fac_docs.id "
+        +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
+        
+        //System.out.println("Busqueda GetPage: "+sql_to_query);
+        //System.out.println("cliente: "+cliente+ "fecha_inicial:"+fecha_inicial+" fecha_final: "+fecha_final+ " offset:"+offset+ " pageSize: "+pageSize+" orderBy:"+orderBy+" asc:"+asc);
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query, 
+            new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("serie_folio",rs.getString("serie_folio"));
+                    row.put("cliente",rs.getString("cliente"));
+                    row.put("total",StringHelper.AgregaComas(StringHelper.roundDouble(rs.getString("total"),2)));
+                    row.put("moneda",rs.getString("moneda"));
+                    row.put("fecha_facturacion",rs.getString("fecha_facturacion"));
+                    row.put("fecha_venc",rs.getString("fecha_venc"));
+                    row.put("folio_pedido",rs.getString("folio_pedido"));
+                    row.put("oc",rs.getString("oc"));
+                    row.put("estado",rs.getString("estado"));
+                    row.put("fecha_pago",rs.getString("fecha_pago"));
+                    
+                    if(rs.getString("estado").toUpperCase().equals("CANCELADO")){
+                        row.put("accion","<td><INPUT TYPE=\"button\" classs=\"cancel\" id=\"cancel_"+rs.getInt("id")+"\" value=\"Cancelar\" disabled=\"true\" style=\"width:65px; height:15px; font-weight:bold;\"></td>");
+                    }else{
+                        row.put("accion","<td><INPUT TYPE=\"button\" classs=\"cancel\" id=\"cancel_"+rs.getInt("id")+"\" value=\"Cancelar\" style=\"width:65px; height:15px; font-weight:bold;\"></td>");
+                    }
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    @Override
+    public ArrayList<HashMap<String, Object>> AgentesDeVentas(Integer id_empresa, Integer id_sucursal) {
+        //String sql_to_query = "SELECT id,nombre_pila||' '||apellido_paterno||' '||apellido_materno AS nombre_vendedor FROM erp_empleados WHERE borrado_logico=FALSE AND vendedor=TRUE AND empresa_id="+id_empresa+" AND sucursal_id="+id_sucursal;
+        
+        String sql_to_query = "SELECT cxc_agen.id,  "
+                                        +"cxc_agen.nombre AS nombre_vendedor "
+                                +"FROM cxc_agen "
+                                +"JOIN gral_usr_suc ON gral_usr_suc.gral_usr_id=cxc_agen.gral_usr_id "
+                                +"JOIN gral_suc ON gral_suc.id=gral_usr_suc.gral_suc_id "
+                                +"WHERE gral_suc.empresa_id="+id_empresa+" ORDER BY cxc_agen.id;";
+        
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        ArrayList<HashMap<String, Object>> hm_vendedor = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getString("id")  );
+                    row.put("nombre_vendedor",rs.getString("nombre_vendedor"));
+                    return row;
+                }
+            }
+        );
+        return hm_vendedor;
+    }
+    
+    
+    
+    //Obtiene  los datos de la Factura
+    @Override
+    public ArrayList<HashMap<String, Object>> getInvOrdenSalidaEtiqueta_Datos(Integer id_factura) {
+        
+        String sql_query = ""
+        + "SELECT fac_docs.id,"
+            +"fac_docs.folio_pedido,"
+            +"fac_docs.serie_folio,"
+            +"fac_docs.moneda_id,"
+            +"to_char(fac_docs.momento_creacion,'yyyy-mm-dd') AS fecha_exp, "
+            + "(case when gral_mon.id is null then '' else gral_mon.iso_4217 end) as moneda_iso_4217, "
+            +"fac_docs.observaciones,"
+            +"cxc_clie.id AS cliente_id,"
+            +"cxc_clie.rfc,"
+            +"cxc_clie.razon_social,"
+            + "(CASE WHEN cxc_clie.email IS NULL THEN '' ELSE cxc_clie.email END) AS email, "
+            + "fac_docs.cxc_clie_df_id,"
+            + "(CASE WHEN fac_docs.cxc_clie_df_id > 1 THEN "
+                + "sbtdf.calle||' '||sbtdf.numero_interior||' '||sbtdf.numero_exterior||', '||sbtdf.colonia||', '||sbtdf.municipio||', '||sbtdf.estado||', '||sbtdf.pais||' C.P. '||sbtdf.cp "
+            + "ELSE "
+                + "cxc_clie.calle||' '||cxc_clie.numero||', '||cxc_clie.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo||' C.P. '||cxc_clie.cp "
+            + "END ) AS direccion,"
+            +"cxc_clie.cxc_clie_tipo_adenda_id as t_adenda_id,"
+            +"fac_docs.subtotal,"
+            +"fac_docs.monto_ieps,"
+            +"fac_docs.impuesto,"
+            +"fac_docs.total,"
+            +"fac_docs.monto_retencion,"
+            +"fac_docs.tipo_cambio,"
+            +"(CASE WHEN fac_docs.cancelado=FALSE THEN '' ELSE 'CANCELADO' END) AS estado,"
+            +"fac_docs.cxc_agen_id,"
+            +"fac_docs.terminos_id,"
+            +"fac_docs.orden_compra,"
+            + "fac_docs.fac_metodos_pago_id,"
+            + "fac_docs.no_cuenta, "
+            + "cxc_clie.tasa_ret_immex/100 AS tasa_ret_immex,"
+            + "erp_h_facturas.saldo_factura, "
+            + "fac_docs.monto_descto, "
+            + "(CASE WHEN fac_docs.subtotal_sin_descto IS NULL THEN 0 ELSE fac_docs.subtotal_sin_descto END) AS subtotal_sin_descto, "
+            + "(CASE WHEN fac_docs.monto_descto>0 THEN fac_docs.motivo_descto ELSE '' END) AS motivo_descto  "
+        +"FROM fac_docs "
+        +"JOIN erp_h_facturas ON erp_h_facturas.serie_folio=fac_docs.serie_folio "
+        +"LEFT JOIN cxc_clie ON cxc_clie.id=fac_docs.cxc_clie_id "
+        +"LEFT JOIN gral_mon ON gral_mon.id = fac_docs.moneda_id "
+        +"LEFT JOIN gral_pais ON gral_pais.id = cxc_clie.pais_id "
+        +"LEFT JOIN gral_edo ON gral_edo.id = cxc_clie.estado_id "
+        +"LEFT JOIN gral_mun ON gral_mun.id = cxc_clie.municipio_id "
+        +"LEFT JOIN (SELECT cxc_clie_df.id, (CASE WHEN cxc_clie_df.calle IS NULL THEN '' ELSE cxc_clie_df.calle END) AS calle, (CASE WHEN cxc_clie_df.numero_interior IS NULL THEN '' ELSE (CASE WHEN cxc_clie_df.numero_interior IS NULL OR cxc_clie_df.numero_interior='' THEN '' ELSE 'NO.INT.'||cxc_clie_df.numero_interior END)  END) AS numero_interior, (CASE WHEN cxc_clie_df.numero_exterior IS NULL THEN '' ELSE (CASE WHEN cxc_clie_df.numero_exterior IS NULL OR cxc_clie_df.numero_exterior='' THEN '' ELSE 'NO.EXT.'||cxc_clie_df.numero_exterior END )  END) AS numero_exterior, (CASE WHEN cxc_clie_df.colonia IS NULL THEN '' ELSE cxc_clie_df.colonia END) AS colonia,(CASE WHEN gral_mun.id IS NULL OR gral_mun.id=0 THEN '' ELSE gral_mun.titulo END) AS municipio,(CASE WHEN gral_edo.id IS NULL OR gral_edo.id=0 THEN '' ELSE gral_edo.titulo END) AS estado,(CASE WHEN gral_pais.id IS NULL OR gral_pais.id=0 THEN '' ELSE gral_pais.titulo END) AS pais,(CASE WHEN cxc_clie_df.cp IS NULL THEN '' ELSE cxc_clie_df.cp END) AS cp  FROM cxc_clie_df LEFT JOIN gral_pais ON gral_pais.id = cxc_clie_df.gral_pais_id LEFT JOIN gral_edo ON gral_edo.id = cxc_clie_df.gral_edo_id LEFT JOIN gral_mun ON gral_mun.id = cxc_clie_df.gral_mun_id ) AS sbtdf ON sbtdf.id = fac_docs.cxc_clie_df_id "
+        +"WHERE fac_docs.id=? ";
+        
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,  
+            new Object[]{new Integer(id_factura)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("serie_folio",rs.getString("serie_folio"));
+                    row.put("fecha_exp",rs.getString("fecha_exp"));
+                    row.put("folio_pedido",rs.getString("folio_pedido"));
+                    row.put("moneda_id",rs.getInt("moneda_id"));
+                    row.put("moneda_4217",rs.getString("moneda_iso_4217"));
+                    row.put("observaciones",rs.getString("observaciones"));
+                    row.put("cliente_id",rs.getInt("cliente_id"));
+                    row.put("rfc",rs.getString("rfc"));
+                    row.put("razon_social",rs.getString("razon_social"));
+                    row.put("email",rs.getString("email"));
+                    row.put("df_id",rs.getInt("cxc_clie_df_id"));
+                    row.put("direccion",rs.getString("direccion"));
+                    row.put("t_adenda_id",rs.getInt("t_adenda_id"));
+                    row.put("subtotal",StringHelper.roundDouble(rs.getDouble("subtotal"),2));
+                    row.put("impuesto",StringHelper.roundDouble(rs.getDouble("impuesto"),2));
+                    row.put("monto_retencion",StringHelper.roundDouble(rs.getDouble("monto_retencion"),2));
+                    row.put("total",StringHelper.roundDouble(rs.getDouble("total"),2));
+                    row.put("tipo_cambio",StringHelper.roundDouble(rs.getDouble("tipo_cambio"),4));
+                    row.put("estado",rs.getString("estado"));
+                    row.put("cxc_agen_id",rs.getInt("cxc_agen_id"));
+                    row.put("terminos_id",rs.getInt("terminos_id"));
+                    row.put("orden_compra",rs.getString("orden_compra"));
+                    row.put("fac_metodos_pago_id",String.valueOf(rs.getInt("fac_metodos_pago_id")));
+                    row.put("no_cuenta",rs.getString("no_cuenta"));
+                    row.put("tasa_ret_immex",StringHelper.roundDouble(rs.getDouble("tasa_ret_immex"),2));
+                    row.put("saldo_fac",StringHelper.roundDouble(rs.getDouble("saldo_factura"),2));
+                    row.put("monto_ieps",StringHelper.roundDouble(rs.getDouble("monto_ieps"),2));
+                    row.put("monto_descto",StringHelper.roundDouble(rs.getDouble("monto_descto"),2));
+                    row.put("subtotal_sin_descto",StringHelper.roundDouble(rs.getDouble("subtotal_sin_descto"),2));
+                    row.put("motivo_descto",rs.getString("motivo_descto"));
+                    
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    //Obtiene el listado de conceptos de la factura. El parametro seleccionado es para filtrar solo seleccionados para imprimir o todos segun se requiera.
+    @Override
+    public ArrayList<HashMap<String, Object>> getInvOrdenSalidaEtiqueta_DatosGrid(Integer id, boolean seleccionado) {
+        String cadena_join = "";
+        if(seleccionado){
+            //Obtener solo los registros marcados para impresion
+            cadena_join = " join inv_fac_etiqueta on (inv_fac_etiqueta.fac_doc_det_id=fac_docs_detalles.id and inv_fac_etiqueta.imprimir=true) ";
+        }else{
+            cadena_join = " left join inv_fac_etiqueta on inv_fac_etiqueta.fac_doc_det_id=fac_docs_detalles.id ";
+        }
+        
+        String sql_query = ""
+        + "select "
+            + "fac_docs_detalles.id as iddet, "
+            + "fac_docs_detalles.inv_prod_id as prod_id, "
+            + "inv_prod.sku AS codigo, "
+            + "inv_prod.descripcion AS titulo, "
+            + "(case when inv_prod_unidades.titulo is null then '' else inv_prod_unidades.titulo end) AS unidad, "
+            + "(case when inv_prod_unidades.decimales is null then 0 else inv_prod_unidades.decimales end) AS decimales, "
+            + "(case when inv_prod_presentaciones.id is null then 0 else inv_prod_presentaciones.id end) AS pres_id, "
+            + "(case when inv_prod_presentaciones.titulo is null then '' else inv_prod_presentaciones.titulo end) AS pres, "
+            + "fac_docs_detalles.precio_unitario,"
+            + "(case when inv_fac_etiqueta.cantidad is null then fac_docs_detalles.cantidad else inv_fac_etiqueta.cantidad end) as cantidad,"
+            + "(case when inv_fac_etiqueta.orden_compra is null then '' else inv_fac_etiqueta.orden_compra end) as orden_compra,"
+            + "(case when inv_fac_etiqueta.lote is null then '' else inv_fac_etiqueta.lote end) as lote,"
+            + "(case when inv_fac_etiqueta.caducidad is null then '' else inv_fac_etiqueta.caducidad::character varying end) as caducidad,"
+            + "inv_fac_etiqueta.imprimir as seleccionado "
+        + "from fac_docs_detalles "
+        + "left join inv_prod on inv_prod.id=fac_docs_detalles.inv_prod_id "
+        + "left join inv_prod_unidades on inv_prod_unidades.id=fac_docs_detalles.inv_prod_unidad_id "
+        + "left join inv_prod_presentaciones on inv_prod_presentaciones.id=fac_docs_detalles.inv_prod_presentacion_id "
+        + cadena_join
+        + "where fac_docs_detalles.fac_doc_id=? order by fac_docs_detalles.id;";
+        
+        //System.out.println("DatosGrid: "+sql_query);
+        System.out.println("id: "+id);
+        ArrayList<HashMap<String, Object>> hm_grid = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,  
+            new Object[]{new Integer(id)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("iddet",rs.getString("iddet"));
+                    row.put("prod_id",rs.getString("prod_id"));
+                    row.put("codigo",rs.getString("codigo"));
+                    row.put("titulo",rs.getString("titulo"));
+                    row.put("unidad",rs.getString("unidad"));
+                    row.put("pres_id",rs.getString("pres_id"));
+                    row.put("pres",rs.getString("pres"));
+                    row.put("precio_unitario",StringHelper.roundDouble(rs.getDouble("precio_unitario"),4) );
+                    row.put("cantidad",StringHelper.roundDouble( rs.getString("cantidad"), rs.getInt("decimales") ));
+                    row.put("orden_compra",rs.getString("orden_compra"));
+                    row.put("lote",rs.getString("lote"));
+                    row.put("caducidad",rs.getString("caducidad"));
+                    row.put("seleccionado",rs.getBoolean("seleccionado"));
+                    
+                    return row;
+                }
+            }
+        );
+        return hm_grid;
+    }
 }
