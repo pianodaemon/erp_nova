@@ -9007,50 +9007,20 @@ public class InvSpringDao implements InvInterfaceDao{
     public ArrayList<HashMap<String, Object>> getInvOrdenSalidaEtiqueta_Datos(Integer id_factura) {
         
         String sql_query = ""
-        + "SELECT fac_docs.id,"
+        + "select fac_docs.id,"
             +"fac_docs.folio_pedido,"
             +"fac_docs.serie_folio,"
+            +"(case when fac_docs.orden_compra is null then '' else fac_docs.orden_compra end) as orden_compra,"
             +"fac_docs.moneda_id,"
             +"to_char(fac_docs.momento_creacion,'yyyy-mm-dd') AS fecha_exp, "
-            + "(case when gral_mon.id is null then '' else gral_mon.iso_4217 end) as moneda_iso_4217, "
-            +"fac_docs.observaciones,"
             +"cxc_clie.id AS cliente_id,"
             +"cxc_clie.rfc,"
             +"cxc_clie.razon_social,"
-            + "(CASE WHEN cxc_clie.email IS NULL THEN '' ELSE cxc_clie.email END) AS email, "
-            + "fac_docs.cxc_clie_df_id,"
-            + "(CASE WHEN fac_docs.cxc_clie_df_id > 1 THEN "
-                + "sbtdf.calle||' '||sbtdf.numero_interior||' '||sbtdf.numero_exterior||', '||sbtdf.colonia||', '||sbtdf.municipio||', '||sbtdf.estado||', '||sbtdf.pais||' C.P. '||sbtdf.cp "
-            + "ELSE "
-                + "cxc_clie.calle||' '||cxc_clie.numero||', '||cxc_clie.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo||' C.P. '||cxc_clie.cp "
-            + "END ) AS direccion,"
-            +"cxc_clie.cxc_clie_tipo_adenda_id as t_adenda_id,"
-            +"fac_docs.subtotal,"
-            +"fac_docs.monto_ieps,"
-            +"fac_docs.impuesto,"
-            +"fac_docs.total,"
-            +"fac_docs.monto_retencion,"
-            +"fac_docs.tipo_cambio,"
-            +"(CASE WHEN fac_docs.cancelado=FALSE THEN '' ELSE 'CANCELADO' END) AS estado,"
-            +"fac_docs.cxc_agen_id,"
-            +"fac_docs.terminos_id,"
-            +"fac_docs.orden_compra,"
-            + "fac_docs.fac_metodos_pago_id,"
-            + "fac_docs.no_cuenta, "
-            + "cxc_clie.tasa_ret_immex/100 AS tasa_ret_immex,"
-            + "erp_h_facturas.saldo_factura, "
-            + "fac_docs.monto_descto, "
-            + "(CASE WHEN fac_docs.subtotal_sin_descto IS NULL THEN 0 ELSE fac_docs.subtotal_sin_descto END) AS subtotal_sin_descto, "
-            + "(CASE WHEN fac_docs.monto_descto>0 THEN fac_docs.motivo_descto ELSE '' END) AS motivo_descto  "
-        +"FROM fac_docs "
-        +"JOIN erp_h_facturas ON erp_h_facturas.serie_folio=fac_docs.serie_folio "
-        +"LEFT JOIN cxc_clie ON cxc_clie.id=fac_docs.cxc_clie_id "
-        +"LEFT JOIN gral_mon ON gral_mon.id = fac_docs.moneda_id "
-        +"LEFT JOIN gral_pais ON gral_pais.id = cxc_clie.pais_id "
-        +"LEFT JOIN gral_edo ON gral_edo.id = cxc_clie.estado_id "
-        +"LEFT JOIN gral_mun ON gral_mun.id = cxc_clie.municipio_id "
-        +"LEFT JOIN (SELECT cxc_clie_df.id, (CASE WHEN cxc_clie_df.calle IS NULL THEN '' ELSE cxc_clie_df.calle END) AS calle, (CASE WHEN cxc_clie_df.numero_interior IS NULL THEN '' ELSE (CASE WHEN cxc_clie_df.numero_interior IS NULL OR cxc_clie_df.numero_interior='' THEN '' ELSE 'NO.INT.'||cxc_clie_df.numero_interior END)  END) AS numero_interior, (CASE WHEN cxc_clie_df.numero_exterior IS NULL THEN '' ELSE (CASE WHEN cxc_clie_df.numero_exterior IS NULL OR cxc_clie_df.numero_exterior='' THEN '' ELSE 'NO.EXT.'||cxc_clie_df.numero_exterior END )  END) AS numero_exterior, (CASE WHEN cxc_clie_df.colonia IS NULL THEN '' ELSE cxc_clie_df.colonia END) AS colonia,(CASE WHEN gral_mun.id IS NULL OR gral_mun.id=0 THEN '' ELSE gral_mun.titulo END) AS municipio,(CASE WHEN gral_edo.id IS NULL OR gral_edo.id=0 THEN '' ELSE gral_edo.titulo END) AS estado,(CASE WHEN gral_pais.id IS NULL OR gral_pais.id=0 THEN '' ELSE gral_pais.titulo END) AS pais,(CASE WHEN cxc_clie_df.cp IS NULL THEN '' ELSE cxc_clie_df.cp END) AS cp  FROM cxc_clie_df LEFT JOIN gral_pais ON gral_pais.id = cxc_clie_df.gral_pais_id LEFT JOIN gral_edo ON gral_edo.id = cxc_clie_df.gral_edo_id LEFT JOIN gral_mun ON gral_mun.id = cxc_clie_df.gral_mun_id ) AS sbtdf ON sbtdf.id = fac_docs.cxc_clie_df_id "
-        +"WHERE fac_docs.id=? ";
+            +"(case when inv_fac.observaciones is null then '' else inv_fac.observaciones end) as observaciones "
+        +"from fac_docs "
+        +"left join inv_fac ON inv_fac.fac_doc_id=fac_docs.id "
+        +"left join cxc_clie ON cxc_clie.id=fac_docs.cxc_clie_id "
+        +"where fac_docs.id=? ";
         
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_query,  
@@ -9061,34 +9031,13 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("id",rs.getInt("id"));
                     row.put("serie_folio",rs.getString("serie_folio"));
                     row.put("fecha_exp",rs.getString("fecha_exp"));
+                    row.put("orden_compra",rs.getString("orden_compra"));
                     row.put("folio_pedido",rs.getString("folio_pedido"));
                     row.put("moneda_id",rs.getInt("moneda_id"));
-                    row.put("moneda_4217",rs.getString("moneda_iso_4217"));
                     row.put("observaciones",rs.getString("observaciones"));
                     row.put("cliente_id",rs.getInt("cliente_id"));
                     row.put("rfc",rs.getString("rfc"));
                     row.put("razon_social",rs.getString("razon_social"));
-                    row.put("email",rs.getString("email"));
-                    row.put("df_id",rs.getInt("cxc_clie_df_id"));
-                    row.put("direccion",rs.getString("direccion"));
-                    row.put("t_adenda_id",rs.getInt("t_adenda_id"));
-                    row.put("subtotal",StringHelper.roundDouble(rs.getDouble("subtotal"),2));
-                    row.put("impuesto",StringHelper.roundDouble(rs.getDouble("impuesto"),2));
-                    row.put("monto_retencion",StringHelper.roundDouble(rs.getDouble("monto_retencion"),2));
-                    row.put("total",StringHelper.roundDouble(rs.getDouble("total"),2));
-                    row.put("tipo_cambio",StringHelper.roundDouble(rs.getDouble("tipo_cambio"),4));
-                    row.put("estado",rs.getString("estado"));
-                    row.put("cxc_agen_id",rs.getInt("cxc_agen_id"));
-                    row.put("terminos_id",rs.getInt("terminos_id"));
-                    row.put("orden_compra",rs.getString("orden_compra"));
-                    row.put("fac_metodos_pago_id",String.valueOf(rs.getInt("fac_metodos_pago_id")));
-                    row.put("no_cuenta",rs.getString("no_cuenta"));
-                    row.put("tasa_ret_immex",StringHelper.roundDouble(rs.getDouble("tasa_ret_immex"),2));
-                    row.put("saldo_fac",StringHelper.roundDouble(rs.getDouble("saldo_factura"),2));
-                    row.put("monto_ieps",StringHelper.roundDouble(rs.getDouble("monto_ieps"),2));
-                    row.put("monto_descto",StringHelper.roundDouble(rs.getDouble("monto_descto"),2));
-                    row.put("subtotal_sin_descto",StringHelper.roundDouble(rs.getDouble("subtotal_sin_descto"),2));
-                    row.put("motivo_descto",rs.getString("motivo_descto"));
                     
                     return row;
                 }
@@ -9124,7 +9073,8 @@ public class InvSpringDao implements InvInterfaceDao{
             + "(case when inv_fac_etiqueta.orden_compra is null then '' else inv_fac_etiqueta.orden_compra end) as orden_compra,"
             + "(case when inv_fac_etiqueta.lote is null then '' else inv_fac_etiqueta.lote end) as lote,"
             + "(case when inv_fac_etiqueta.caducidad is null then '' else inv_fac_etiqueta.caducidad::character varying end) as caducidad,"
-            + "inv_fac_etiqueta.imprimir as seleccionado "
+            + "(case when inv_fac_etiqueta.codigo2 is null then '' else inv_fac_etiqueta.codigo2 end) as codigo2,"
+            + "(case when inv_fac_etiqueta.imprimir is null then false else inv_fac_etiqueta.imprimir end) as seleccionado "
         + "from fac_docs_detalles "
         + "left join inv_prod on inv_prod.id=fac_docs_detalles.inv_prod_id "
         + "left join inv_prod_unidades on inv_prod_unidades.id=fac_docs_detalles.inv_prod_unidad_id "
@@ -9133,7 +9083,7 @@ public class InvSpringDao implements InvInterfaceDao{
         + "where fac_docs_detalles.fac_doc_id=? order by fac_docs_detalles.id;";
         
         //System.out.println("DatosGrid: "+sql_query);
-        System.out.println("id: "+id);
+        //System.out.println("id: "+id);
         ArrayList<HashMap<String, Object>> hm_grid = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_query,  
             new Object[]{new Integer(id)}, new RowMapper() {
@@ -9152,6 +9102,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("orden_compra",rs.getString("orden_compra"));
                     row.put("lote",rs.getString("lote"));
                     row.put("caducidad",rs.getString("caducidad"));
+                    row.put("codigo2",rs.getString("codigo2"));
                     row.put("seleccionado",rs.getBoolean("seleccionado"));
                     
                     return row;

@@ -44,11 +44,11 @@ public class PdfEtiquetas {
     }
 
     
-    public PdfEtiquetas(ArrayList<HashMap<String, Object>> datos, String fileout, String dir_tmp) {
+    public PdfEtiquetas(ArrayList<HashMap<String, Object>> datos, String observaciones, String fileout, String dir_tmp) {
         this.setArchivoSalida(new File(fileout));
         this.setRows(datos);
         
-        Font smallFont = new Font(Font.FontFamily.HELVETICA,9,Font.NORMAL,BaseColor.BLACK);
+        Font smallFont = new Font(Font.FontFamily.HELVETICA,7,Font.NORMAL,BaseColor.BLACK);
         Font smallFontBold = new Font(Font.FontFamily.HELVETICA,14,Font.BOLD,BaseColor.BLACK);
         
         PdfPTable tablaPrincipal;
@@ -58,7 +58,7 @@ public class PdfEtiquetas {
         ImagenPDF ipdf;
         String ruta_imagen = "";
         String fecha_caducidad="";
-        int alto_celda = 99;
+        int alto_celda = 73;
         
         try {
             Document document = new Document(PageSize.LETTER, -50, -50, 20, 20);
@@ -74,162 +74,229 @@ public class PdfEtiquetas {
             
             int contador = 0;
             
-            for (HashMap<String, Object> i : this.getRows()){
+            if(this.getRows().size()>0){
+                for (HashMap<String, Object> i : this.getRows()){
+                    tabla_etiquetas = new PdfPTable(anchocolumnas);
+                    tabla_etiquetas.setKeepTogether(true);
+                    ruta_imagen = "";
+                    fecha_caducidad="";
+                    contador++;
+
+                    //FILA 1 
+                    cellEtiqueta = new PdfPCell(new Paragraph("Orden Compra",smallFontBold));
+                    cellEtiqueta.setHorizontalAlignment(Element.ALIGN_LEFT);
+                    cellEtiqueta.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                    cellEtiqueta.setFixedHeight(alto_celda);
+                    tabla_etiquetas.addCell(cellEtiqueta);
+
+                    cellEtiqueta = new PdfPCell(new Paragraph(i.get("orden_compra").toString(),smallFontBold));
+                    cellEtiqueta.setHorizontalAlignment(Element.ALIGN_LEFT);
+                    cellEtiqueta.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                    cellEtiqueta.setFixedHeight(alto_celda);
+                    tabla_etiquetas.addCell(cellEtiqueta);
+
+                    if("".equals(i.get("orden_compra").toString().trim())){
+                        cellEtiqueta = new PdfPCell(new Paragraph("",smallFontBold));
+                        cellEtiqueta.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        cellEtiqueta.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        cellEtiqueta.setFixedHeight(alto_celda);
+                        cellEtiqueta.setColspan(3);
+                        tabla_etiquetas.addCell(cellEtiqueta);
+                    }else{
+                        ruta_imagen = dir_tmp + i.get("orden_compra").toString() +".png";
+                        net.sourceforge.barbecue.Barcode barcode = BarcodeFactory.createCode128(i.get("orden_compra").toString());
+                        File f = new File(ruta_imagen);
+                        BarcodeImageHandler.savePNG(barcode, f);
+                        ipdf = new ImagenPDF(ruta_imagen);
+
+                        cellEtiqueta = new PdfPCell(ipdf.addContent());
+                        cellEtiqueta.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        cellEtiqueta.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        cellEtiqueta.setFixedHeight(alto_celda);
+                        cellEtiqueta.setColspan(3);
+                        tabla_etiquetas.addCell(cellEtiqueta);
+                    }
+
+                    //FILA 2
+                    cellEtiqueta = new PdfPCell(new Paragraph("Código",smallFontBold));
+                    cellEtiqueta.setHorizontalAlignment(Element.ALIGN_LEFT);
+                    cellEtiqueta.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                    cellEtiqueta.setFixedHeight(alto_celda);
+                    tabla_etiquetas.addCell(cellEtiqueta);
+
+                    cellEtiqueta = new PdfPCell(new Paragraph(i.get("codigo").toString(),smallFontBold));
+                    cellEtiqueta.setHorizontalAlignment(Element.ALIGN_LEFT);
+                    cellEtiqueta.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                    cellEtiqueta.setFixedHeight(alto_celda);
+                    tabla_etiquetas.addCell(cellEtiqueta);
+
+                    if("".equals(i.get("codigo").toString().trim())){
+                        cellEtiqueta = new PdfPCell(new Paragraph("",smallFontBold));
+                        cellEtiqueta.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        cellEtiqueta.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        cellEtiqueta.setFixedHeight(alto_celda);
+                        cellEtiqueta.setColspan(3);
+                        tabla_etiquetas.addCell(cellEtiqueta);
+                    }else{
+                        ruta_imagen = dir_tmp + i.get("codigo").toString() +".png";
+                        net.sourceforge.barbecue.Barcode barcode = BarcodeFactory.createCode128(i.get("codigo").toString());
+                        File f = new File(ruta_imagen);
+                        BarcodeImageHandler.savePNG(barcode, f);
+                        ipdf = new ImagenPDF(ruta_imagen);
+
+                        cellEtiqueta = new PdfPCell(ipdf.addContent());
+                        cellEtiqueta.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        cellEtiqueta.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        cellEtiqueta.setFixedHeight(alto_celda);
+                        cellEtiqueta.setColspan(3);
+                        tabla_etiquetas.addCell(cellEtiqueta);
+                    }
+                    
+                    
+                    //FILA 3
+                    cellEtiqueta = new PdfPCell(new Paragraph("Código 2",smallFontBold));
+                    cellEtiqueta.setHorizontalAlignment(Element.ALIGN_LEFT);
+                    cellEtiqueta.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                    cellEtiqueta.setFixedHeight(alto_celda);
+                    tabla_etiquetas.addCell(cellEtiqueta);
+
+                    cellEtiqueta = new PdfPCell(new Paragraph(i.get("codigo2").toString(),smallFontBold));
+                    cellEtiqueta.setHorizontalAlignment(Element.ALIGN_LEFT);
+                    cellEtiqueta.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                    cellEtiqueta.setFixedHeight(alto_celda);
+                    tabla_etiquetas.addCell(cellEtiqueta);
+
+                    if("".equals(i.get("codigo2").toString().trim())){
+                        cellEtiqueta = new PdfPCell(new Paragraph("",smallFontBold));
+                        cellEtiqueta.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        cellEtiqueta.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        cellEtiqueta.setFixedHeight(alto_celda);
+                        cellEtiqueta.setColspan(3);
+                        tabla_etiquetas.addCell(cellEtiqueta);
+                    }else{
+                        ruta_imagen = dir_tmp + i.get("codigo2").toString() +".png";
+                        net.sourceforge.barbecue.Barcode barcode = BarcodeFactory.createCode128(i.get("codigo2").toString());
+                        File f = new File(ruta_imagen);
+                        BarcodeImageHandler.savePNG(barcode, f);
+                        ipdf = new ImagenPDF(ruta_imagen);
+
+                        cellEtiqueta = new PdfPCell(ipdf.addContent());
+                        cellEtiqueta.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        cellEtiqueta.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        cellEtiqueta.setFixedHeight(alto_celda);
+                        cellEtiqueta.setColspan(3);
+                        tabla_etiquetas.addCell(cellEtiqueta);
+                    }
+
+                    //FILA 4
+                    cellEtiqueta = new PdfPCell(new Paragraph("Lote",smallFontBold));
+                    cellEtiqueta.setHorizontalAlignment(Element.ALIGN_LEFT);
+                    cellEtiqueta.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                    cellEtiqueta.setFixedHeight(alto_celda);
+                    tabla_etiquetas.addCell(cellEtiqueta);
+
+                    cellEtiqueta = new PdfPCell(new Paragraph(i.get("lote").toString(),smallFontBold));
+                    cellEtiqueta.setHorizontalAlignment(Element.ALIGN_LEFT);
+                    cellEtiqueta.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                    cellEtiqueta.setFixedHeight(alto_celda);
+                    tabla_etiquetas.addCell(cellEtiqueta);
+
+                    if("".equals(i.get("lote").toString().trim())){
+                        cellEtiqueta = new PdfPCell(new Paragraph("",smallFontBold));
+                        cellEtiqueta.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        cellEtiqueta.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        cellEtiqueta.setFixedHeight(alto_celda);
+                        cellEtiqueta.setColspan(3);
+                        tabla_etiquetas.addCell(cellEtiqueta);
+                    }else{
+                        ruta_imagen = dir_tmp + i.get("lote").toString() +".png";
+                        net.sourceforge.barbecue.Barcode barcode = BarcodeFactory.createCode128(i.get("lote").toString());
+                        File f = new File(ruta_imagen);
+                        BarcodeImageHandler.savePNG(barcode, f);
+                        ipdf = new ImagenPDF(ruta_imagen);
+
+                        cellEtiqueta = new PdfPCell(ipdf.addContent());
+                        cellEtiqueta.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        cellEtiqueta.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        cellEtiqueta.setFixedHeight(alto_celda);
+                        cellEtiqueta.setColspan(3);
+                        tabla_etiquetas.addCell(cellEtiqueta);
+                    }
+
+
+                    //FILA 4
+                    cellEtiqueta = new PdfPCell(new Paragraph("Fecha Caducidad",smallFontBold));
+                    cellEtiqueta.setHorizontalAlignment(Element.ALIGN_LEFT);
+                    cellEtiqueta.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                    cellEtiqueta.setFixedHeight(30);
+                    tabla_etiquetas.addCell(cellEtiqueta);
+
+                    if(!"".equals(i.get("caducidad").toString().trim())){
+                        fecha_caducidad = i.get("caducidad").toString().split("-")[2] +"/"+ i.get("caducidad").toString().split("-")[1] +"/"+ i.get("caducidad").toString().split("-")[0];
+                    }
+
+                    cellEtiqueta = new PdfPCell(new Paragraph(fecha_caducidad,smallFontBold));
+                    cellEtiqueta.setHorizontalAlignment(Element.ALIGN_MIDDLE);
+                    cellEtiqueta.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                    cellEtiqueta.setFixedHeight(30);
+                    tabla_etiquetas.addCell(cellEtiqueta);
+
+                    cellEtiqueta = new PdfPCell(new Paragraph("Cantidad",smallFontBold));
+                    cellEtiqueta.setHorizontalAlignment(Element.ALIGN_LEFT);
+                    cellEtiqueta.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                    cellEtiqueta.setFixedHeight(30);
+                    tabla_etiquetas.addCell(cellEtiqueta);
+
+                    cellEtiqueta = new PdfPCell(new Paragraph(i.get("cantidad").toString(),smallFontBold));
+                    cellEtiqueta.setHorizontalAlignment(Element.ALIGN_LEFT);
+                    cellEtiqueta.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                    cellEtiqueta.setColspan(2);
+                    cellEtiqueta.setFixedHeight(30);
+                    tabla_etiquetas.addCell(cellEtiqueta);
+
+                    if(!"".equals(observaciones)){
+                        cellEtiqueta = new PdfPCell(new Paragraph(observaciones.toUpperCase(),smallFont));
+                        cellEtiqueta.setHorizontalAlignment(Element.ALIGN_LEFT);
+                        cellEtiqueta.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        cellEtiqueta.setColspan(5);
+                        cellEtiqueta.setFixedHeight(30);
+                        tabla_etiquetas.addCell(cellEtiqueta);
+                    }else{
+                        cellEtiqueta = new PdfPCell(new Paragraph("",smallFont));
+                        cellEtiqueta.setHorizontalAlignment(Element.ALIGN_LEFT);
+                        cellEtiqueta.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        cellEtiqueta.setColspan(5);
+                        cellEtiqueta.setFixedHeight(30);
+                        tabla_etiquetas.addCell(cellEtiqueta);
+                    }
+
+                    //Aqui agregamos la tablaPrincipal al documento
+                    document.add(tabla_etiquetas);
+
+                    if(contador==1){
+                        document.add(new Paragraph("\n\n"));
+                    }else{
+                        if(contador==2){
+                            contador=0;
+
+                            //Agregar nueva pagina
+                            document.newPage();
+                        }
+                    }
+                }
+            }else{
                 tabla_etiquetas = new PdfPTable(anchocolumnas);
                 tabla_etiquetas.setKeepTogether(true);
-                ruta_imagen = "";
-                fecha_caducidad="";
-                contador++;
                 
-                //FILA 1 
-                cellEtiqueta = new PdfPCell(new Paragraph("Orden Compra",smallFontBold));
+                cellEtiqueta = new PdfPCell(new Paragraph("No se ha seleccionado ningun producto para generar etiqueta",smallFontBold));
                 cellEtiqueta.setHorizontalAlignment(Element.ALIGN_LEFT);
                 cellEtiqueta.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                cellEtiqueta.setFixedHeight(alto_celda);
-                tabla_etiquetas.addCell(cellEtiqueta);
-                
-                cellEtiqueta = new PdfPCell(new Paragraph(i.get("orden_compra").toString(),smallFontBold));
-                cellEtiqueta.setHorizontalAlignment(Element.ALIGN_LEFT);
-                cellEtiqueta.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                cellEtiqueta.setFixedHeight(alto_celda);
-                tabla_etiquetas.addCell(cellEtiqueta);
-                    
-                if("".equals(i.get("orden_compra").toString().trim())){
-                    cellEtiqueta = new PdfPCell(new Paragraph("",smallFontBold));
-                    cellEtiqueta.setHorizontalAlignment(Element.ALIGN_CENTER);
-                    cellEtiqueta.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                    cellEtiqueta.setFixedHeight(alto_celda);
-                    cellEtiqueta.setColspan(3);
-                    tabla_etiquetas.addCell(cellEtiqueta);
-                }else{
-                    ruta_imagen = dir_tmp + i.get("orden_compra").toString() +".png";
-                    net.sourceforge.barbecue.Barcode barcode = BarcodeFactory.createCode128(i.get("orden_compra").toString());
-                    File f = new File(ruta_imagen);
-                    BarcodeImageHandler.savePNG(barcode, f);
-                    ipdf = new ImagenPDF(ruta_imagen);
-                    
-                    cellEtiqueta = new PdfPCell(ipdf.addContent());
-                    cellEtiqueta.setHorizontalAlignment(Element.ALIGN_CENTER);
-                    cellEtiqueta.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                    cellEtiqueta.setFixedHeight(alto_celda);
-                    cellEtiqueta.setColspan(3);
-                    tabla_etiquetas.addCell(cellEtiqueta);
-                }
-                
-                //FILA 2
-                cellEtiqueta = new PdfPCell(new Paragraph("Código",smallFontBold));
-                cellEtiqueta.setHorizontalAlignment(Element.ALIGN_LEFT);
-                cellEtiqueta.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                cellEtiqueta.setFixedHeight(alto_celda);
-                tabla_etiquetas.addCell(cellEtiqueta);
-                
-                cellEtiqueta = new PdfPCell(new Paragraph(i.get("codigo").toString(),smallFontBold));
-                cellEtiqueta.setHorizontalAlignment(Element.ALIGN_LEFT);
-                cellEtiqueta.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                cellEtiqueta.setFixedHeight(alto_celda);
-                tabla_etiquetas.addCell(cellEtiqueta);
-                
-                if("".equals(i.get("codigo").toString().trim())){
-                    cellEtiqueta = new PdfPCell(new Paragraph("",smallFontBold));
-                    cellEtiqueta.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                    cellEtiqueta.setHorizontalAlignment(Element.ALIGN_CENTER);
-                    cellEtiqueta.setFixedHeight(alto_celda);
-                    cellEtiqueta.setColspan(3);
-                    tabla_etiquetas.addCell(cellEtiqueta);
-                }else{
-                    ruta_imagen = dir_tmp + i.get("codigo").toString() +".png";
-                    net.sourceforge.barbecue.Barcode barcode = BarcodeFactory.createCode128(i.get("codigo").toString());
-                    File f = new File(ruta_imagen);
-                    BarcodeImageHandler.savePNG(barcode, f);
-                    ipdf = new ImagenPDF(ruta_imagen);
-                    
-                    cellEtiqueta = new PdfPCell(ipdf.addContent());
-                    cellEtiqueta.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                    cellEtiqueta.setHorizontalAlignment(Element.ALIGN_CENTER);
-                    cellEtiqueta.setFixedHeight(alto_celda);
-                    cellEtiqueta.setColspan(3);
-                    tabla_etiquetas.addCell(cellEtiqueta);
-                }
-                
-                //FILA 3
-                cellEtiqueta = new PdfPCell(new Paragraph("Lote",smallFontBold));
-                cellEtiqueta.setHorizontalAlignment(Element.ALIGN_LEFT);
-                cellEtiqueta.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                cellEtiqueta.setFixedHeight(alto_celda);
-                tabla_etiquetas.addCell(cellEtiqueta);
-                
-                cellEtiqueta = new PdfPCell(new Paragraph(i.get("lote").toString(),smallFontBold));
-                cellEtiqueta.setHorizontalAlignment(Element.ALIGN_LEFT);
-                cellEtiqueta.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                cellEtiqueta.setFixedHeight(alto_celda);
-                tabla_etiquetas.addCell(cellEtiqueta);
-                
-                if("".equals(i.get("lote").toString().trim())){
-                    cellEtiqueta = new PdfPCell(new Paragraph("",smallFontBold));
-                    cellEtiqueta.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                    cellEtiqueta.setHorizontalAlignment(Element.ALIGN_CENTER);
-                    cellEtiqueta.setFixedHeight(alto_celda);
-                    cellEtiqueta.setColspan(3);
-                    tabla_etiquetas.addCell(cellEtiqueta);
-                }else{
-                    ruta_imagen = dir_tmp + i.get("lote").toString() +".png";
-                    net.sourceforge.barbecue.Barcode barcode = BarcodeFactory.createCode128(i.get("lote").toString());
-                    File f = new File(ruta_imagen);
-                    BarcodeImageHandler.savePNG(barcode, f);
-                    ipdf = new ImagenPDF(ruta_imagen);
-                    
-                    cellEtiqueta = new PdfPCell(ipdf.addContent());
-                    cellEtiqueta.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                    cellEtiqueta.setHorizontalAlignment(Element.ALIGN_CENTER);
-                    cellEtiqueta.setFixedHeight(alto_celda);
-                    cellEtiqueta.setColspan(3);
-                    tabla_etiquetas.addCell(cellEtiqueta);
-                }
-                
-                
-                //FILA 4
-                cellEtiqueta = new PdfPCell(new Paragraph("Fecha Caducidad",smallFontBold));
-                cellEtiqueta.setHorizontalAlignment(Element.ALIGN_LEFT);
-                cellEtiqueta.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                cellEtiqueta.setFixedHeight(40);
-                tabla_etiquetas.addCell(cellEtiqueta);
-                
-                if(!"".equals(i.get("caducidad").toString().trim())){
-                    fecha_caducidad = i.get("caducidad").toString().split("-")[2] +"/"+ i.get("caducidad").toString().split("-")[1] +"/"+ i.get("caducidad").toString().split("-")[0];
-                }
-                
-                cellEtiqueta = new PdfPCell(new Paragraph(fecha_caducidad,smallFontBold));
-                cellEtiqueta.setHorizontalAlignment(Element.ALIGN_MIDDLE);
-                cellEtiqueta.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                cellEtiqueta.setFixedHeight(40);
-                tabla_etiquetas.addCell(cellEtiqueta);
-                
-                cellEtiqueta = new PdfPCell(new Paragraph("Cantidad",smallFontBold));
-                cellEtiqueta.setHorizontalAlignment(Element.ALIGN_LEFT);
-                cellEtiqueta.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                cellEtiqueta.setFixedHeight(40);
-                tabla_etiquetas.addCell(cellEtiqueta);
-                
-                cellEtiqueta = new PdfPCell(new Paragraph(i.get("cantidad").toString(),smallFontBold));
-                cellEtiqueta.setHorizontalAlignment(Element.ALIGN_LEFT);
-                cellEtiqueta.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                cellEtiqueta.setColspan(2);
-                cellEtiqueta.setFixedHeight(40);
+                cellEtiqueta.setColspan(5);
+                cellEtiqueta.setFixedHeight(30);
                 tabla_etiquetas.addCell(cellEtiqueta);
                 
                 //Aqui agregamos la tablaPrincipal al documento
                 document.add(tabla_etiquetas);
-                
-                if(contador==1){
-                    document.add(new Paragraph("\n\n\n"));
-                }else{
-                    if(contador==2){
-                        contador=0;
-                        
-                        //Agregar nueva pagina
-                        document.newPage();
-                    }
-                }
             }
             
             document.close();
@@ -258,7 +325,7 @@ public class PdfEtiquetas {
             try {
                 img = Image.getInstance(this.getRuta());
                 //img.scaleAbsoluteHeight(100);
-                img.scaleAbsoluteHeight(70);
+                img.scaleAbsoluteHeight(60);
                 img.scaleAbsoluteWidth(250);
                 img.setAlignment(0);
             }

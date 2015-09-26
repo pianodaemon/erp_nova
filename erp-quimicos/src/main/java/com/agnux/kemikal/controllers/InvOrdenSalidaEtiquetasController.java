@@ -222,6 +222,8 @@ public class InvOrdenSalidaEtiquetasController {
         //Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         //Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
         
+        System.out.println("id: "+identificador);
+        
         if(identificador!=0){
             datosFactura = this.getInvDao().getInvOrdenSalidaEtiqueta_Datos(identificador);
             datosGrid = this.getInvDao().getInvOrdenSalidaEtiqueta_DatosGrid(identificador, false);
@@ -240,6 +242,7 @@ public class InvOrdenSalidaEtiquetasController {
     @RequestMapping(method = RequestMethod.POST, value="/edit.json")
     public @ResponseBody HashMap<String, String> editJson(
             @RequestParam(value="identificador", required=true) Integer identificador,
+            @RequestParam(value="observaciones", required=true) String observaciones,
             @RequestParam(value="iddet", required=true)         String[] iddet,
             @RequestParam(value="idprod", required=true)        String[] idprod,
             @RequestParam(value="idpres", required=true)        String[] idpres,
@@ -247,6 +250,7 @@ public class InvOrdenSalidaEtiquetasController {
             @RequestParam(value="lote", required=true)          String[] lote,
             @RequestParam(value="fcaducidad", required=true)    String[] fcaducidad,
             @RequestParam(value="cantidad", required=true)      String[] cantidad,
+            @RequestParam(value="codigo2", required=true)       String[] codigo2,
             @RequestParam(value="selec_micheck", required=true) String[] selec_micheck,
             @ModelAttribute("user") UserSessionData user,
             Model model
@@ -267,7 +271,7 @@ public class InvOrdenSalidaEtiquetasController {
         Integer id_usuario= user.getUserId();//variable para el id  del usuario
         
         for(int i=0; i<iddet.length; i++) {
-            arreglo[i]= "'"+ iddet[i] +"___"+ idprod[i] +"___"+ idpres[i] +"___"+ oc[i] +"___"+ lote[i] +"___"+ fcaducidad[i] +"___"+ cantidad[i] +"___"+ selec_micheck[i] +"'";
+            arreglo[i]= "'"+ iddet[i] +"___"+ idprod[i] +"___"+ idpres[i] +"___"+ oc[i].trim().toUpperCase() +"___"+ lote[i].trim() +"___"+ fcaducidad[i].trim() +"___"+ cantidad[i] +"___"+ codigo2[i].trim().toUpperCase() +"___"+ selec_micheck[i] +"'";
             //System.out.println(arreglo[i]);
         }
         
@@ -278,8 +282,8 @@ public class InvOrdenSalidaEtiquetasController {
             command_selected = "edit";
         }
         
-        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+identificador;
-        System.out.println("data_string: "+data_string);
+        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+identificador +"___"+ observaciones.toUpperCase();
+        //System.out.println("data_string: "+data_string);
         
         //Aqui entra cuando la accion es Edit o Confirmar
         succes = this.getInvDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
@@ -310,9 +314,10 @@ public class InvOrdenSalidaEtiquetasController {
     )throws ServletException, IOException, URISyntaxException, DocumentException, Exception {
         
         HashMap<String, String> userDat = new HashMap<String, String>();
+        ArrayList<HashMap<String, Object>> datosFactura = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> datos = new ArrayList<HashMap<String, Object>>();
         HashMap<String, String> datosEncabezadoPie= new HashMap<String, String>();
-        
+        String observaciones = "";
         System.out.println("Generando PDF de Etiquetas");
         
         //decodificar id de usuario
@@ -321,15 +326,21 @@ public class InvOrdenSalidaEtiquetasController {
         userDat = this.getHomeDao().getUserById(id_usuario);
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         
-        String razon_social_empresa = this.getGralDao().getRazonSocialEmpresaEmisora(id_empresa);
-        String rfc_empresa=this.getGralDao().getRfcEmpresaEmisora(id_empresa);
-        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
-        datosEncabezadoPie.put("nombre_empresa_emisora", razon_social_empresa);
+        //String razon_social_empresa = this.getGralDao().getRazonSocialEmpresaEmisora(id_empresa);
+        //String rfc_empresa=this.getGralDao().getRfcEmpresaEmisora(id_empresa);
+        //Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        //datosEncabezadoPie.put("nombre_empresa_emisora", razon_social_empresa);
         
-        //obtener el directorio temporal
+        //Obtener el directorio temporal
         String dir_tmp = this.getGralDao().getTmpDir();
         
         File file_dir_tmp = new File(dir_tmp);
+        
+        datosFactura = this.getInvDao().getInvOrdenSalidaEtiqueta_Datos(identificador);
+        
+        if(datosFactura.size()>0){
+            observaciones=datosFactura.get(0).get("observaciones").toString();
+        }
         
         //Obtener los datos para las etiquetas. El parametro true es para que obtenga solo los seleccionados para imprimir
         datos = this.getInvDao().getInvOrdenSalidaEtiqueta_DatosGrid(identificador, true);
@@ -340,7 +351,7 @@ public class InvOrdenSalidaEtiquetasController {
         //ruta de archivo de salida
         String fileout = file_dir_tmp +"/"+  file_name;
         
-        PdfEtiquetas pdf = new PdfEtiquetas(datos,fileout,dir_tmp);
+        PdfEtiquetas pdf = new PdfEtiquetas(datos,observaciones,fileout,dir_tmp);
         
         System.out.println("Recuperando archivo: " + fileout);
         File file = new File(fileout);
