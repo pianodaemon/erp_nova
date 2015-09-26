@@ -120,7 +120,7 @@
 					
                     <div id="div_two" title="" class="invordensalidaetiqueta_div_two">
                         <div class="columns on-2">
-                            <div class="fixed column" style="width:1015px; padding-left:6px;"><strong>${title}</strong></div>
+                            <div class="fixed column" style="width:1075px; padding-left:6px;"><strong>${title}</strong></div>
                             <div class="fixed column" style="width:20px; height:25px;">
                                 <div id="close" style="height:25px; background-image:url('../../img/modalbox/close.png'); background-color:; background-position:top; cursor:pointer; background-repeat:no-repeat;"></div>
                             </div>
@@ -147,7 +147,7 @@
                                                     <td width="475"></td>
                                                     <td width="10"></td>
                                                     <td width="110"></td>
-                                                    <td width="300"></td>
+                                                    <td width="370"></td>
                                                 </tr>
                                                 <tr>
                                                     <td valign="top" colspan="2" width="600"  > 
@@ -187,19 +187,17 @@
                                                     <td width="10"></td>
                                                     <!--<td width="60"></td>-->
 													
-                                                    <td width="410" colspan="2" valign="top">
+                                                    <td width="480" colspan="2" valign="top">
                                                         <table border="0" class="gral">
                                                             <tr>
                                                                 <td width="10"></td>
-                                                                <td width="380">Observaciones</td>
-                                                                <td width="10"></td>
+                                                                <td width="460">Observaciones para las etiquetas</td>
                                                             </tr>
                                                             <tr>
                                                                 <td width="10"></td>
-                                                                <td width="380">
-																	<textarea name="observaciones" rows="3" cols="60" style="width:380px; resize:none;"></textarea>
+                                                                <td width="460">
+																	<textarea name="observaciones" rows="3" cols="60" style="width:460px; resize:none;"></textarea>
                                                                 </td>
-                                                                <td width="10"></td>
                                                             </tr>
                                                         </table>
                                                     </td>
@@ -207,12 +205,11 @@
                                                 
                                                 <tr>
                                                     <td width="720" colspan="4"></td>
-                                                    <td width="300">
+                                                    <td width="370">
                                                         <table border="0" class="gral">
                                                             <tr>
                                                                 <td width="10"></td>
-                                                                <td width="280" align="right"><input type="button" id="btn_etiquetas" value="Etiquetas" style="width:100px; font-weight:bold;"></td>
-                                                                <td width="10"></td>
+                                                                <td width="355" align="right"><input type="button" id="btn_etiquetas" value="Etiquetas" style="width:100px; font-weight:bold;"></td>
                                                             </tr>
                                                         </table>
                                                     </td>
@@ -223,21 +220,22 @@
 														<table >
 															<thead>
 																<tr class="registros_pagos">
-																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="102">&nbsp;C&oacute;digo</td>
-																	<td class="grid" style="background-color: rgb(180, 180, 180);"  width="220">&nbsp;Descripci&oacute;n</td>
-																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="90">&nbsp;Unidad</td>
-																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="100">&nbsp;Presentaci&oacute;n</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="102">C&oacute;digo</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180);"  width="220">Descripci&oacute;n</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="90">Unidad</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="90">Presentaci&oacute;n</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="100">C&oacute;digo&nbsp;2</td>
 																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="105">Orden&nbsp;de&nbsp;Compra</td>
 																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="125">No.&nbsp;de&nbsp;Lote</td>
 																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="75">Caducidad</td>
-																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;Cantidad</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">Cantidad</td>
 																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="30">
 																		<input type="checkbox" name="check_head" id="check_head" value="check">
 																	</td>
 																</tr>
 															</thead>
 														</table>
-														<div style="overflow:scroll; overflow-x:hidden; overflow-y:auto; width:1002; height:195px; border:1px solid #C1DAD7 !important;">	
+														<div style="overflow:scroll; overflow-x:hidden; overflow-y:auto; height:195px; border:1px solid #C1DAD7 !important;">	
 															<table class="tabla_facturas">
 																<tbody style="background-color: #FFFFFF;" valign="top" id="grid_productos">
 																	
@@ -289,10 +287,10 @@
                             </div>
 
 
-                            <div class="fixed column" style="width:1016px; background:; text-align:right; padding-left:; position:absolute; margin-top:4px;">
+                            <div class="fixed column" style="width:1076px; background:; text-align:right; padding-left:; position:absolute; margin-top:4px;">
 								<table border="0">
 									<tr>
-										<td width="916"></td>
+										<td width="976"></td>
 										<td>
 											<input type="image" src="../../img/modalbox/btn1.png" id="submit" style="width:77px; height:24px;"/>
 										</td>
