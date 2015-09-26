@@ -59,6 +59,30 @@ $(function() {
 		});
 	}
 	
+	var signar_espacio_blanco_si_esta_vacio = function($campo_input){
+		if($campo_input.val().trim()==''){
+			$campo_input.val(' ');
+		}
+	}
+	
+							
+	var aplicar_evento_focus_input_text = function($campo_input){
+		$campo_input.focus(function(e){
+			//Eliminar espacios en blanco
+			$(this).val($(this).val().trim());
+		});
+	}
+	
+	var aplicar_evento_blur_input_text = function($campo_input){
+		$campo_input.blur(function(e){
+			//Asignar espacio en blanco
+			if($(this).val().trim()==''){
+				$(this).val(' ');
+			}
+		});
+		
+	}
+	
 	var quitar_comas= function($valor){
 		$valor = $valor+'';
 		return $valor.split(',').join('');
@@ -470,7 +494,7 @@ $(function() {
 			
 			$(this).modalPanel_invordensalidaetiqueta();
 			
-			$('#forma-invordensalidaetiqueta-window').css({"margin-left": -390, 	"margin-top": -290});
+			$('#forma-invordensalidaetiqueta-window').css({"margin-left": -415, 	"margin-top": -290});
 			
 			$forma_selected.prependTo('#forma-invordensalidaetiqueta-window');
 			$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
@@ -649,9 +673,12 @@ $(function() {
 							trr += '</td>';
 							trr += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="220">'+ prod['titulo'] +'</td>';
 							trr += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="90">'+ prod['unidad'] +'</td>';
-							trr += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="100">';
+							trr += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="90">';
 									trr += '<input type="hidden" 	name="idpres"  value="'+  prod['pres_id'] +'" 	id="idpres">';
-									trr += '<input type="text" 		name="presentacion'+ tr +'" 	value="'+  prod['pres'] +'" 	id="pres" class="borde_oculto" readOnly="true" style="width:96px;">';
+									trr += '<input type="text" 		name="presentacion'+ tr +'" 	value="'+  prod['pres'] +'" 	id="pres" class="borde_oculto" readOnly="true" style="width:87px;">';
+							trr += '</td>';
+							trr += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="100">';
+									trr += '<input type="text" name="codigo2" value="'+ prod['codigo2'] +'" id="codigo2" class="codigo2'+ tr +'" style="width:97px;">';
 							trr += '</td>';
 							trr += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="105">';
 									trr += '<input type="text" name="oc" value="'+ orden_compra +'" id="oc" class="oc'+ tr +'" style="width:102px;">';
@@ -740,6 +767,23 @@ $(function() {
 								}
 							});
 							
+							//Asignar espacio en blanco
+							signar_espacio_blanco_si_esta_vacio($grid_productos.find('.fcaducidad'+ tr));
+							signar_espacio_blanco_si_esta_vacio($grid_productos.find('.oc'+ tr));
+							signar_espacio_blanco_si_esta_vacio($grid_productos.find('.lote'+ tr));
+							signar_espacio_blanco_si_esta_vacio($grid_productos.find('.codigo2'+ tr));
+							
+							
+							aplicar_evento_focus_input_text($grid_productos.find('.fcaducidad'+ tr));
+							aplicar_evento_focus_input_text($grid_productos.find('.oc'+ tr));
+							aplicar_evento_focus_input_text($grid_productos.find('.lote'+ tr));
+							aplicar_evento_focus_input_text($grid_productos.find('.codigo2'+ tr));
+							
+							aplicar_evento_blur_input_text($grid_productos.find('.fcaducidad'+ tr));
+							aplicar_evento_blur_input_text($grid_productos.find('.oc'+ tr));
+							aplicar_evento_blur_input_text($grid_productos.find('.lote'+ tr));
+							aplicar_evento_blur_input_text($grid_productos.find('.codigo2'+ tr));
+							
 							//Aplicar eventos a los campos checkbox
 							$aplicar_evento_click_checkbox($grid_productos.find('.micheck'+ tr), $grid_productos.find('.selec_micheck'+ tr));
 						});
@@ -751,7 +795,7 @@ $(function() {
 					$folio_pedido.attr("readonly", true);
 					$razon_cliente.attr("readonly", true);
 					$serie_folio.attr("readonly", true);
-					$observaciones.attr("readonly", true);
+					//$observaciones.attr("readonly", true);
 					$fecha.attr("readonly", true);
 					$tipo_cambio.attr("readonly", true);
 					//$grid_productos.find('#cant').attr("readonly", true);
