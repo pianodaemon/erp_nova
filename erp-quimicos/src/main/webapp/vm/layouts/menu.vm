@@ -386,6 +386,8 @@
 													<li class="topline"><a href="../invcontrolcostos/startup.agnux">Control de Costos</a></li>
 													<li class="topline"><a href="../invactualizaprecios/startup.agnux">Actualizar Precios</a></li>
 													<li class="topline"><a href="../invcarga/startup.agnux">Carga de Inventario F&iacute;sico</a></li>
+													
+													<li class="topline"><a href="../invordensalidaetiqueta/startup.agnux">Impresi&oacute;n de Etiquetas de Salida</a></li>
 													<!--
 													<li class="topline"><a href="#">Actualizar Precios</a></li>
 													<li class="topline"><a href="#">Existencias F&iacute;sicas</a></li>
