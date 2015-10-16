@@ -498,6 +498,7 @@
 													<li><a href="../logvehiculotiporodada/startup.agnux">Tipo Rodada</a></li>
 													<li><a href="../logvehiculotipocaja/startup.agnux">Tipo Caja</a></li>
 													<li><a href="../logtiporechazo/startup.agnux">Tipo de Rechazo</a></li>
+													<li><a href="../logpoblaciones/startup.agnux">Municipios/Poblaciones</a></li>
 													<li><a href="../logtarifario/startup.agnux">Tarifario por ruta</a></li>
 													<li><a href="../logtarifarioventa/startup.agnux">Tarifario de Venta por Poblaci&oacute;n</a></li>
 													<li><a href="../logtarifarioventaxrango/startup.agnux">Tarifario de Venta por Rango</a></li>
@@ -514,6 +515,7 @@
 													
 													
 													<li class="topline"><a href="../logadmviaje/startup.agnux">Viajes</a></li>
+													<li class="topline"><a href="../logmonitoreo/startup.agnux">Monitoreo</a></li>
 													<li class="topline"><a href="../logevidencias/startup.agnux">Evidencias</a></li>
 													<li class="topline"><a href="../logcargadoc/startup.agnux">Carga de Documentos</a></li>
 													<li class="topline"><a href="../logregcarga/startup.agnux">Registro de Cargas</a></li>
@@ -525,6 +527,7 @@
 												<a href="#" class="sub">Reportes &raquo;</a>
 												<ul>
 													<li class="topline"><a href="../logreporteviajes/startup.agnux">Reporte de Viajes</a></li>
+													<li class="topline"><a href="../logrepindicaoperaciones/startup.agnux">Indicadores de Operaciones</a></li>
 												</ul>
 											</li>
 										</ul>
