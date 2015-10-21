@@ -365,4 +365,7 @@ public interface InvInterfaceDao {
     public ArrayList<HashMap<String, Object>> getInvOrdenSalidaEtiqueta_Datos(Integer id_factura);
     public ArrayList<HashMap<String, Object>> getInvOrdenSalidaEtiqueta_DatosGrid(Integer id_factura, boolean seleccionado);
     public ArrayList<HashMap<String, Object>> AgentesDeVentas(Integer id_empresa, Integer id_sucursal);
+    
+    //Metodos para aplicativo de Etiquetas de Entradas
+    public ArrayList<HashMap<String, String>> getInvEtiquetasEntrada_DatosGrid(Integer id);
 }

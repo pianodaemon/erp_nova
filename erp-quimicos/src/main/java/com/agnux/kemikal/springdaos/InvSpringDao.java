@@ -7,15 +7,20 @@
 package com.agnux.kemikal.springdaos;
 import com.agnux.common.helpers.StringHelper;
 import com.agnux.common.helpers.TimeHelper;
+import com.agnux.kemikal.controllers.InvEtiquetasEntradaController;
 import com.agnux.kemikal.interfacedaos.InvInterfaceDao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
 public class InvSpringDao implements InvInterfaceDao{
+    private static final Logger log  = Logger.getLogger(InvEtiquetasEntradaController.class.getName());
+    
     private JdbcTemplate jdbcTemplate;
 
     public JdbcTemplate getJdbcTemplate() {
@@ -9111,4 +9116,115 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm_grid;
     }
+    
+    
+    
+    
+    //Metodos para aplicativo de Etiquetas de Entradas
+    @Override
+    public ArrayList<HashMap<String, String>> getInvEtiquetasEntrada_DatosGrid(Integer id) {
+        String sql_to_query = ""
+        + "SELECT "
+            + "inv_oent_detalle.id AS id_detalle,"
+            + "inv_oent_detalle.inv_prod_id, "
+            + "inv_prod.sku, "
+            + "inv_prod.descripcion, "
+            + "inv_prod_unidades.titulo as unidad, "
+            + "(CASE WHEN inv_prod_presentaciones.titulo IS NULL THEN '' ELSE inv_prod_presentaciones.titulo END) AS presentacion, "
+            + "inv_oent_detalle.costo_unitario as costo_u, "
+            + "inv_oent_detalle.cantidad, "
+            + "inv_oent_detalle.cantidad_rec, "
+            + "(inv_oent_detalle.costo_unitario * inv_oent_detalle.cantidad) as importe, "
+            + "inv_prod_unidades.decimales as no_dec,"
+            + "inv_lote.lote_int, "
+            + "(CASE WHEN inv_lote.lote_prov IS NULL THEN '' ELSE inv_lote.lote_prov END) AS lote_prov "
+            + "inv_lote.inicial AS cant_lote, "
+            + "(CASE WHEN inv_lote.pedimento='' OR inv_lote.pedimento IS NULL THEN ' ' ELSE inv_lote.pedimento END) AS pedimento,"
+            +"(CASE WHEN to_char(inv_lote.caducidad,'yyyymmdd') = '29991231' THEN ''::character varying ELSE inv_lote.caducidad::character varying END) AS caducidad "
+        + "from inv_oent_detalle "
+        + "left join inv_lote ON inv_lote.inv_oent_detalle_id=inv_oent_detalle.id "
+        + "join inv_prod on inv_prod.id = inv_oent_detalle.inv_prod_id "
+        + "left join inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "
+        + "left join inv_prod_presentaciones on inv_prod_presentaciones.id = inv_oent_detalle.inv_prod_presentacion_id "
+        + "where inv_oent_detalle.inv_oent_id=? "
+        + "order by inv_oent_detalle.inv_oent_id;";
+        
+        System.out.println("id= "+id);
+        log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(id)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id_detalle",String.valueOf(rs.getInt("id_detalle")));
+                    row.put("producto_id",String.valueOf(rs.getInt("inv_prod_id")));
+                    row.put("codigo",rs.getString("sku"));
+                    row.put("titulo",rs.getString("descripcion"));
+                    row.put("unidad",rs.getString("unidad"));
+                    row.put("presentacion",rs.getString("presentacion"));
+                    row.put("costo_u",StringHelper.roundDouble(rs.getString("costo_u"),2));
+                    row.put("cantidad",StringHelper.roundDouble(rs.getString("cantidad"),2));
+                    row.put("cant_rec",StringHelper.roundDouble(rs.getString("cantidad_rec"),2));
+                    row.put("importe",StringHelper.roundDouble(rs.getString("importe"),2));
+                    row.put("no_dec",rs.getString("no_dec"));
+                    row.put("lote_int",rs.getString("lote_int"));
+                    row.put("lote_prov",rs.getString("lote_prov"));
+                    row.put("cant_lote",StringHelper.roundDouble(rs.getString("cant_lote"),2));
+                    row.put("ped_lote",rs.getString("pedimento"));
+                    row.put("cad_lote",rs.getString("caducidad"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+
+
+    /*
+    @Override
+    public ArrayList<HashMap<String, String>> getInvEtiquetasEntrada_DatosGridLotes(Integer id) {
+                String sql_to_query = ""
+                        + "SELECT "
+                            + "inv_oent_detalle.id AS id_detalle_oent,"
+                            + "inv_lote.id AS id_lote, "
+                            + "inv_lote.inv_prod_id AS inv_prod_id_lote, "
+                            + "inv_lote.inv_alm_id AS inv_alm_id_lote, "
+                            + "inv_lote.lote_int, "
+                            + "(CASE WHEN inv_lote.lote_prov IS NULL THEN '' ELSE inv_lote.lote_prov END) AS lote_prov_lote, "
+                            + "inv_lote.inicial AS cantidad_lote, "
+                            + "(CASE WHEN inv_lote.pedimento='' OR inv_lote.pedimento IS NULL THEN ' ' ELSE inv_lote.pedimento END) AS pedimento,"
+                            +"(CASE WHEN to_char(inv_lote.caducidad,'yyyymmdd') = '29991231' THEN ''::character varying ELSE inv_lote.caducidad::character varying END) AS caducidad "
+                        + "FROM inv_oent_detalle "
+                        + "JOIN inv_lote ON inv_lote.inv_oent_detalle_id=inv_oent_detalle.id  "
+                        + "JOIN inv_prod on inv_prod.id = inv_lote.inv_prod_id  "
+                        + "WHERE inv_oent_detalle.inv_oent_id=? "
+                        + "ORDER BY inv_lote.id;";
+
+        //System.out.println(sql_to_query);
+        //System.out.println("id: "+id);
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{ new Integer(id) }, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id_detalle_oent",String.valueOf(rs.getInt("id_detalle_oent")));
+                    row.put("id_lote",String.valueOf(rs.getInt("id_lote")));
+                    row.put("inv_prod_id_lote",String.valueOf(rs.getInt("inv_prod_id_lote")));
+                    row.put("inv_alm_id_lote",String.valueOf(rs.getInt("inv_alm_id_lote")));
+                    row.put("lote_int",rs.getString("lote_int"));
+                    row.put("lote_prov_lote",rs.getString("lote_prov_lote"));
+                    row.put("cantidad_lote",StringHelper.roundDouble(rs.getString("cantidad_lote"),2));
+                    row.put("ped_lote",rs.getString("pedimento"));
+                    row.put("cad_lote",rs.getString("caducidad"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    */
+    
+    
 }
