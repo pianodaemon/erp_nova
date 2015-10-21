@@ -7,7 +7,6 @@
 package com.agnux.kemikal.springdaos;
 import com.agnux.common.helpers.StringHelper;
 import com.agnux.common.helpers.TimeHelper;
-import com.agnux.kemikal.controllers.InvEtiquetasEntradaController;
 import com.agnux.kemikal.interfacedaos.InvInterfaceDao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -19,7 +18,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
 public class InvSpringDao implements InvInterfaceDao{
-    private static final Logger log  = Logger.getLogger(InvEtiquetasEntradaController.class.getName());
+    private static final Logger log  = Logger.getLogger(InvSpringDao.class.getName());
     
     private JdbcTemplate jdbcTemplate;
 
