@@ -4,17 +4,16 @@
  */
 package com.agnux.kemikal.controllers;
 
-import com.agnux.common.obj.UserSessionData;
-import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
 import com.agnux.common.obj.ResourceProject;
+import com.agnux.common.obj.UserSessionData;
 import com.agnux.kemikal.interfacedaos.GralInterfaceDao;
+import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.net.MalformedURLException;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -23,14 +22,18 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.apache.commons.lang.StringUtils;
+import org.htmlcleaner.HtmlCleaner;
+import org.htmlcleaner.TagNode;
+import org.htmlcleaner.XPatherException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.servlet.ModelAndView;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -80,6 +83,37 @@ public class HomeController {
     String title = "";
     String description = "";
     String valueDate = "";
+    
+    
+    String valorUsd="";
+    String valorEur="";
+    String origenTc="";
+
+    public String getOrigenTc() {
+        return origenTc;
+    }
+
+    public void setOrigenTc(String origenTc) {
+        this.origenTc = origenTc;
+    }
+
+    public String getValorEur() {
+        return valorEur;
+    }
+
+    public void setValorEur(String valorEur) {
+        this.valorEur = valorEur;
+    }
+
+    public String getValorUsd() {
+        return valorUsd;
+    }
+
+    public void setValorUsd(String valorUsd) {
+        this.valorUsd = valorUsd;
+    }
+    
+    
 
     public String getDescription() {
         return description;
@@ -145,68 +179,54 @@ public class HomeController {
         succes = this.getHomeDao().getUserByName(username);
         userdata = new UserSessionData(String.valueOf(succes.get("username")), Integer.parseInt(succes.get("id")), Integer.parseInt(succes.get("empresa_id")), String.valueOf(succes.get("empresa")),Integer.parseInt(succes.get("sucursal_id")), String.valueOf(succes.get("sucursal")), String.valueOf(succes.get("incluye_crm")));
         x.addObject("user", userdata);
-       
-       /* 
-        if(user == null){
-            
-            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            if (principal instanceof UserDetails) {
-                username = ((UserDetails)principal).getUsername();
-            } else {
-                username = principal.toString();
-            }
-            
-            
-         
-
-            HashMap<String, String> succes = new HashMap<String, String>();
-            
-            succes = this.getHomeDao().getUserByName(username);
-            user = new UserSessionData(String.valueOf(succes.get("username")), Integer.parseInt(succes.get("id")),Integer.parseInt(succes.get("empleado_id")),0);
-            
-            //UserSessionData(String login_name, int userId , int empleadoId, int empresaId) {
-            session.setAttribute("user", user);
-            
-            user = (UserSessionData) session.getAttribute("user");
-            System.out.println("userId: "+ user.getUserId());
-            System.out.println("empleadoId: "+ user.getEmpleadoId());
-            System.out.println("empresaId: "+ user.getEmpresaId());
-            System.out.println("userName: "+ user.getUserName());
-            
-            
-            x = x.addObject("username", user.getUserName());
-            
-        }
-        */
-       
+        
         x = x.addObject("username", userdata.getUserName());
         x = x.addObject("empresa", userdata.getRazonSocialEmpresa());
         x = x.addObject("sucursal", userdata.getSucursal());
         
         /*Para actualizar el tipo de cambio*/
-        this.tipoCambioServiceMethod(Integer.parseInt(succes.get("id")));
-        
-        //String userId = String.valueOf(userdata.getUserId());
-        //System.out.println("id_de_usuario: "+userId);
-        
-        //String codificado = Base64Coder.encodeString(userId);
-        //System.out.println("codificado: "+codificado);
-        
-        //String decodificado = Base64Coder.decodeString(codificado);
-        //System.out.println("decodificado: "+decodificado);
-        
+        this.tipoCambioServiceMethod(Integer.parseInt(succes.get("id")), userdata.getEmpresaId());
         
         return x;
     }
     
-    public void tipoCambioServiceMethod(Integer user_id){
+    public void tipoCambioServiceMethod(Integer user_id, Integer empresa_id){
         Date date = new Date();
+        //Url default para leer el tipo de cambio
+        String urlString = "http://dof.gob.mx/indicadores.xml";
         
-        getXmlV2("http://dof.gob.mx/indicadores.xml");
+        Map<String, Object> map = this.getGralDao().getTipoCambio_Url(empresa_id);
+        
+        if(map.containsKey("url")){
+            if(!"".equals(map.get("url").toString())){
+                urlString = map.get("url").toString();
+            }
+        }
+        
+        if(map.containsKey("institucion")){
+            if(!"".equals(map.get("institucion").toString())){
+                this.setOrigenTc(map.get("institucion").toString().toUpperCase());
+            }else{
+                this.setOrigenTc("DOF");
+            }
+        }else{
+            this.setOrigenTc("DOF");
+        }
+        
+        getXmlV2(Integer.parseInt(map.get("id").toString()), urlString);
         
         //121--Proceso Actualizador Tipo de cambion
         String data_string = "121___new___"+user_id+"___0___"+this.getDescription()+"___dolar%";
         String extra_data_array = "'sin datos'";
+        
+        String arreglo[];
+        arreglo = new String[2];
+        
+        arreglo[0]= "'"+ "dolar___" + this.getValorUsd() +"___"+ this.getOrigenTc() +"'";
+        arreglo[1]= "'"+ "euro___" + this.getValorEur() +"___"+ this.getOrigenTc() +"'";
+        
+        //Serializar el arreglo
+        extra_data_array = StringUtils.join(arreglo, ",");
         
         //System.out.println("antes de jdbc data_string:"+data_string+"     extra_data_array:"+extra_data_array);
         String retorno = this.jobTiposMoneda(data_string, extra_data_array);
@@ -219,36 +239,94 @@ public class HomeController {
         */
     }
     
-    public void getXmlV2(String urlString){
+    public void getXmlV2(Integer id_url, String urlString){
         try {
-            
+            //System.out.println("urlString="+urlString);
             URL url = new URL(urlString);
             URLConnection conn = url.openConnection();
+            
+            if(id_url==1){
+                
+                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                DocumentBuilder builder = factory.newDocumentBuilder();
+                Document doc = builder.parse(conn.getInputStream());
 
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document doc = builder.parse(conn.getInputStream());
-            
-            NodeList ndl = doc.getElementsByTagName("item");
-            
-            for(int i=0; i < ndl.getLength(); i++ ){
-                NodeList nodl = (NodeList) ndl.item(i);
-                for(int j=0; j < nodl.getLength(); j++ ){
-                    Node nditem = nodl.item(j);
-                    if (nditem.getNodeName().equals("title") ){
-                        setTitle(nditem.getTextContent());
-                    }
-                    if(title.equals("DOLAR")){
-                        if (nditem.getNodeName().equals("description") ){
-                            setDescription(nditem.getTextContent());
+                NodeList ndl = doc.getElementsByTagName("item");
+                
+                for(int i=0; i < ndl.getLength(); i++ ){
+                    NodeList nodl = (NodeList) ndl.item(i);
+                    for(int j=0; j < nodl.getLength(); j++ ){
+                        Node nditem = nodl.item(j);
+                        if (nditem.getNodeName().equals("title") ){
+                            setTitle(nditem.getTextContent());
                         }
-                        if (nditem.getNodeName().equals("valueDate") ){
-                            setValueDate(nditem.getTextContent());
+                        if(title.equals("DOLAR")){
+                            if (nditem.getNodeName().equals("description") ){
+                                setDescription(nditem.getTextContent());
+                                this.setValorUsd(nditem.getTextContent());
+                            }
+                            if (nditem.getNodeName().equals("valueDate") ){
+                                setValueDate(nditem.getTextContent());
+                            }
                         }
                     }
                 }
+                
+                //Aqui le asignamos por default el valor cero
+                this.setValorEur("0");
             }
-           
+            
+            if(id_url==2){
+                conn.connect();
+                //Creamos el objeto con el que vamos a leer
+                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                String inputLine;
+                String html = "";
+                while ((inputLine = in.readLine()) != null) {
+                    html += inputLine;
+                }
+                in.close();
+                
+                
+                HtmlCleaner cleaner = new HtmlCleaner();
+                TagNode node = cleaner.clean(html);
+                
+                boolean tomarValorUsd=false;
+                boolean valorUsdTomado=false;
+                boolean tomarValorEuro=false;
+                boolean valorEuroTomado=false;
+                
+                for (Object o : node.evaluateXPath("//td")) {
+                    String text = ((TagNode)(o)).getText().toString().trim().toLowerCase().replace("ó", "o");
+                    String text2 = text;
+                    if(text.contains("dolar venta") && text.length()<=11){
+                        //TagNode parent = ((TagNode)o).getParent();
+                        if(!valorUsdTomado){
+                            tomarValorUsd=true;
+                        }
+                    }else{
+                        if(tomarValorUsd && !valorUsdTomado){
+                            this.setValorUsd(text);
+                            valorUsdTomado=true;
+                        }
+                    }
+                    
+                    if(text2.contains("euro venta") && text2.length()<=10){
+                        if(!valorEuroTomado){
+                            tomarValorEuro=true;
+                        }
+                    }else{
+                        if(tomarValorEuro && !valorEuroTomado){
+                            this.setValorEur(text);
+                            valorEuroTomado=true;
+                        }
+                    }
+                    
+                    if(valorUsdTomado && valorEuroTomado) break;
+                    
+                }
+            }
+            
             //System.out.println("title:"+title+" description:"+description+" valueDate:"+valueDate);
             /*
             TransformerFactory factory1 = TransformerFactory.newInstance();
@@ -258,6 +336,8 @@ public class HomeController {
             xform.transform(new DOMSource(doc), new StreamResult(System.out));
             */
             
+        } catch (XPatherException ex) {
+            Logger.getLogger(HomeController.class.getName()).log(Level.SEVERE, null, ex);
         }
         catch (ParserConfigurationException ex) {
             Logger.getLogger(HomeController.class.getName()).log(Level.SEVERE, null, ex);
@@ -271,7 +351,7 @@ public class HomeController {
     public String jobTiposMoneda(String data_string, String extra_data_array){
         
         String actualizo = "0";
-        if(!this.getDescription().equals(null) && !this.getDescription().equals("")){
+        if(!this.getValorUsd().equals(null) && !this.getValorUsd().equals("")){
             actualizo = this.getGralDao().selectFunctionForThisApp(data_string, extra_data_array);
         }
         //actualizo = this.getGralDao().selectFunctionForThisApp(data_string, extra_data_array);

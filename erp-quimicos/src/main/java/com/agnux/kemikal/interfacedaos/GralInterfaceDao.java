@@ -6,6 +6,7 @@ package com.agnux.kemikal.interfacedaos;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -249,4 +250,6 @@ public interface GralInterfaceDao {
     public ArrayList<HashMap<String, Object>> getConfigPeriodosPago_Grid(Integer id);
     //Calcular años a mostrar
     public ArrayList<HashMap<String, Object>> getConfigPeriodosPago_Anios();
+    
+    public Map<String, Object> getTipoCambio_Url(Integer id_empresa);
 }

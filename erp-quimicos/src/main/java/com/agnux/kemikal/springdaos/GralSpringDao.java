@@ -2955,4 +2955,23 @@ public class GralSpringDao implements GralInterfaceDao{
     }
 
     
+    
+    @Override
+    public Map<String, Object> getTipoCambio_Url(Integer id_empresa) {
+        String sql_to_query="";
+        
+        sql_to_query = ""
+        + "select "
+            + "(case when gral_tc_url.id is null then 0 else gral_tc_url.id end) as id, "
+            + "(case when gral_tc_url.url is null then '' else gral_tc_url.url end) as url,"
+            + "(case when gral_tc_url.institucion is null then '' else gral_tc_url.institucion end) as institucion "
+        + "from gral_emp "
+        + "left join gral_tc_url on gral_tc_url.id=gral_emp.gral_tc_url_id "
+        + "where gral_emp.id="+id_empresa+";";
+        Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_to_query);
+
+        return map;
+    }
+    
+    
 }
