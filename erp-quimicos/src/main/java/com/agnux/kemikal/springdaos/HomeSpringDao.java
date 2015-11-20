@@ -5,13 +5,12 @@
 package com.agnux.kemikal.springdaos;
 
 import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 
 /**
  *
@@ -53,13 +52,13 @@ public class HomeSpringDao  implements HomeInterfaceDao  {
         +"JOIN gral_usr_suc ON gral_usr_suc.gral_usr_id=gral_usr.id "
         +"JOIN gral_suc ON gral_suc.id=gral_usr_suc.gral_suc_id "
         +"JOIN gral_emp ON gral_emp.id=gral_suc.empresa_id "
-        +"WHERE gral_usr.username ILIKE '"+name+"' AND gral_usr.enabled=true;";
+        +"WHERE gral_usr.username=? and gral_usr.enabled=?;";
         
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         
         HashMap<String, String> hm = (HashMap<String, String>) this.jdbcTemplate.queryForObject(
             sql_to_query, 
-            new Object[]{}, new RowMapper() {
+            new Object[]{name, true}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, String> row = new HashMap<String, String>();
@@ -115,13 +114,13 @@ public class HomeSpringDao  implements HomeInterfaceDao  {
                 + "JOIN gral_usr_suc ON gral_usr_suc.gral_usr_id = gral_usr.id "
                 + "JOIN gral_suc ON gral_suc.id = gral_usr_suc.gral_suc_id "
                 + "JOIN gral_emp ON gral_emp.id=gral_suc.empresa_id "
-                + "WHERE gral_usr.id ="+id_user +" AND gral_usr.enabled=true";
+                + "WHERE gral_usr.id=? and gral_usr.enabled=?";
         
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         
         HashMap<String, String> hm = (HashMap<String, String>) this.jdbcTemplate.queryForObject(
             sql_to_query, 
-            new Object[]{}, new RowMapper() {
+            new Object[]{new Integer(id_user), true}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, String> row = new HashMap<String, String>();
