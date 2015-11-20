@@ -193,6 +193,7 @@ public class HomeController {
     public void tipoCambioServiceMethod(Integer user_id, Integer empresa_id){
         Date date = new Date();
         //Url default para leer el tipo de cambio
+        Integer urlId = 1;
         String urlString = "http://dof.gob.mx/indicadores.xml";
         
         Map<String, Object> map = this.getGralDao().getTipoCambio_Url(empresa_id);
@@ -200,6 +201,7 @@ public class HomeController {
         if(map.containsKey("url")){
             if(!"".equals(map.get("url").toString())){
                 urlString = map.get("url").toString();
+                urlId = Integer.parseInt(map.get("id").toString());
             }
         }
         
@@ -213,7 +215,7 @@ public class HomeController {
             this.setOrigenTc("DOF");
         }
         
-        getXmlV2(Integer.parseInt(map.get("id").toString()), urlString);
+        getXmlV2(urlId, urlString);
         
         //121--Proceso Actualizador Tipo de cambion
         String data_string = "121___new___"+user_id+"___0___"+this.getDescription()+"___dolar%";
