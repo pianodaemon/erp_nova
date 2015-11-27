@@ -15,9 +15,9 @@ $(function() {
 	var $contextpath = $('#lienzo_recalculable').find('input[name=contextpath]');
 	var controller = $contextpath.val()+"/controllers/comcompraautorizacion";
 
-        //Barra para las acciones
-        $('#barra_acciones').append($('#lienzo_recalculable').find('.table_acciones'));
-        $('#barra_acciones').find('.table_acciones').css({'display':'block'});
+	//Barra para las acciones
+	$('#barra_acciones').append($('#lienzo_recalculable').find('.table_acciones'));
+	$('#barra_acciones').find('.table_acciones').css({'display':'block'});
 	var $visualiza_buscador = $('#barra_acciones').find('.table_acciones').find('a[href*=visualiza_buscador]');
 
 	$('#barra_acciones').find('.table_acciones').find('#vbuscador').mouseover(function(){
@@ -86,6 +86,7 @@ $(function() {
 		$busqueda_proveedor.val('');
 		$busqueda_fecha_inicial.val('');
 		$busqueda_fecha_final.val('');
+		$busqueda_folio.focus();
 	});
 
 
@@ -119,8 +120,16 @@ $(function() {
 			 $('#barra_buscador').animate({height:'0px'}, 500);
 			 $('#cuerpo').css({'height': pix_alto});
 		};
+		$busqueda_folio.focus();
 	});
+	
 
+	//Aplicar evento Keypress para que al pulsar enter ejecute la busqueda
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_folio, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_proveedor, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_fecha_inicial, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_fecha_final, $buscar);
+	
 
 	//----------------------------------------------------------------
 	//valida la fecha seleccionada

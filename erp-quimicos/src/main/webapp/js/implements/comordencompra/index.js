@@ -138,7 +138,7 @@ $(function() {
 	});
 	
 	
-	
+	/*
 	//desencadena evento del $campo_ejecutar al pulsar Enter en $campo
 	$(this).aplicarEventoKeypressEjecutaTrigger = function($campo, $campo_ejecutar){
 		$campo.keypress(function(e){
@@ -148,7 +148,7 @@ $(function() {
 			}
 		});
 	}
-	
+	*/
 	
 	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_folio, $buscar);
 	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_proveedor, $buscar);
