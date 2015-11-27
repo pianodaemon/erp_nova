@@ -1697,7 +1697,7 @@ public class CtbSpringDao implements CtbInterfaceDao{
             + "ctb_cta.ssubcta, "
             + "ctb_cta.sssubcta,"
             + "ctb_cta.ssssubcta, "
-            + "(CASE WHEN nivel_cta=1 THEN rpad(ctb_cta.cta::character varying, 4, '0')   "
+            + "(CASE WHEN nivel_cta=1 THEN lpad(ctb_cta.cta::character varying, 4, '0')   "
             + "WHEN ctb_cta.nivel_cta=2 THEN lpad(ctb_cta.cta::character varying, 4, '0')||'-'||lpad(ctb_cta.subcta::character varying, 4, '0') "
             + "WHEN ctb_cta.nivel_cta=3 THEN lpad(ctb_cta.cta::character varying, 4, '0')||'-'||lpad(ctb_cta.subcta::character varying, 4, '0')||'-'||lpad(ctb_cta.ssubcta::character varying, 4, '0') "
             + "WHEN ctb_cta.nivel_cta=4 THEN lpad(ctb_cta.cta::character varying, 4, '0')||'-'||lpad(ctb_cta.subcta::character varying, 4, '0')||'-'||lpad(ctb_cta.ssubcta::character varying, 4, '0')||'-'||lpad(ctb_cta.sssubcta::character varying, 4, '0') "
