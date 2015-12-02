@@ -1914,4 +1914,109 @@ public class CtbSpringDao implements CtbInterfaceDao{
     
     
     
+    //METODOS PARA APLICATIVO DE DEFINICION DE ASIENTOS CONTABLES
+    @Override
+    public ArrayList<HashMap<String, Object>> getCtbDefinicionAsientos_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
+        String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
+        
+	String sql_to_query = ""
+        + "select "
+            + "ctb_tmov.id,"
+            + "ctb_tmov.folio,"
+            + "ctb_tmov.titulo as nombre,"
+            + "(case when ctb_tpol.titulo is null then '' else ctb_tpol.titulo end) as tipo "
+        + "from ctb_tmov "
+        + "left join ctb_tpol on ctb_tpol.id=ctb_tmov.ctb_tpol_id "
+        + "JOIN ("+sql_busqueda+") AS sbt ON sbt.id=ctb_tmov.id "
+        + "order by "+orderBy+" "+asc+" limit ? OFFSET ?";
+        
+        //System.out.println("data_string: "+data_string);
+        //System.out.println("sql_busqueda: "+sql_busqueda);
+        //System.out.println("sql_to_query: "+sql_to_query);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query, 
+            new Object[]{data_string, new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("folio",rs.getString("folio"));
+                    row.put("nombre",rs.getString("nombre"));
+                    row.put("tipo",rs.getString("tipo"));
+                    return row;
+                }
+            }
+        );
+        return hm; 
+    }
+    
+    
+    
+    
+    @Override
+    public ArrayList<HashMap<String, Object>> getCtbDefinicionAsientos_Datos(Integer id) {
+        String sql_query = "select id,folio,titulo,fecha,ctb_tpol_id as tpol_id,pol_num from ctb_tmov where id=?;";
+        
+        //System.out.println(sql_query);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query, 
+            new Object[]{new Integer(id)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("folio",rs.getString("folio"));
+                    row.put("titulo",rs.getString("titulo"));
+                    row.put("fecha",rs.getInt("fecha"));
+                    row.put("tpol_id",rs.getInt("tpol_id"));
+                    row.put("pol_num",rs.getInt("pol_num"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    @Override
+    public ArrayList<HashMap<String, Object>> getCtbDefinicionAsientos_DatosGrid(Integer id) {
+        String sql_query = ""
+        + "select "
+            + "ctb_tmov_det.id as id_det,"
+            + "ctb_tmov_det.ctb_cta_id as cta_id,"
+            + "(CASE WHEN nivel_cta=1 THEN lpad(ctb_cta.cta::character varying, 4, '0') "
+            + "WHEN ctb_cta.nivel_cta=2 THEN lpad(ctb_cta.cta::character varying, 4, '0')||'-'||lpad(ctb_cta.subcta::character varying, 4, '0') "
+            + "WHEN ctb_cta.nivel_cta=3 THEN lpad(ctb_cta.cta::character varying, 4, '0')||'-'||lpad(ctb_cta.subcta::character varying, 4, '0')||'-'||lpad(ctb_cta.ssubcta::character varying, 4, '0') "
+            + "WHEN ctb_cta.nivel_cta=4 THEN lpad(ctb_cta.cta::character varying, 4, '0')||'-'||lpad(ctb_cta.subcta::character varying, 4, '0')||'-'||lpad(ctb_cta.ssubcta::character varying, 4, '0')||'-'||lpad(ctb_cta.sssubcta::character varying, 4, '0') "
+            + "WHEN ctb_cta.nivel_cta=5 THEN lpad(ctb_cta.cta::character varying, 4, '0')||'-'||lpad(ctb_cta.subcta::character varying, 4, '0')||'-'||lpad(ctb_cta.ssubcta::character varying, 4, '0')||'-'||lpad(ctb_cta.sssubcta::character varying, 4, '0')||'-'||lpad(ctb_cta.ssssubcta::character varying, 4, '0') "
+            + "ELSE '' "
+            + "END) AS cuenta, "
+            + "ctb_cta.descripcion,"
+            + "ctb_tmov_det.mov_tipo,"
+            + "ctb_tmov_det.detalle "
+        + "from ctb_tmov_det "
+        + "join ctb_cta on ctb_cta.id=ctb_tmov_det.ctb_cta_id "
+        + "where ctb_tmov_det.ctb_tmov_id=?;";
+        
+        //System.out.println(sql_query);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,  
+            new Object[]{new Integer(id)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id_det",rs.getInt("id_det"));
+                    row.put("cta_id",rs.getInt("cta_id"));
+                    row.put("cuenta",rs.getString("cuenta"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("mov_tipo",rs.getInt("mov_tipo"));
+                    row.put("detalle",rs.getBoolean("detalle"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
 }

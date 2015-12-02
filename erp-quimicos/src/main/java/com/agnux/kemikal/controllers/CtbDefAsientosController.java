@@ -5,7 +5,9 @@
 package com.agnux.kemikal.controllers;
 
 import com.agnux.cfd.v2.Base64Coder;
+import com.agnux.common.helpers.StringHelper;
 import com.agnux.common.helpers.TimeHelper;
+import com.agnux.common.obj.DataPost;
 import com.agnux.common.obj.ResourceProject;
 import com.agnux.common.obj.UserSessionData;
 import com.agnux.kemikal.interfacedaos.CtbInterfaceDao;
@@ -19,6 +21,7 @@ import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -64,14 +67,9 @@ public class CtbDefAsientosController {
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
         
         infoConstruccionTabla.put("id", "Acciones:90");
-        infoConstruccionTabla.put("poliza", "P&oacute;liza:80");
-        infoConstruccionTabla.put("tipo", "Tipo de P&oacute;liza:170");
-        infoConstruccionTabla.put("concepto","Concepto:170");
-        infoConstruccionTabla.put("fecha","Fecha:80");
-        infoConstruccionTabla.put("moneda", "Moneda:60");
-        infoConstruccionTabla.put("debe","Debe:90");
-        infoConstruccionTabla.put("haber","Haber:90");
-        infoConstruccionTabla.put("status","Estatus:90");
+        infoConstruccionTabla.put("folio", "Folio:80");
+        infoConstruccionTabla.put("nombre","Nombre:300");
+        infoConstruccionTabla.put("tipo", "Tipo de P&oacute;liza:180");
         
                     
         ModelAndView x = new ModelAndView("ctbdefasientos/startup", "title", "Definici&oacute;n de Asientos Contables");
@@ -94,6 +92,70 @@ public class CtbDefAsientosController {
         
         return x;
     }
+    
+    
+    @RequestMapping(value="/getAllAsientos.json", method = RequestMethod.POST)
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getAllAsientosJson(
+           @RequestParam(value="orderby", required=true) String orderby,
+           @RequestParam(value="desc", required=true) String desc,
+           @RequestParam(value="items_por_pag", required=true) int items_por_pag,
+           @RequestParam(value="pag_start", required=true) int pag_start,
+           @RequestParam(value="display_pag", required=true) String display_pag,
+           @RequestParam(value="input_json", required=true) String input_json,
+           @RequestParam(value="cadena_busqueda", required=true) String cadena_busqueda,
+           @RequestParam(value="iu", required=true) String id_user_cod,
+           Model modcel
+        ) {
+           
+        HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
+        HashMap<String,String> has_busqueda = StringHelper.convert2hash(StringHelper.ascii2string(cadena_busqueda));
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        
+        //Aplicativo Definicion de Asientos Contables(CTB)
+        Integer app_selected = 203;
+        
+        //Decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        
+        //Variables para el buscador
+        //String sucursal = StringHelper.isNullString(String.valueOf(has_busqueda.get("sucursal")));
+        String tipo_pol = StringHelper.isNullString(String.valueOf(has_busqueda.get("tipo_pol")));
+        String folio = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("folio")))+"%";
+        String nombre = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("nombre")))+"%";
+        /*
+        if(this.getCtbDao().getUserRolAdmin(id_usuario)<=0){
+            // Si el usuario no es administrador y la sucursal es cero, se asigna la sucursal del usuario actual.
+            if(Integer.valueOf(sucursal)<=0){
+                sucursal = String.valueOf(id_sucursal);
+            }
+        }
+        */
+        
+        String data_string = app_selected+"___"+id_usuario+"___"+id_sucursal+"___"+tipo_pol+"___"+folio+"___"+nombre;
+        //System.out.println("data_string: "+data_string);
+        //Obtiene total de registros en base de datos, con los parametros de busqueda
+        int total_items = this.getCtbDao().countAll(data_string);
+        
+        //Calcula el total de paginas
+        int total_pags = resource.calculaTotalPag(total_items,items_por_pag);
+        
+        //Variables que necesita el datagrid, para no tener que hacer uno por cada aplicativo
+        DataPost dataforpos = new DataPost(orderby, desc, items_por_pag, pag_start, display_pag, input_json, cadena_busqueda,total_items,total_pags, id_user_cod);
+        
+        int offset = resource.__get_inicio_offset(items_por_pag, pag_start);
+        
+        //Obtiene los registros para el grid, de acuerdo a los parametros de busqueda
+        jsonretorno.put("Data", this.getCtbDao().getCtbDefinicionAsientos_PaginaGrid(data_string, offset, items_por_pag, orderby, desc));
+        
+        //Obtiene el hash para los datos que necesita el datagrid
+        jsonretorno.put("DataForGrid", dataforpos.formaHashForPos(dataforpos));
+        
+        return jsonretorno;
+    }
+    
     
     
     
@@ -125,6 +187,7 @@ public class CtbDefAsientosController {
         
         jsonretorno.put("TP", this.getCtbDao().getPolizasContables_TiposPolizas(id_empresa));
         jsonretorno.put("Suc", this.getCtbDao().getCtb_Sucursales(id_empresa));
+        jsonretorno.put("CtaMay", this.getCtbDao().getPolizasContables_CuentasMayor(id_empresa));
         jsonretorno.put("Data", data);
         
         return jsonretorno;
@@ -142,7 +205,7 @@ public class CtbDefAsientosController {
         
         log.log(Level.INFO, "Ejecutando getPolizaJson de {0}", CtbDefAsientosController.class.getName());
         HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
-        ArrayList<HashMap<String, Object>> datosPoliza = new ArrayList<HashMap<String, Object>>();
+        ArrayList<HashMap<String, Object>> datos = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> datosGrid = new ArrayList<HashMap<String, Object>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
         ArrayList<HashMap<String, Object>> arrayExtra = new ArrayList<HashMap<String, Object>>();
@@ -160,11 +223,11 @@ public class CtbDefAsientosController {
         arrayExtra.add(0,extra);
         
         if( id != 0  ){
-            datosPoliza = this.getCtbDao().getPolizasContables_Datos(id);
-            datosGrid = this.getCtbDao().getPolizasContables_DatosGrid(id);
+            datos = this.getCtbDao().getCtbDefinicionAsientos_Datos(id);
+            datosGrid = this.getCtbDao().getCtbDefinicionAsientos_DatosGrid(id);
         }
         
-        jsonretorno.put("Data", datosPoliza);
+        jsonretorno.put("Data", datos);
         jsonretorno.put("Grid", datosGrid);
         jsonretorno.put("Extras", arrayExtra);
         
@@ -245,5 +308,69 @@ public class CtbDefAsientosController {
         return jsonretorno;
     }
     
+    
+    
+    //Crear y editar
+    @RequestMapping(method = RequestMethod.POST, value="/edit.json")
+    public @ResponseBody HashMap<String, String> editJson(
+            @RequestParam(value="identificador", required=true) String identificador,
+            @RequestParam(value="nombre", required=true) String nombre,
+            @RequestParam(value="select_fecha", required=true) String select_fecha,
+            @RequestParam(value="select_pol_num", required=true) String select_pol_num,
+            @RequestParam(value="select_tipo", required=true) String select_tipo,
+            @RequestParam(value="id_det", required=false) String[] id_det,
+            @RequestParam(value="delete", required=false) String[] eliminado,
+            @RequestParam(value="id_cta", required=false) String[] id_cta,
+            @RequestParam(value="select_mov", required=false) String[] select_mov,
+            @RequestParam(value="detalle", required=false) String[] detalle,
+            @RequestParam(value="no_tr", required=false) String[] no_tr,
+            Model model,@ModelAttribute("user") UserSessionData user
+        ) {
+        
+        HashMap<String, String> jsonretorno = new HashMap<String, String>();
+        HashMap<String, String> succes = new HashMap<String, String>();
+        
+        //Aplicativo Definicion de Asientos Contables(CTB)
+        Integer app_selected = 203;
+        String command_selected = "new";
+        Integer id_usuario= user.getUserId();//variable para el id  del usuario
+        String extra_data_array = "'sin_datos'";
+        String actualizo = "0";
+        
+        if(id_det!=null){
+            String arreglo[];
+            arreglo = new String[eliminado.length];
+
+            for(int i=0; i<eliminado.length; i++) {
+                arreglo[i]= "'"+ eliminado[i] +"___"+ id_det[i] +"___"+ id_cta[i] +"___"+ select_mov[i] +"___"+ detalle[i] +"'";
+                //System.out.println(arreglo[i]);
+            }
+            
+            //Serializar el arreglo
+            extra_data_array = StringUtils.join(arreglo, ",");
+        }
+        
+        //System.out.println(extra_data_array);
+        
+        if( identificador.equals("0") ){
+            command_selected = "new";
+        }else{
+            command_selected = "edit";
+        }
+        
+        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+identificador+"___"+nombre.trim().toUpperCase()+"___"+select_fecha+"___"+select_pol_num+"___"+select_tipo;
+        
+        succes = this.getCtbDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
+        
+        log.log(Level.INFO, "despues de validacion {0}", String.valueOf(succes.get("success")));
+        if( String.valueOf(succes.get("success")).equals("true") ){
+            actualizo = this.getCtbDao().selectFunctionForCtbAdmProcesos(data_string, extra_data_array);
+        }
+        
+        jsonretorno.put("success",String.valueOf(succes.get("success")));
+        
+        log.log(Level.INFO, "Salida json {0}", String.valueOf(jsonretorno.get("success")));
+        return jsonretorno;
+    }
     
 }
