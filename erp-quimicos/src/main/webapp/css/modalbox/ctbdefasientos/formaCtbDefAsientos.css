@@ -166,7 +166,7 @@ table tr td.grid {
 	border-right: 1px solid #ccc;
 	padding: 2px;
 	text-align: center;
-	vertical-align: top;
+	vertical-align:middle;
 }
 
 table tr td.grid1 {
@@ -174,7 +174,7 @@ table tr td.grid1 {
 	border-right: 1px solid #ccc;
 	padding: 2px;
 	text-align: left;
-	vertical-align: top;
+	vertical-align:middle;
 }
 
 table tr td.grid2 {
@@ -182,5 +182,5 @@ table tr td.grid2 {
 	border-right: 1px solid #ccc;
 	padding: 2px;
 	text-align: right;
-	vertical-align: top;
+	vertical-align:middle;
 }
