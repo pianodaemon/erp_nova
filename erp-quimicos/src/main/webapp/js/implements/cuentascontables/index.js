@@ -327,6 +327,7 @@ $(function() {
 		var $descripcion = $('#forma-cuentascontables-window').find('input[name=descripcion]');
 		var $chk_cta_detalle = $('#forma-cuentascontables-window').find('input[name=chk_cta_detalle]');
 		var $select_estatus = $('#forma-cuentascontables-window').find('select[name=select_estatus]');
+		var $select_agrupador = $('#forma-cuentascontables-window').find('select[name=select_agrupador]');
 		
 		var $descripcion_es = $('#forma-cuentascontables-window').find('input[name=descripcion_es]');
 		var $descripcion_in = $('#forma-cuentascontables-window').find('input[name=descripcion_in]');
@@ -392,7 +393,6 @@ $(function() {
 			if(parseInt(entry['Extras'][0]['nivel_cta']) >=4 ){ $ssscuenta.show(); };
 			if(parseInt(entry['Extras'][0]['nivel_cta']) >=5 ){ $sssscuenta.show(); };
 			
-			
 			$select_sucursal.children().remove();
 			var suc_hmtl = '';
 			$.each(ArraySuc,function(entryIndex,suc){
@@ -406,7 +406,6 @@ $(function() {
 			});
 			$select_sucursal.append(suc_hmtl);
 			
-			
 			//Carga select de cuentas de Mayor
 			$select_cuenta_mayor.children().remove();
 			var ctamay_hmtl = '';
@@ -414,7 +413,6 @@ $(function() {
 				ctamay_hmtl += '<option value="' + ctamay['id'] + '"  >( ' + ctamay['cta_mayor']+', '+ ctamay['clasificacion'] +' ) '+ ctamay['descripcion'] + '</option>';
 			});
 			$select_cuenta_mayor.append(ctamay_hmtl);
-			
 			
 			//carga select de cuentas de Estatus
 			$select_estatus.children().remove();
@@ -435,9 +433,6 @@ $(function() {
 				});
 			});
 			
-			
-			
-					
 			//Carga select de niveles
 			var mostrar_opciones=true;
 			var elemento_seleccionado=0;
@@ -450,15 +445,20 @@ $(function() {
 			txt_elemento_cero='';
 			$carga_select_con_arreglo_fijo($select_naturaleza, array_naturaleza_cta, txt_elemento_cero, elemento_seleccionado, mostrar_opciones)
 			
-			
 			mostrar_opciones=true;
 			elemento_seleccionado=0;
 			txt_elemento_cero='';
 			$carga_select_con_arreglo_fijo($select_tipo_cta, array_tipo_cta, txt_elemento_cero, elemento_seleccionado, mostrar_opciones)
 			
-					
-					
-					/*
+			//Carga select de agrupador
+			$select_agrupador.children().remove();
+			var agrupa_hmtl = '<option value="0">[-----------]</option>';
+			$.each(entry['App'],function(entryIndex,agrupa){
+				agrupa_hmtl += '<option value="' + agrupa['id'] + '"  >'+ agrupa['titulo'] + '</option>';
+			});
+			$select_agrupador.append(agrupa_hmtl);
+			
+			/*
 			//Carga select de niveles
 			$select_nivel.children().remove();
 			var nivel_hmtl = '';
@@ -495,7 +495,6 @@ $(function() {
 		$descripcion_es.change(function(){
 			$descripcion.val($(this).val());
 		});
-		
 		
 		$cerrar_plugin.bind('click',function(){
 			var remove = function() { $(this).remove(); };
@@ -570,6 +569,7 @@ $(function() {
 			var $descripcion = $('#forma-cuentascontables-window').find('input[name=descripcion]');
 			var $chk_cta_detalle = $('#forma-cuentascontables-window').find('input[name=chk_cta_detalle]');
 			var $select_estatus = $('#forma-cuentascontables-window').find('select[name=select_estatus]');
+			var $select_agrupador = $('#forma-cuentascontables-window').find('select[name=select_agrupador]');
 			
 			var $descripcion_es = $('#forma-cuentascontables-window').find('input[name=descripcion_es]');
 			var $descripcion_in = $('#forma-cuentascontables-window').find('input[name=descripcion_in]');
@@ -681,8 +681,6 @@ $(function() {
 					});
 					$select_cuenta_mayor.append(ctamay_hmtl);
 					
-					
-					
 					//var array_nive_cta = {1:"Auxiliar", 2:"Mayor" };
 					//var array_naturaleza_cta = {1:"Deudora", 2:"Acreedora" };
 					//var array_tipo_cta = {1:"Balance", 2:"Resultados", 3:"De orden" };
@@ -714,7 +712,17 @@ $(function() {
 					}
 					$carga_select_con_arreglo_fijo($select_tipo_cta, array_tipo_cta, txt_elemento_cero, elemento_seleccionado, mostrar_opciones)
 					
-					
+					//Carga select de agrupador
+					$select_agrupador.children().remove();
+					var agrupa_hmtl = '<option value="0">[-----------]</option>';
+					$.each(entry['App'],function(entryIndex,agrupa){
+						if(parseInt(agrupa['id'])==parseInt(entry['Cc'][0]['agrupa_id'])){
+							agrupa_hmtl += '<option value="'+ agrupa['id'] +'" selected="yes">'+ agrupa['titulo'] + '</option>';
+						}else{
+							agrupa_hmtl += '<option value="'+ agrupa['id'] +'">'+ agrupa['titulo'] + '</option>';
+						}
+					});
+					$select_agrupador.append(agrupa_hmtl);
 					
 					/*
 					$select_nivel.children().remove();
@@ -762,8 +770,6 @@ $(function() {
 					});
 					$select_tipo_cta.append(tipo_hmtl);
 					*/
-					
-					
 					
 					$chk_cta_detalle.attr('checked',  (entry['Cc'][0]['detalle'] == '1')? true:false );
 					
@@ -836,10 +842,8 @@ $(function() {
             Elastic.reset(document.getElementById('lienzo_recalculable'));
         },"json");
     }
-
+    
     $get_datos_grid();
-    
-    
 });
 
 

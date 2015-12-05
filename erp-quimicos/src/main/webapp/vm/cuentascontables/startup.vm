@@ -34,34 +34,34 @@
         <!--Esta tabla va  en la barra de buscador -->
 		<table border="0" class="tabla_buscador" style="display:none">
 			<tr>
-				<td colspan="13">&nbsp;&nbsp;</td>
+				<td colspan="13">&nbsp;</td>
 			</tr>
 			<tr>
-				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				<td width="10">&nbsp;</td>
 				<td width="150">Sucursal</td>
-				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				<td width="10">&nbsp;</td>
 				<td>Cuenta&nbsp;de&nbsp;Mayor</td>
-				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				<td width="10">&nbsp;</td>
 				<td>Descripci&oacute;n</td>
-				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				<td width="10">&nbsp;</td>
 				<td></td>
-				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				<td width="10">&nbsp;</td>
 				<td></td>
-				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				<td width="10">&nbsp;</td>
 			</tr>
 			
 			<tr>
-				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				<td width="10">&nbsp;</td>
 				<td width="150"><select name="busqueda_select_sucursal" style="width:150px;"><option value="0" selected="yes">[-- --]</option></select></td>
-				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				<td width="10">&nbsp;</td>
 				<td width="200"><select name="busqueda_select_cuenta_mayor" style="width:200px;"><option value="0" selected="yes">[-- --]</option></select></td>
-				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				<td width="10">&nbsp;</td>
 				<td width="280"><input type="text" name="busqueda_descripcion" style="width:280px;"></td>
-				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				<td width="10">&nbsp;</td>
 				<td><input type="button" value="Buscar"></td>
-				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				<td width="10">&nbsp;</td>
 				<td ><input type="button" value="Limpiar"></td>
-				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				<td width="10">&nbsp;</td>
 			</tr>
 		</table>
         
@@ -123,7 +123,6 @@
 											<tr>
 												<td width="14">&nbsp;</td>
 											</tr>
-											
 											<tr>
 												<td width="80">Cuenta</td>
 												<td width="50">
@@ -155,11 +154,9 @@
 												<td width="180"><select name="select_cuenta_mayor" style="width:180px;"></select></td>
 												<td width="25"></td>
 											</tr>
-											
 											<tr>
 												<td width="14">&nbsp;</td>
 											</tr>
-											
 											<tr>
 												<td width="80">Descripci&oacute;n</td>
 												<td colspan="9" width="290"><input type="text"name="descripcion" style="width:290px;" maxlength="60"></td>
@@ -171,7 +168,6 @@
 											<tr>
 												<td width="14">&nbsp;</td>
 											</tr>
-											
 											<tr>
 												<td width="80">Nivel&nbsp;de&nbsp;la&nbsp;Cta.</td>
 												<td width="110" colspan="3"><select name="select_nivel" style="width:110px;"></select></td>
@@ -192,11 +188,9 @@
 												<td width="180"><select name="select_tipo_cta" style="width:180px;"></select></td>
 												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_tipocta"></div></td>
 											</tr>
-											
 											<tr>
 												<td width="14">&nbsp;</td>
 											</tr>
-											
 											<tr>
 												<td width="80">Estatus</td>
 												<td width="110" colspan="3"><select name="select_estatus" style="width:110px;"></select></td>
@@ -205,30 +199,20 @@
 												<td width="70"><select name="select_subcuenta" style="width:70px;"></select></td>
 												-->
 												<td width="10"></td>
-												<td width="50">
-													<!--
-													<select id="combo4" style="width: 70px;" onchange="$('input#text4').val($(this).val());">
-														<option>option 1</option>
-														<option>option 2</option>
-														<option>option 3</option>
-													</select>
-													<input id="text4" onchange="if($(this).val()!=''){$('select#combo4').append('<option>'+$(this).val()+'</option>');}" style="margin-left:-72px; width:52px; height:1.2em; border:0;" />
-													-->
-												</td>
+												<td width="50">Agrupador</td>
+												<td width="10"></td>
+												<td width="110" colspan="3"><select name="select_agrupador" style="width:110px;"></select></td>
+												<!--
 												<td width="10"></td>
 												<td width="50"></td>
-												<td width="10"></td>
-												<td width="50"></td>
+												-->
 												<td width="40"></td>
 												<td width="90">Cuenta&nbsp;de&nbsp;Detalle</td>
 												<td width="180"><input type="checkbox" name="chk_cta_detalle"></td>
 												<td width="25"></td>
 											</tr>
-											
                                         </table>
                                     </div>
-									
-									
 									<div id="tabx-2" class="contenidoPes" >
                                         <table border="0" class="gral">
 											<tr>
@@ -255,7 +239,6 @@
 												<td width="400"><input type="text"name="descripcion_otro" style="width:400px;" maxlength="60"></td>
 												<td width="25"></td>
 											</tr>
-											
                                         </table>
                                     </div>
 									
