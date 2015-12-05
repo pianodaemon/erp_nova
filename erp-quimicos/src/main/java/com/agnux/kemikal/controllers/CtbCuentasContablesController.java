@@ -226,6 +226,7 @@ public class CtbCuentasContablesController {
         
         jsonretorno.put("Cc", datosCC);
         jsonretorno.put("CtaMay", this.getCtbDao().getCuentasContables_CuentasMayor(id_empresa));
+        jsonretorno.put("App", this.getCtbDao().getCuentasContables_Aplicativos());
         jsonretorno.put("Extras", arrayExtra);
         
         return jsonretorno;
@@ -252,7 +253,7 @@ public class CtbCuentasContablesController {
             @RequestParam(value="descripcion_in", required=true) String descripcion_in,
             @RequestParam(value="descripcion_otro", required=true) String descripcion_otro,
             @RequestParam(value="select_sucursal", required=false) String select_sucursal,
-            
+            @RequestParam(value="select_agrupador", required=false) String select_agrupador,
             @RequestParam(value="select_nivel", required=false) String select_nivel,
             @RequestParam(value="select_naturaleza", required=false) String select_naturaleza,
             @RequestParam(value="select_tipo_cta", required=false) String select_tipo_cta,
@@ -261,7 +262,8 @@ public class CtbCuentasContablesController {
         
         HashMap<String, String> jsonretorno = new HashMap<String, String>();
         HashMap<String, String> succes = new HashMap<String, String>();
-        Integer app_selected = 106;//catalogo de Cuentas Contables
+        //Catalogo de Cuentas Contables
+        Integer app_selected = 106;
         String command_selected = "new";
         Integer id_usuario= user.getUserId();//variable para el id  del usuario
         String extra_data_array = "'sin datos'";
@@ -281,27 +283,7 @@ public class CtbCuentasContablesController {
         
         select_sucursal = StringHelper.verificarSelect(select_sucursal);
         
-        String data_string = 
-                app_selected+"___"+
-                command_selected+"___"+
-                id_usuario+"___"+
-                id+"___"+
-                cuenta+"___"+
-                scuenta+"___"+
-                sscuenta+"___"+
-                ssscuenta+"___"+
-                sssscuenta+"___"+
-                cuenta_mayor+"___"+
-                estatus+"___"+
-                cta_detalle+"___"+
-                descripcion_es.toUpperCase()+"___"+
-                descripcion_in.toUpperCase()+"___"+
-                descripcion_otro.toUpperCase()+"___"+
-                select_centro_costo+"___"+
-                select_sucursal+"___"+
-                select_nivel+"___"+
-                select_naturaleza+"___"+
-                select_tipo_cta;
+        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id+"___"+cuenta+"___"+scuenta+"___"+sscuenta+"___"+ssscuenta+"___"+sssscuenta+"___"+cuenta_mayor+"___"+estatus+"___"+cta_detalle+"___"+descripcion_es.toUpperCase()+"___"+descripcion_in.toUpperCase()+"___"+descripcion_otro.toUpperCase()+"___"+select_centro_costo+"___"+select_sucursal+"___"+select_nivel+"___"+select_naturaleza+"___"+select_tipo_cta+"___"+select_agrupador;
         
         succes = this.getCtbDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
         

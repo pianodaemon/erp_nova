@@ -252,4 +252,7 @@ public interface GralInterfaceDao {
     public ArrayList<HashMap<String, Object>> getConfigPeriodosPago_Anios();
     
     public Map<String, Object> getTipoCambio_Url(Integer id_empresa);
+    
+    public ArrayList<HashMap<String, Object>> getImpTras_Datos(Integer id);
+    public ArrayList<HashMap<String, Object>> getImpTras_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
 }

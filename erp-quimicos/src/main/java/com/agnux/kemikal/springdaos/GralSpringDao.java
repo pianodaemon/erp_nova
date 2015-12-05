@@ -2954,8 +2954,6 @@ public class GralSpringDao implements GralInterfaceDao{
         return hm;
     }
 
-    
-    
     @Override
     public Map<String, Object> getTipoCambio_Url(Integer id_empresa) {
         String sql_to_query="";
@@ -2972,6 +2970,64 @@ public class GralSpringDao implements GralInterfaceDao{
 
         return map;
     }
+    
+    
+    
+    
+    
+    //metodos para el Catalogo de IVA Trasladado
+    //guarda los datos de los Ieps
+    @Override
+    public ArrayList<HashMap<String, Object>> getImpTras_Datos(Integer id) {
+        
+        String sql_to_query = "SELECT gral_imptos.id, gral_imptos.descripcion as titulo, gral_imptos.iva_1 as tasa FROM gral_imptos WHERE gral_imptos.id=?;";
+        
+        ArrayList<HashMap<String, Object>> dato_puesto = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(id)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("titulo",rs.getString("titulo"));
+                    row.put("tasa",StringHelper.roundDouble(rs.getString("tasa"),2));
+                    
+                    return row;
+                }
+            }
+        );
+        return dato_puesto;
+    }
+
+
+
+    @Override
+    public ArrayList<HashMap<String, Object>> getImpTras_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
+        String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
+
+	String sql_to_query = ""
+        +"select gral_imptos.id, gral_imptos.descripcion as titulo, gral_imptos.iva_1 as tasa "
+        +"from gral_imptos "
+        +"join ("+sql_busqueda+") as sbt on sbt.id = gral_imptos.id "
+        +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
+
+        System.out.println("Busqueda GetPage: "+sql_to_query+" "+data_string+" "+ offset +" "+ pageSize);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{data_string, new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("titulo",rs.getString("titulo"));
+                    row.put("tasa",StringHelper.roundDouble(rs.getString("tasa"),2));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
     
     
 }

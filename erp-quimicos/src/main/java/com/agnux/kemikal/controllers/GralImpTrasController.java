@@ -26,27 +26,28 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+
 /**
  *
- * @author Noe Martinez 
+ * @author Noe Martinez
  * gpmarsan@gmail.com
+ * 04/diciembre/2015
  * 
  */
 @Controller
 @SessionAttributes({"user"})
-@RequestMapping("/gralieps/")
-public class GralIepsController {
+@RequestMapping("/gralimptras/")
+public class GralImpTrasController {
     ResourceProject resource = new ResourceProject();
-    private static final Logger log  = Logger.getLogger(GralIepsController.class.getName());
+    private static final Logger log  = Logger.getLogger(GralImpTrasController.class.getName());
     
     @Autowired
     @Qualifier("daoGral")
     private GralInterfaceDao gralDao;
     
     @Autowired
-    @Qualifier("daoHome")   //permite controlar usuarios que entren
+    @Qualifier("daoHome")
     private HomeInterfaceDao HomeDao;
-    
     
     public GralInterfaceDao getGralDao() {
         return gralDao;
@@ -56,20 +57,18 @@ public class GralIepsController {
         return HomeDao;
     }
     
-    
     @RequestMapping(value="/startup.agnux")
     public ModelAndView startUp(HttpServletRequest request, HttpServletResponse response, 
             @ModelAttribute("user") UserSessionData user
         )throws ServletException, IOException {
         
-        log.log(Level.INFO, "Ejecutando starUp de {0}", GralIepsController.class.getName());
+        log.log(Level.INFO, "Ejecutando starUp de {0}", GralImpTrasController.class.getName());
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
-        infoConstruccionTabla.put("id", "Acciones:90");
-        infoConstruccionTabla.put("ieps", "Titulo:180");
-        infoConstruccionTabla.put("descripcion", "Descripci&oacute;n:250");
+        infoConstruccionTabla.put("id", "Acciones:70");
+        infoConstruccionTabla.put("titulo", "Titulo:200");
         infoConstruccionTabla.put("tasa", "Tasa:100");
         
-        ModelAndView x = new ModelAndView("gralieps/startup", "title", "Cat&aacute;logo de IEPS");
+        ModelAndView x = new ModelAndView("gralimptras/startup", "title", "Cat&aacute;logo de IVA Trasladado");
         x = x.addObject("layoutheader", resource.getLayoutheader());
         x = x.addObject("layoutmenu", resource.getLayoutmenu());
         x = x.addObject("layoutfooter", resource.getLayoutfooter());
@@ -82,7 +81,7 @@ public class GralIepsController {
         String userId = String.valueOf(user.getUserId());
         String codificado = Base64Coder.encodeString(userId);
         
-        //Id de usuario codificado
+        //id de usuario codificado
         x = x.addObject("iu", codificado);
         
         return x;
@@ -90,39 +89,35 @@ public class GralIepsController {
     
     
     
-    @RequestMapping(method = RequestMethod.POST, value="/getIeps.json")
-    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getIepsJson(
+    @RequestMapping(method = RequestMethod.POST, value="/getImpto.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getImptoJson(
             @RequestParam(value="id", required=true) Integer id,
             @RequestParam(value="iu", required=true) String id_user_cod,
             Model model
-            ){
+        ){
         
-        log.log(Level.INFO, "Ejecutando getIepsjson de {0}", GralIepsController.class.getName());
+        log.log(Level.INFO, "Ejecutando getImptoJson de {0}", GralImpTrasController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
-       
         ArrayList<HashMap<String, String>> datosIeps = new ArrayList<HashMap<String, String>>(); 
        
-        //decodificar id de usuario
+        //Decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
         userDat = this.getHomeDao().getUserById(id_usuario);
+        //Integer id = Integer.parseInt(userDat.get("id"));
         
-       // Integer id = Integer.parseInt(userDat.get("id"));
-       
-        
-        if( id != 0 ){
+        if(id!=0){
             datosIeps = this.getGralDao().getIeps_Datos(id);
-          
         }
         
-       //datos iepss es lo que me trajo de la consulta y los pone en el json
+       //Datos iepss es lo que me trajo de la consulta y los pone en el json
        jsonretorno.put("Ieps", datosIeps);        
        return jsonretorno;
     }
     
-     
-        @RequestMapping(value="/getAllIeps.json", method = RequestMethod.POST)
-     public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getAllIepsJson(
+    
+    @RequestMapping(value="/getAllImptos.json", method = RequestMethod.POST)
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getAllImptosJson(
            @RequestParam(value="orderby", required=true) String orderby,
            @RequestParam(value="desc", required=true) String desc,
            @RequestParam(value="items_por_pag", required=true) int items_por_pag,
@@ -131,63 +126,61 @@ public class GralIepsController {
            @RequestParam(value="input_json", required=true) String input_json,
            @RequestParam(value="cadena_busqueda", required=true) String cadena_busqueda,
            @RequestParam(value="iu", required=true) String id_user_cod,
-           Model modcel) {
+           Model modcel
+        ) {
            
         HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
         HashMap<String,String> has_busqueda = StringHelper.convert2hash(StringHelper.ascii2string(cadena_busqueda));
         
-        //aplicativo catalogo de marcas 
-        Integer app_selected = 167;
+        //Catalogo de IVA Trasladado
+        Integer app_selected = 204;
         
-        //decodificar id de usuario
+        //Decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
         
-        //variables para el buscador
+        //Variables para el buscador
         String ieps = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("ieps")))+"%";
         
         String data_string = app_selected+"___"+id_usuario+"___"+ieps;
         
-        //obtiene total de registros en base de datos, con los parametros de busqueda
-        int total_items = this.getGralDao().countAll(data_string);              
-                
+        //Obtiene total de registros en base de datos, con los parametros de busqueda
+        int total_items = this.getGralDao().countAll(data_string);
         
-        //calcula el total de paginas
+        //Calcula el total de paginas
         int total_pags = resource.calculaTotalPag(total_items,items_por_pag);
         
-        //variables que necesita el datagrid, para no tener que hacer uno por cada aplicativo
+        //Variables que necesita el datagrid, para no tener que hacer uno por cada aplicativo
         DataPost dataforpos = new DataPost(orderby, desc, items_por_pag, pag_start, display_pag, input_json, cadena_busqueda,total_items,total_pags, id_user_cod);
         
         int offset = resource.__get_inicio_offset(items_por_pag, pag_start);
         
-        //obtiene los registros para el grid, de acuerdo a los parametros de busqueda
+        //Obtiene los registros para el grid, de acuerdo a los parametros de busqueda
         jsonretorno.put("Data", this.getGralDao().getIeps_PaginaGrid(data_string, offset, items_por_pag, orderby, desc));
                
-        //obtiene el hash para los datos que necesita el datagrid
+        //Obtiene el hash para los datos que necesita el datagrid
         jsonretorno.put("DataForGrid", dataforpos.formaHashForPos(dataforpos));
         
         return jsonretorno;
     }
-        
-        
-     
     
     
     
     
-    //crear y editar un ieps
+    //Crear y editar
     @RequestMapping(method = RequestMethod.POST, value="/edit.json")
     public @ResponseBody HashMap<String, String> editJson(
             @RequestParam(value="identificador", required=true) Integer id,
-            @RequestParam(value="nombreieps", required=true) String ieps,
-            @RequestParam(value="descripcion", required=true) String descripcion,
+            @RequestParam(value="titulo", required=true) String titulo,
             @RequestParam(value="tasa", required=true) String tasa,
             @ModelAttribute("user") UserSessionData user,
             Model model
-            ) {
+        ) {
         
         HashMap<String, String> jsonretorno = new HashMap<String, String>();
         HashMap<String, String> succes = new HashMap<String, String>();
-        Integer app_selected = 167;//catalogo de iepss
+        //Catalogo de IVA Trasladado
+        Integer app_selected = 204;
+        
         String command_selected = "new";
         //decodificar id de usuario
         Integer id_usuario = user.getUserId();
@@ -201,8 +194,7 @@ public class GralIepsController {
             command_selected = "edit";
         }
         
-        
-        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id+"___"+ieps.toUpperCase()+"___"+descripcion.toUpperCase()+"___"+tasa;
+        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id+"___"+titulo.toUpperCase()+"___"+tasa;
         
         succes = this.getGralDao().selectFunctionValidateAaplicativo(data_string, app_selected, extra_data_array);
         log.log(Level.INFO, "despues de validacion {0}", String.valueOf(succes.get("success")));
@@ -216,10 +208,10 @@ public class GralIepsController {
         return jsonretorno;
     }
     
-       
-        //cambia el estatus del borrado logico
-        @RequestMapping(method = RequestMethod.POST, value="/logicDelete.json")
-        public @ResponseBody HashMap<String, String> logicDeleteJson(
+    
+    //Cambia el estatus del borrado logico
+    @RequestMapping(method = RequestMethod.POST, value="/logicDelete.json")
+    public @ResponseBody HashMap<String, String> logicDeleteJson(
                 @RequestParam(value="id", required=true) Integer id,
                 @RequestParam(value="iu", required=true) String id_user,
                 Model model
@@ -239,7 +231,4 @@ public class GralIepsController {
         jsonretorno.put("success",String.valueOf( this.getGralDao().selectFunctionForThisApp(data_string, extra_data_array)));
         return jsonretorno;
     }
-        
-    
-    
 }
