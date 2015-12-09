@@ -561,7 +561,7 @@ $(function() {
 					$(this).find('td').css({'background-color':'#FFFFFF'});
 				});
 				
-				//seleccionar un producto del grid de resultados
+				//Seleccionar un producto del grid de resultados
 				$tabla_resultados.find('tr').click(function(){
 					var id_cta = $(this).find('input[name=id_cta]').val();
 					var cta = $(this).find('input[name=campo_cta]').val();
@@ -596,8 +596,6 @@ $(function() {
 			});//termina llamada json
 		});
 		
-		
-		
 		$campo_clasif.keypress(function(e){
 			if(e.which == 13){
 				$boton_busca.trigger('click');
@@ -622,7 +620,6 @@ $(function() {
 		$(this).aplicarEventoKeypressEjecutaTrigger($campo_sssscuenta, $boton_busca);
 		$(this).aplicarEventoKeypressEjecutaTrigger($campo_descripcion, $boton_busca);
 		
-		
 		$boton_cencela.click(function(event){
 			//event.preventDefault();
 			var remove = function() {$(this).remove();};
@@ -630,7 +627,6 @@ $(function() {
 		});
 		
 		$select_cta_mayor.focus();
-		
 	}//termina buscador de Cuentas Contables
 
 
