@@ -6,11 +6,13 @@
         #include("${layoutheader}")
 		
         <!--  css for this catalogo -->
-        <link rel="stylesheet" href="../../css/modalbox/gralimptras/formagralimptras.css" type="text/css" />
+        <link rel="stylesheet" href="../../css/modalbox/gralimptras/formaGralImpTras.css" type="text/css" />
+        <link rel="stylesheet" href="../../css/modalbox/productos/formaBuscaCuentaContable.css" type="text/css" />
 		
         <!--  js for this catalogo -->
         <script type="text/javascript" src="../../js/components/jquery-form/jquery-form.js"></script>
-        <script type="text/javascript" src="../../js/components/modalbox/gralimptras/modalboxgralimptras.js"></script>
+        <script type="text/javascript" src="../../js/components/modalbox/gralimptras/modalboxGralImpTras.js"></script>
+        <script type="text/javascript" src="../../js/components/modalbox/productos/modalboxBuscaCuentaContable.js"></script>
         <script type="text/javascript" src="../../js/implements/gralimptras/index.js" ></script>
         
         #include("${layoutmenu}")
@@ -36,18 +38,16 @@
 			<tr>
 			   <td colspan="9">&nbsp;&nbsp;</td>
 			</tr>
-			
 			<tr>
-				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-				<td>Nombre Del IEPS</td>
-				<td width="10">&nbsp;&nbsp;</td>
-				<td><INPUT TYPE="text" name="busqueda_ieps" style="width:150px;"></td>
-				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-				<td width="10">&nbsp;&nbsp;</td>
-				<td><INPUT TYPE="button" value="Buscar"></td>
-				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-				<td ><INPUT TYPE="button" value="Limpiar"></td>
-				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				<td width="10">&nbsp;</td>
+				<td>Nombre</td>
+				<td width="10">&nbsp;</td>
+				<td><INPUT TYPE="text" name="busqueda_titulo" style="width:150px;"></td>
+				<td width="40">&nbsp;</td>
+				<td><INPUT TYPE="button" value="Buscar" style="width:60px;"></td>
+				<td width="10">&nbsp;</td>
+				<td ><INPUT TYPE="button" value="Limpiar" style="width:60px;"></td>
+				<td width="10">&nbsp;</td>
 			</tr>
 			<tr>
 				<td colspan="9">&nbsp;&nbsp;</td>
@@ -70,10 +70,11 @@
         <form id="formagralimptras" action="edit.json" method="POST" >
         <!--clase la quite por causar problemas      tabulador -->
                 <div id="div_one" class="panelcito_modal gralimptras_div_one"  style="display:none;" title="">
-                <input type="hidden" name="identificador">
+                <input type="hidden" name="identificador" value="0">
+                <input type="hidden" name="cta_id" value="0">
 				<div id="div_two" title="" class="gralimptras_div_two">
                         <div class="columns on-2">
-                            <div class="fixed column" id="cierra" style="width:329px; padding-left:6px;"><strong>Cat&aacute;logo de IEPS</strong></div>
+                            <div class="fixed column" id="cierra" style="width:370px; padding-left:6px;"><strong>${title}</strong></div>
                             <div class="fixed column" style="width:30px; height:25px;">
                                 <div id="close" style="height:25px;background-image:url('../../img/modalbox/close.png'); background-color:; background-position:top; cursor:pointer; background-repeat:no-repeat;"></div>
                             </div>
@@ -83,7 +84,8 @@
                         <div class="columns" >
                             <div class=" fixed column">
                                 <ul class="pestanas">
-                                    <li><a href="#tabx-1"><strong>IEPS</strong></a></li>
+                                    <li><a href="#tabx-1"><strong>IVA</strong></a></li>
+                                    <li><a href="#tabx-2"><strong>Contabilidad</strong></a></li>
                                 </ul>
                             </div>
                         </div>
@@ -93,52 +95,82 @@
 									
                                     <div id="tabx-1" class="contenidoPes" >
                                         <table border="0">
-                                            <tr>
+                                             <tr>
                                                 <td width="5"></td>
-                                                <td width="120">Nombre&nbsp;del&nbsp;IEPS</td>
-                                                <td width="220"><INPUT TYPE="text" name="nombreieps" style="width:220px;"></td>
-                                                <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_nombreieps"></div></td>
-                                                <td width="5"></td>
+                                                <td width="50">Nombre</td>
+                                                <td width="300"><INPUT TYPE="text" name="titulo" style="width:300px;"></td>
+                                                <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_titulo"></div></td>
                                             </tr>
                                             <tr>
-                                                <td width="5">&nbsp;</td>
+                                                <td height="10" colspan="4"></td>
                                             </tr>
                                              <tr>
                                                 <td width="5"></td>
-                                                <td width="120">Descripci&oacute;n</td>
-                                                <td width="220"><INPUT TYPE="text" name="descripcion" style="width:220px;"></td>
-                                                <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_descripcion"></div></td>
-                                                <td width="5"></td>
-                                            </tr>
-                                            <tr>
-                                                <td width="5">&nbsp;</td>
-                                            </tr>
-                                             <tr>
-                                                <td width="5"></td>
-                                                <td width="120">Tasa</td>
-                                                <td width="50"><INPUT TYPE="text" name="tasa" style="width:50px;">&nbsp;<b>&#37</b></td>
+                                                <td width="50">Tasa</td>
+                                                <td width="300"><INPUT TYPE="text" name="tasa" value="0.00" style="width:50px;">&nbsp;<b>&#37</b></td>
                                                 <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_tasa"></div></td>
-                                                <!--<td width="2"></td>-->
-                                                <td width="5"></td>
                                             </tr>
                                             <tr>
-                                                <td width="5">&nbsp;</td>
+                                                <td height="13" colspan="4"></td>
+                                            </tr>
+                                            <tr>
+                                                <td height="12" colspan="4"></td>
                                             </tr>
                                         </table>
                                     </div>
+                                    
+                                    <!--Pestaña Contabilidad-->
+									<div id="tabx-2" class="contenidoPes" >
+                                        <table border="0">
+                                            <tr>
+                                                <td height="14" colspan="4" style="border-top:1px solid #C1DAD7; border-bottom:1px solid #C1DAD7; border-left:1px solid #FFFFFF; border-right:1px solid #FFFFFF; background-color:#D4D3D3;">Buscar y seleccionar la Cuenta Contable</td>
+                                            </tr>
+                                            <tr>
+                                                <td height="8" colspan="4"></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="4">
+													<table border="0">
+														<tr>
+															<td width="5"></td>
+															<td width="50">Cuenta</td>
+															<td><input name="cuenta" style="width:40px;" maxlength="4"></td>
+															<td width="5"></td>
+															<td><input name="scuenta" style="width:40px;" maxlength="4"></td>
+															<td width="5"></td>
+															<td><input name="sscuenta" style="width:40px;" maxlength="4"></td>
+															<td width="5"></td>
+															<td><input name="ssscuenta" style="width:40px;" maxlength="4"></td>
+															<td width="5"></td>
+															<td><input name="sssscuenta" style="width:40px;" maxlength="4"></td>
+															<td width="20"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_cta"></div></td>
+															<td width="70"><a href="#buscar_cta" id="buscar_cta">&nbsp;(Buscar)</a></td>
+														</tr>
+													</table>
+                                                </td>
+                                            </tr>
+											<tr>
+                                                <td width="5"></td>
+                                                <td width="50">Nombre</td>
+                                                <td width="300"><input name="descripcion" style="width:300px;" maxlength="4"></td>
+                                                <td width="25"></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    
                                 </div>
                             </div>
-                            <div class="fixed column" id="botones" style="width:359px; background:; text-align:right; padding-left:; position:absolute;margin-top:4px;">
+                            <div class="fixed column" id="botones" style="width:400px; background:; text-align:right; padding-left:; position:absolute;margin-top:4px;">
                                 <table border="0">
-                                        <tr><td colspan="4" height="7"></td></tr>
-                                        <tr>
-                                            <td width="559"></td>
-                                            <td>
-                                               <input type="image" src="../../img/modalbox/btn1.png" id="submit" style="width:77px; height:24px;"/>
-                                            </td>
-                                            <td width="30"></td>
-                                            <td><div id="boton_cancelar" style="width:77px; height:24px; float:right; cursor:pointer; background-image:url('../../img/modalbox/btn2.png'); background-repeat:no-repeat;"></div></td>
-                                        </tr>
+									<tr><td colspan="4" height="7"></td></tr>
+									<tr>
+										<td width="400"></td>
+										<td>
+										   <input type="image" src="../../img/modalbox/btn1.png" id="submit" style="width:77px; height:24px;"/>
+										</td>
+										<td width="30"></td>
+										<td><div id="boton_cancelar" style="width:77px; height:24px; float:right; cursor:pointer; background-image:url('../../img/modalbox/btn2.png'); background-repeat:no-repeat;"></div></td>
+									</tr>
                                 </table>      
                             </div>
                         </div>
@@ -146,6 +178,148 @@
                 </div>
         </form>
         #include("${layoutfooter}")
+        
+        
+        
+        
+		<div class="buscador_cuentas" style="display:none;">	
+			<table width="100%" border="0" class="formaBusqueda_cuentas">
+				<tr>
+					<td>
+						<div class="div_dos_buscactacontable">
+							<table width="100%" border="0">
+								<thead>
+									<tr>
+										<td colspan="10" height="50" valign="top"><div class="titulo_buscactacontable" width="100%"><strong>Buscador de cuentas contables</strong></div></td>
+									</tr>
+								</thead>
+								
+								<tbody>
+									<tr class="gral">
+										<td width="10"></td>
+										<td width="10" style="background:#ffffff;"></td>
+										<td colspan="6" style="background:#ffffff;" width="600">
+											
+											<table id="tabla_busqueda" border="0"  class="contenidobusqueda">
+												<tr>
+													<td colspan="13" width="600" height="10"></td>
+												</tr>
+												
+												<tr>
+													<td width="100">Cuenta&nbsp;de&nbsp;mayor</td>
+													<td width="220" colspan="8">
+														<select name="select_cta_mayor" style="width:220px;">
+															<option value="0" selected="yes">[--  --]</OPTION>
+														</select>
+													</td>
+													<td width="50"></td>
+													<td width="80">Clasificaci&oacute;n</td>
+													<td width="100"><input type="text" name="clasif" style="width:50px;" maxlength="4" ></td>
+													<td width="50"></td>
+												</tr>
+												<tr>
+													<td colspan="13" width="600" height="10"></td>
+												</tr>
+												<tr>
+													<td width="100">Cuenta</td>
+													<td width="50"><input name="cuenta" style="width:50px;" maxlength="4"></td>
+													<td width="5"></td>
+													<td width="50"><input name="scuenta" style="width:50px;" maxlength="4"></td>
+													<td width="5"></td>
+													<td width="50"><input name="sscuenta" style="width:50px;" maxlength="4"></td>
+													<td width="5"></td>
+													<td width="50"><input name="ssscuenta" style="width:50px;" maxlength="4"></td>
+													<td width="5"></td>
+													<td width="50"><input name="sssscuenta" style="width:50px;" maxlength="4"></td>
+													<td width="80"></td>
+													<td width="100"></td>
+													<td width="50"></td>
+												</tr>
+												
+												<tr>
+													<td colspan="13" width="600" height="10"></td>
+												</tr>
+												<tr>
+													<td width="100">Descripci&oacute;n</td>
+													<td width="270" colspan="9"><input type="text" name="campo_descripcion" style="width:270px;"></td>
+													<td width="80"></td>
+													<td width="100"></td>
+													<td width="50" align="right"><input type="button" id="boton_busca" class="onmouseOutBuscar"></td>
+												</tr>
+												
+											</table>
+											
+										</td>
+										<td width="10" style="background:#ffffff"></td>
+										<td width="10"></td>
+									</tr>
+									
+									<tr style="font-size:13px;">
+										<td width="10"></td>
+										<td width="10" style="background:#ffffff"></td>
+										
+										<td width="30" style="background:#A8A9AB;">M&nbsp;</td>
+										<td width="30" style="background:#A8A9AB;">C&nbsp;</td>
+										<td width="170" style="background:#A8A9AB;">Cuenta&nbsp;</td>
+										<td width="230" style="background:#A8A9AB;">Descripci&oacute;n</td>
+										<td width="70" style="background:#A8A9AB;">Detalle</td>
+										<td width="70" style="background:#A8A9AB;">Nivel Cta.</td>
+										
+										<td width="10" style="background:#ffffff"></td>
+										<td width="10"></td>
+									</tr>
+									
+									<tr>
+										<td width="10"></td>
+										<td width="10" style="background:#ffffff"></td>
+										<td style="background:#ffffff; border: solid 1px #454442;" colspan="6" width="600">
+											<div style="overflow:scroll; overflow-x:auto; overflow-y:auto; width:600px; height:120px; align=top;">
+												<table  border="0" id="tabla_resultado" width="580">
+													<!--aqui van los resultados de la busqueda-->
+												</table>
+											</div>
+										</td>
+										<td width="10" style="background:#ffffff"></td>
+										<td width="10"></td>
+									</tr>
+									<tr>
+										<td width="10"></td>
+										<td width="10" colspan="8" height="4" style="background:#ffffff"></td>
+										<td width="10"></td>
+									</tr>
+									<tr>
+										<td width="10"></td>
+										<td width="10" style="background:#ffffff"></td>
+										
+										<td width="30"  style="background:#ffffff"></td>
+										<td width="30"  style="background:#ffffff"></td>
+										<td width="170"  style="background:#ffffff"></td>
+										<td width="230" style="background:#ffffff"></td>
+										<td width="70" style="background:#ffffff"></td>
+										<td width="70" style="background:#ffffff" align="right">
+											<input type="button" id="boton_cencela" class="onmouseOutCancelar">
+										</td>
+										
+										<td width="10" style="background:#ffffff"></td>
+										<td width="10"></td>
+									</tr>
+									<tr>
+										<td width="10"></td>
+										<td width="10" colspan="8" height="6" style="background:#ffffff"></td>
+										<td width="10"></td>
+									</tr>
+								</tbody>
+								
+							</table>
+						</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+
+
+
+
     </body>
 </html>	
 
