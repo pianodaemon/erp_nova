@@ -255,4 +255,5 @@ public interface GralInterfaceDao {
     
     public ArrayList<HashMap<String, Object>> getImpTras_Datos(Integer id);
     public ArrayList<HashMap<String, Object>> getImpTras_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
+    public ArrayList<HashMap<String, Object>> getImpTras_DatosContabilidad(Integer id);
 }
