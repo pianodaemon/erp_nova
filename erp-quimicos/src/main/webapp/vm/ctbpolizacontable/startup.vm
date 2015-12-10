@@ -104,7 +104,7 @@
         </table>
 		
         
-        <!--form for conceptos contables -->
+        <!--form for poliza contable -->
         <form id="formactbpolizacontable00" action="edit.json" method="POST" >
         <!--clase la quite por causar problemas      tabulador -->
                 <div id="div_one" class="panelcito_modal ctbpolizacontable_div_one"  style="display:none;" title="">
