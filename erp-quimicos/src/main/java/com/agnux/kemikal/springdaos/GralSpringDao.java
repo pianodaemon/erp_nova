@@ -3022,7 +3022,7 @@ public class GralSpringDao implements GralInterfaceDao{
     
     
 
-    //Obtiene datos de configuracion de Cuentas Contables
+    //Obtiene datos de la cuenta Contable de IVA Trasladado
     @Override
     public ArrayList<HashMap<String, Object>> getImpTras_DatosContabilidad(Integer id) {
         String sql_query = ""
@@ -3037,6 +3037,98 @@ public class GralSpringDao implements GralInterfaceDao{
         +"from gral_impto_cta "
         +"left join ctb_cta AS tbl_cta ON tbl_cta.id=gral_impto_cta.ctb_cta_id "
         +"where gral_impto_cta.gral_impto_id=?;";
+        
+        //System.out.println("getImpTras_DatosContabilidad: "+ sql_query);
+        //System.out.println("id: "+ id);
+        ArrayList<HashMap<String, Object>> contab = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{new Integer(id)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id_cta",rs.getString("id_cta"));
+                    row.put("cta",rs.getString("cta"));
+                    row.put("subcta",rs.getString("subcta"));
+                    row.put("ssubcta",rs.getString("ssubcta"));
+                    row.put("sssubcta",rs.getString("sssubcta"));
+                    row.put("ssssubcta",rs.getString("ssssubcta"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    return row;
+                }
+            }
+        );
+        return contab;
+    }
+    
+    
+    
+    
+    //Metodos para el Catalogo de IVA Retenido
+    @Override
+    public ArrayList<HashMap<String, Object>> getImpRet_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
+        String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
+
+	String sql_to_query = ""
+        +"select gral_imptos_ret.id, gral_imptos_ret.titulo, gral_imptos_ret.tasa "
+        +"from gral_imptos_ret "
+        +"join ("+sql_busqueda+") as sbt on sbt.id = gral_imptos_ret.id "
+        +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
+
+        //System.out.println("Busqueda GetPage: "+sql_to_query+" "+data_string+" "+ offset +" "+ pageSize);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{data_string, new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("titulo",rs.getString("titulo"));
+                    row.put("tasa",StringHelper.roundDouble(rs.getString("tasa"),2));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    @Override
+    public ArrayList<HashMap<String, Object>> getImpRet_Datos(Integer id) {
+        String sql_to_query = "select gral_imptos_ret.id, gral_imptos_ret.titulo, gral_imptos_ret.tasa from gral_imptos_ret where gral_imptos_ret.id=?;";
+        
+        ArrayList<HashMap<String, Object>> data = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(id)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("titulo",rs.getString("titulo"));
+                    row.put("tasa",StringHelper.roundDouble(rs.getString("tasa"),2));
+                    
+                    return row;
+                }
+            }
+        );
+        return data;
+    }
+    
+    
+
+    //Obtiene datos de la cuenta Contable de IVA Trasladado
+    @Override
+    public ArrayList<HashMap<String, Object>> getImpRet_DatosContabilidad(Integer id) {
+        String sql_query = ""
+        + "select "
+            + "(case when tbl_cta.id is null then 0 else tbl_cta.id end) AS id_cta, "
+            + "(case when tbl_cta.cta is null or tbl_cta.cta=0 then '' else tbl_cta.cta::character varying end) AS cta, "
+            + "(case when tbl_cta.subcta is null or tbl_cta.subcta=0 then '' else tbl_cta.subcta::character varying end) AS subcta, "
+            + "(case when tbl_cta.ssubcta is null or tbl_cta.ssubcta=0 then '' else tbl_cta.ssubcta::character varying end) AS ssubcta, "
+            + "(case when tbl_cta.sssubcta is null or tbl_cta.sssubcta=0 then '' else tbl_cta.sssubcta::character varying end) AS sssubcta,"
+            + "(case when tbl_cta.ssssubcta is null or tbl_cta.ssssubcta=0 then '' else tbl_cta.ssssubcta::character varying end) AS ssssubcta, "
+            + "(case when tbl_cta.descripcion is null or tbl_cta.descripcion='' then  (case when tbl_cta.descripcion_ing is null or tbl_cta.descripcion_ing='' then  tbl_cta.descripcion_otr else tbl_cta.descripcion_ing END )  else tbl_cta.descripcion END ) AS descripcion "
+        +"from gral_impto_ret_cta "
+        +"left join ctb_cta AS tbl_cta ON tbl_cta.id=gral_impto_ret_cta.ctb_cta_id "
+        +"where gral_impto_ret_cta.gral_impto_ret_id=?;";
         
         //System.out.println("getImpTras_DatosContabilidad: "+ sql_query);
         //System.out.println("id: "+ id);

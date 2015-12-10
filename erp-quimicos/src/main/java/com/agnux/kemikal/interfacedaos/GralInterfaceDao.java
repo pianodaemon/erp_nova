@@ -253,7 +253,13 @@ public interface GralInterfaceDao {
     
     public Map<String, Object> getTipoCambio_Url(Integer id_empresa);
     
+    //Metodos para catálogo de Iva Trasladado
     public ArrayList<HashMap<String, Object>> getImpTras_Datos(Integer id);
     public ArrayList<HashMap<String, Object>> getImpTras_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
     public ArrayList<HashMap<String, Object>> getImpTras_DatosContabilidad(Integer id);
+    
+    //Metodos para catálogo de Iva Retenido
+    public ArrayList<HashMap<String, Object>> getImpRet_Datos(Integer id);
+    public ArrayList<HashMap<String, Object>> getImpRet_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
+    public ArrayList<HashMap<String, Object>> getImpRet_DatosContabilidad(Integer id);
 }
