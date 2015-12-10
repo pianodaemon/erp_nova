@@ -226,8 +226,7 @@ $(function() {
 	});
 	
 	
-	//aqui va el titulo del catalogo
-	$('#barra_titulo').find('#td_titulo').append('P&oacute;lizas Contables');
+	$('#barra_titulo').find('#td_titulo').append(document.title);
 	
 	//barra para el buscador 
 	$('#barra_buscador').append($('#lienzo_recalculable').find('.tabla_buscador'));

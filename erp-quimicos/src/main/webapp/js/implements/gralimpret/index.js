@@ -13,7 +13,7 @@ $(function() {
 	$username.text($('#lienzo_recalculable').find('input[name=user]').val());
 	
 	var $contextpath = $('#lienzo_recalculable').find('input[name=contextpath]');
-	var controller = $contextpath.val()+"/controllers/gralimptras";
+	var controller = $contextpath.val()+"/controllers/gralimpret";
     
     //Barra para las acciones
     $('#barra_acciones').append($('#lienzo_recalculable').find('.table_acciones'));
@@ -109,45 +109,45 @@ $(function() {
 	
 	
 	$tabs_li_funxionalidad = function(){
-		$('#forma-gralimptras-window').find('#submit').mouseover(function(){
-			$('#forma-gralimptras-window').find('#submit').removeAttr("src").attr("src","../../img/modalbox/bt1.png");
+		$('#forma-gralimpret-window').find('#submit').mouseover(function(){
+			$('#forma-gralimpret-window').find('#submit').removeAttr("src").attr("src","../../img/modalbox/bt1.png");
 		});
-		$('#forma-gralimptras-window').find('#submit').mouseout(function(){
-			$('#forma-gralimptras-window').find('#submit').removeAttr("src").attr("src","../../img/modalbox/btn1.png");
+		$('#forma-gralimpret-window').find('#submit').mouseout(function(){
+			$('#forma-gralimpret-window').find('#submit').removeAttr("src").attr("src","../../img/modalbox/btn1.png");
 		});
-		$('#forma-gralimptras-window').find('#boton_cancelar').mouseover(function(){
-			$('#forma-gralimptras-window').find('#boton_cancelar').css({backgroundImage:"url(../../img/modalbox/bt2.png)"});
+		$('#forma-gralimpret-window').find('#boton_cancelar').mouseover(function(){
+			$('#forma-gralimpret-window').find('#boton_cancelar').css({backgroundImage:"url(../../img/modalbox/bt2.png)"});
 		})
-		$('#forma-gralimptras-window').find('#boton_cancelar').mouseout(function(){
-			$('#forma-gralimptras-window').find('#boton_cancelar').css({backgroundImage:"url(../../img/modalbox/btn2.png)"});
+		$('#forma-gralimpret-window').find('#boton_cancelar').mouseout(function(){
+			$('#forma-gralimpret-window').find('#boton_cancelar').css({backgroundImage:"url(../../img/modalbox/btn2.png)"});
 		});
 		
-		$('#forma-gralimptras-window').find('#close').mouseover(function(){
-			$('#forma-gralimptras-window').find('#close').css({backgroundImage:"url(../../img/modalbox/close_over.png)"});
+		$('#forma-gralimpret-window').find('#close').mouseover(function(){
+			$('#forma-gralimpret-window').find('#close').css({backgroundImage:"url(../../img/modalbox/close_over.png)"});
 		});
-		$('#forma-gralimptras-window').find('#close').mouseout(function(){
-			$('#forma-gralimptras-window').find('#close').css({backgroundImage:"url(../../img/modalbox/close.png)"});
+		$('#forma-gralimpret-window').find('#close').mouseout(function(){
+			$('#forma-gralimpret-window').find('#close').css({backgroundImage:"url(../../img/modalbox/close.png)"});
 		});
 		
 		
-		$('#forma-gralimptras-window').find(".contenidoPes").hide(); //Hide all content
-		$('#forma-gralimptras-window').find("ul.pestanas li:first").addClass("active").show(); //Activate first tab
-		$('#forma-gralimptras-window').find(".contenidoPes:first").show(); //Show first tab content
+		$('#forma-gralimpret-window').find(".contenidoPes").hide(); //Hide all content
+		$('#forma-gralimpret-window').find("ul.pestanas li:first").addClass("active").show(); //Activate first tab
+		$('#forma-gralimpret-window').find(".contenidoPes:first").show(); //Show first tab content
 		
 		//On Click Event
-		$('#forma-gralimptras-window').find("ul.pestanas li").click(function() {
-			$('#forma-gralimptras-window').find(".contenidoPes").hide();
-			$('#forma-gralimptras-window').find("ul.pestanas li").removeClass("active");
+		$('#forma-gralimpret-window').find("ul.pestanas li").click(function() {
+			$('#forma-gralimpret-window').find(".contenidoPes").hide();
+			$('#forma-gralimpret-window').find("ul.pestanas li").removeClass("active");
 			var activeTab = $(this).find("a").attr("href");
-			$('#forma-gralimptras-window').find( activeTab , "ul.pestanas li" ).fadeIn().show();
+			$('#forma-gralimpret-window').find( activeTab , "ul.pestanas li" ).fadeIn().show();
 			$(this).addClass("active");
 			
 			if(activeTab=='#tabx-1'){
-				$('#forma-gralimptras-window').find('input[name=titulo]').focus();
+				$('#forma-gralimpret-window').find('input[name=titulo]').focus();
 			}
 			
 			if(activeTab=='#tabx-2'){
-				$('#forma-gralimptras-window').find('input[name=cuenta]').focus();
+				$('#forma-gralimpret-window').find('input[name=cuenta]').focus();
 			}
 			
 			return false;
@@ -386,7 +386,7 @@ $(function() {
 					var remove = function() {$(this).remove();};
 					$('#forma-buscactacontable-overlay').fadeOut(remove);
 					//asignar el enfoque al campo sku del producto
-					$('#forma-gralimptras-window').find('input[name=cuenta]').focus();
+					$('#forma-gralimpret-window').find('input[name=cuenta]').focus();
 				});
 			});//termina llamada json
 		});
@@ -488,38 +488,38 @@ $(function() {
 	$new.click(function(event){
 		event.preventDefault();
 		var id_to_show = 0;
-		$(this).modalPanel_gralimptras();
+		$(this).modalPanel_gralimpret();
 		
-		var form_to_show = 'formagralimptras';
+		var form_to_show = 'formagralimpret';
 		$('#' + form_to_show).each (function(){this.reset();});
 		var $forma_selected = $('#' + form_to_show).clone();
 		$forma_selected.attr({id : form_to_show + id_to_show});
 		
-		$('#forma-gralimptras-window').css({"margin-left": -260, 	"margin-top": -200});
-		$forma_selected.prependTo('#forma-gralimptras-window');
+		$('#forma-gralimpret-window').css({"margin-left": -260, 	"margin-top": -200});
+		$forma_selected.prependTo('#forma-gralimpret-window');
 		$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
 		$tabs_li_funxionalidad();
 		
-		$('#forma-gralimptras-window').find('ul.pestanas').find('a[href=#tabx-2]').parent().hide();
+		$('#forma-gralimpret-window').find('ul.pestanas').find('a[href=#tabx-2]').parent().hide();
 		
-		var $identificador = $('#forma-gralimptras-window').find('input[name=identificador]'); 
-		var $titulo = $('#forma-gralimptras-window').find('input[name=titulo]');
-		var $tasa = $('#forma-gralimptras-window').find('input[name=tasa]');
+		var $identificador = $('#forma-gralimpret-window').find('input[name=identificador]'); 
+		var $titulo = $('#forma-gralimpret-window').find('input[name=titulo]');
+		var $tasa = $('#forma-gralimpret-window').find('input[name=tasa]');
 		
-		var $cta_id = $('#forma-gralimptras-window').find('input[name=cta_id]');
-		var $cuenta = $('#forma-gralimptras-window').find('input[name=cuenta]');
-		var $scuenta = $('#forma-gralimptras-window').find('input[name=scuenta]');
-		var $sscuenta = $('#forma-gralimptras-window').find('input[name=sscuenta]');
-		var $ssscuenta = $('#forma-gralimptras-window').find('input[name=ssscuenta]');
-		var $sssscuenta = $('#forma-gralimptras-window').find('input[name=sssscuenta]');
-		var $descripcion = $('#forma-gralimptras-window').find('input[name=descripcion]');
+		var $cta_id = $('#forma-gralimpret-window').find('input[name=cta_id]');
+		var $cuenta = $('#forma-gralimpret-window').find('input[name=cuenta]');
+		var $scuenta = $('#forma-gralimpret-window').find('input[name=scuenta]');
+		var $sscuenta = $('#forma-gralimpret-window').find('input[name=sscuenta]');
+		var $ssscuenta = $('#forma-gralimpret-window').find('input[name=ssscuenta]');
+		var $sssscuenta = $('#forma-gralimpret-window').find('input[name=sssscuenta]');
+		var $descripcion = $('#forma-gralimpret-window').find('input[name=descripcion]');
 		
-		var $buscar_cta = $('#forma-gralimptras-window').find('#buscar_cta');
+		var $buscar_cta = $('#forma-gralimpret-window').find('#buscar_cta');
 		
 		//Botones
-		var $cerrar_plugin = $('#forma-gralimptras-window').find('#close');
-		var $cancelar_plugin = $('#forma-gralimptras-window').find('#boton_cancelar');
-		var $submit_actualizar = $('#forma-gralimptras-window').find('#submit');
+		var $cerrar_plugin = $('#forma-gralimpret-window').find('#close');
+		var $cancelar_plugin = $('#forma-gralimpret-window').find('#boton_cancelar');
+		var $submit_actualizar = $('#forma-gralimpret-window').find('#submit');
 		
 		$permitir_solo_numeros($cuenta);
 		$permitir_solo_numeros($scuenta);
@@ -542,12 +542,12 @@ $(function() {
 			if ( data['success'] == "true" ){
 				jAlert("El Registro fue dado de alta con exito", 'Atencion!');
 				var remove = function() {$(this).remove();};
-				$('#forma-gralimptras-overlay').fadeOut(remove);
+				$('#forma-gralimpret-overlay').fadeOut(remove);
 				//refresh_table();
 				$get_datos_grid();
 			}else{
 				// Desaparece todas las interrogaciones si es que existen
-				$('#forma-gralimptras-window').find('div.interrogacion').css({'display':'none'});
+				$('#forma-gralimpret-window').find('div.interrogacion').css({'display':'none'});
 				
 				var valor = data['success'].split('___');
 				//muestra las interrogaciones
@@ -555,7 +555,7 @@ $(function() {
 					tmp = data['success'].split('___')[element];
 					longitud = tmp.split(':');
 					if( longitud.length > 1 ){
-						$('#forma-gralimptras-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
+						$('#forma-gralimpret-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
 						.parent()
 						.css({'display':'block'})
 						.easyTooltip({tooltipId: "easyTooltip2",content: tmp.split(':')[1]});
@@ -570,7 +570,7 @@ $(function() {
 		var parametros={id:$identificador.val(), iu: $('#lienzo_recalculable').find('input[name=iu]').val() };
 		$.post(input_json,parametros,function(entry){
 			if(entry['Param']['contab']=='true'){
-				$('#forma-gralimptras-window').find('ul.pestanas').find('a[href=#tabx-2]').parent().show();
+				$('#forma-gralimpret-window').find('ul.pestanas').find('a[href=#tabx-2]').parent().show();
 			};
 			
 			//Visualizar subcuentas de acuerdo al nivel definido para la empresa
@@ -643,12 +643,12 @@ $(function() {
 		
 		$cerrar_plugin.bind('click',function(){
 			var remove = function() {$(this).remove();};
-			$('#forma-gralimptras-overlay').fadeOut(remove);
+			$('#forma-gralimpret-overlay').fadeOut(remove);
 		});
 		
 		$cancelar_plugin.click(function(event){
 			var remove = function() {$(this).remove();};
-			$('#forma-gralimptras-overlay').fadeOut(remove);
+			$('#forma-gralimpret-overlay').fadeOut(remove);
 			$buscar.trigger('click');
 		});
 		
@@ -677,42 +677,42 @@ $(function() {
 			});
 		}else{
 			//aqui  entra para editar un registro
-			var form_to_show = 'formagralimptras';
+			var form_to_show = 'formagralimpret';
 			
 			$('#' + form_to_show).each (function(){this.reset();});
 			var $forma_selected = $('#' + form_to_show).clone();
 			$forma_selected.attr({id : form_to_show + id_to_show});
 			
-			$(this).modalPanel_gralimptras();
+			$(this).modalPanel_gralimpret();
 						
-			$('#forma-gralimptras-window').css({"margin-left": -260, 	"margin-top": -200});
-			$forma_selected.prependTo('#forma-gralimptras-window');
+			$('#forma-gralimpret-window').css({"margin-left": -260, 	"margin-top": -200});
+			$forma_selected.prependTo('#forma-gralimpret-window');
 			$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
 			$tabs_li_funxionalidad();
 			
-			$('#forma-gralimptras-window').find('ul.pestanas').find('a[href=#tabx-2]').parent().hide();
+			$('#forma-gralimpret-window').find('ul.pestanas').find('a[href=#tabx-2]').parent().hide();
 			
 			//campos de la vista
-			var $identificador = $('#forma-gralimptras-window').find('input[name=identificador]'); 
+			var $identificador = $('#forma-gralimpret-window').find('input[name=identificador]'); 
 			//alert($identificador);
-			var $ieps = $('#forma-gralimptras-window').find('input[name=nombreieps]');
-			var $titulo = $('#forma-gralimptras-window').find('input[name=titulo]');
-			var $tasa = $('#forma-gralimptras-window').find('input[name=tasa]');
+			var $ieps = $('#forma-gralimpret-window').find('input[name=nombreieps]');
+			var $titulo = $('#forma-gralimpret-window').find('input[name=titulo]');
+			var $tasa = $('#forma-gralimpret-window').find('input[name=tasa]');
 			
-			var $cta_id = $('#forma-gralimptras-window').find('input[name=cta_id]');
-			var $cuenta = $('#forma-gralimptras-window').find('input[name=cuenta]');
-			var $scuenta = $('#forma-gralimptras-window').find('input[name=scuenta]');
-			var $sscuenta = $('#forma-gralimptras-window').find('input[name=sscuenta]');
-			var $ssscuenta = $('#forma-gralimptras-window').find('input[name=ssscuenta]');
-			var $sssscuenta = $('#forma-gralimptras-window').find('input[name=sssscuenta]');
-			var $descripcion = $('#forma-gralimptras-window').find('input[name=descripcion]');
+			var $cta_id = $('#forma-gralimpret-window').find('input[name=cta_id]');
+			var $cuenta = $('#forma-gralimpret-window').find('input[name=cuenta]');
+			var $scuenta = $('#forma-gralimpret-window').find('input[name=scuenta]');
+			var $sscuenta = $('#forma-gralimpret-window').find('input[name=sscuenta]');
+			var $ssscuenta = $('#forma-gralimpret-window').find('input[name=ssscuenta]');
+			var $sssscuenta = $('#forma-gralimpret-window').find('input[name=sssscuenta]');
+			var $descripcion = $('#forma-gralimpret-window').find('input[name=descripcion]');
 			
-			var $buscar_cta = $('#forma-gralimptras-window').find('#buscar_cta');
+			var $buscar_cta = $('#forma-gralimpret-window').find('#buscar_cta');
 			
 			//botones                        
-			var $cerrar_plugin = $('#forma-gralimptras-window').find('#close');
-			var $cancelar_plugin = $('#forma-gralimptras-window').find('#boton_cancelar');
-			var $submit_actualizar = $('#forma-gralimptras-window').find('#submit');
+			var $cerrar_plugin = $('#forma-gralimpret-window').find('#close');
+			var $cancelar_plugin = $('#forma-gralimpret-window').find('#boton_cancelar');
+			var $submit_actualizar = $('#forma-gralimpret-window').find('#submit');
 			
 			$permitir_solo_numeros($cuenta);
 			$permitir_solo_numeros($scuenta);
@@ -737,12 +737,12 @@ $(function() {
 				var respuestaProcesada = function(data){
 					if ( data['success'] == 'true' ){
 						var remove = function() {$(this).remove();};
-						$('#forma-gralimptras-overlay').fadeOut(remove);
+						$('#forma-gralimpret-overlay').fadeOut(remove);
 						jAlert("Los datos se han actualizado.", 'Atencion!');
 						//$get_datos_grid();
 					}else{
 						// Desaparece todas las interrogaciones si es que existen
-						$('#forma-gralimptras-window').find('div.interrogacion').css({'display':'none'});
+						$('#forma-gralimpret-window').find('div.interrogacion').css({'display':'none'});
 						
 						var valor = data['success'].split('___');
 						//muestra las interrogaciones
@@ -750,7 +750,7 @@ $(function() {
 							tmp = data['success'].split('___')[element];
 							longitud = tmp.split(':');
 							if( longitud.length > 1 ){
-								$('#forma-gralimptras-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
+								$('#forma-gralimpret-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
 								.parent()
 								.css({'display':'block'})
 								.easyTooltip({tooltipId: "easyTooltip2",content: tmp.split(':')[1]});
@@ -765,7 +765,7 @@ $(function() {
 				//Aqui se cargan los campos al editar
 				$.post(input_json,$arreglo,function(entry){
 					if(entry['Param']['contab']=='true'){
-						$('#forma-gralimptras-window').find('ul.pestanas').find('a[href=#tabx-2]').parent().show();
+						$('#forma-gralimpret-window').find('ul.pestanas').find('a[href=#tabx-2]').parent().show();
 						
 						//Visualizar subcuentas de acuerdo al nivel definido para la empresa
 						if(parseInt(entry['Param']['nivel_cta']) >=1 ){ $cuenta.show(); };
@@ -855,12 +855,12 @@ $(function() {
 				//Ligamos el boton cancelar al evento click para eliminar la forma
 				$cancelar_plugin.bind('click',function(){
 					var remove = function() {$(this).remove();};
-					$('#forma-gralimptras-overlay').fadeOut(remove);
+					$('#forma-gralimpret-overlay').fadeOut(remove);
 				});
 				
 				$cerrar_plugin.bind('click',function(){
 					var remove = function() {$(this).remove();};
-					$('#forma-gralimptras-overlay').fadeOut(remove);
+					$('#forma-gralimpret-overlay').fadeOut(remove);
 					$buscar.trigger('click');
 				});
 				
