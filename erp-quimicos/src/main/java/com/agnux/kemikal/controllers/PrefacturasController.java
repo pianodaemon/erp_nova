@@ -248,17 +248,12 @@ public class PrefacturasController {
         ArrayList<HashMap<String, Object>> datosPrefactura = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> datosGrid = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> datosAdenda = new ArrayList<HashMap<String, Object>>();
-        
         ArrayList<HashMap<String, Object>> valorIva = new ArrayList<HashMap<String, Object>>();
-        ArrayList<HashMap<String, Object>> monedas = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> arrayExtras = new ArrayList<HashMap<String, Object>>();
         HashMap<String, Object> extra = new HashMap<String, Object>();
-        ArrayList<HashMap<String, Object>> vendedores = new ArrayList<HashMap<String, Object>>();
-        ArrayList<HashMap<String, Object>> condiciones = new ArrayList<HashMap<String, Object>>();
-        ArrayList<HashMap<String, Object>> metodos_pago = new ArrayList<HashMap<String, Object>>();
-        ArrayList<HashMap<String, Object>> almacenes = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> parametros = new ArrayList<HashMap<String, Object>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
+        //ArrayList<HashMap<String, Object>> TMov = new ArrayList<HashMap<String, Object>>();
         
         //Decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
@@ -284,7 +279,6 @@ public class PrefacturasController {
             }
         }
         
-        
         valorIva= this.getFacdao().getValoriva(id_sucursal);
         extra.put("tipo_cambio", StringHelper.roundDouble(this.getFacdao().getTipoCambioActual(), 4)) ;
         extra.put("controlExiPres", userDat.get("control_exi_pres"));
@@ -292,22 +286,21 @@ public class PrefacturasController {
         extra.put("adenda", String.valueOf(incluirAdenda));
         arrayExtras.add(0,extra);
         
-        monedas = this.getPdao().getMonedas();
-        vendedores = this.getPdao().getVendedores(id_empresa, id_sucursal);
-        condiciones = this.getPdao().getCondiciones();
-        metodos_pago = this.getPdao().getMetodosPago();
-        almacenes = this.getPdao().getAlmacenes(id_empresa);
+        if(userDat.get("incluye_contab").toLowerCase().equals("true")){
+            //Aplicacion 13=Prefacturas(Facturacion)
+            jsonretorno.put("TMov", this.getFacdao().getCtb_TiposDeMovimiento(id_empresa, 13));
+        }
         
         jsonretorno.put("datosPrefactura", datosPrefactura);
         jsonretorno.put("datosGrid", datosGrid);
         jsonretorno.put("datosAdenda", datosAdenda);
         jsonretorno.put("iva", valorIva);
-        jsonretorno.put("Monedas", monedas);
+        jsonretorno.put("Monedas", this.getPdao().getMonedas());
         jsonretorno.put("Extras", arrayExtras);
-        jsonretorno.put("Vendedores", vendedores);
-        jsonretorno.put("Condiciones", condiciones);
-        jsonretorno.put("MetodosPago", metodos_pago);
-        jsonretorno.put("Almacenes", almacenes);
+        jsonretorno.put("Vendedores", this.getPdao().getVendedores(id_empresa, id_sucursal));
+        jsonretorno.put("Condiciones", this.getPdao().getCondiciones());
+        jsonretorno.put("MetodosPago", this.getPdao().getMetodosPago());
+        jsonretorno.put("Almacenes", this.getPdao().getAlmacenes(id_empresa));
         
         return jsonretorno;
     }
@@ -554,6 +547,7 @@ public class PrefacturasController {
             @RequestParam(value="folio_pedido", required=false) String folio_pedido,
             @RequestParam(value="tasa_ret_immex", required=false) String tasa_ret_immex,
             @RequestParam(value="select_almacen", required=false) String select_almacen,
+            @RequestParam(value="select_tmov", required=false) String select_tmov,
             @RequestParam(value="pdescto", required=true) String permitir_descto,
             
             //Estos son para datos de la Adenda
@@ -665,7 +659,7 @@ public class PrefacturasController {
         
         
         //System.out.println("data_string: "+data_string);
-        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_prefactura+"___"+id_cliente+"___"+id_moneda+"___"+observaciones.toUpperCase()+"___"+tipo_cambio_vista+"___"+id_vendedor+"___"+id_condiciones+"___"+orden_compra.toUpperCase()+"___"+refacturar+"___"+id_metodo_pago+"___"+no_cuenta+"___"+select_tipo_documento+"___"+folio_pedido+"___"+select_almacen+"___"+id_moneda_original+"___"+id_df+"___"+campo_adenda1.toUpperCase()+"___"+campo_adenda2.toUpperCase()+"___"+campo_adenda3+"___"+campo_adenda4.toUpperCase()+"___"+campo_adenda5.toUpperCase()+"___"+campo_adenda6.toUpperCase()+"___"+campo_adenda7.toUpperCase()+"___"+campo_adenda8.toUpperCase()+"___"+rfc.toUpperCase().trim() + "___" + permitir_descto;
+        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_prefactura+"___"+id_cliente+"___"+id_moneda+"___"+observaciones.toUpperCase()+"___"+tipo_cambio_vista+"___"+id_vendedor+"___"+id_condiciones+"___"+orden_compra.toUpperCase()+"___"+refacturar+"___"+id_metodo_pago+"___"+no_cuenta+"___"+select_tipo_documento+"___"+folio_pedido+"___"+select_almacen+"___"+id_moneda_original+"___"+id_df+"___"+campo_adenda1.toUpperCase()+"___"+campo_adenda2.toUpperCase()+"___"+campo_adenda3+"___"+campo_adenda4.toUpperCase()+"___"+campo_adenda5.toUpperCase() +"___"+ campo_adenda6.toUpperCase() +"___"+ campo_adenda7.toUpperCase() +"___"+ campo_adenda8.toUpperCase() +"___"+ rfc.toUpperCase().trim() +"___"+ permitir_descto +"___"+select_tmov;
         //System.out.println("data_string: "+data_string);
         
         //System.out.println(TimeHelper.getFechaActualYMDH()+"::::Inicia Validacion de la Prefactura::::::::::::::::::");

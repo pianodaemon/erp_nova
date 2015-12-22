@@ -71,6 +71,7 @@ public class CtbSpringDao implements CtbInterfaceDao{
     @Override
     public String selectFunctionForCtbAdmProcesos(String campos_data, String extra_data_array) {
         String sql_to_query = "select * from ctb_adm_procesos('"+campos_data+"',array["+extra_data_array+"]);";
+        //System.out.println(sql_to_query);
         
         String valor_retorno="";
         Map<String, Object> update = this.getJdbcTemplate().queryForMap(sql_to_query);
@@ -466,10 +467,19 @@ public class CtbSpringDao implements CtbInterfaceDao{
         return hm;
     }
     
-    
     @Override
-    public ArrayList<HashMap<String, Object>> getCuentasContables_Aplicativos() {
-        String sql_query = "select id,titulo from ctb_app where estatus=true;";
+    public ArrayList<HashMap<String, Object>> getCtb_Aplicaciones(Integer tipo) {
+        String sql_query = "";
+        
+        //Para programa de Cuentas contables
+        if(tipo==1){
+            sql_query = "select id,titulo from ctb_app where estatus=true and ctb_cta=true order by titulo;";
+        }
+        
+        //Para programa de Definicion de asientos
+        if(tipo==2){
+            sql_query = "select id,titulo from ctb_app where estatus=true and ctb_tmov=true order by titulo;";
+        }
         
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_query,  
@@ -1303,9 +1313,9 @@ public class CtbSpringDao implements CtbInterfaceDao{
         + "group by sbt1.id, sbt1.fecha1, sbt1.poliza,sbt1.tipo,sbt1.concepto, sbt1.fecha, sbt1.moneda, sbt1.status "
         + "order by "+orderBy+" "+asc+" limit ? OFFSET ?";
         
-        //System.out.println("data_string: "+data_string);
-        //System.out.println("sql_busqueda: "+sql_busqueda);
-        //System.out.println("sql_to_query: "+sql_to_query);
+        System.out.println("data_string: "+data_string);
+        System.out.println("sql_busqueda: "+sql_busqueda);
+        System.out.println("sql_to_query: "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query, 
             new Object[]{data_string, new Integer(pageSize),new Integer(offset)}, new RowMapper() {
@@ -1582,6 +1592,10 @@ public class CtbSpringDao implements CtbInterfaceDao{
         
         String where="";
         
+        if(detalle>0){
+            where+=" AND ctb_cta.detalle="+detalle+" ";
+        }
+        
 	if(clase_cta_mayor != 0){
             where+=" AND ctb_cta.cta_mayor="+clase_cta_mayor+" ";
 	}
@@ -1640,7 +1654,7 @@ public class CtbSpringDao implements CtbInterfaceDao{
             + "ctb_cta.nivel_cta, "
             + "ctb_cta.ctb_cc_id "
         + "FROM ctb_cta "
-        + "WHERE ctb_cta.borrado_logico=false AND ctb_cta.gral_emp_id=? AND ctb_cta.detalle=? "+ where +" "
+        + "WHERE ctb_cta.borrado_logico=false AND ctb_cta.gral_emp_id=? "+ where +" "
         + "ORDER BY ctb_cta.id;";
         
         //System.out.println("sql_query: "+sql_query);
@@ -1648,7 +1662,7 @@ public class CtbSpringDao implements CtbInterfaceDao{
 
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
-            new Object[]{new Integer(id_empresa), new Integer(detalle)}, new RowMapper() {
+            new Object[]{new Integer(id_empresa)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, String> row = new HashMap<String, String>();
@@ -1685,6 +1699,11 @@ public class CtbSpringDao implements CtbInterfaceDao{
 	if(id_sucursal>0){
             where+=" AND ctb_cta.gral_suc_id="+id_sucursal+" ";
 	}
+        
+	if(detalle>0){
+            where+=" AND ctb_cta.detalle="+detalle+" ";
+	}
+        
         /*
 	if(!cta.equals("")){
             where+=" AND ctb_cta.cta="+cta.trim()+" ";
@@ -1729,15 +1748,15 @@ public class CtbSpringDao implements CtbInterfaceDao{
             + "ctb_cta.ctb_cc_id "
         + "FROM ctb_cta "
         + "WHERE ctb_cta.borrado_logico=false "
-        + "AND ctb_cta.gral_emp_id=? AND ctb_cta.detalle=? AND ctb_cta.cta="+cta.trim()+" "+ where +" "
+        + "AND ctb_cta.gral_emp_id=? and ctb_cta.cta="+cta.trim()+" "+ where +" "
         + "ORDER BY ctb_cta.id;";
         
         //System.out.println("sql_query: "+sql_query);
         //System.out.println("cta:"+cta+"\nscta:"+scta+"\nsscta:"+sscta+"\nssscta:"+ssscta+"\nsssscta:"+sssscta);
-
+        
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_query,
-            new Object[]{new Integer(id_empresa), new Integer(detalle)}, new RowMapper() {
+            new Object[]{new Integer(id_empresa)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, Object> row = new HashMap<String, Object>();
@@ -1974,7 +1993,7 @@ public class CtbSpringDao implements CtbInterfaceDao{
     
     @Override
     public ArrayList<HashMap<String, Object>> getCtbDefinicionAsientos_Datos(Integer id) {
-        String sql_query = "select id,folio,titulo,fecha,ctb_tpol_id as tpol_id,pol_num from ctb_tmov where id=?;";
+        String sql_query = "select id,folio,titulo,fecha,ctb_tpol_id as tpol_id,pol_num, ctb_app_id as app_id from ctb_tmov where id=?;";
         
         //System.out.println(sql_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
@@ -1989,6 +2008,7 @@ public class CtbSpringDao implements CtbInterfaceDao{
                     row.put("fecha",rs.getInt("fecha"));
                     row.put("tpol_id",rs.getInt("tpol_id"));
                     row.put("pol_num",rs.getInt("pol_num"));
+                    row.put("app_id",rs.getInt("app_id"));
                     return row;
                 }
             }
@@ -2030,6 +2050,33 @@ public class CtbSpringDao implements CtbInterfaceDao{
                     row.put("descripcion",rs.getString("descripcion"));
                     row.put("mov_tipo",rs.getInt("mov_tipo"));
                     row.put("detalle",rs.getBoolean("detalle"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    
+    //Metodo para busqueda de movimientos para la Generacion de Polizas
+    @Override
+    public ArrayList<HashMap<String, Object>> getCtbGeneraPolizas_busquedaDatos(String data_string) {
+        
+        String sql_to_query = "select * from ctb_reporte(?) as foo(fecha date, ref_id integer, referencia character varying, descripcion character varying, total character varying, tmov_id integer, tipo_mov character varying, app_id integer) order by tmov_id, fecha;"; 
+        //System.out.println("data_string: "+data_string);
+        //System.out.println("CtbGeneraPoliza:: "+sql_to_query);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{data_string}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("fecha",rs.getString("fecha"));
+                    row.put("referencia",rs.getString("referencia"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("total",StringHelper.roundDouble(rs.getString("total"),2));
+                    row.put("tipo_mov",rs.getString("tipo_mov"));
                     return row;
                 }
             }

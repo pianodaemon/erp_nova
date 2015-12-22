@@ -226,7 +226,8 @@ public class CtbCuentasContablesController {
         
         jsonretorno.put("Cc", datosCC);
         jsonretorno.put("CtaMay", this.getCtbDao().getCuentasContables_CuentasMayor(id_empresa));
-        jsonretorno.put("App", this.getCtbDao().getCuentasContables_Aplicativos());
+        //Se le pasa como parámetro 1 para indicar que solo debe tomar las aplicaciones que se deben mostrar en el catalogo de cuentas contables
+        jsonretorno.put("App", this.getCtbDao().getCtb_Aplicaciones(1));
         jsonretorno.put("Extras", arrayExtra);
         
         return jsonretorno;

@@ -100,8 +100,6 @@ public class CtbGeneraPolizasController {
         
         log.log(Level.INFO, "Ejecutando getDataJson de {0}", CtbGeneraPolizasController.class.getName());
         HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
-        ArrayList<HashMap<String, Object>> datos = new ArrayList<HashMap<String, Object>>();
-        ArrayList<HashMap<String, Object>> datosGrid = new ArrayList<HashMap<String, Object>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
         ArrayList<HashMap<String, Object>> arrayExtra = new ArrayList<HashMap<String, Object>>();
         HashMap<String, Object> extra = new HashMap<String, Object>();
@@ -114,17 +112,12 @@ public class CtbGeneraPolizasController {
         
         //Esta variable indica si la empresa incluye modulo de Contabilidad
         extra.put("nivel_cta", userDat.get("nivel_cta"));
-        
         arrayExtra.add(0,extra);
-        /*
-        if( id != 0  ){
-            datos = this.getCtbDao().getCtbDefinicionAsientos_Datos(id);
-            datosGrid = this.getCtbDao().getCtbDefinicionAsientos_DatosGrid(id);
-        }
-        */
-        jsonretorno.put("Data", datos);
-        jsonretorno.put("Grid", datosGrid);
+        
         jsonretorno.put("Extras", arrayExtra);
+        jsonretorno.put("TM", this.getCtbDao().getPolizasContables_TiposDeMovimiento(id_empresa));
+        //Se le pasa como parámetro 2 para indicar que solo debe tomar las aplicaciones que se deben mostrar en el Programa de Definicion de Asientos
+        //jsonretorno.put("App", this.getCtbDao().getCtb_Aplicaciones(2));
         
         return jsonretorno;
     }
@@ -132,76 +125,36 @@ public class CtbGeneraPolizasController {
     
     
     
-    //Metodo para el Buscador de Cuentas Contables
-    @RequestMapping(method = RequestMethod.POST, value="/getBuscadorCuentasContables.json")
-    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getBuscadorCuentasContablesJson(
-            @RequestParam(value="cta_mayor", required=true) String cta_mayor_class,
-            @RequestParam(value="detalle", required=true) Integer detalle,
-            @RequestParam(value="clasifica", required=false) String clasifica,
-            @RequestParam(value="cta", required=false) String cta,
-            @RequestParam(value="scta", required=false) String scta,
-            @RequestParam(value="sscta", required=false) String sscta,
-            @RequestParam(value="ssscta", required=false) String ssscta,
-            @RequestParam(value="sssscta", required=false) String sssscta,
-            @RequestParam(value="descripcion", required=false) String descripcion,
+    //Metodo para Buscar movimientos para contabilizar
+    @RequestMapping(method = RequestMethod.POST, value="/getBusqueda.json")
+    public @ResponseBody HashMap<String,Object> getBusquedaJson(
+            @RequestParam(value="fecha_ini", required=true) String fecha_ini,
+            @RequestParam(value="fecha_fin", required=true) String fecha_fin,
+            @RequestParam(value="tipo_mov", required=false) String tipo_mov,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
         ) {
         
-        log.log(Level.INFO, "Ejecutando getBuscadorCuentasContablesJson de {0}", CtbGeneraPolizasController.class.getName());
-        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
-        HashMap<String, String> userDat = new HashMap<String, String>();
-        ArrayList<HashMap<String, String>> cuentasContables = new ArrayList<HashMap<String, String>>();
-        
-        //Decodificar id de usuario
-        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
-        userDat = this.getHomeDao().getUserById(id_usuario);
-        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
-        
-        System.out.println("cta_mayor:"+cta_mayor_class.split("_")[0]+"   clasificacion:"+cta_mayor_class.split("_")[1]);
-        
-        cuentasContables = this.getCtbDao().getPolizasContables_CuentasContables(Integer.valueOf(cta_mayor_class.split("_")[0]), Integer.valueOf(cta_mayor_class.split("_")[1]), detalle, clasifica, cta, scta, sscta, ssscta, sssscta, descripcion, id_empresa);
-        
-        jsonretorno.put("CtaContables", cuentasContables);
-        
-        return jsonretorno;
-    }
-    
-    
-    
-    
-    //Obtiene dados de una cuenta contable en espcifico
-    @RequestMapping(method = RequestMethod.POST, value="/getDataCta.json")
-    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getDataCtaJson(
-            @RequestParam(value="detalle", required=true) Integer detalle,
-            @RequestParam(value="cta", required=false) String cta,
-            @RequestParam(value="scta", required=false) String scta,
-            @RequestParam(value="sscta", required=false) String sscta,
-            @RequestParam(value="ssscta", required=false) String ssscta,
-            @RequestParam(value="sssscta", required=false) String sssscta,
-            @RequestParam(value="iu", required=true) String id_user,
-            Model model
-        ) {
-        
-        log.log(Level.INFO, "Ejecutando getDataCtaJson de {0}", CtbGeneraPolizasController.class.getName());
-        HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
+        log.log(Level.INFO, "Ejecutando getBusquedaJson de {0}", CtbGeneraPolizasController.class.getName());
+        HashMap<String,Object> jsonretorno = new HashMap<String,Object>();
         HashMap<String, String> userDat = new HashMap<String, String>();
         
         //Decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
-        userDat = this.getHomeDao().getUserById(id_usuario);
-        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
-        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        //userDat = this.getHomeDao().getUserById(id_usuario);
+        //Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         
-        if(this.getCtbDao().getUserRolAdmin(id_usuario)>0){
-            //Sucursal cero cuando el usuario es administrador, esto para permitir la busque de la cuenta contable sin importar la sucursal
-            id_sucursal=0;
-        }
+        //Aplicativo Generacion de Polizas Contables(CTB)
+        Integer app_selected = 206;
+        String command_selected="busqueda";
         
-        jsonretorno.put("Cta", this.getCtbDao().getDatosCuentaContable(detalle, cta, scta, sscta, ssscta, sssscta, id_empresa, id_sucursal));
+        String data_string = app_selected+"___"+id_usuario+"___"+command_selected+"___"+fecha_ini+"___"+fecha_fin+"___"+tipo_mov;
+        
+        jsonretorno.put("Data", this.getCtbDao().getCtbGeneraPolizas_busquedaDatos(data_string));
         
         return jsonretorno;
     }
+    
     
     
     
@@ -209,16 +162,9 @@ public class CtbGeneraPolizasController {
     @RequestMapping(method = RequestMethod.POST, value="/edit.json")
     public @ResponseBody HashMap<String, String> editJson(
             @RequestParam(value="identificador", required=true) String identificador,
-            @RequestParam(value="nombre", required=true) String nombre,
-            @RequestParam(value="select_fecha", required=true) String select_fecha,
-            @RequestParam(value="select_pol_num", required=true) String select_pol_num,
-            @RequestParam(value="select_tipo", required=true) String select_tipo,
-            @RequestParam(value="id_det", required=false) String[] id_det,
-            @RequestParam(value="delete", required=false) String[] eliminado,
-            @RequestParam(value="id_cta", required=false) String[] id_cta,
-            @RequestParam(value="select_mov", required=false) String[] select_mov,
-            @RequestParam(value="detalle", required=false) String[] detalle,
-            @RequestParam(value="no_tr", required=false) String[] no_tr,
+            @RequestParam(value="fecha_ini", required=true) String fecha_ini,
+            @RequestParam(value="fecha_fin", required=true) String fecha_fin,
+            @RequestParam(value="select_tipo_mov", required=true) String select_tipo_mov,
             Model model,@ModelAttribute("user") UserSessionData user
         ) {
         
@@ -232,20 +178,6 @@ public class CtbGeneraPolizasController {
         String extra_data_array = "'sin_datos'";
         String actualizo = "0";
         
-        if(id_det!=null){
-            String arreglo[];
-            arreglo = new String[eliminado.length];
-
-            for(int i=0; i<eliminado.length; i++) {
-                arreglo[i]= "'"+ eliminado[i] +"___"+ id_det[i] +"___"+ id_cta[i] +"___"+ select_mov[i] +"___"+ detalle[i] +"'";
-                //System.out.println(arreglo[i]);
-            }
-            
-            //Serializar el arreglo
-            extra_data_array = StringUtils.join(arreglo, ",");
-        }
-        
-        //System.out.println(extra_data_array);
         
         if( identificador.equals("0") ){
             command_selected = "new";
@@ -253,7 +185,7 @@ public class CtbGeneraPolizasController {
             command_selected = "edit";
         }
         
-        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+identificador+"___"+nombre.trim().toUpperCase()+"___"+select_fecha+"___"+select_pol_num+"___"+select_tipo;
+        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+identificador+"___"+fecha_ini+"___"+fecha_fin+"___"+select_tipo_mov;
         
         succes = this.getCtbDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
         

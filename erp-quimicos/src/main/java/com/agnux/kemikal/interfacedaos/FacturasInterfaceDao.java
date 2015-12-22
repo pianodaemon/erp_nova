@@ -234,5 +234,6 @@ public interface FacturasInterfaceDao {
     public ArrayList<HashMap<String, Object>> getFacPar_Datos(Integer id_factura);
     public ArrayList<HashMap<String, Object>> getFacPar_Almacenes(Integer id_emp, Integer id_suc);
     
-    
+    //Obtiene los tipos de movimientos de contabilidad
+    public ArrayList<HashMap<String, Object>> getCtb_TiposDeMovimiento(Integer id_empresa, Integer appId);
 }

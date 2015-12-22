@@ -38,8 +38,9 @@ public interface CtbInterfaceDao {
     //metodos para catalogo de cuentas contables 
     public ArrayList<HashMap<String, Object>> getCuentasContables_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
     public ArrayList<HashMap<String, Object>> getCuentasContables_Datos(Integer id);
-    public ArrayList<HashMap<String, Object>> getCuentasContables_Aplicativos();
     public ArrayList<HashMap<String, Object>> getCuentasContables_CuentasMayor(Integer id_empresa);
+    
+    public ArrayList<HashMap<String, Object>> getCtb_Aplicaciones(Integer tipo);
     
     //Medotdos para reporte de Auxiliar de Cuentas
     public ArrayList<HashMap<String, Object>> getCtbRepAuxCtas_Anios();
@@ -123,5 +124,8 @@ public interface CtbInterfaceDao {
     public ArrayList<HashMap<String, Object>> getCtbDefinicionAsientos_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
     public ArrayList<HashMap<String, Object>> getCtbDefinicionAsientos_Datos(Integer id);
     public ArrayList<HashMap<String, Object>> getCtbDefinicionAsientos_DatosGrid(Integer id);
+    
+    //Metodo para busqueda de movimientos para la Generacion de Polizas
+    public ArrayList<HashMap<String, Object>> getCtbGeneraPolizas_busquedaDatos(String data_string);
     
 }

@@ -5059,6 +5059,32 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     }
     
     
+    @Override
+    public ArrayList<HashMap<String, Object>> getCtb_TiposDeMovimiento(Integer id_empresa, Integer appId) {
+        
+        String sql_query = ""
+        + "select ctb_tmov.id, ctb_tmov.titulo "
+        + "from ctb_tmov "
+        + "join ctb_app on (ctb_app.id=ctb_tmov.ctb_app_id and ctb_app.gral_app_id=?)"
+        + "where ctb_tmov.borrado_logico=false and ctb_tmov.gral_emp_id=?;";
+        
+        //System.out.println("Ctb_Temov: "+sql_query);
+        
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{new Integer(appId), new Integer(id_empresa)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("titulo",String.valueOf(rs.getString("titulo")));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
     
     
 }

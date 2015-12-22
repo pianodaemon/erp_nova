@@ -228,6 +228,7 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
             + "erp_prefacturas.tasa_retencion_immex, "
             + "erp_prefacturas.tipo_documento,"
             + "erp_prefacturas.inv_alm_id, "
+            + "erp_prefacturas.ctb_tmov_id as tmov_id, "
             + "(CASE WHEN erp_prefacturas.monto_descto>0 THEN true ELSE false END) AS pdescto, "
             + "erp_prefacturas.monto_descto, "
             + "(CASE WHEN erp_prefacturas.monto_descto>0 THEN (CASE WHEN erp_prefacturas.motivo_descto IS NULL THEN '' ELSE erp_prefacturas.motivo_descto END) ELSE '' END) AS mdescto "
@@ -277,7 +278,8 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                     row.put("empresa_immex",String.valueOf(rs.getBoolean("empresa_immex")));
                     row.put("tasa_retencion_immex",StringHelper.roundDouble(rs.getDouble("tasa_retencion_immex"),2));
                     row.put("tipo_documento",String.valueOf(rs.getInt("tipo_documento")));
-                    row.put("id_almacen",String.valueOf(rs.getInt("inv_alm_id")));
+                    row.put("id_almacen",rs.getInt("inv_alm_id"));
+                    row.put("tmov_id",rs.getInt("tmov_id"));
                     row.put("pdescto",String.valueOf(rs.getBoolean("pdescto")));
                     row.put("monto_descto",StringHelper.roundDouble(rs.getDouble("monto_descto"),2));
                     row.put("mdescto",rs.getString("mdescto"));

@@ -213,8 +213,8 @@ public class CtbDefAsientosController {
         //Decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
         userDat = this.getHomeDao().getUserById(id_usuario);
-        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
-        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        //Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        //Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
         
         //Esta variable indica si la empresa incluye modulo de Contabilidad
         extra.put("nivel_cta", userDat.get("nivel_cta"));
@@ -228,6 +228,8 @@ public class CtbDefAsientosController {
         
         jsonretorno.put("Data", datos);
         jsonretorno.put("Grid", datosGrid);
+        //Se le pasa como parámetro 2 para indicar que solo debe tomar las aplicaciones que se deben mostrar en el Programa de Definicion de Asientos
+        jsonretorno.put("App", this.getCtbDao().getCtb_Aplicaciones(2));
         jsonretorno.put("Extras", arrayExtra);
         
         return jsonretorno;
@@ -317,6 +319,7 @@ public class CtbDefAsientosController {
             @RequestParam(value="select_fecha", required=true) String select_fecha,
             @RequestParam(value="select_pol_num", required=true) String select_pol_num,
             @RequestParam(value="select_tipo", required=true) String select_tipo,
+            @RequestParam(value="select_app", required=true) String select_app,
             @RequestParam(value="id_det", required=false) String[] id_det,
             @RequestParam(value="delete", required=false) String[] eliminado,
             @RequestParam(value="id_cta", required=false) String[] id_cta,
@@ -350,14 +353,13 @@ public class CtbDefAsientosController {
         }
         
         //System.out.println(extra_data_array);
-        
         if( identificador.equals("0") ){
             command_selected = "new";
         }else{
             command_selected = "edit";
         }
         
-        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+identificador+"___"+nombre.trim().toUpperCase()+"___"+select_fecha+"___"+select_pol_num+"___"+select_tipo;
+        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+identificador+"___"+nombre.trim().toUpperCase()+"___"+select_fecha+"___"+select_pol_num+"___"+select_tipo+"___"+select_app;
         
         succes = this.getCtbDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
         
