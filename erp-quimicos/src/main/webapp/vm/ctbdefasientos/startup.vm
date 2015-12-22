@@ -139,36 +139,38 @@
 														
 														<tr>
 															<td width="10"></td>
-															<td width="50">Folio</td>
+															<td width="40">Folio</td>
 															<td width="100"><input type="text"name="folio" style="width:100px;" maxlength="10" readOnly></td>
 															<td width="30"></td>
 															<td width="60">Nombre</td>
-															<td width="280"><input type="text"name="nombre" style="width:280px;" ></td>
+															<td width="280" colspan="3"><input type="text"name="nombre" style="width:280px;" ></td>
 															<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_nombre"></div></td>
 														</tr>
-														<tr><td height="8" colspan="7"></td></tr>
+														<tr><td height="8" colspan="9"></td></tr>
 														<tr>
 															<td width="10"></td>
-															<td width="50">Fecha</td>
+															<td width="40">Fecha</td>
 															<td width="100"><select name="select_fecha" style="width:100px;"><option value="1">Documento</option></select></td>
 															<td width="30"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_fecha"></div></td>
 															<td width="60">P&oacute;liza&nbsp;Num.</td>
-															<td width="280"><select name="select_pol_num" style="width:280px;"><option value="0">[ ----- ]</option></select></td>
+															<td width="280" colspan="3"><select name="select_pol_num" style="width:280px;"><option value="0">[ ----- ]</option></select></td>
 															<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_polnum"></div></td>
 														</tr>
-														<tr><td height="8" colspan="7"></td></tr>
+														<tr><td height="8" colspan="9"></td></tr>
 														<tr>
 															<td width="10"></td>
-															<td width="50">Tipo</td>
+															<td width="40">Tipo</td>
 															<td width="190" colspan="3"><select name="select_tipo" style="width:190px;"><option value="1">Diario</option></select></td>
 															<!--
 															<td width="30"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_tipo"></div></td>
 															<td width="60"></td>
 															-->
-															<td width="280"></td>
+															<td width="30"></td>
+															<td width="60">Utilizar&nbsp;en</td>
+															<td width="190"><select name="select_app" style="width:190px;"><option value="0">[ ----- ]</option></select></td>
 															<td width="25"></td>
 														</tr>
-														<tr><td height="8" colspan="7"></td></tr>
+														<tr><td height="8" colspan="9"></td></tr>
 													</table>
 												</td>
 											</tr>

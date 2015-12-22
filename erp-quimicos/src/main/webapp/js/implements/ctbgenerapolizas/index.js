@@ -246,6 +246,25 @@ $(function() {
 	
 	
 	
+	//Generar tr para agregar al grid
+	var $agrega_tr = function($grid_movs, fecha, referencia, descripcion, total, tipo_mov){
+		//var noTr = $("tr", $grid_movs).size();
+		//noTr++;
+		
+		var trr = '';
+		trr = '<tr>';
+			trr += '<td class="grid1" style="" width="70">'+ fecha +'</td>';
+			trr += '<td class="grid1" width="70">'+ referencia +'</td>';
+			trr += '<td class="grid1" width="300">'+ descripcion +'</td>';
+			trr += '<td class="grid2" width="80">'+ $(this).agregar_comas(total) +'</td>';
+			trr += '<td class="grid1" width="185">'+ tipo_mov +'</td>';
+		trr += '</tr>';
+		$grid_movs.append(trr);
+
+	}
+	
+	
+		
 
 	
 	//Nuevo 
@@ -259,50 +278,25 @@ $(function() {
 		var $forma_selected = $('#' + form_to_show).clone();
 		$forma_selected.attr({ id : form_to_show + id_to_show });
 		
-		$('#forma-ctbgenerapolizas-window').css({ "margin-left": -310, 	"margin-top": -265 });
+		$('#forma-ctbgenerapolizas-window').css({ "margin-left": -400, 	"margin-top": -265 });
 		$forma_selected.prependTo('#forma-ctbgenerapolizas-window');
 		$forma_selected.find('.panelcito_modal').attr({ id : 'panelcito_modal' + id_to_show , style:'display:table'});
 		$tabs_li_funxionalidad();
 		
 		var $identificador = $('#forma-ctbgenerapolizas-window').find('input[name=identificador]');
-		//var $select_sucursal = $('#forma-ctbgenerapolizas-window').find('select[name=select_sucursal]');
-		var $folio = $('#forma-ctbgenerapolizas-window').find('input[name=folio]');
-		var $nombre = $('#forma-ctbgenerapolizas-window').find('input[name=nombre]');
-		var $select_fecha = $('#forma-ctbgenerapolizas-window').find('select[name=select_fecha]');
-		var $select_pol_num = $('#forma-ctbgenerapolizas-window').find('select[name=select_pol_num]');
-		var $select_tipo = $('#forma-ctbgenerapolizas-window').find('select[name=select_tipo]');
+		var $fecha_ini = $('#forma-ctbgenerapolizas-window').find('input[name=fecha_ini]');
+		var $fecha_fin = $('#forma-ctbgenerapolizas-window').find('input[name=fecha_fin]');
+		var $select_tipo_mov = $('#forma-ctbgenerapolizas-window').find('select[name=select_tipo_mov]');
+		var $buscar = $('#forma-ctbgenerapolizas-window').find('#buscar');
 		
-		var $cuenta = $('#forma-ctbgenerapolizas-window').find('input[name=cuenta]');
-		var $scuenta = $('#forma-ctbgenerapolizas-window').find('input[name=scuenta]');
-		var $sscuenta = $('#forma-ctbgenerapolizas-window').find('input[name=sscuenta]');
-		var $ssscuenta = $('#forma-ctbgenerapolizas-window').find('input[name=ssscuenta]');
-		var $sssscuenta = $('#forma-ctbgenerapolizas-window').find('input[name=sssscuenta]');
-		
-		var $agregar_cta = $('#forma-ctbgenerapolizas-window').find('#agregar_cta');
-		var $buscar_cta = $('#forma-ctbgenerapolizas-window').find('#buscar_cta');
-		
-		//Grid de Cuentas contables
-		var $grid_cuentas = $('#forma-ctbgenerapolizas-window').find('#grid_cuentas');
+		//Grid de movimientos
+		var $grid_movs = $('#forma-ctbgenerapolizas-window').find('#grid_movs');
 		var $grid_warning = $('#forma-ctbgenerapolizas-window').find('#grid_warning');
 		
 		var $cerrar_plugin = $('#forma-ctbgenerapolizas-window').find('#close');
 		var $cancelar_plugin = $('#forma-ctbgenerapolizas-window').find('#boton_cancelar');
 		var $submit_actualizar = $('#forma-ctbgenerapolizas-window').find('#submit');
 		var $boton_actualizar = $('#forma-ctbgenerapolizas-window').find('#boton_actualizar');
-		
-		$permitir_solo_numeros($cuenta);
-		$permitir_solo_numeros($scuenta);
-		$permitir_solo_numeros($sscuenta);
-		$permitir_solo_numeros($ssscuenta);
-		$permitir_solo_numeros($sssscuenta);
-		
-		$cuenta.hide();
-		$scuenta.hide();
-		$sscuenta.hide();
-		$ssscuenta.hide();
-		$sssscuenta.hide();
-		
-		$aplica_read_only_input_text($folio);
 		
 		$identificador.attr({ 'value' : 0 });
 		
@@ -319,7 +313,7 @@ $(function() {
 				var remove = function() { $(this).remove(); };
 				$('#forma-ctbgenerapolizas-overlay').fadeOut(remove);
 				//refresh_table();
-				$get_datos_grid();
+				//$get_datos_grid();
 			}else{
 				// Desaparece todas las interrogaciones si es que existen
 				$('#forma-ctbgenerapolizas-window').find('div.interrogacion').css({'display':'none'});
@@ -370,12 +364,128 @@ $(function() {
 		$forma_selected.ajaxForm(options);
 		
 		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getData.json';
-		$arreglo = {'id':id_to_show, 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
+		var $arreglo = {'id':id_to_show, 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
 		
 		$.post(input_json,$arreglo,function(entry){
 			
+			//Carga select de Tipos de Movimientos
+			$select_tipo_mov.children().remove();
+			var tp_hmtl = '<option value="0">[--Todos--]</option>';
+			$.each(entry['TM'],function(entryIndex,tp){
+				tp_hmtl += '<option value="'+ tp['id'] +'">'+ tp['titulo'] +'</option>';
+			});
+			$select_tipo_mov.append(tp_hmtl);
+			
 		},"json");
 		//Termina llamada json
+		
+		
+		
+		//Buscador de Movimientos
+		$buscar.click(function(event){
+			event.preventDefault();
+			
+			var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getBusqueda.json';
+			var $arreglo = {
+				'fecha_ini':$fecha_ini.val(),
+				'fecha_fin':$fecha_fin.val(),
+				'tipo_mov':$select_tipo_mov.val(),
+				'iu': $('#lienzo_recalculable').find('input[name=iu]').val() 
+			};
+			
+			var buscar_registro=false;
+			
+			$.post(input_json,$arreglo,function(entry){
+				
+				//Eliminar registros
+				$grid_movs.children().remove();
+				
+				$.each(entry['Data'],function(entryIndex, fila){
+					$agrega_tr($grid_movs, fila['fecha'], fila['referencia'], fila['descripcion'], fila['total'], fila['tipo_mov']);
+				});
+			});
+		});
+		
+		//Aplicar evento Keypress para que al pulsar enter ejecute la busqueda
+		$(this).aplicarEventoKeypressEjecutaTrigger($fecha_ini, $buscar);
+		$(this).aplicarEventoKeypressEjecutaTrigger($fecha_fin, $buscar);
+		$(this).aplicarEventoKeypressEjecutaTrigger($select_tipo_mov, $buscar);
+		
+		
+		$fecha_ini.val(mostrarFecha());
+		
+		$fecha_ini.click(function (s){
+			var a=$('div.datepicker');
+			a.css({'z-index':100});
+		});
+			
+		$fecha_ini.DatePicker({
+			format:'Y-m-d',
+			date: $fecha_ini.val(),
+			current: $fecha_ini.val(),
+			starts: 1,
+			position: 'bottom',
+			locale: {
+				days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
+				daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
+				daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
+				months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
+				monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
+				weekMin: 'se'
+			},
+			onChange: function(formated, dates){
+				var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
+				$fecha_ini.val(formated);
+				if (formated.match(patron) ){
+					var valida_fecha=mayor($fecha_ini.val(),mostrarFecha());
+					
+					if (valida_fecha==true){
+						jAlert("Fecha no valida",'! Atencion');
+						$fecha_ini.val(mostrarFecha());
+					}else{
+						$fecha_ini.DatePickerHide();	
+					}
+				}
+			}
+		});
+		
+		
+		$fecha_fin.val(mostrarFecha());
+		
+		$fecha_fin.click(function (s){
+			var a=$('div.datepicker');
+			a.css({'z-index':100});
+		});
+		
+		$fecha_fin.DatePicker({
+			format:'Y-m-d',
+			date: $fecha_fin.val(),
+			current: $fecha_fin.val(),
+			starts: 1,
+			position: 'bottom',
+			locale: {
+				days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
+				daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
+				daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
+				months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
+				monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
+				weekMin: 'se'
+			},
+			onChange: function(formated, dates){
+				var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
+				$fecha_fin.val(formated);
+				if (formated.match(patron) ){
+					var valida_fecha=mayor($fecha_fin.val(),mostrarFecha());
+					
+					if (valida_fecha==true){
+						jAlert("Fecha no valida",'! Atencion');
+						$fecha_fin.val(mostrarFecha());
+					}else{
+						$fecha_fin.DatePickerHide();	
+					}
+				}
+			}
+		});
 		
 		
 		

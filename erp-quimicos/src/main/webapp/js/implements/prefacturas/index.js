@@ -2176,9 +2176,7 @@ $(function() {
 		var $cta_mn = $('#forma-prefacturas-window').find('input[name=cta_mn]');
 		var $cta_usd = $('#forma-prefacturas-window').find('input[name=cta_usd]');
 		var $select_almacen = $('#forma-prefacturas-window').find('select[name=select_almacen]');
-		
-		
-		
+		var $select_tmov = $('#forma-prefacturas-window').find('select[name=select_tmov]');
 		
 		//Boton para agregar datos de la Adenda
 		var $agregarDatosAdenda = $('#forma-prefacturas-window').find('#agregarDatosAdenda');
@@ -2377,11 +2375,22 @@ $(function() {
 			});
 			*/
 			
+			$select_tmov.children().remove();
+			var tmov_hmtl = '';
+			if(entry['TMov']){
+				$.each(entry['TMov'],function(entryIndex,mov){
+					tmov_hmtl += '<option value="'+ mov['id'] +'">'+ mov['titulo'] + '</option>';
+				});
+			}else{
+				tmov_hmtl += '<option value="0">[--- ---]</option>';
+			}
+			$select_tmov.append(tmov_hmtl);
+			
 			//carga select denominacion con todas las monedas
 			$select_moneda.children().remove();
 			var moneda_hmtl = '';
 			$.each(entry['Monedas'],function(entryIndex,moneda){
-				moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
+				moneda_hmtl += '<option value="'+ moneda['id'] +'">'+ moneda['descripcion'] + '</option>';
 			});
 			$select_moneda.append(moneda_hmtl);
 			
@@ -2630,7 +2639,7 @@ $(function() {
 				var $select_condiciones_original = $('#forma-prefacturas-window').find('select[name=condiciones_original]');
 				var $select_vendedor_original = $('#forma-prefacturas-window').find('select[name=vendedor_original]');
 				var $select_almacen = $('#forma-prefacturas-window').find('select[name=select_almacen]');
-				
+				var $select_tmov = $('#forma-prefacturas-window').find('select[name=select_tmov]');
 				
 				//var $select_almacen = $('#forma-prefacturas-window').find('select[name=almacen]');
 				//var $sku_producto = $('#forma-prefacturas-window').find('input[name=sku_producto]');
@@ -2915,6 +2924,22 @@ $(function() {
 						$cargaFormaDatosAdenda(entry['datosPrefactura']['0']['adenda_id'], $campo1, $campo2, $campo3, $campo4, $campo5, $campo6, $campo7, $campo8);
 					});
                     
+                    
+					$select_tmov.children().remove();
+					var tmov_hmtl = '<option value="0">[--- ---]</option>';
+					if(entry['TMov']){
+						if(parseInt(entry['datosPrefactura'][0]['tmov_id'])>0){
+							tmov_hmtl='';
+						}
+						$.each(entry['TMov'],function(entryIndex,mov){
+							if(parseInt(mov['id'])==parseInt(entry['datosPrefactura'][0]['tmov_id'])){
+								tmov_hmtl += '<option value="'+ mov['id'] +'" selected="yes">'+ mov['titulo'] + '</option>';
+							}else{
+								tmov_hmtl += '<option value="'+ mov['id'] +'">'+ mov['titulo'] + '</option>';
+							}
+						});
+					}
+					$select_tmov.append(tmov_hmtl);
                     
                     
                     

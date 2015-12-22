@@ -3755,7 +3755,7 @@ $(function() {
 						jAlert("Los cambios se guardaron con exito", 'Atencion!');
 						var remove = function() {$(this).remove();};
 						$('#forma-proordenproduccion-overlay').fadeOut(remove);
-						$get_datos_grid();
+						//$get_datos_grid();
 					}else{
 						
 						// Desaparece todas las interrogaciones si es que existen

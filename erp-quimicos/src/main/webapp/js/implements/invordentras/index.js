@@ -43,7 +43,7 @@ $(function() {
 	});
 	
 	//aqui va el titulo del catalogo
-	$('#barra_titulo').find('#td_titulo').append('Ordenes de Traspaso');
+	$('#barra_titulo').find('#td_titulo').append(document.title);
 	
 	//barra para el buscador 
 	//$('#barra_buscador').css({'height':'0px'});
@@ -126,8 +126,9 @@ $(function() {
 			$busqueda_alm_origen.append(alm_html);
 			
 			$busqueda_alm_destino.append(alm_html);
-			
 		});
+		
+		$get_datos_grid();
 	});
 	
 	
@@ -143,7 +144,6 @@ $(function() {
 		$busqueda_alm_origen.append(alm_html);
 		
 		$busqueda_alm_destino.append(alm_html);
-		
 	});
 	
 	
@@ -177,12 +177,17 @@ $(function() {
 			 $('#barra_buscador').animate({height:'0px'}, 500);
 			 $('#cuerpo').css({'height': pix_alto});
 		};
+		$busqueda_folio.focus();
 	});
 	
 	
-	
-
-	
+	//aplicar evento Keypress para que al pulsar enter ejecute la busqueda
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_folio, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_descripcion, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_alm_origen, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_alm_destino, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_fecha_inicial, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_fecha_final, $buscar);
 	
 	
 	//----------------------------------------------------------------
@@ -1076,8 +1081,6 @@ $(function() {
     }
     
     $get_datos_grid();
-    
-    
 });
 
 

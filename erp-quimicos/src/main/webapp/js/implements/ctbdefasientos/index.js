@@ -484,7 +484,7 @@ $(function() {
 		//if(parseInt(tipo)==2 ){mayor_seleccionado=5; detalle=1; clasifica=1; };
 		//if(parseInt(tipo)==3 ){mayor_seleccionado=4; detalle=1; clasifica=1; };
 		
-		detalle=1;
+		//detalle=1;
 		
 		$campo_clasif.val(clasifica);
 		
@@ -769,7 +769,7 @@ $(function() {
 	$getDataCta = function($grid_cuentas, $cuenta, $scuenta, $sscuenta, $ssscuenta, $sssscuenta){
 		var detalle=0;
 		
-		detalle=1;
+		//detalle=1;
 		
 		if($cuenta.val().trim()!='' || $scuenta.val().trim()!='' || $sscuenta.val().trim()!='' || $ssscuenta.val().trim()!='' || $sssscuenta.val().trim()!=''){
 			var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDataCta.json';
@@ -858,6 +858,7 @@ $(function() {
 		var $select_fecha = $('#forma-ctbdefasientos-window').find('select[name=select_fecha]');
 		var $select_pol_num = $('#forma-ctbdefasientos-window').find('select[name=select_pol_num]');
 		var $select_tipo = $('#forma-ctbdefasientos-window').find('select[name=select_tipo]');
+		var $select_app = $('#forma-ctbdefasientos-window').find('select[name=select_app]');
 		
 		var $cuenta = $('#forma-ctbdefasientos-window').find('input[name=cuenta]');
 		var $scuenta = $('#forma-ctbdefasientos-window').find('input[name=scuenta]');
@@ -910,13 +911,13 @@ $(function() {
 			}else{
 				// Desaparece todas las interrogaciones si es que existen
 				$('#forma-ctbdefasientos-window').find('div.interrogacion').css({'display':'none'});
-				$('#forma-ctbdefasientos-window').find('.ctbdefasientos_div_one').css({'height':'620px'});
+				//$('#forma-ctbdefasientos-window').find('.ctbdefasientos_div_one').css({'height':'620px'});
 				
-				$grid_cuentas.find('select').css({'background' : '#ffffff'});
-				$grid_cuentas.find('input').css({'background' : '#ffffff'});
+				//$grid_cuentas.find('select').css({'background' : '#ffffff'});
+				//$grid_cuentas.find('input').css({'background' : '#ffffff'});
 				
 				$('#forma-ctbdefasientos-window').find('#div_warning_grid').css({'display':'none'});
-				$('#forma-ctbdefasientos-window').find('#div_warning_grid').find('#grid_warning').children().remove();
+				//$('#forma-ctbdefasientos-window').find('#div_warning_grid').find('#grid_warning').children().remove();
 				
 				var valor = data['success'].split('___');
 				//muestra las interrogaciones
@@ -929,6 +930,7 @@ $(function() {
 						.css({'display':'block'})
 						.easyTooltip({	tooltipId: "easyTooltip2",content: tmp.split(':')[1] });
 						
+						/*
 						if((tmp.split(':')[0].substring(0, 11) == 'select_tmov') || (tmp.split(':')[0].substring(0, 3) == 'cta') || (tmp.split(':')[0].substring(0, 4) == 'debe') || (tmp.split(':')[0].substring(0, 4) == 'haber')){
 							var campo = tmp.split(':')[0];
 							
@@ -947,10 +949,13 @@ $(function() {
 							
 							$('#forma-ctbdefasientos-window').find('#div_warning_grid').find('#grid_warning').append(tr_warning);
 						}
+						*/
 					}
 				}
+				/*
 				$('#forma-ctbdefasientos-window').find('#div_warning_grid').find('#grid_warning').find('tr:odd').find('td').css({ 'background-color' : '#FFFFFF'});
 				$('#forma-ctbdefasientos-window').find('#div_warning_grid').find('#grid_warning').find('tr:even').find('td').css({ 'background-color' : '#e7e8ea'});
+				*/
 			}
 		}
 		var options = { dataType :  'json', success : respuestaProcesada };
@@ -987,9 +992,17 @@ $(function() {
 			$select_tipo.children().remove();
 			var tp_hmtl = '';
 			$.each(ArrayTP,function(entryIndex,tp){
-				tp_hmtl += '<option value="' + tp['id'] + '">'+ tp['titulo'] + '</option>';
+				tp_hmtl += '<option value="'+ tp['id'] +'">'+ tp['titulo'] +'</option>';
 			});
 			$select_tipo.append(tp_hmtl);
+			
+			//Carga select 
+			$select_app.children().remove();
+			var app_hmtl = '';
+			$.each(entry['App'],function(entryIndex,tp){
+				app_hmtl += '<option value="' + tp['id'] + '">'+ tp['titulo'] + '</option>';
+			});
+			$select_app.append(app_hmtl);
 			
 			$agregar_cta.click(function(event){
 				event.preventDefault();
@@ -1111,7 +1124,6 @@ $(function() {
 			
 			$tabs_li_funxionalidad();
 			
-			
 			var $identificador = $('#forma-ctbdefasientos-window').find('input[name=identificador]');
 			//var $select_sucursal = $('#forma-ctbdefasientos-window').find('select[name=select_sucursal]');
 			var $folio = $('#forma-ctbdefasientos-window').find('input[name=folio]');
@@ -1119,6 +1131,7 @@ $(function() {
 			var $select_fecha = $('#forma-ctbdefasientos-window').find('select[name=select_fecha]');
 			var $select_pol_num = $('#forma-ctbdefasientos-window').find('select[name=select_pol_num]');
 			var $select_tipo = $('#forma-ctbdefasientos-window').find('select[name=select_tipo]');
+			var $select_app = $('#forma-ctbdefasientos-window').find('select[name=select_app]');
 			
 			var $cuenta = $('#forma-ctbdefasientos-window').find('input[name=cuenta]');
 			var $scuenta = $('#forma-ctbdefasientos-window').find('input[name=scuenta]');
@@ -1162,26 +1175,18 @@ $(function() {
 			
 			if(accion_mode == 'edit'){
 				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAsiento.json';
-				$arreglo = {	'id':id_to_show,
-								'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
-							};
+				$arreglo = {'id':id_to_show, 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
 				
 				var respuestaProcesada = function(data){
 					if ( data['success'] == 'true' ){
 						var remove = function() { $(this).remove(); };
 						$('#forma-ctbdefasientos-overlay').fadeOut(remove);
-						jAlert("Los datos de la Cuenta se han actualizado.", 'Atencion!');
-						$get_datos_grid();
-					}
-					else{
+						jAlert("Los datos se han actualizado.", 'Atencion!');
+						//$get_datos_grid();
+					}else{
 						// Desaparece todas las interrogaciones si es que existen
 						$('#forma-ctbdefasientos-window').find('div.interrogacion').css({'display':'none'});
-						$('#forma-ctbdefasientos-window').find('.ctbdefasientos_div_one').css({'height':'620px'});
-						
-						$grid_cuentas.find('#select_tmov').css({'background' : '#ffffff'});
-						$grid_cuentas.find('#cta').css({'background' : '#ffffff'});
-						$grid_cuentas.find('#debe').css({'background' : '#ffffff'});
-						$grid_cuentas.find('#haber').css({'background' : '#ffffff'});
+						//$('#forma-ctbdefasientos-window').find('.ctbdefasientos_div_one').css({'height':'620px'});
 						
 						$('#forma-ctbdefasientos-window').find('#div_warning_grid').css({'display':'none'});
 						$('#forma-ctbdefasientos-window').find('#div_warning_grid').find('#grid_warning').children().remove();
@@ -1196,7 +1201,7 @@ $(function() {
 								.parent()
 								.css({'display':'block'})
 								.easyTooltip({	tooltipId: "easyTooltip2",content: tmp.split(':')[1] });
-								
+								/*
 								if((tmp.split(':')[0].substring(0, 11) == 'select_tmov') || (tmp.split(':')[0].substring(0, 3) == 'cta') || (tmp.split(':')[0].substring(0, 4) == 'debe') || (tmp.split(':')[0].substring(0, 4) == 'haber')){
 									var campo = tmp.split(':')[0];
 									
@@ -1215,10 +1220,13 @@ $(function() {
 									
 									$('#forma-ctbdefasientos-window').find('#div_warning_grid').find('#grid_warning').append(tr_warning);
 								}
+								*/
 							}
 						}
+						/*
 						$('#forma-ctbdefasientos-window').find('#div_warning_grid').find('#grid_warning').find('tr:odd').find('td').css({ 'background-color' : '#FFFFFF'});
 						$('#forma-ctbdefasientos-window').find('#div_warning_grid').find('#grid_warning').find('tr:even').find('td').css({ 'background-color' : '#e7e8ea'});
+						*/
 					}
 				}
 				
@@ -1260,6 +1268,21 @@ $(function() {
 					});
 					$select_tipo.append(tp_hmtl);
 					
+					//Carga select 
+					$select_app.children().remove();
+					var app_hmtl = '';
+					if(parseInt(entry['Data'][0]['app_id'])<=0){
+						app_hmtl = '<option value="0" selected="yes">[---- ----]</option>';
+					}
+					
+					$.each(entry['App'],function(entryIndex,ap){
+						if(parseInt(entry['Data'][0]['app_id'])==parseInt(ap['id'])){
+							app_hmtl += '<option value="'+ ap['id'] +'" selected="yes">'+ ap['titulo'] +'</option>';
+						}else{
+							app_hmtl += '<option value="'+ ap['id'] +'">'+ ap['titulo'] +'</option>';
+						}
+					});
+					$select_app.append(app_hmtl);
 					
 					if(parseInt(entry['Grid'].length)>0){
 						$.each(entry['Grid'],function(entryIndex,grid){

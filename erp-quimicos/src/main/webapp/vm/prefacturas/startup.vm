@@ -347,19 +347,21 @@
 											
 											<tr>
 												<td colspan="5">
+													
 													<table border="0" class="gral">
-														<!--
-														<tr><td colspan="11" height="8"></td></tr>
-														-->
 														<tr>
 															<td width="10"></td>
 															<td width="80">Almacen</td>
 															<td width="180"><select name="select_almacen" style="width:190px"></select></td>
 															<td width="30"></td>
-															<td width="95"><a  href="agregar_remision">(Agregar&nbsp;Remisi&oacute;n)</a></td>
-															<td width="197"></td>
+															<td width="95"><a href="agregar_remision">(Agregar&nbsp;Remisi&oacute;n)</a></td>
+															
+															<td class="tmov">&nbsp;&nbsp;&nbsp;&nbsp;Movimiento&nbsp;</td>
+															<td width="180"><select name="select_tmov" style="width:180px"></select></td>
+															<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_tmov"></div></td>
+															
 															<td width="76"><span class="adenda">Incluye&nbsp;Adenda</span></td>
-															<td width="18">
+															<td width="20">
 																<input type="checkbox" class="adenda" name="check_incluye_adenda">
 																<!--Aqui agrego campos hidden para datos de la adenda-->
 																<input type="hidden" name="campo1">
@@ -380,9 +382,6 @@
 																<input type="button" id="facturar" value="Facturar" style="width:90px; font-weight: bold;">
 															</td>
 														</tr>
-														
-														
-														
 													</table>
 													
 												</td>

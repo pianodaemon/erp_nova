@@ -1782,7 +1782,7 @@ $(function() {
 						jAlert("La mercancia se guardo con exito", 'Atencion!');
 						var remove = function() { $(this).remove(); };
 						$('#forma-entradamercancias-overlay').fadeOut(remove);
-						$get_datos_grid();
+						//$get_datos_grid();
 					}else{
 						// Desaparece todas las interrogaciones si es que existen
 						$('#forma-entradamercancias-window').find('div.interrogacion').css({'display':'none'});

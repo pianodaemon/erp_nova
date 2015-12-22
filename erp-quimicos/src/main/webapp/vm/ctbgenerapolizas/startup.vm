@@ -40,7 +40,7 @@
 					<input type="hidden" name="identificador">
                     <div id="div_two" title="" class="ctbgenerapolizas_div_two">
                         <div class="columns on-2">
-                            <div class="fixed column" id="cierra" style="width:550px; padding-left:6px;"><strong>${title}</strong></div>
+                            <div class="fixed column" id="cierra" style="width:730px; padding-left:6px;"><strong>${title}</strong></div>
                             <div class="fixed column" style="width:20px; height:25px;">
                                 <div id="close" style="height:25px;background-image:url('../../img/modalbox/close.png'); background-color:; background-position:top; cursor:pointer; background-repeat:no-repeat;"></div>
                             </div>
@@ -51,7 +51,7 @@
                         <div class="columns" >
                             <div class=" fixed column">
                                 <ul class="pestanas">
-                                    <li><a href="#tabx-1"><strong>Generar</strong></a></li>
+                                    <li><a href="#tabx-1"><strong>Movimientos</strong></a></li>
                                 </ul>
                             </div>
                         </div>
@@ -63,100 +63,62 @@
 										
                                         <table border="0" style="margin:0; padding:0;">
 											<tr>
-												<td width="590"></td>
+												<td width="750"></td>
 											</tr>
+                                            <tr>
+                                                <td height="14" width="750" style="border-top:1px solid #C1DAD7; border-bottom:1px solid #C1DAD7; border-left:1px solid #FFFFFF; border-right:1px solid #FFFFFF; background-color:#D4D3D3;">Busqueda de movimientos</td>
+                                            </tr>
 											<tr>
 												<td valign="top">
 													<table border="0" class="gral">
-														<!--
+														<tr><td height="8" colspan="8"></td></tr>
 														<tr>
 															<td width="10"></td>
-															<td width="50">Sucursal</td>
-															<td width="190" colspan="3"><select name="select_sucursal" style="width:190px;"></select></td>
-															<td width="250"></td>
-															<td width="30"></td>
+															<td width="100">Fecha&nbsp;inicial</td>
+															<td width="90"><input type="text"name="fecha_ini" style="width:90px;" readOnly></td>
+															<td width="50"></td>
+															<td width="80">Fecha&nbsp;final</td>
+															<td width="90"><input type="text"name="fecha_fin" style="width:90px;" readOnly></td>
+															<td width="40"></td>
+															<td width="80"></td>
 														</tr>
-														<tr><td height="8" colspan="7"></td></tr>
-														-->
-														
+														<tr><td height="8" colspan="8"></td></tr>
 														<tr>
 															<td width="10"></td>
-															<td width="50">Folio</td>
-															<td width="100"><input type="text"name="folio" style="width:100px;" maxlength="10" readOnly></td>
-															<td width="30"></td>
-															<td width="60">Nombre</td>
-															<td width="280"><input type="text"name="nombre" style="width:280px;" ></td>
-															<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_nombre"></div></td>
-														</tr>
-														<tr><td height="8" colspan="7"></td></tr>
-														<tr>
-															<td width="10"></td>
-															<td width="50">Fecha</td>
-															<td width="100"><select name="select_fecha" style="width:100px;"><option value="1">Documento</option></select></td>
-															<td width="30"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_fecha"></div></td>
-															<td width="60">P&oacute;liza&nbsp;Num.</td>
-															<td width="280"><select name="select_pol_num" style="width:280px;"><option value="0">[ ----- ]</option></select></td>
-															<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_polnum"></div></td>
-														</tr>
-														<tr><td height="8" colspan="7"></td></tr>
-														<tr>
-															<td width="10"></td>
-															<td width="50">Tipo</td>
-															<td width="190" colspan="3"><select name="select_tipo" style="width:190px;"><option value="1">Diario</option></select></td>
+															<td width="100">Tipo&nbsp;de&nbsp;Movimiento</td>
+															<td width="310" colspan="4"><select name="select_tipo_mov" style="width:310px;"><option value="0">[--- ---]</option></select></td>
 															<!--
-															<td width="30"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_tipo"></div></td>
-															<td width="60"></td>
+															<td width="50"></td>
+															<td width="80"></td>
+															<td width="90"></td>
 															-->
-															<td width="280"></td>
-															<td width="25"></td>
+															<td width="40"></td>
+															<td width="80"><a href="#busqueda" id="buscar">(Buscar)</a></td>
 														</tr>
-														<tr><td height="8" colspan="7"></td></tr>
 													</table>
+													
 												</td>
 											</tr>
 											
-											<tr>
-												<td valign="top" > 
-													<table border="0" class="gral">
-														<tr>
-															<td width="10"></td>
-															<td width="50">Cuenta</td>
-															<td><input name="cuenta" style="width:40px;" maxlength="4"></td>
-															<td width="5"></td>
-															<td><input name="scuenta" style="width:40px;" maxlength="4"></td>
-															<td width="5"></td>
-															<td><input name="sscuenta" style="width:40px;" maxlength="4"></td>
-															<td width="5"></td>
-															<td><input name="ssscuenta" style="width:40px;" maxlength="4"></td>
-															<td width="5"></td>
-															<td><input name="sssscuenta" style="width:40px;" maxlength="4"></td>
-															<td width="5"></td>
-															<td width="60"><a href="#agregar_cta" id="agregar_cta">&nbsp;(Agregar)</a></td>
-															<td width="5"></td>
-															<td width="70"><a href="#buscar_cta" id="buscar_cta">&nbsp;(Buscar)</a></td>
-														</tr>
-													</table>
-												</td>
-											</tr>
 											
 											<tr>
 												<td style="border-top: 1px solid #C1DAD7; border-bottom: 1px solid #C1DAD7; border-left: 1px solid #FFFFFF; border-right: 1px solid #FFFFFF;">
 													<table >
 														<thead>
 															<tr>
-																<td class="grid" style="background-color:rgb(180,180,180); border-botton:0px none;" width="30">&nbsp;#</td>
-																<td class="grid" style="background-color:rgb(180,180,180);" width="150">Cuenta</td>
-																<td class="grid" style="background-color:rgb(180,180,180);" width="250">Descripci&oacute;n</td>
-																<td class="grid" style="background-color:rgb(180,180,180);" width="60">D-H</td>
-																<td class="grid" style="background-color:rgb(180,180,180); "width="50">Detalle</td>
+																<td class="grid_head" width="70">Fecha</td>
+																<td class="grid_head" width="70">Referencia</td>
+																<td class="grid_head" width="300">Nombre&nbsp;/&nbsp;Descripci&oacute;n</td>
+																<td class="grid_head" width="80">Total</td></td>
+																<td class="grid_head" width="203">Tipo&nbsp;de&nbsp;Movimiento</td>
 															</tr>
 														</thead>
 														<tbody>
 															<tr>
 																<td colspan="5">
-																	<div style="overflow:scroll; overflow-x:hidden; overflow-y:auto; height:140px; border:1px solid #C1DAD7 !important;">	
+																	<div style="overflow:scroll; overflow-x:hidden; overflow-y:auto; height:185px; border:1px solid #C1DAD7 !important;">	
 																		<table>
-																			<tbody style="background-color: #FFFFFF;" valign="top" id="grid_cuentas">
+																			<tbody style="background-color: #FFFFFF;" valign="top" id="grid_movs">
 																				
 																			</tbody>
 																		</table>
@@ -210,11 +172,11 @@
                             </div>
 
 
-                            <div class="fixed column" id="botones" style="width:563px; background:; text-align:right; padding-left:; position:absolute;margin-top:4px;">
+                            <div class="fixed column" id="botones" style="width:743px; background:; text-align:right; padding-left:; position:absolute;margin-top:4px;">
 								<table border="0">
 									<tr><td colspan="4" height="7"></td></tr>
 									<tr>
-										<td width="463"></td>
+										<td width="643"></td>
 										<td>
 											<input type="image" src="../../img/modalbox/btn1.png" id="submit" style="width:77px; height:24px;"/>
 										</td>

@@ -713,7 +713,7 @@ $(function() {
 						$submit_actualizar.removeAttr('disabled');
 						var remove = function() { $(this).remove(); };
 						$('#forma-invordensalida-overlay').fadeOut(remove);
-						$get_datos_grid();
+						//$get_datos_grid();
 					}else{
 						//habilitar boton actualizar
 						$submit_actualizar.removeAttr('disabled');
