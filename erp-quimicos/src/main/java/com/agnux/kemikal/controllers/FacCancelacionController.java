@@ -227,15 +227,11 @@ public class FacCancelacionController {
         ArrayList<HashMap<String, Object>> datosFactura = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> datosGrid = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> valorIva = new ArrayList<HashMap<String, Object>>();
-        ArrayList<HashMap<String, Object>> monedas = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> tipoCambioActual = new ArrayList<HashMap<String, Object>>();
         HashMap<String, Object> tc = new HashMap<String, Object>();
-        ArrayList<HashMap<String, Object>> vendedores = new ArrayList<HashMap<String, Object>>();
-        ArrayList<HashMap<String, Object>> condiciones = new ArrayList<HashMap<String, Object>>();
-        ArrayList<HashMap<String, Object>> metodos_pago = new ArrayList<HashMap<String, Object>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
         
-        //decodificar id de usuario
+        //Decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
         
         userDat = this.getHomeDao().getUserById(id_usuario);
@@ -252,19 +248,14 @@ public class FacCancelacionController {
         tc.put("tipo_cambio", StringHelper.roundDouble(this.getFacdao().getTipoCambioActual(), 4)) ;
         tipoCambioActual.add(0,tc);
         
-        monedas = this.getFacdao().getFactura_Monedas();
-        vendedores = this.getFacdao().getFactura_Agentes(id_empresa, id_sucursal);
-        condiciones = this.getFacdao().getFactura_DiasDeCredito();
-        metodos_pago = this.getFacdao().getMetodosPago();
-        
-        jsonretorno.put("datosFactura", datosFactura);
+        jsonretorno.put("Datos", datosFactura);
         jsonretorno.put("datosGrid", datosGrid);
         jsonretorno.put("iva", valorIva);
-        jsonretorno.put("Monedas", monedas);
         jsonretorno.put("Tc", tipoCambioActual);
-        jsonretorno.put("Vendedores", vendedores);
-        jsonretorno.put("Condiciones", condiciones);
-        jsonretorno.put("MetodosPago", metodos_pago);
+        jsonretorno.put("Monedas", this.getFacdao().getFactura_Monedas());
+        jsonretorno.put("Vendedores", this.getFacdao().getFactura_Agentes(id_empresa, id_sucursal));
+        jsonretorno.put("Condiciones", this.getFacdao().getFactura_DiasDeCredito());
+        jsonretorno.put("MetodosPago", this.getFacdao().getMetodosPago());
         
         return jsonretorno;
     }
@@ -287,17 +278,27 @@ public class FacCancelacionController {
     
     //obtiene los tipos de cancelacion
     @RequestMapping(method = RequestMethod.POST, value="/getTiposCancelacion.json")
-    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getTiposCancelacionJson(
+    public @ResponseBody HashMap<String,Object> getTiposCancelacionJson(
+            @RequestParam(value="identificador", required=true) Integer identificador,
+            @RequestParam(value="iu", required=true) String id_user,
             Model model
         ) {
-        
         log.log(Level.INFO, "Ejecutando getTiposCancelacionJson de {0}", FacCancelacionController.class.getName());
-        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
-        ArrayList<HashMap<String, String>> tipos_cancelacion = new ArrayList<HashMap<String, String>>();
+        HashMap<String,Object> jsonretorno = new HashMap<String,Object>();
         
-        tipos_cancelacion = this.getFacdao().getTiposCancelacion();
+        HashMap<String, String> userDat = new HashMap<String, String>();
         
-        jsonretorno.put("Tipos", tipos_cancelacion);
+        Integer app_selected = 36;
+        //Decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        //Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        
+        jsonretorno.put("Tipos", this.getFacdao().getTiposCancelacion());
+        jsonretorno.put("TMov", this.getFacdao().getCtb_TiposDeMovimiento(id_empresa, app_selected));
         
         return jsonretorno;
     }
@@ -314,6 +315,7 @@ public class FacCancelacionController {
     public @ResponseBody HashMap<String, String> getCancelarFactura(
             @RequestParam(value="id_factura", required=true) Integer id_factura,
             @RequestParam(value="tipo_cancelacion", required=true) Integer tipo_cancelacion,
+            @RequestParam(value="tmov", required=true) Integer tmov,
             @RequestParam(value="motivo", required=true) String motivo_cancelacion,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
@@ -342,7 +344,7 @@ public class FacCancelacionController {
         String valorRespuesta="false";
         String msjRespuesta="";
         
-        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_factura+"___"+tipo_cancelacion+"___"+motivo_cancelacion.toUpperCase();
+        String data_string = app_selected +"___"+ command_selected +"___"+ id_usuario +"___"+ id_factura +"___"+ tipo_cancelacion +"___"+ motivo_cancelacion.toUpperCase() +"___"+ tmov;
         
         validacion = this.getFacdao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
         

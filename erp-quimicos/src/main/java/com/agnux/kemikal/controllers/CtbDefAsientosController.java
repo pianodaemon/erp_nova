@@ -187,6 +187,7 @@ public class CtbDefAsientosController {
         jsonretorno.put("TP", this.getCtbDao().getPolizasContables_TiposPolizas(id_empresa));
         jsonretorno.put("Suc", this.getCtbDao().getCtb_Sucursales(id_empresa));
         jsonretorno.put("CtaMay", this.getCtbDao().getPolizasContables_CuentasMayor(id_empresa));
+        jsonretorno.put("Campos", this.getCtbDao().getCtbDefinicionAsientos_Campos());
         jsonretorno.put("Data", data);
         
         return jsonretorno;
@@ -196,14 +197,14 @@ public class CtbDefAsientosController {
     
     
     @RequestMapping(method = RequestMethod.POST, value="/getAsiento.json")
-    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getAsientoJson(
+    public @ResponseBody HashMap<String,Object> getAsientoJson(
             @RequestParam(value="id", required=true) Integer id,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
         ) {
         
         log.log(Level.INFO, "Ejecutando getPolizaJson de {0}", CtbDefAsientosController.class.getName());
-        HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
+        HashMap<String,Object> jsonretorno = new HashMap<String,Object>();
         ArrayList<HashMap<String, Object>> datos = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> datosGrid = new ArrayList<HashMap<String, Object>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
@@ -324,6 +325,7 @@ public class CtbDefAsientosController {
             @RequestParam(value="delete", required=false) String[] eliminado,
             @RequestParam(value="id_cta", required=false) String[] id_cta,
             @RequestParam(value="select_mov", required=false) String[] select_mov,
+            @RequestParam(value="select_importe", required=false) String[] select_importe,
             @RequestParam(value="detalle", required=false) String[] detalle,
             @RequestParam(value="no_tr", required=false) String[] no_tr,
             Model model,@ModelAttribute("user") UserSessionData user
@@ -344,7 +346,7 @@ public class CtbDefAsientosController {
             arreglo = new String[eliminado.length];
 
             for(int i=0; i<eliminado.length; i++) {
-                arreglo[i]= "'"+ eliminado[i] +"___"+ id_det[i] +"___"+ id_cta[i] +"___"+ select_mov[i] +"___"+ detalle[i] +"'";
+                arreglo[i]= "'"+ eliminado[i] +"___"+ id_det[i] +"___"+ id_cta[i] +"___"+ select_mov[i] +"___"+ detalle[i] +"___"+ select_importe[i] +"'";
                 //System.out.println(arreglo[i]);
             }
             

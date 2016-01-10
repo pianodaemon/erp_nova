@@ -217,7 +217,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query, 
-            new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+            new Object[]{data_string,new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, Object> row = new HashMap<String, Object>();
@@ -254,6 +254,8 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         + "SELECT fac_docs.id,"
             +"fac_docs.folio_pedido,"
             +"fac_docs.serie_folio,"
+            +"to_char(fac_docs.momento_creacion,'dd/mm/yyyy') AS fecha,"
+            +"(case when fac_docs.momento_cancelacion is null then '' else to_char(fac_docs.momento_cancelacion,'dd/mm/yyyy') end) as fecha_can,"
             +"fac_docs.moneda_id,"
             + "(case when gral_mon.id is null then '' else gral_mon.iso_4217 end) as moneda_iso_4217, "
             +"fac_docs.observaciones,"
@@ -267,24 +269,28 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
             + "ELSE "
                 + "cxc_clie.calle||' '||cxc_clie.numero||', '||cxc_clie.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo||' C.P. '||cxc_clie.cp "
             + "END ) AS direccion,"
-            +"cxc_clie.cxc_clie_tipo_adenda_id as t_adenda_id,"
-            +"fac_docs.subtotal,"
-            +"fac_docs.monto_ieps,"
-            +"fac_docs.impuesto,"
-            +"fac_docs.total,"
-            +"fac_docs.monto_retencion,"
-            +"fac_docs.tipo_cambio,"
-            +"(CASE WHEN fac_docs.cancelado=FALSE THEN '' ELSE 'CANCELADO' END) AS estado,"
-            +"fac_docs.cxc_agen_id,"
-            +"fac_docs.terminos_id,"
-            +"fac_docs.orden_compra,"
+            + "cxc_clie.cxc_clie_tipo_adenda_id as t_adenda_id,"
+            + "fac_docs.subtotal,"
+            + "fac_docs.monto_ieps,"
+            + "fac_docs.impuesto,"
+            + "fac_docs.total,"
+            + "fac_docs.monto_retencion,"
+            + "fac_docs.tipo_cambio,"
+            + "(CASE WHEN fac_docs.cancelado=FALSE THEN '' ELSE 'CANCELADO' END) AS estado,"
+            + "fac_docs.cxc_agen_id,"
+            + "fac_docs.terminos_id,"
+            + "fac_docs.orden_compra,"
             + "fac_docs.fac_metodos_pago_id,"
             + "fac_docs.no_cuenta, "
-            + "cxc_clie.tasa_ret_immex/100 AS tasa_ret_immex,"
+            + "(cxc_clie.tasa_ret_immex::double precision/100) AS tasa_ret_immex,"
             + "erp_h_facturas.saldo_factura, "
             + "fac_docs.monto_descto, "
             + "(CASE WHEN fac_docs.subtotal_sin_descto IS NULL THEN 0 ELSE fac_docs.subtotal_sin_descto END) AS subtotal_sin_descto, "
-            + "(CASE WHEN fac_docs.monto_descto>0 THEN fac_docs.motivo_descto ELSE '' END) AS motivo_descto  "
+            + "(CASE WHEN fac_docs.monto_descto>0 THEN fac_docs.motivo_descto ELSE '' END) AS motivo_descto,"
+            + "fac_docs.cancelado,"
+            + "fac_docs.fac_docs_tipo_cancelacion_id as tipo_cancel,"
+            + "fac_docs.ctb_tmov_id_cancelacion as tmovid_cancel,"
+            + "fac_docs.motivo_cancelacion as motivo_cancel "
         +"FROM fac_docs "
         +"JOIN erp_h_facturas ON erp_h_facturas.serie_folio=fac_docs.serie_folio "
         +"LEFT JOIN cxc_clie ON cxc_clie.id=fac_docs.cxc_clie_id "
@@ -295,7 +301,6 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         +"LEFT JOIN (SELECT cxc_clie_df.id, (CASE WHEN cxc_clie_df.calle IS NULL THEN '' ELSE cxc_clie_df.calle END) AS calle, (CASE WHEN cxc_clie_df.numero_interior IS NULL THEN '' ELSE (CASE WHEN cxc_clie_df.numero_interior IS NULL OR cxc_clie_df.numero_interior='' THEN '' ELSE 'NO.INT.'||cxc_clie_df.numero_interior END)  END) AS numero_interior, (CASE WHEN cxc_clie_df.numero_exterior IS NULL THEN '' ELSE (CASE WHEN cxc_clie_df.numero_exterior IS NULL OR cxc_clie_df.numero_exterior='' THEN '' ELSE 'NO.EXT.'||cxc_clie_df.numero_exterior END )  END) AS numero_exterior, (CASE WHEN cxc_clie_df.colonia IS NULL THEN '' ELSE cxc_clie_df.colonia END) AS colonia,(CASE WHEN gral_mun.id IS NULL OR gral_mun.id=0 THEN '' ELSE gral_mun.titulo END) AS municipio,(CASE WHEN gral_edo.id IS NULL OR gral_edo.id=0 THEN '' ELSE gral_edo.titulo END) AS estado,(CASE WHEN gral_pais.id IS NULL OR gral_pais.id=0 THEN '' ELSE gral_pais.titulo END) AS pais,(CASE WHEN cxc_clie_df.cp IS NULL THEN '' ELSE cxc_clie_df.cp END) AS cp  FROM cxc_clie_df LEFT JOIN gral_pais ON gral_pais.id = cxc_clie_df.gral_pais_id LEFT JOIN gral_edo ON gral_edo.id = cxc_clie_df.gral_edo_id LEFT JOIN gral_mun ON gral_mun.id = cxc_clie_df.gral_mun_id ) AS sbtdf ON sbtdf.id = fac_docs.cxc_clie_df_id "
         +"WHERE fac_docs.id=? ";
         
-        
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_query,  
             new Object[]{new Integer(id_factura)}, new RowMapper() {
@@ -304,6 +309,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     HashMap<String, Object> row = new HashMap<String, Object>();
                     row.put("id",rs.getInt("id"));
                     row.put("serie_folio",rs.getString("serie_folio"));
+                    row.put("fecha",rs.getString("fecha"));
                     row.put("folio_pedido",rs.getString("folio_pedido"));
                     row.put("moneda_id",rs.getInt("moneda_id"));
                     row.put("moneda_4217",rs.getString("moneda_iso_4217"));
@@ -332,7 +338,11 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     row.put("monto_descto",StringHelper.roundDouble(rs.getDouble("monto_descto"),2));
                     row.put("subtotal_sin_descto",StringHelper.roundDouble(rs.getDouble("subtotal_sin_descto"),2));
                     row.put("motivo_descto",rs.getString("motivo_descto"));
-                    
+                    row.put("cancelado",rs.getBoolean("cancelado"));
+                    row.put("fecha_can",rs.getString("fecha_can"));
+                    row.put("tipo_cancel",rs.getInt("tipo_cancel"));
+                    row.put("tmovid_cancel",rs.getInt("tmovid_cancel"));
+                    row.put("motivo_cancel",rs.getString("motivo_cancel"));
                     return row;
                 }
             }
@@ -2298,7 +2308,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
-            new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+            new Object[]{data_string,new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, Object> row = new HashMap<String, Object>();
@@ -2325,48 +2335,52 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     @Override
     public ArrayList<HashMap<String, Object>> getNotasCredito_Datos(Integer id_nota_credito) {
 	String sql_query = ""
-                + "SELECT "
-                    + "fac_nota_credito.id,"
-                    + "fac_nota_credito.serie_folio,"
-                    + "fac_nota_credito.cxc_clie_id,"
-                    + "cxc_clie.numero_control AS no_cliente,"
-                    + "cxc_clie.razon_social,"
-                    + "fac_nota_credito.cxc_clie_df_id,"
-                    + "cxc_clie.empresa_immex,"
-                    + "fac_nota_credito.cxc_agen_id,"
-                    + "fac_nota_credito.moneda_id,"
-                    + "fac_nota_credito.valor_impuesto,"
-                    + "fac_nota_credito.tasa_retencion_immex,"
-                    + "fac_nota_credito.tipo_cambio,"
-                    + "fac_nota_credito.subtotal AS importe,"
-                    + "fac_nota_credito.impuesto AS importe_iva,"
-                    + "fac_nota_credito.monto_retencion AS importe_retencion,"
-                    + "fac_nota_credito.total AS monto_total,"
-                    + "fac_nota_credito.concepto,"
-                    + "fac_nota_credito.observaciones,"
-                    + "fac_nota_credito.serie_folio_factura as factura,"
-                    + "erp_h_facturas.moneda_id as id_moneda_factura, "
-                    + "fac_nota_credito.cancelado,"
-                    + "erp_h_facturas.monto_total AS monto_factura, "
-                    + "erp_h_facturas.saldo_factura, "
-                    + "to_char(erp_h_facturas.momento_facturacion,'dd/mm/yyyy') AS fecha_factura,"
-                    + "fac_nota_credito.monto_ieps "
-                + "FROM fac_nota_credito "
-                + "JOIN cxc_clie ON cxc_clie.id = fac_nota_credito.cxc_clie_id "
-                + "JOIN erp_h_facturas ON erp_h_facturas.serie_folio = fac_nota_credito.serie_folio_factura "
-                + "WHERE fac_nota_credito.id="+id_nota_credito;
+        + "SELECT "
+            + "fac_nota_credito.id,"
+            + "fac_nota_credito.serie_folio,"
+            + "(case when fac_nota_credito.momento_expedicion is null then '' else to_char(fac_nota_credito.momento_expedicion,'dd/mm/yyyy') end) AS fecha_exp,"
+            + "fac_nota_credito.ctb_tmov_id as tmov_id,"
+            + "fac_nota_credito.cxc_clie_id,"
+            + "cxc_clie.numero_control AS no_cliente,"
+            + "cxc_clie.razon_social,"
+            + "fac_nota_credito.cxc_clie_df_id,"
+            + "cxc_clie.empresa_immex,"
+            + "fac_nota_credito.cxc_agen_id,"
+            + "fac_nota_credito.moneda_id,"
+            + "fac_nota_credito.valor_impuesto,"
+            + "fac_nota_credito.tasa_retencion_immex,"
+            + "fac_nota_credito.tipo_cambio,"
+            + "fac_nota_credito.subtotal AS importe,"
+            + "fac_nota_credito.impuesto AS importe_iva,"
+            + "fac_nota_credito.monto_retencion AS importe_retencion,"
+            + "fac_nota_credito.total AS monto_total,"
+            + "fac_nota_credito.concepto,"
+            + "fac_nota_credito.observaciones,"
+            + "fac_nota_credito.serie_folio_factura as factura,"
+            + "erp_h_facturas.moneda_id as id_moneda_factura, "
+            + "fac_nota_credito.cancelado,"
+            + "erp_h_facturas.monto_total AS monto_factura, "
+            + "erp_h_facturas.saldo_factura, "
+            + "to_char(erp_h_facturas.momento_facturacion,'dd/mm/yyyy') AS fecha_factura,"
+            + "fac_nota_credito.monto_ieps "
+        + "FROM fac_nota_credito "
+        + "JOIN cxc_clie ON cxc_clie.id = fac_nota_credito.cxc_clie_id "
+        + "JOIN erp_h_facturas ON erp_h_facturas.serie_folio = fac_nota_credito.serie_folio_factura "
+        + "WHERE fac_nota_credito.id=?;";
         
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_query,  
-            new Object[]{}, new RowMapper() {
+            new Object[]{new Integer(id_nota_credito)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, Object> row = new HashMap<String, Object>();
                     row.put("id",String.valueOf(rs.getInt("id")));
                     row.put("serie_folio",rs.getString("serie_folio"));
-                    row.put("cxc_clie_id",String.valueOf(rs.getInt("cxc_clie_id")));
+                    row.put("fecha_exp",rs.getString("fecha_exp"));
+                    row.put("tmov_id",rs.getInt("tmov_id"));
+                    row.put("cxc_clie_id",rs.getInt("cxc_clie_id"));
                     row.put("cxc_agen_id",String.valueOf(rs.getInt("cxc_agen_id")));
-                    row.put("moneda_id",String.valueOf(rs.getInt("moneda_id")));
+                    row.put("moneda_id",rs.getInt("moneda_id"));
                     row.put("no_cliente",rs.getString("no_cliente"));
                     row.put("razon_social",rs.getString("razon_social"));
                     row.put("df_id",String.valueOf(rs.getInt("cxc_clie_df_id")));

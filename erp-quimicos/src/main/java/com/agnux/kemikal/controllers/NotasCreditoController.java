@@ -282,11 +282,11 @@ public class NotasCreditoController {
         HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
         ArrayList<HashMap<String, Object>> datosNota = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> valorIva = new ArrayList<HashMap<String, Object>>();
-        ArrayList<HashMap<String, Object>> monedas = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> tipoCambioActual = new ArrayList<HashMap<String, Object>>();
         HashMap<String, Object> tc = new HashMap<String, Object>();
-        ArrayList<HashMap<String, Object>> vendedores = new ArrayList<HashMap<String, Object>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
+        //Aplicativo notas de credito
+        Integer app_selected = 70;
         
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
@@ -304,14 +304,12 @@ public class NotasCreditoController {
         tc.put("tipo_cambio", StringHelper.roundDouble(this.getFacdao().getTipoCambioActual(), 4)) ;
         tipoCambioActual.add(0,tc);
         
-        monedas = this.getFacdao().getFactura_Monedas();
-        vendedores = this.getFacdao().getFactura_Agentes(id_empresa, id_sucursal);
-        
-        jsonretorno.put("datosNota", datosNota);
+        jsonretorno.put("Datos", datosNota);
         jsonretorno.put("iva", valorIva);
-        jsonretorno.put("Monedas", monedas);
         jsonretorno.put("Tc", tipoCambioActual);
-        jsonretorno.put("Vendedores", vendedores);
+        jsonretorno.put("Monedas", this.getFacdao().getFactura_Monedas());
+        jsonretorno.put("Vendedores", this.getFacdao().getFactura_Agentes(id_empresa, id_sucursal));
+        jsonretorno.put("TMov", this.getFacdao().getCtb_TiposDeMovimiento(id_empresa, app_selected));
         
         return jsonretorno;
     }
@@ -393,6 +391,7 @@ public class NotasCreditoController {
             @RequestParam(value="factura", required=true) String factura,
             @RequestParam(value="generar", required=true) String generar,
             @RequestParam(value="fac_saldado", required=true) String fac_saldado,
+            @RequestParam(value="select_tmov", required=true) Integer select_tmov,
             @ModelAttribute("user") UserSessionData user
         ) throws Exception {
             
@@ -449,7 +448,7 @@ public class NotasCreditoController {
                 command_selected = "edit";
             }
             
-            String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_nota_credito+"___"+id_cliente+"___"+id_impuesto+"___"+valor_impuesto+"___"+observaciones.toUpperCase()+"___"+select_moneda+"___"+select_vendedor+"___"+concepto.toUpperCase()+"___"+tipo_cambio+"___"+importe+"___"+impuesto+"___"+retencion+"___"+total+"___"+factura;
+            String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_nota_credito+"___"+id_cliente+"___"+id_impuesto+"___"+valor_impuesto+"___"+observaciones.toUpperCase()+"___"+select_moneda+"___"+select_vendedor+"___"+concepto.toUpperCase()+"___"+tipo_cambio+"___"+importe+"___"+impuesto+"___"+retencion+"___"+total+"___"+factura+"___"+select_tmov;
             //System.out.println("data_string: "+data_string);
             
             succes = this.getFacdao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
@@ -494,7 +493,6 @@ public class NotasCreditoController {
                         impTrasladados = this.getFacdao().getNotaCreditoCfd_CfdiTf_ImpuestosTrasladadosXml(id_sucursal);
                         dataCliente = this.getFacdao().getNotaCreditoCfd_Cfdi_Datos(id_nota_credito);
                         
-                        
                         command_selected = "genera_nota_credito_cfd";
                         extra_data_array = "'sin datos'";
                         datosExtras = this.getFacdao().getNotaCreditoCfd_DatosExtrasXml(id_nota_credito,tipo_cambio,String.valueOf(id_usuario),select_moneda,id_empresa,id_sucursal,app_selected, command_selected, extra_data_array, fac_saldado);
@@ -515,7 +513,6 @@ public class NotasCreditoController {
                         
                         String sello_digital = this.getBf().getSelloDigital();
                         //System.out.println("sello_digital:"+sello_digital);
-                        
                         
                         //este es el timbre fiscal, solo es para cfdi con timbre fiscal. Aqui debe ir vacio
                         String sello_digital_sat = "";
@@ -628,7 +625,7 @@ public class NotasCreditoController {
 
                             dataCliente.put("comprobante_attr_tc", String.valueOf(datosExtras.get("tipo_cambio")));
                             dataCliente.put("comprobante_attr_moneda", String.valueOf(datosExtras.get("nombre_moneda")));
-
+                            
                             //estos son requeridos para cfditf
                             datosExtras.put("prefactura_id", String.valueOf(id_nota_credito));
                             datosExtras.put("tipo_documento", String.valueOf(select_tipo_documento));
@@ -706,8 +703,6 @@ public class NotasCreditoController {
                                     pdfCfd_CfdiTimbrado pdfFactura = new pdfCfd_CfdiTimbrado(this.getGralDao(), dataCliente, listaConceptosPdf, datosExtrasPdf, id_empresa, id_sucursal);
                                 }
                                 
-                                
-                            
                                 //::::::INICIA AGREGAR ADENDA AL XML DEL CFDI::::::::::::::::::::::::::::::::::::::::::::::::::::::
                                 System.out.println("incluye_adenda: "+parametros.get("incluye_adenda")+"  |  dataFacturaClienteAdendaID: "+dataCliente.get("adenda_id"));
                                 
@@ -760,8 +755,6 @@ public class NotasCreditoController {
                                 }
                                 //::::::TERMINA AGREGAR ADENDA AL XML DEL CFDI::::::::::::::::::::::::::::::::::::::::::::::::::::::
                                 
-                                
-                                
                                 jsonretorno.put("folio",Serie+Folio);
                                 valorRespuesta="true";
                                 msjRespuesta = "Se gener&oacute; la Nota de Cr&eacute;dito: "+Serie+Folio;
@@ -769,13 +762,11 @@ public class NotasCreditoController {
                                 if (!procesoAdendaCorrecto){
                                     msjRespuesta = msjRespuesta + ", pero no fue posible agregar la Adenda.\nContacte a Soporte.";
                                 }
-                                
                             }else{
                                 valorRespuesta="false";
                                 msjRespuesta=cadRes[1];
                             }
                             /***********************************************/
-                            
                         }else{
                             valorRespuesta="false";
                             msjRespuesta="No se puede Timbrar la Nota de Cr&eacute;dito con el PAC actual.\nVerifique la configuraci&oacute;n del PAC.";
@@ -814,12 +805,7 @@ public class NotasCreditoController {
     }
     
     
-    
-    
-    
-    
-
-    //obtiene los tipos de cancelacion
+    //Obtiene los tipos de cancelacion
     @RequestMapping(method = RequestMethod.POST, value="/getVerificaArchivoGenerado.json")
     public @ResponseBody HashMap<String,String> getVerificaArchivoGeneradoJson(
             @RequestParam(value="serie_folio", required=true) String serie_folio,
@@ -827,7 +813,7 @@ public class NotasCreditoController {
             @RequestParam(value="id", required=true) Integer id,
             @RequestParam(value="iu", required=true) String id_user_cod,
             Model model
-            ) {
+        ) {
         
         log.log(Level.INFO, "Ejecutando getVerificaArchivoGeneradoJson de {0}", NotasCreditoController.class.getName());
         HashMap<String, String> jsonretorno = new HashMap<String,String>();
@@ -835,7 +821,7 @@ public class NotasCreditoController {
         String existe ="false";
         String dirSalidas = "";
         
-        //decodificar id de usuario
+        //Decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
         userDat = this.getHomeDao().getUserById(id_usuario);
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
@@ -855,7 +841,6 @@ public class NotasCreditoController {
         
         String nombre_archivo = this.getFacdao().getRefIdNotaCredito(id);
         
-        
         String fileout = dirSalidas +"/"+ nombre_archivo +"."+extension;
         
         System.out.println("Ruta: " + fileout);
@@ -870,16 +855,15 @@ public class NotasCreditoController {
     }
     
     
-    
-    
-    //cancelacion de Notas de Credito
+    //Cancelacion de Notas de Crédito
     @RequestMapping(method = RequestMethod.POST, value="/cancelarNotaCredito.json")
     public @ResponseBody HashMap<String, String> cancelarNotaCreditoJson(
             @RequestParam(value="id_nota", required=true) Integer id_nota,
+            @RequestParam(value="tmov", required=true) Integer tmov,
             @RequestParam(value="motivo", required=true) String motivo_cancelacion,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
-            ) throws IOException {
+        ) throws IOException {
         
         HashMap<String, String> jsonretorno = new HashMap<String, String>();
         HashMap<String, String> userDat = new HashMap<String, String>();
@@ -892,7 +876,7 @@ public class NotasCreditoController {
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
         
-        //aplicativo notas de credito
+        //Aplicativo notas de credito
         Integer app_selected = 70;
         String command_selected = "cancelacion";
         String extra_data_array = "'sin datos'";
@@ -916,7 +900,7 @@ public class NotasCreditoController {
         System.out.println("Tipo::"+tipo_facturacion+" | noPac::"+noPac+" | Ambiente::"+ambienteFac);
         
         
-        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_nota+"___"+motivo_cancelacion.toUpperCase()+"___"+tipo_facturacion;
+        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_nota+"___"+motivo_cancelacion.toUpperCase()+"___"+tipo_facturacion+"___"+tmov;
         
         if(tipo_facturacion.equals("cfdi") || tipo_facturacion.equals("cfd")){
             succcess = this.getFacdao().selectFunctionForFacAdmProcesos(data_string, extra_data_array);
@@ -948,9 +932,7 @@ public class NotasCreditoController {
                 //System.out.println("FicheroXML: "+this.getGralDao().getCfdiSolicitudesDir() + "out/"+serie_folio+".xml");
                 
                 if (toFile.exists()) {
-                    
                     if(succcess.split(":")[1].equals("true")){
-                        
                         HashMap<String, String> data = new HashMap<String, String>();
                         serie_folio = succcess.split(":")[0];
                         
@@ -966,12 +948,10 @@ public class NotasCreditoController {
                         this.getBcancelafdi().start();
                         
                         System.out.println("serie_folio:"+serie_folio + "    Cancelado:"+succcess.split(":")[1]);
-                        
                     }else{
                         valorRespuesta="false";
                         msjRespuesta="No fue posible cancelar la Nota de Cr&eacute;dito "+serie_folio+".\nIntente de nuevo.";
                     }
-                    
                 }else{                        
                     valorRespuesta="false";
                     msjRespuesta="No fue posible cancelar la Nota de Cr&eacute;dito "+serie_folio+". No se encuentra el archivo XML.";

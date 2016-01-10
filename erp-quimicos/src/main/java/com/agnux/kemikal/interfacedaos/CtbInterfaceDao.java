@@ -124,6 +124,7 @@ public interface CtbInterfaceDao {
     public ArrayList<HashMap<String, Object>> getCtbDefinicionAsientos_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
     public ArrayList<HashMap<String, Object>> getCtbDefinicionAsientos_Datos(Integer id);
     public ArrayList<HashMap<String, Object>> getCtbDefinicionAsientos_DatosGrid(Integer id);
+    public ArrayList<Object> getCtbDefinicionAsientos_Campos();
     
     //Metodo para busqueda de movimientos para la Generacion de Polizas
     public ArrayList<HashMap<String, Object>> getCtbGeneraPolizas_busquedaDatos(String data_string);

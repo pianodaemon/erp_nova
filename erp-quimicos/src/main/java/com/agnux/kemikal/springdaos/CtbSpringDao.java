@@ -1308,7 +1308,11 @@ public class CtbSpringDao implements CtbInterfaceDao{
         
 	String sql_to_query = ""
         + "select sbt1.id, poliza,tipo,concepto, fecha, moneda, status,sum(debe) as debe, sum(haber) as haber "
-        + "from (select ctb_pol.fecha::date as fecha1, ctb_pol.id, ctb_pol.poliza, ctb_pol.tipo, ctb_pol.concepto, (case when ctb_pol.fecha is null then '' else to_char(ctb_pol.fecha,'dd/mm/yyyy') end) as fecha, ctb_pol.moneda, (CASE WHEN ctb_pol.status=1 THEN 'No afectada' WHEN ctb_pol.status=2 THEN 'Afectada' WHEN ctb_pol.status=3 THEN 'Cancelada' ELSE '' END) AS status, (case when ctb_pol_mov.tipo=1 then ctb_pol_mov.cantidad else 0 end) as debe,(case when ctb_pol_mov.tipo=2 then ctb_pol_mov.cantidad else 0 end) as haber from ctb_pol join ctb_pol_mov on ctb_pol_mov.ctb_pol_id=ctb_pol.id ) as sbt1 "
+        + "from ("
+            + "select ctb_pol.fecha::date as fecha1, ctb_pol.id, ctb_pol.poliza, ctb_pol.tipo, ctb_pol.concepto, (case when ctb_pol.fecha is null then '' else to_char(ctb_pol.fecha,'dd/mm/yyyy') end) as fecha, ctb_pol.moneda, (CASE WHEN ctb_pol.status=1 THEN 'No afectada' WHEN ctb_pol.status=2 THEN 'Afectada' WHEN ctb_pol.status=3 THEN 'Cancelada' ELSE '' END) AS status, (case when ctb_pol_mov.tipo=1 then ctb_pol_mov.cantidad else 0 end) as debe,(case when ctb_pol_mov.tipo=2 then ctb_pol_mov.cantidad else 0 end) as haber "
+            + "from ctb_pol "
+            + "join ctb_pol_mov on ctb_pol_mov.ctb_pol_id=ctb_pol.id"
+        + ") as sbt1 "
         + "JOIN ("+sql_busqueda+") AS sbt ON sbt.id = sbt1.id "
         + "group by sbt1.id, sbt1.fecha1, sbt1.poliza,sbt1.tipo,sbt1.concepto, sbt1.fecha, sbt1.moneda, sbt1.status "
         + "order by "+orderBy+" "+asc+" limit ? OFFSET ?";
@@ -2032,7 +2036,8 @@ public class CtbSpringDao implements CtbInterfaceDao{
             + "END) AS cuenta, "
             + "ctb_cta.descripcion,"
             + "ctb_tmov_det.mov_tipo,"
-            + "ctb_tmov_det.detalle "
+            + "ctb_tmov_det.detalle, "
+            + "ctb_tmov_det.campo "
         + "from ctb_tmov_det "
         + "join ctb_cta on ctb_cta.id=ctb_tmov_det.ctb_cta_id "
         + "where ctb_tmov_det.ctb_tmov_id=?;";
@@ -2050,11 +2055,52 @@ public class CtbSpringDao implements CtbInterfaceDao{
                     row.put("descripcion",rs.getString("descripcion"));
                     row.put("mov_tipo",rs.getInt("mov_tipo"));
                     row.put("detalle",rs.getBoolean("detalle"));
+                    row.put("campo",rs.getInt("campo"));
                     return row;
                 }
             }
         );
         return hm;
+    }
+    
+    
+    //Arma lista de Campos que contiene valores para utilizar en la generación de pólizas
+    @Override
+    public ArrayList<Object> getCtbDefinicionAsientos_Campos() {
+        ArrayList<Object> arreglo = new ArrayList<Object>();
+        HashMap<String, Object> row = null;
+        
+        row = new HashMap<String, Object>();
+        row.put("id",1);
+        row.put("titulo","Subtotal");
+        arreglo.add(row);
+        
+        row = new HashMap<String, Object>();
+        row.put("id",2);
+        row.put("titulo","Total");
+        arreglo.add(row);
+        
+        row = new HashMap<String, Object>();
+        row.put("id",3);
+        row.put("titulo","I.V.A.");
+        arreglo.add(row);
+        
+        row = new HashMap<String, Object>();
+        row.put("id",4);
+        row.put("titulo","Retención I.V.A.");
+        arreglo.add(row);
+        
+        row = new HashMap<String, Object>();
+        row.put("id",5);
+        row.put("titulo","I.E.P.S.");
+        arreglo.add(row);
+        
+        row = new HashMap<String, Object>();
+        row.put("id",6);
+        row.put("titulo","I.S.R.");
+        arreglo.add(row);
+        
+        return arreglo;
     }
     
     
