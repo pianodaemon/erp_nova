@@ -119,7 +119,6 @@ public interface CtbInterfaceDao {
     //Obtiene  parametros de contabilidad
     public HashMap<String, Object> getCtb_Parametros(Integer id_emp, Integer id_suc);
     
-    
     //Metodos para el Aplicativo de definicion de asientos contables.
     public ArrayList<HashMap<String, Object>> getCtbDefinicionAsientos_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
     public ArrayList<HashMap<String, Object>> getCtbDefinicionAsientos_Datos(Integer id);
