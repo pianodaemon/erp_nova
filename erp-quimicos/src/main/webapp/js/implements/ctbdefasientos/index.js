@@ -9,6 +9,7 @@ $(function() {
 	
 	var ArraySuc;
 	var ArrayTP;
+	var arrayCampos;
 	var CtaMay;
 	var array_fecha = {1:"Documento"};
 	var array_polnum = {1:"Cosecutivo del sistema"};
@@ -309,7 +310,7 @@ $(function() {
 			ArraySuc = data['Suc'];
 			ArrayTP = data['TP'];
 			parametros = data['Data'];
-			
+			arrayCampos = data['Campos'];
 			$busqueda_select_tipo_poliza.focus();
 		});
 	}
@@ -636,7 +637,7 @@ $(function() {
 
 	
 	//generar tr para agregar al grid
-	var $agrega_tr = function($grid_cuentas, id_det, id_cta, cta, descripcion, tipo, seleccionado){
+	var $agrega_tr = function($grid_cuentas, id_det, id_cta, cta, descripcion, tipo, seleccionado, campo_importe){
 		var noTr = $("tr", $grid_cuentas).size();
 		noTr++;
 		
@@ -673,6 +674,9 @@ $(function() {
 				trr += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="250">';
 					trr += '<input type="text" 		name="descripcion_cta" 	value="'+ descripcion +'" class="borde_oculto" readOnly="true" style="width:246px;">';
 				trr += '</td>';
+				trr += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="80">';
+					trr += '<select name="select_importe" id="select_importe'+ noTr +'" style="width:78px;"></select>';
+				trr += '</td>';
 				trr += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="60">';
 					trr += '<select name="select_mov" id="select_mov'+ noTr +'" style="width:58px;"></select>';
 				trr += '</td>';
@@ -682,6 +686,27 @@ $(function() {
 				trr += '</td>';
 			trr += '</tr>';
 			$grid_cuentas.append(trr);
+			
+			
+			
+			//Carga select 
+			$grid_cuentas.find('#select_importe'+noTr).children().remove();
+			var campo_hmtl = '';
+			
+			if(parseInt(campo_importe)<=0){
+				campo_hmtl += '<option value="0">[--- ---]</option>';
+			}
+			
+			$.each(arrayCampos,function(entryIndex,campo){
+				if(parseInt(campo_importe)==parseInt(campo['id'])){
+					campo_hmtl += '<option value="' + campo['id'] + '" selected="yes">'+ campo['titulo'] + '</option>';
+				}else{
+					campo_hmtl += '<option value="' + campo['id'] + '">'+ campo['titulo'] + '</option>';
+				}
+			});
+			$grid_cuentas.find('#select_importe'+noTr).append(campo_hmtl);
+			
+			
 			
 			//Carga select
 			$grid_cuentas.find('#select_mov'+noTr).children().remove();
@@ -694,7 +719,6 @@ $(function() {
 				suc_hmtl += '<option value="2" selected="yes">Haber</option>';
 			}
 			$grid_cuentas.find('#select_mov'+noTr).append(suc_hmtl);
-			
 			
 			$grid_cuentas.find('#micheck'+noTr).click(function(){
 				if(this.checked){
@@ -784,7 +808,7 @@ $(function() {
 					var descripcion=entry['Cta'][0]['descripcion'];
 					var tipo = 1;
 					
-					$agrega_tr($grid_cuentas, id_det, id_cta, cta, descripcion, tipo, false);
+					$agrega_tr($grid_cuentas, id_det, id_cta, cta, descripcion, tipo, false, 0);
 				}else{
 					jAlert('La cuenta ingresada no es valida.', 'Atencion!', function(r) {
 						if($sssscuenta.val().trim()==''){
@@ -1292,7 +1316,7 @@ $(function() {
 							var descripcion=grid['descripcion'];
 							var tipo = grid['mov_tipo'];
 							
-							$agrega_tr($grid_cuentas, id_det, id_cta, cta, descripcion, tipo, grid['detalle']);
+							$agrega_tr($grid_cuentas, id_det, id_cta, cta, descripcion, tipo, grid['detalle'], grid['campo']);
 						});
 					}
 					

@@ -144,133 +144,9 @@ $(function() {
 		$busqueda_factura.focus();
 	});
 	
+
 	
-	
-	
-	/*
-	//descarga de xml
-	$('#barra_descarga_xml').append($('#lienzo_recalculable').find('.tabla_decarga_xml'));
-	var $boton_descarga_xml = $('#barra_descarga_xml').find('.tabla_decarga_xml').find('#descarga_xml');
-	var $factura_xml = $('#barra_descarga_xml').find('.tabla_decarga_xml').find('input[name=factura_xml]');
-	*/
-	
-	
-	//informe mensual
-	$('#barra_genera_informe').append($('#lienzo_recalculable').find('.tabla_genera_informe'));
-	var $select_tipo_reporte = $('#barra_genera_informe').find('.tabla_genera_informe').find('select[name=select_tipo_reporte]');
-	var $tabla_informe_mensual = $('#barra_genera_informe').find('.tabla_genera_informe').find('.tabla_informe_mensual');
-	var $select_anio = $('#barra_genera_informe').find('.tabla_genera_informe').find('select[name=select_anio]');
-	var $select_mes = $('#barra_genera_informe').find('.tabla_genera_informe').find('select[name=select_mes]');
-	var $boton_generar_informe_txt = $('#barra_genera_informe').find('.tabla_genera_informe').find('#generar_informe_mensual');
-	
-	/*
-	var $tabla_reporte_facturacion = $('#barra_genera_informe').find('.tabla_genera_informe').find('.tabla_reporte_facturacion');
-	var $reporte_fecha_inicial = $('#barra_genera_informe').find('.tabla_genera_informe').find('input[name=fecha_inicial]');
-	var $reporte_fecha_final = $('#barra_genera_informe').find('.tabla_genera_informe').find('input[name=fecha_final]');
-	var $boton_generar_reporte_faccancelacion = $('#barra_genera_informe').find('.tabla_genera_informe').find('#generar_reporte_faccancelacion');
-	*/
-	//$tabla_reporte_facturacion.hide();
-	
-	var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/datos_generador_informe.json';
-	$arreglo = { }
-	$.post(input_json,$arreglo,function(entry){
-		//carga select de años
-		$select_anio.children().remove();
-		var html_anio = '';
-		$.each(entry['anioinforme'],function(entryIndex,anio){
-			html_anio += '<option value="' + anio['valor'] + '"  >' + anio['valor'] + '</option>';
-		});
-		$select_anio.append(html_anio);
-	});//termina llamada json
-	
-	
-	
-	
-	
-	//TriggerClickVisualizaDescargaXml = 0;
-	TriggerClickVisualizaGeneradorInforme = 0;
 	TriggerClickVisializaBuscador = 0;
-	
-	/*
-	//visualizar descarga de xml
-	$descargar_xml.click(function(event){
-		event.preventDefault();
-		var alto=0;
-		$('#barra_genera_informe').find('.tabla_genera_informe').css({'display':'none'});
-		$('#barra_buscador').find('.tabla_buscador').css({'display':'none'});
-			
-		if(parseInt(TriggerClickVisualizaGeneradorInforme)==1){
-			$generar_informe.trigger('click');
-		}
-		if(parseInt(TriggerClickVisializaBuscador)==1){
-			$visualiza_buscador.trigger('click');
-		}
-		
-		if(TriggerClickVisualizaDescargaXml==0){
-			 TriggerClickVisualizaDescargaXml=1;
-			 var height2 = $('#cuerpo').css('height');
-			 
-			 alto = parseInt(height2)-220;
-			 var pix_alto=alto+'px';
-			 
-			 $('#barra_descarga_xml').find('.tabla_decarga_xml').css({'display':'block'});
-			 $('#barra_descarga_xml').animate({height: '80px'}, 500);
-			 $('#cuerpo').css({'height': pix_alto});
-		}else{
-			 TriggerClickVisualizaDescargaXml=0;
-			 var height2 = $('#cuerpo').css('height');
-			 alto = parseInt(height2)+220;
-			 var pix_alto=alto+'px';
-			 
-			 $('#barra_descarga_xml').animate({height:'0px'}, 500);
-			 $('#cuerpo').css({'height': pix_alto});
-		};
-	});
-	*/
-	
-	
-	
-	
-	//visualizar generador de informe mensual
-	$generar_informe.click(function(event){
-		event.preventDefault();
-		var alto=0;
-		$('#barra_buscador').find('.tabla_buscador').css({'display':'none'});
-		//$('#barra_descarga_xml').find('.tabla_decarga_xml').css({'display':'none'});
-		
-		if(parseInt(TriggerClickVisializaBuscador)==1){
-			$visualiza_buscador.trigger('click');
-		}
-		/*
-		if(parseInt(TriggerClickVisualizaDescargaXml)==1){
-			$descargar_xml.trigger('click');
-		}
-		*/
-		
-		if(TriggerClickVisualizaGeneradorInforme==0){
-			 TriggerClickVisualizaGeneradorInforme=1;
-			 var height2 = $('#cuerpo').css('height');
-			 
-			 alto = parseInt(height2)-220;
-			 var pix_alto=alto+'px';
-			 
-			 $('#barra_genera_informe').find('.tabla_genera_informe').css({'display':'block'});
-			 $('#barra_genera_informe').animate({height: '80px'}, 500);
-			 $('#cuerpo').css({'height': pix_alto});
-		}else{
-			 TriggerClickVisualizaGeneradorInforme=0;
-			 var height2 = $('#cuerpo').css('height');
-			 alto = parseInt(height2)+220;
-			 var pix_alto=alto+'px';
-			 
-			 $('#barra_genera_informe').animate({height:'0px'}, 500);
-			 $('#cuerpo').css({'height': pix_alto});
-		};
-	});
-	
-	
-	
-	
 	
 	//visualizar  la barra del buscador
 	$visualiza_buscador.click(function(event){
@@ -278,18 +154,8 @@ $(function() {
 		$('#barra_genera_informe').find('.tabla_genera_informe').css({'display':'none'});
 		//$('#barra_descarga_xml').find('.tabla_decarga_xml').css({'display':'none'});
 		
-		if(parseInt(TriggerClickVisualizaGeneradorInforme)==1){
-			$generar_informe.trigger('click');
-		}
-		/*
-		if(parseInt(TriggerClickVisualizaDescargaXml)==1){
-			$descargar_xml.trigger('click');
-		}
-		*/
-		
 		var alto=0;
 		if(TriggerClickVisializaBuscador==0){
-			 TriggerClickVisializaBuscador=1;
 			 var height2 = $('#cuerpo').css('height');
 			 //alert('height2: '+height2);
 			 
@@ -371,116 +237,7 @@ $(function() {
 	}
 	//----------------------------------------------------------------
 	
-	/*
-	//fecha inicial para reporte de faccancelacion
-	$reporte_fecha_inicial.val(mostrarFecha());
-	$reporte_fecha_inicial.click(function (s){
-		var a=$('div.datepicker');
-		a.css({'z-index':100,});
-	});
-	$reporte_fecha_inicial.DatePicker({
-		format:'Y-m-d',
-		onBeforeShow: function(){
-			$reporte_fecha_inicial.DatePickerSetDate($reporte_fecha_inicial.val(), true);
-		},
-		date: $reporte_fecha_inicial.val(),
-		current: $reporte_fecha_inicial.val(),
-		starts: 1,
-		position: 'bottom',
-		locale: {
-			days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
-			daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
-			daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
-			months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
-			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
-			weekMin: 'se'
-		},
-		onChange: function(formated, dates){
-			var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
-			$reporte_fecha_inicial.val(formated);
-			if (formated.match(patron) ){
-				$reporte_fecha_inicial.DatePickerHide();
-			};
-		}
-	});
 	
-	//fecha final para reporte de faccancelacion
-	$reporte_fecha_final.val(mostrarFecha());
-	$reporte_fecha_final.click(function (s){
-		var a=$('div.datepicker');
-		a.css({'z-index':100,});
-	});
-	$reporte_fecha_final.DatePicker({
-		format:'Y-m-d',
-		onBeforeShow: function(){
-			$reporte_fecha_final.DatePickerSetDate($reporte_fecha_final.val(), true);
-		},
-		date: $reporte_fecha_final.val(),
-		current: $reporte_fecha_final.val(),
-		starts: 1,
-		position: 'bottom',
-		locale: {
-			days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
-			daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
-			daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
-			months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
-			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
-			weekMin: 'se'
-		},
-		onChange: function(formated, dates){
-			var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
-			$reporte_fecha_final.val(formated);
-			if (formated.match(patron) ){
-				$reporte_fecha_final.DatePickerHide();
-			};
-		}
-	});
-
-	$reporte_fecha_inicial.attr('readonly',true);
-	$reporte_fecha_final.attr('readonly',true);
-	*/
-	
-	//seleccionar tipo de reporte
-	$select_tipo_reporte.change(function(){
-		var tipo_reporte = $(this).val();
-		if(parseInt(tipo_reporte)==1){
-			//$tabla_reporte_facturacion.hide();
-			$tabla_informe_mensual.toggle("slow");
-		}else{
-			$tabla_informe_mensual.hide();
-			//$tabla_reporte_facturacion.toggle("slow");
-		}
-	});
-	
-	
-	
-	
-	//generar informe mensual
-	$boton_generar_informe_txt.click(function(event){
-		//event.preventDefault();
-		var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
-		var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/get_genera_txt_reporte_mensual_sat/'+$select_mes.val()+'/'+$select_anio.val()+'/'+ iu +'/out.json';
-		window.location.href=input_json;
-	});
-	
-	
-	/*
-	$boton_generar_reporte_faccancelacion.click(function(event){
-		//$reporte_fecha_inicial
-		//$reporte_fecha_final
-		var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
-		var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/get_genera_reporte_facturacion/'+$reporte_fecha_inicial.val()+'/'+$reporte_fecha_final.val()+'/'+ iu +'/out.json';
-		window.location.href=input_json;
-	});
-	*/
-
-
-        
-        
-        
-
-        
-        
 	$busqueda_fecha_inicial.click(function (s){
 		var a=$('div.datepicker');
 		a.css({'z-index':100});
@@ -602,7 +359,7 @@ $(function() {
 	
     
     //convertir costos en dolar y pesos
-	$convertir_costos = function($tipo_cambio,moneda_id,$campo_subtotal,$campo_impuesto,$campo_total,$valor_impuesto,$grid_productos){
+	var $convertir_costos = function($tipo_cambio,moneda_id,$campo_subtotal,$campo_impuesto,$campo_total,$valor_impuesto,$grid_productos){
 		var sumaSubTotal = 0; //es la suma de todos los importes
 		var sumaImpuesto = 0; //valor del iva
 		var sumaTotal = 0; //suma del subtotal + totalImpuesto
@@ -722,6 +479,114 @@ $(function() {
 	
 	
 	
+	
+	
+	//Dibuja modal de cancelacion
+	var modal_cancelar= function(id_to_show, $boton_cancelarfactura, tmov_id, tipo_id, motivo, cancelado, iu){
+		$(this).modalPanel_cancelaemision();
+		var form_to_show = 'formaCancelaEmision';
+		$('#' + form_to_show).each (function(){this.reset();});
+		var $forma_selected = $('#' + form_to_show).clone();
+		$forma_selected.attr({id : form_to_show + id_to_show});
+		$('#forma-cancelaemision-window').css({"margin-left": -100,"margin-top": -180});
+		$forma_selected.prependTo('#forma-cancelaemision-window');
+		$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
+		
+		var $select_tipo_cancelacion = $('#forma-cancelaemision-window').find('select[name=tipo_cancelacion]');
+		var $select_tmov = $('#forma-cancelaemision-window').find('select[name=select_tmov]');
+		var $motivo_cancelacion = $('#forma-cancelaemision-window').find('textarea[name=motivo_cancel]');
+		
+		var $boton_cancelfact = $('#forma-cancelaemision-window').find('#boton_cancelfact');
+		var $boton_salir_cancelacion = $('#forma-cancelaemision-window').find('#boton_salir_cancelacion');
+		
+		if(cancelado){
+			$boton_cancelfact.hide();
+			$motivo_cancelacion.attr("readonly", true);
+		}
+		
+		$motivo_cancelacion.text(motivo);
+		
+		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getTiposCancelacion.json';
+		var $arreglo = {'identificador':id_to_show,'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
+		
+		$.post(input_json,$arreglo,function(entry){
+			$select_tipo_cancelacion.children().remove();
+			var tipo_hmtl = '';
+			$.each(entry['Tipos'],function(entryIndex,tipo){
+				if(parseInt(tipo['id'])==parseInt(tipo_id)){
+					tipo_hmtl += '<option value="' + tipo['id'] + '" selected="yes">' + tipo['titulo'] + '</option>';
+				}else{
+					if(!cancelado){
+						tipo_hmtl += '<option value="' + tipo['id'] + '">' + tipo['titulo'] + '</option>';
+					}
+				}
+			});
+			$select_tipo_cancelacion.append(tipo_hmtl);
+			
+			$select_tmov.children().remove();
+			var tmov_hmtl = '<option value="0">[--- ---]</option>';
+			if(entry['TMov']){
+				if(parseInt(tmov_id)>0){
+					tmov_hmtl='';
+				}
+				$.each(entry['TMov'],function(entryIndex,mov){
+					if(parseInt(mov['id'])==parseInt(tmov_id)){
+						tmov_hmtl += '<option value="'+ mov['id'] +'" selected="yes">'+ mov['titulo'] + '</option>';
+					}else{
+						if(!cancelado){
+							tmov_hmtl += '<option value="'+ mov['id'] +'">'+ mov['titulo'] + '</option>';
+						}
+					}
+				});
+			}
+			$select_tmov.append(tmov_hmtl);
+		});
+		
+		$boton_cancelfact.click(function(event){
+			event.preventDefault();
+			
+			if(parseInt($select_tmov.val())>0){
+				if($motivo_cancelacion.val()!=null && $motivo_cancelacion.val()!=""){
+					var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/cancelar_factura.json';
+					var $arreglo = {'id_factura':$id_factura.val(),'tipo_cancelacion':$select_tipo_cancelacion.val(),'tmov':$select_tmov.val(),'motivo':$motivo_cancelacion.val(),'iu':iu };
+					
+					$.post(input_json,$arreglo,function(entry){
+						var cad = entry['success'].split(":");
+						
+						if(entry['success'].trim()=='false'){
+							jAlert(entry['msj'], 'Atencion!');
+						}else{
+							if(entry['valor'].trim()=='false'){
+								jAlert(entry['msj'], 'Atencion!');
+							}else{
+								$boton_cancelarfactura.hide();
+								jAlert(entry['msj'], 'Atencion!');
+								$get_datos_grid();
+								
+								var remove = function() {$(this).remove();};
+								$('#forma-cancelaemision-overlay').fadeOut(remove);
+							}
+						}
+					});//termina llamada json
+				}else{
+					jAlert("Es necesario ingresar el motivo de la cancelaci&oacute;n", 'Atencion!');
+				}
+			}else{
+				jAlert('Es necesario seleccionar el Tipo de Movimiento.', 'Atencion!', function(r) { 
+					$select_tmov.focus();
+				});
+			}
+		});
+		
+		$boton_salir_cancelacion.click(function(event){
+			event.preventDefault();
+			var remove = function() {$(this).remove();};
+			$('#forma-cancelaemision-overlay').fadeOut(remove);
+		});
+	}
+	
+	
+	
 
 	//ver detalles de una factura
 	var carga_formafaccancelacion00_for_datagrid00Edit = function(id_to_show, accion_mode){
@@ -736,7 +601,7 @@ $(function() {
 					$.post(input_json,$arreglo,function(entry){
 						if ( entry['success'] == '1' ){
 							jAlert("La factura fue eliminada exitosamente", 'Atencion!');
-							$get_datos_grid();
+							//$get_datos_grid();
 						}
 						else{
 							jAlert("La factura no pudo ser eliminada", 'Atencion!');
@@ -770,27 +635,22 @@ $(function() {
 			if(accion_mode == 'edit'){
                                 
 				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getFactura.json';
-				$arreglo = {'id_factura':id_to_show,
-							'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
-							};
-                                
+				$arreglo = {'id_factura':id_to_show,'iu':$('#lienzo_recalculable').find('input[name=iu]').val()};
+				
 				var $total_tr = $('#forma-faccancelacion-window').find('input[name=total_tr]');
 				var $id_factura = $('#forma-faccancelacion-window').find('input[name=id_factura]');
 				var $folio_pedido = $('#forma-faccancelacion-window').find('input[name=folio_pedido]');
-				var $busca_cliente = $('#forma-faccancelacion-window').find('a[href*=busca_cliente]');
+				var $fecha = $('#forma-faccancelacion-window').find('input[name=fecha]');
 				var $id_cliente = $('#forma-faccancelacion-window').find('input[name=id_cliente]');
 				var $rfc_cliente = $('#forma-faccancelacion-window').find('input[name=rfccliente]');
 				var $razon_cliente = $('#forma-faccancelacion-window').find('input[name=razoncliente]');
 				var $dir_cliente = $('#forma-faccancelacion-window').find('input[name=dircliente]');
 				
-				
 				var $serie_folio = $('#forma-faccancelacion-window').find('input[name=serie_folio]');
 				var $select_moneda = $('#forma-faccancelacion-window').find('select[name=moneda]');
 				var $moneda_original = $('#forma-faccancelacion-window').find('input[name=moneda_original]');
 				var $tipo_cambio = $('#forma-faccancelacion-window').find('input[name=tipo_cambio]');
-				var $tipo_tipo_cambio_original = $('#forma-faccancelacion-window').find('input[name=tipo_cambio_original]');
 				var $orden_compra = $('#forma-faccancelacion-window').find('input[name=orden_compra]');
-				var	$orden_compra_original = $('#forma-faccancelacion-window').find('input[name=orden_compra_original]');
 				
 				//var $campo_tc = $('#forma-faccancelacion-window').find('input[name=tc]');
 				var $id_impuesto = $('#forma-faccancelacion-window').find('input[name=id_impuesto]');
@@ -799,14 +659,13 @@ $(function() {
 				var $observaciones = $('#forma-faccancelacion-window').find('textarea[name=observaciones]');
 				var $select_condiciones = $('#forma-faccancelacion-window').find('select[name=condiciones]');
 				var $select_vendedor = $('#forma-faccancelacion-window').find('select[name=vendedor]');
-				var $observaciones_original = $('#forma-faccancelacion-window').find('textarea[name=observaciones_original]');
-				var $select_condiciones_original = $('#forma-faccancelacion-window').find('select[name=condiciones_original]');
-				var $select_vendedor_original = $('#forma-faccancelacion-window').find('select[name=vendedor_original]');
-				
 				var $select_metodo_pago = $('#forma-faccancelacion-window').find('select[name=select_metodo_pago]');
-				var $etiqueta_digit = $('#forma-faccancelacion-window').find('input[name=digit]');
-				var $digitos = $('#forma-faccancelacion-window').find('input[name=digitos]');
-				var $no_cuenta = $('#forma-faccancelacion-window').find('input[name=no_cuenta]');
+				
+				var $fecha_can = $('#forma-faccancelacion-window').find('input[name=fecha_can]');
+				
+				//var $etiqueta_digit = $('#forma-faccancelacion-window').find('input[name=digit]');
+				//var $digitos = $('#forma-faccancelacion-window').find('input[name=digitos]');
+				//var $no_cuenta = $('#forma-faccancelacion-window').find('input[name=no_cuenta]');
 				//var $sku_producto = $('#forma-faccancelacion-window').find('input[name=sku_producto]');
 				//var $nombre_producto = $('#forma-faccancelacion-window').find('input[name=nombre_producto]');
 				
@@ -842,9 +701,12 @@ $(function() {
 				$boton_cancelarfactura.hide();
 				$submit_actualizar.hide();
 				
-				$digitos.attr('disabled','-1');
-				$etiqueta_digit.attr('disabled','-1');
-				$no_cuenta.hide();
+				//$digitos.attr('disabled','-1');
+				//$etiqueta_digit.attr('disabled','-1');
+				//$no_cuenta.hide();
+				$('#forma-faccancelacion-window').find('input').attr("readonly", true)
+				$('#forma-faccancelacion-window').find('textarea').attr("readonly", true)
+				
 				var respuestaProcesada = function(data){
 					if ( data['success'] == "true" ){
 						$('#forma-faccancelacion-window').find('div.interrogacion').css({'display':'none'});
@@ -927,28 +789,40 @@ $(function() {
 				
 				//aqui se cargan los campos al editar
 				$.post(input_json,$arreglo,function(entry){
-					$id_factura.val(entry['datosFactura'][0]['id']);
-					$folio_pedido.val(entry['datosFactura'][0]['folio_pedido']);
-					$id_cliente.val(entry['datosFactura'][0]['cliente_id']);
-					$rfc_cliente.val(entry['datosFactura'][0]['rfc']);
-					$razon_cliente.val(entry['datosFactura'][0]['razon_social']);
-					$dir_cliente.val(entry['datosFactura'][0]['direccion']);
-					$serie_folio.val(entry['datosFactura'][0]['serie_folio']);
-					$observaciones.text(entry['datosFactura'][0]['observaciones']);
-					$observaciones_original.val(entry['datosFactura'][0]['observaciones']);
-                    $orden_compra.val(entry['datosFactura'][0]['orden_compra']);
-                    $orden_compra_original.val(entry['datosFactura'][0]['orden_compra']);
-					$digitos.val(entry['datosFactura'][0]['no_tarjeta']);
+					$id_factura.val(entry['Datos'][0]['id']);
+					$folio_pedido.val(entry['Datos'][0]['folio_pedido']);
+					$fecha.val(entry['Datos'][0]['fecha']);
+					$id_cliente.val(entry['Datos'][0]['cliente_id']);
+					$rfc_cliente.val(entry['Datos'][0]['rfc']);
+					$razon_cliente.val(entry['Datos'][0]['razon_social']);
+					$dir_cliente.val(entry['Datos'][0]['direccion']);
+					$serie_folio.val(entry['Datos'][0]['serie_folio']);
+					$observaciones.text(entry['Datos'][0]['observaciones']);
+                    $orden_compra.val(entry['Datos'][0]['orden_compra']);
+					$fecha_can.val(entry['Datos'][0]['fecha_can']);
 					
-					$subtotal.val( $(this).agregar_comas(entry['datosFactura'][0]['subtotal']));
-					$campo_ieps.val( $(this).agregar_comas(entry['datosFactura'][0]['monto_ieps']));
-					$impuesto.val( $(this).agregar_comas( entry['datosFactura'][0]['impuesto']) );
-					$impuesto_retenido.val( $(this).agregar_comas(entry['datosFactura'][0]['monto_retencion']));
-					$total.val($(this).agregar_comas( entry['datosFactura'][0]['total']));
+					if(entry['Datos'][0]['fecha_can'].trim()!=''){
+						$('#forma-faccancelacion-window').find('td.td_cancelado').html('CANCELADA');
+						$('#forma-faccancelacion-window').find('td.td_detalle').append('<a href="#detalle" style="font-size:13px;">Ver&nbsp;detalle</a>');
+						
+						//Ver detalle de la cancelacion
+						$('#forma-faccancelacion-window').find('a[href=#detalle]').click(function(event){
+							event.preventDefault();
+							
+							//Llamada a funcion
+							modal_cancelar($id_factura.val(), $boton_cancelarfactura, entry['Datos'][0]['tmovid_cancel'], entry['Datos'][0]['tipo_cancel'], entry['Datos'][0]['motivo_cancel'], entry['Datos'][0]['cancelado'], $('#lienzo_recalculable').find('input[name=iu]').val());
+						});//termina cancelar factura
+						
+					}
 					
+					$subtotal.val( $(this).agregar_comas(entry['Datos'][0]['subtotal']));
+					$campo_ieps.val( $(this).agregar_comas(entry['Datos'][0]['monto_ieps']));
+					$impuesto.val( $(this).agregar_comas( entry['Datos'][0]['impuesto']) );
+					$impuesto_retenido.val( $(this).agregar_comas(entry['Datos'][0]['monto_retencion']));
+					$total.val($(this).agregar_comas( entry['Datos'][0]['total']));
 					
-					var sumaIeps = entry['datosFactura'][0]['monto_ieps'];
-					var impuestoRetenido = entry['datosFactura'][0]['monto_retencion'];
+					var sumaIeps = entry['Datos'][0]['monto_ieps'];
+					var impuestoRetenido = entry['Datos'][0]['monto_retencion'];
 					
 					//Ocultar campos si tienen valor menor o igual a cero
 					if(parseFloat(sumaIeps)<=0){
@@ -974,37 +848,12 @@ $(function() {
 						$('#forma-faccancelacion-window').find('.faccancelacion_div_one').css({'height':'550px'});
 					}
 					
-                    //form pago 2=Tarjeta Credito, 3=Tarjeta Debito
-                    if(parseInt(entry['datosFactura']['0']['fac_metodos_pago_id'])==2 || parseInt(entry['datosFactura']['0']['fac_metodos_pago_id']==3)){
-						$no_cuenta.hide();
-						$digitos.show();
-						$digitos.val(entry['datosFactura']['0']['no_cuenta']);
-					}
-                    
-                    //form pago 4=Cheque Nominativo, 5=Transferencia Electronica de Fondos
-                    if(parseInt(entry['datosFactura']['0']['fac_metodos_pago_id'])==4 || parseInt(entry['datosFactura']['0']['fac_metodos_pago_id']==5)){
-						$no_cuenta.show();
-						$digitos.val('');
-						$digitos.hide();
-						
-						if(parseInt(entry['datosFactura']['0']['moneda_id'])==1){
-							$etiqueta_digit.val('N&uacute;mero de Cuenta para pagos en Pesos');
-						}else{
-							$etiqueta_digit.val('N&uacute;mero de Cuenta para pagos en Dolares');
-						}
-						$no_cuenta.val(entry['datosFactura']['0']['no_cuenta']);
-					}
-					
-					
-					
-					
-					
 					//carga select denominacion con todas las monedas
 					$select_moneda.children().remove();
 					//var moneda_hmtl = '<option value="0">[--   --]</option>';
 					var moneda_hmtl = '';
 					$.each(entry['Monedas'],function(entryIndex,moneda){
-						if(moneda['id'] == entry['datosFactura']['0']['moneda_id']){
+						if(moneda['id'] == entry['Datos'][0]['moneda_id']){
 							moneda_hmtl += '<option value="' + moneda['id'] + '"  selected="yes">' + moneda['descripcion'] + '</option>';
 							$moneda_original.val(moneda['id']);
 						}else{
@@ -1013,42 +862,40 @@ $(function() {
 					});
 					$select_moneda.append(moneda_hmtl);
 					
-					$id_impuesto.val(entry['iva']['0']['id_impuesto']);
-					$valor_impuesto.val(entry['iva']['0']['valor_impuesto']);
+					$id_impuesto.val(entry['iva'][0]['id_impuesto']);
+					$valor_impuesto.val(entry['iva'][0]['valor_impuesto']);
 					
 					//carga select de vendedores
 					$select_vendedor.children().remove();
 					var hmtl_vendedor;
 					$.each(entry['Vendedores'],function(entryIndex,vendedor){
-						if(entry['datosFactura']['0']['cxc_agen_id'] == vendedor['id']){
+						if(entry['Datos'][0]['cxc_agen_id'] == vendedor['id']){
 							hmtl_vendedor += '<option value="' + vendedor['id'] + '" selected="yes" >' + vendedor['nombre_vendedor'] + '</option>';
 						}else{
 							hmtl_vendedor += '<option value="' + vendedor['id'] + '">' + vendedor['nombre_vendedor'] + '</option>';
 						}
 					});
 					$select_vendedor.append(hmtl_vendedor);
-					$select_vendedor.find('option').clone().appendTo($select_vendedor_original);
 					
 					
 					//carga select de condiciones
 					$select_condiciones.children().remove();
 					var hmtl_condiciones;
 					$.each(entry['Condiciones'],function(entryIndex,condicion){
-						if(entry['datosFactura']['0']['terminos_id'] == condicion['id']){
+						if(entry['Datos'][0]['terminos_id'] == condicion['id']){
 							hmtl_condiciones += '<option value="' + condicion['id'] + '" selected="yes" >' + condicion['descripcion'] + '</option>';
 						}else{
 							hmtl_condiciones += '<option value="' + condicion['id'] + '">' + condicion['descripcion'] + '</option>';
 						}
 					});
 					$select_condiciones.append(hmtl_condiciones);
-					$select_condiciones.find('option').clone().appendTo($select_condiciones_original);
 					
 					
 					//carga select de metodos de pago
 					$select_metodo_pago.children().remove();
 					var hmtl_metodo;
 					$.each(entry['MetodosPago'],function(entryIndex,metodo){
-						if(entry['datosFactura']['0']['fac_metodos_pago_id'] == metodo['id']){
+						if(entry['Datos'][0]['fac_metodos_pago_id'] == metodo['id']){
 							hmtl_metodo += '<option value="' + metodo['id'] + '"  selected="yes">' + metodo['titulo'] + '</option>';
 						}else{
 							hmtl_metodo += '<option value="' + metodo['id'] + '"  >' + metodo['titulo'] + '</option>';
@@ -1057,10 +904,7 @@ $(function() {
 					$select_metodo_pago.append(hmtl_metodo);
 					
 					
-					$busca_cliente.hide();
-					
-					
-					if(entry['datosGrid'] != null){
+					if(parseInt(entry['datosGrid'].length) > 0 ){
 						$.each(entry['datosGrid'],function(entryIndex,prod){
 							
 							//obtiene numero de trs
@@ -1124,135 +968,35 @@ $(function() {
 					}
 					
 					//$calcula_totales();//llamada a la funcion que calcula totales 
+					$tipo_cambio.val(entry['Datos'][0]['tipo_cambio']);
 					
-					
-					$tipo_cambio.val(entry['datosFactura']['0']['tipo_cambio']);
-					$tipo_tipo_cambio_original.val(entry['datosFactura']['0']['tipo_cambio']);
-					$rfc_cliente.attr('disabled','-1'); //deshabilitar
-					$folio_pedido.attr('disabled','-1'); //deshabilitar
-					$razon_cliente.attr('disabled','-1'); //deshabilitar
-					$dir_cliente.attr('disabled','-1'); //deshabilitar
-					$serie_folio.attr('disabled','-1'); //deshabilitar
-					$observaciones.attr('disabled','-1'); //deshabilitar
 					$select_moneda.attr('disabled','-1'); //deshabilitar
-					$tipo_cambio.attr('disabled','-1'); //deshabilitar
 					$select_vendedor.attr('disabled','-1'); //deshabilitar
 					$select_condiciones.attr('disabled','-1'); //deshabilitar
-					//$sku_producto.attr('disabled','-1'); //deshabilitar
-					//$nombre_producto.attr('disabled','-1'); //deshabilitar
+					$select_metodo_pago.attr('disabled','-1'); //deshabilitar
+					$grid_productos.find('a').hide();//ocultar
 					$grid_productos.find('#cant').attr("readonly", true);//establece solo lectura campos cantidad del grid
 					$grid_productos.find('#cost').attr("readonly", true);//establece solo lectura campos costo del grid
-					$grid_productos.find('#cant').attr('disabled','-1'); //deshabilitar
-					$grid_productos.find('#cost').attr('disabled','-1'); //deshabilitar
-					$grid_productos.find('a').hide();//ocultar
-					$orden_compra.attr('disabled','-1'); //deshabilitar
-					//$factura_sai.attr('disabled','-1'); //deshabilitar
 					
-					$select_metodo_pago.attr('disabled','-1'); //deshabilitar
-					$digitos.attr('disabled','-1'); //deshabilitar
-					
-					//$busca_sku.hide();
-					//$agregar_producto.hide();
-					//$boton_descargarpdf.show();
 					$boton_cancelarfactura.show();
-					//$boton_descargarxml.show();
 					//ocultar boton actualizar porque ya esta facturado, ya no se puede guardar cambios
 					$submit_actualizar.hide();
 					
-
 					//si el estado del comprobante es 0, esta cancelado
-					if(entry['datosFactura']['0']['estado']=='CANCELADO'){
-						//$reconstruir_pdf.hide();
-						//$boton_descargarpdf.hide();
+					if(entry['Datos'][0]['estado']=='CANCELADO'){
 						$boton_cancelarfactura.hide();
-						//$boton_descargarxml.hide();
 					}
+					
+					//Cancelar factura
+					$boton_cancelarfactura.click(function(event){
+						event.preventDefault();
+						
+						//Llamada a funcion
+						modal_cancelar($id_factura.val(), $boton_cancelarfactura, entry['Datos'][0]['tmovid_cancel'], entry['Datos'][0]['tipo_cancel'], entry['Datos'][0]['motivo_cancel'],entry['Datos'][0]['cancelado'], $('#lienzo_recalculable').find('input[name=iu]').val());
+					});//termina cancelar factura
+					
 				});//termina llamada json
-                
-                
-                                
-                
-				//cancelar factura
-				$boton_cancelarfactura.click(function(event){
-					event.preventDefault();
-					var id_to_show = 0;
-					$(this).modalPanel_cancelaemision();
-					var form_to_show = 'formaCancelaEmision';
-					$('#' + form_to_show).each (function(){this.reset();});
-					var $forma_selected = $('#' + form_to_show).clone();
-					$forma_selected.attr({id : form_to_show + id_to_show});
-					$('#forma-cancelaemision-window').css({"margin-left": -100,"margin-top": -180});
-					$forma_selected.prependTo('#forma-cancelaemision-window');
-					$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
-					
-					var $select_tipo_cancelacion = $('#forma-cancelaemision-window').find('select[name=tipo_cancelacion]');
-					var $motivo_cancelacion = $('#forma-cancelaemision-window').find('textarea[name=motivo_cancel]');
-					
-					var $cancelar_factura = $('#forma-cancelaemision-window').find('a[href*=cancelfact]');
-					var $salir = $('#forma-cancelaemision-window').find('a[href*=salir]');
-					
-					var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getTiposCancelacion.json';
-					$arreglo = {}
-					
-					$.post(input_json,$arreglo,function(entry){
-						$select_tipo_cancelacion.children().remove();
-						var tipo_hmtl = '';
-						$.each(entry['Tipos'],function(entryIndex,tipo){
-								tipo_hmtl += '<option value="' + tipo['id'] + '"  >' + tipo['titulo'] + '</option>';
-						});
-						$select_tipo_cancelacion.append(tipo_hmtl);
-					});
-					
-					
-					//generar informe mensual
-					$cancelar_factura.click(function(event){
-						event.preventDefault();
-						if($motivo_cancelacion.val()!=null && $motivo_cancelacion.val()!=""){
-							var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/cancelar_factura.json';
-							$arreglo = {'id_factura':$id_factura.val(),
-										'tipo_cancelacion':$select_tipo_cancelacion.val(),
-										'motivo':$motivo_cancelacion.val(),
-										'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
-										}
-							
-							$.post(input_json,$arreglo,function(entry){
-								var cad = entry['success'].split(":");
-								
-								if(entry['success'].trim()=='false'){
-									jAlert(entry['msj'], 'Atencion!');
-								}else{
-									if(entry['valor'].trim()=='false'){
-										//jAlert("La factura "+$serie_folio.val()+" tiene pagos aplicados. Es necesario cancelar primeramente los pagos y despues cancelar la factura.", 'Atencion!');
-										jAlert(entry['msj'], 'Atencion!');
-									}else{
-										$boton_cancelarfactura.hide();
-										//jAlert("La factura "+$serie_folio.val()+"  se ha cancelado con &eacute;xito", 'Atencion!');
-										jAlert(entry['msj'], 'Atencion!');
-										$get_datos_grid();
-										
-										var remove = function() {$(this).remove();};
-										$('#forma-cancelaemision-overlay').fadeOut(remove);
-									}
-								}
-								
-							});//termina llamada json
-						}else{
-							jAlert("Es necesario ingresar el motivo de la cancelaci&oacute;n", 'Atencion!');
-						}
-					});
-					
-					
-					$salir.click(function(event){
-						event.preventDefault();
-						var remove = function() {$(this).remove();};
-						$('#forma-cancelaemision-overlay').fadeOut(remove);
-					});
-					
-				});//termina cancelar factura
-                
-                
-                
-                
+				
 				//Ligamos el boton cancelar al evento click para eliminar la forma
 				$cancelar_plugin.bind('click',function(){
 					var remove = function() {$(this).remove();};

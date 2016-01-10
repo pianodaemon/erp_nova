@@ -797,12 +797,11 @@ $(function() {
 		$tabs_li_funxionalidad();
 		
 		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getNotaCredito.json';
-		$arreglo = {'id_nota_credito':id_to_show,
-					'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
-					};
+		$arreglo = {'id_nota_credito':id_to_show,'iu':$('#lienzo_recalculable').find('input[name=iu]').val()};
         
 		var $identificador = $('#forma-notascredito-window').find('input[name=identificador]');
 		var $folio_nota_credito = $('#forma-notascredito-window').find('input[name=folio_nota_credito]');
+		var $fecha_exp = $('#forma-notascredito-window').find('input[name=fecha_exp]');
 		var $generar = $('#forma-notascredito-window').find('input[name=generar]');
 		var $fac_saldado = $('#forma-notascredito-window').find('input[name=fac_saldado]');
 		
@@ -820,8 +819,8 @@ $(function() {
 		var $select_vendedor = $('#forma-notascredito-window').find('select[name=select_vendedor]');
 		var $select_moneda = $('#forma-notascredito-window').find('select[name=select_moneda]');
 		var $tipo_cambio = $('#forma-notascredito-window').find('input[name=tipo_cambio]');
-		
 		var $concepto = $('#forma-notascredito-window').find('textarea[name=concepto]');
+		var $select_tmov = $('#forma-notascredito-window').find('select[name=select_tmov]');
 		
 		var $importe = $('#forma-notascredito-window').find('input[name=importe]');
 		var $ieps = $('#forma-notascredito-window').find('input[name=ieps]');
@@ -926,7 +925,7 @@ $(function() {
 			$select_moneda.children().remove();
 			var moneda_hmtl = '';
 			$.each(entry['Monedas'],function(entryIndex,moneda){
-				moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
+				moneda_hmtl += '<option value="' + moneda['id'] + '">' + moneda['descripcion'] + '</option>';
 			});
 			$select_moneda.append(moneda_hmtl);
 			
@@ -934,10 +933,18 @@ $(function() {
 			$select_vendedor.children().remove();
 			var hmtl_vendedor;
 			$.each(entry['Vendedores'],function(entryIndex,vendedor){
-				hmtl_vendedor += '<option value="' + vendedor['id'] + '"  >' + vendedor['nombre_vendedor'] + '</option>';
+				hmtl_vendedor += '<option value="' + vendedor['id'] + '">' + vendedor['nombre_vendedor'] + '</option>';
 			});
 			$select_vendedor.append(hmtl_vendedor);
 			
+			$select_tmov.children().remove();
+			var tmov_hmtl = '<option value="0">[--- ---]</option>';
+			if(entry['TMov']){
+				$.each(entry['TMov'],function(entryIndex,mov){
+					tmov_hmtl += '<option value="'+ mov['id'] +'">'+ mov['titulo'] + '</option>';
+				});
+			}
+			$select_tmov.append(tmov_hmtl);
 			
 			//buscador de clientes
 			$busca_cliente.click(function(event){
@@ -949,7 +956,7 @@ $(function() {
 			//buscador de facturas del cliente
 			$busca_factura.click(function(event){
 				event.preventDefault();
-				if ($razon_cliente.val()!=''){
+				if ($razon_cliente.val().trim()!=''){
 					$busca_facturas( $select_moneda,$select_vendedor,$id_cliente.val(), entry['Monedas'],entry['Vendedores'],$factura, $fecha_factura, $monto_factura, $aplicado, $saldo );
 				}else{
 					jAlert('Es necesario seleccionar un Cliente.', 'Atencion!', function(r) { 
@@ -1220,6 +1227,7 @@ $(function() {
 							
 				var $identificador = $('#forma-notascredito-window').find('input[name=identificador]');
 				var $folio_nota_credito = $('#forma-notascredito-window').find('input[name=folio_nota_credito]');
+				var $fecha_exp = $('#forma-notascredito-window').find('input[name=fecha_exp]');
 				var $generar = $('#forma-notascredito-window').find('input[name=generar]');
 				var $fac_saldado = $('#forma-notascredito-window').find('input[name=fac_saldado]');
 				
@@ -1237,6 +1245,7 @@ $(function() {
 				var $select_moneda = $('#forma-notascredito-window').find('select[name=select_moneda]');
 				var $tipo_cambio = $('#forma-notascredito-window').find('input[name=tipo_cambio]');
 				var $concepto = $('#forma-notascredito-window').find('textarea[name=concepto]');
+				var $select_tmov = $('#forma-notascredito-window').find('select[name=select_tmov]');
 				
 				var $importe = $('#forma-notascredito-window').find('input[name=importe]');
 				var $ieps = $('#forma-notascredito-window').find('input[name=ieps]');
@@ -1337,40 +1346,41 @@ $(function() {
 				//aqui se cargan los campos al editar
 				$.post(input_json,$arreglo,function(entry){
 					
-					$identificador.val(entry['datosNota'][0]['id']);
-					$folio_nota_credito.val(entry['datosNota'][0]['serie_folio']);
-					$id_cliente.val(entry['datosNota'][0]['cxc_clie_id']);
-					$no_cliente.val(entry['datosNota'][0]['no_cliente']);
-					$razon_cliente.val(entry['datosNota'][0]['razon_social']);
-					$empresa_immex.val(entry['datosNota'][0]['empresa_immex']);
-					$tasa_ret_immex.val(entry['datosNota'][0]['tasa_retencion_immex']);
-					//$id_impuesto.val(entry['datosNota'][0]['']);
+					$identificador.val(entry['Datos'][0]['id']);
+					$folio_nota_credito.val(entry['Datos'][0]['serie_folio']);
+					$fecha_exp.val(entry['Datos'][0]['fecha_exp']);
+					$id_cliente.val(entry['Datos'][0]['cxc_clie_id']);
+					$no_cliente.val(entry['Datos'][0]['no_cliente']);
+					$razon_cliente.val(entry['Datos'][0]['razon_social']);
+					$empresa_immex.val(entry['Datos'][0]['empresa_immex']);
+					$tasa_ret_immex.val(entry['Datos'][0]['tasa_retencion_immex']);
+					//$id_impuesto.val(entry['Datos'][0]['']);
 					$id_impuesto.val(entry['iva'][0]['id_impuesto']);
-					$valor_impuesto.val(entry['datosNota'][0]['valor_impuesto']);
-					$observaciones.text(entry['datosNota'][0]['observaciones']);
-					$tipo_cambio.val(entry['datosNota'][0]['tipo_cambio']);
-					$concepto.text(entry['datosNota'][0]['concepto']);
+					$valor_impuesto.val(entry['Datos'][0]['valor_impuesto']);
+					$observaciones.text(entry['Datos'][0]['observaciones']);
+					$tipo_cambio.val(entry['Datos'][0]['tipo_cambio']);
+					$concepto.text(entry['Datos'][0]['concepto']);
 					
 					
-					$importe.val(entry['datosNota'][0]['importe']);
+					$importe.val(entry['Datos'][0]['importe']);
 					
 					if($folio_nota_credito.val().trim()!=''){
-						$ieps.val(entry['datosNota'][0]['monto_ieps']);
-						$impuesto.val(entry['datosNota'][0]['importe_iva']);
-						$retencion.val(entry['datosNota'][0]['importe_retencion']);
-						$total.val(entry['datosNota'][0]['monto_total']);
+						$ieps.val(entry['Datos'][0]['monto_ieps']);
+						$impuesto.val(entry['Datos'][0]['importe_iva']);
+						$retencion.val(entry['Datos'][0]['importe_retencion']);
+						$total.val(entry['Datos'][0]['monto_total']);
 					}
 					
 					
 					
-					var monto_aplicado = parseFloat(entry['datosNota'][0]['monto_factura']) - parseFloat(entry['datosNota'][0]['saldo_factura']);
+					var monto_aplicado = parseFloat(entry['Datos'][0]['monto_factura']) - parseFloat(entry['Datos'][0]['saldo_factura']);
 					
-					$factura.val(entry['datosNota'][0]['factura']);
-					$id_moneda_factura.val(entry['datosNota'][0]['id_moneda_factura']);
-					$fecha_factura.val(entry['datosNota'][0]['fecha_factura']);
-					$monto_factura.val(entry['datosNota'][0]['monto_factura']);
+					$factura.val(entry['Datos'][0]['factura']);
+					$id_moneda_factura.val(entry['Datos'][0]['id_moneda_factura']);
+					$fecha_factura.val(entry['Datos'][0]['fecha_factura']);
+					$monto_factura.val(entry['Datos'][0]['monto_factura']);
 					$aplicado.val(parseFloat(monto_aplicado).toFixed(2));
-					$saldo.val(entry['datosNota'][0]['saldo_factura']);
+					$saldo.val(entry['Datos'][0]['saldo_factura']);
 					
 					
 					
@@ -1378,7 +1388,7 @@ $(function() {
 					$select_moneda.children().remove();
 					var moneda_hmtl = '';
 					$.each(entry['Monedas'],function(entryIndex,moneda){
-						if(moneda['id'] == entry['datosNota'][0]['moneda_id']){
+						if(moneda['id'] == entry['Datos'][0]['moneda_id']){
 							moneda_hmtl += '<option value="' + moneda['id'] + '"  selected="yes">' + moneda['descripcion'] + '</option>';
 						}else{
 							//if(parseInt(flujo_proceso)==2){
@@ -1395,7 +1405,7 @@ $(function() {
 					$select_vendedor.children().remove();
 					var hmtl_vendedor;
 					$.each(entry['Vendedores'],function(entryIndex,vendedor){
-						if(entry['datosNota'][0]['cxc_agen_id'] == vendedor['id']){
+						if(entry['Datos'][0]['cxc_agen_id'] == vendedor['id']){
 							hmtl_vendedor += '<option value="' + vendedor['id'] + '" selected="yes" >' + vendedor['nombre_vendedor'] + '</option>';
 						}else{
 							/*
@@ -1407,9 +1417,27 @@ $(function() {
 					});
 					$select_vendedor.append(hmtl_vendedor);
 					
-					var nota_nota_cancelada = entry['datosNota'][0]['cancelado'];
+					$select_tmov.children().remove();
+					var tmov_hmtl = '<option value="0">[--- ---]</option>';
+					if(entry['TMov']){
+						if(parseInt(entry['Datos'][0]['tmov_id'])>0){
+							tmov_hmtl='';
+						}
+						$.each(entry['TMov'],function(entryIndex,mov){
+							if(parseInt(mov['id'])==parseInt(entry['Datos'][0]['tmov_id'])){
+								tmov_hmtl += '<option value="'+ mov['id'] +'" selected="yes">'+ mov['titulo'] + '</option>';
+							}else{
+								if(!cancelado){
+									tmov_hmtl += '<option value="'+ mov['id'] +'">'+ mov['titulo'] + '</option>';
+								}
+							}
+						});
+					}
+					$select_tmov.append(tmov_hmtl);
 					
-					if ( nota_nota_cancelada == 'true'){
+					var nota_nota_cancelada = entry['Datos'][0]['cancelado'].trim();
+					
+					if (nota_nota_cancelada == 'true'){
 						//aqui hay que desahabilitar campos
 						$cancelado.show();
 						$folio_nota_credito.attr('disabled','-1');
@@ -1444,8 +1472,7 @@ $(function() {
 						$submit_actualizar.hide();
 					}
 					
-					
-					if ( entry['datosNota'][0]['serie_folio'] != ''){
+					if ( entry['Datos'][0]['serie_folio'] != ''){
 						//aqui hay que desahabilitar campos
 						if(!$generar_nota_credito.is(':disabled')) {
 							$generar_nota_credito.attr('disabled','-1');
@@ -1466,7 +1493,7 @@ $(function() {
 					
 					//Esta variable es para decidir  si va a evaluar que el monto de la nota de credito no sea mayor que en Saldo de la factura
 					var evaluar="false";
-					if ( entry['datosNota'][0]['serie_folio'] == '' && nota_nota_cancelada != 'true'){
+					if ( entry['Datos'][0]['serie_folio'].trim() == '' && nota_nota_cancelada.trim() != 'true'){
 						evaluar="true";
 					}
 					
@@ -1476,9 +1503,7 @@ $(function() {
 					}
 				});//termina llamada json
                 
-				
-				
-				
+                
 				//elimina cero al hacer clic sobre el campo
 				$importe.focus(function(e){
 					if ($razon_cliente.val()!=''){
@@ -1491,7 +1516,6 @@ $(function() {
 				});
 				
 				
-				
 				$importe.blur(function(){
 					if($importe.val()=="" || parseFloat($importe.val())==0){
 						$importe.val(parseFloat(0.00).toFixed(2));//si el campo esta en blanco, pone cero
@@ -1499,9 +1523,6 @@ $(function() {
 					var evaluar="true";
 					$calcula_total_nota_credito($importe, $ieps, $impuesto, $retencion, $total, $valor_impuesto, $tasa_ret_immex, $saldo,$empresa_immex,$chkbox_aplicar_saldo, $fac_saldado,evaluar );
 				});
-				
-				
-				
 				
 				
 				$chkbox_aplicar_saldo.bind('click',function(event){
@@ -1512,7 +1533,7 @@ $(function() {
 							if( $empresa_immex.val() == 'true' ){
 								SubTotal = saldo_fac;
 							}else{
-								SubTotal = saldo_fac / ( parseFloat($valor_impuesto.val()) + 1 );
+								SubTotal = parseFloat(saldo_fac) / ( parseFloat($valor_impuesto.val()) + 1 );
 							}
 							$importe.val(SubTotal);
 						}else{
@@ -1523,12 +1544,7 @@ $(function() {
 					}else{
 						this.checked = false;
 					}
-					
 				});
-				
-				
-				
-				
 				
 				
 				$generar_nota_credito.click(function(event){
@@ -1591,7 +1607,7 @@ $(function() {
 				
 				
 				
-				//cancelar Nota de Credito
+				//Cancelar Nota de Credito
 				$cancelar_nota_credito.click(function(event){
 					event.preventDefault();
 					var id_to_show = 0;
@@ -1604,26 +1620,20 @@ $(function() {
 					$forma_selected.prependTo('#forma-cancelaemision-window');
 					$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
 					
+					var $select_tmov = $('#forma-cancelaemision-window').find('select[name=select_tmov]');
 					var $motivo_cancelacion = $('#forma-cancelaemision-window').find('textarea[name=motivo_cancel]');
+					var $boton_cancelacion = $('#forma-cancelaemision-window').find('#boton_cancelacion');
+					var $boton_salir_cancelacion = $('#forma-cancelaemision-window').find('#boton_salir_cancelacion');
 					
-					var $cancel = $('#forma-cancelaemision-window').find('a[href*=cancel]');
-					var $salir = $('#forma-cancelaemision-window').find('a[href*=salir]');
-					
-					
-					//generar informe mensual
-					$cancel.click(function(event){
+					//Generar informe mensual
+					$boton_cancelacion.click(function(event){
 						event.preventDefault();
 						
 						if($motivo_cancelacion.val()!=null && $motivo_cancelacion.val()!=""){
-							
 							var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/cancelarNotaCredito.json';
-							$arreglo = {'id_nota':$identificador.val(),
-										'motivo':$motivo_cancelacion.val(),
-										'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
-										}
+							var $arreglo = {'id_nota':$identificador.val(),'tmov':$select_tmov.val(),'motivo':$motivo_cancelacion.val(),'iu':$('#lienzo_recalculable').find('input[name=iu]').val()};
 							
 							$.post(input_json,$arreglo,function(entry){
-								
 								var cad = entry['success'].split(":");
 								
 								jAlert(entry['msj'], 'Atencion!');
@@ -1637,21 +1647,6 @@ $(function() {
 									var remove = function() {$(this).remove();};
 									$('#forma-cancelaemision-overlay').fadeOut(remove);
 								}
-								
-								/*
-								if(cad[1]=='false'){
-									jAlert("No se ha podido cancelar la Nota de Cr&eacute;dito: "+cad[0]+"", 'Atencion!');
-								}else{
-									$descargar_pdf.attr('disabled','-1');
-									$descargar_xml.attr('disabled','-1');
-									$cancelar_nota_credito.attr('disabled','-1');
-									jAlert("La Nota de Cr&eacute;dito "+cad[0]+"  se ha cancelado con &eacute;xito", 'Atencion!');
-									$get_datos_grid();
-								}
-								
-								var remove = function() {$(this).remove();};
-								$('#forma-cancelaemision-overlay').fadeOut(remove);
-								*/
 							});//termina llamada json
 						}else{
 							jAlert("Es necesario ingresar el motivo de la cancelaci&oacute;n", 'Atencion!');
@@ -1659,7 +1654,7 @@ $(function() {
 					});
 					
 					
-					$salir.click(function(event){
+					$boton_salir_cancelacion.click(function(event){
 						event.preventDefault();
 						var remove = function() {$(this).remove();};
 						$('#forma-cancelaemision-overlay').fadeOut(remove);
