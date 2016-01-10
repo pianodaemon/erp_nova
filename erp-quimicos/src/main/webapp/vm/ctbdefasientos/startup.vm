@@ -98,7 +98,7 @@
 					<input type="hidden" name="identificador">
                     <div id="div_two" title="" class="ctbdefasientos_div_two">
                         <div class="columns on-2">
-                            <div class="fixed column" id="cierra" style="width:550px; padding-left:6px;"><strong>${title}</strong></div>
+                            <div class="fixed column" id="cierra" style="width:630px; padding-left:6px;"><strong>${title}</strong></div>
                             <div class="fixed column" style="width:20px; height:25px;">
                                 <div id="close" style="height:25px;background-image:url('../../img/modalbox/close.png'); background-color:; background-position:top; cursor:pointer; background-repeat:no-repeat;"></div>
                             </div>
@@ -121,7 +121,7 @@
 										
                                         <table border="0" style="margin:0; padding:0;">
 											<tr>
-												<td width="590"></td>
+												<td width="670"></td>
 											</tr>
 											<tr>
 												<td valign="top">
@@ -200,20 +200,21 @@
 											</tr>
 											
 											<tr>
-												<td style="border-top: 1px solid #C1DAD7; border-bottom: 1px solid #C1DAD7; border-left: 1px solid #FFFFFF; border-right: 1px solid #FFFFFF;">
+												<td style="border-top:1px solid #C1DAD7; border-bottom:1px solid #C1DAD7; border-left:1px solid #FFFFFF; border-right:1px solid #FFFFFF;">
 													<table >
 														<thead>
 															<tr>
 																<td class="grid" style="background-color:rgb(180,180,180); border-botton:0px none;" width="30">&nbsp;#</td>
 																<td class="grid" style="background-color:rgb(180,180,180);" width="150">Cuenta</td>
 																<td class="grid" style="background-color:rgb(180,180,180);" width="250">Descripci&oacute;n</td>
+																<td class="grid" style="background-color:rgb(180,180,180); "width="80">Importe</td>
 																<td class="grid" style="background-color:rgb(180,180,180);" width="60">D-H</td>
 																<td class="grid" style="background-color:rgb(180,180,180); "width="50">Detalle</td>
 															</tr>
 														</thead>
 														<tbody>
 															<tr>
-																<td colspan="5">
+																<td colspan="6">
 																	<div style="overflow:scroll; overflow-x:hidden; overflow-y:auto; height:140px; border:1px solid #C1DAD7 !important;">	
 																		<table>
 																			<tbody style="background-color: #FFFFFF;" valign="top" id="grid_cuentas">
@@ -270,11 +271,11 @@
                             </div>
 
 
-                            <div class="fixed column" id="botones" style="width:563px; background:; text-align:right; padding-left:; position:absolute;margin-top:4px;">
+                            <div class="fixed column" id="botones" style="width:643px; background:; text-align:right; padding-left:; position:absolute;margin-top:4px;">
 								<table border="0">
 									<tr><td colspan="4" height="7"></td></tr>
 									<tr>
-										<td width="463"></td>
+										<td width="543"></td>
 										<td>
 											<input type="image" src="../../img/modalbox/btn1.png" id="submit" style="width:77px; height:24px;"/>
 										</td>
