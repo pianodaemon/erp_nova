@@ -132,7 +132,7 @@
 				<input type="hidden" name="id_impuesto" value="0">
 				<input type="hidden" name="valorimpuesto" value="0">
 				<input type="hidden" name="tasa_retencion" value="0">
-				
+				                                                                    
                     <div id="div_two" title="" class="facdevoluciones_div_two">
                         <div class="columns on-2">
                             <div class="fixed column" style="width:1003px; padding-left:6px;"><strong>Devoluci&oacute;n de Mercanc&iacute;a</strong></div>
@@ -166,24 +166,20 @@
                                                     <td width="300"></td>
                                                 </tr>
                                                 <tr>
-                                                    <td valign="top" width="600"  > 
+                                                    <td valign="top" width="600"> 
                                                         <table border="0" class="gral">
                                                             <tr>
                                                                 <td width="10"></td>
                                                                 <td width="80">Factura</td>
-                                                                <td width="120">
-																	<input type="text" name="serie_folio" style="width:90px;" readOnly="true">
-                                                                </td>
-                                                                <td width="15"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_rfccliente"></div></td>
-                                                                <td width="90" align="right"><a href="busca_cliente">(Buscar&nbsp;cliente)</a></td>
-                                                                <td width="15"></td>
-                                                                <td width="90">Folio&nbsp;Pedido</td>
-                                                                <td width="75" colspan="2">
-																	<input type="text" name="folio_pedido" style="width:75px;" readOnly="true">
-                                                                </td>
+                                                                <td width="90"><INPUT TYPE="text" name="serie_folio" style="width:90px;"></td>
+                                                                <td width="25"></td>
+                                                                <td width="50">Fecha</td>
+                                                                <td width="75"><INPUT TYPE="text" name="fecha" style="width:75px;" readOnly="true"></td>
+                                                                <td width="25"></td>
+                                                                <td width="70">Folio&nbsp;Pedido</td>
+                                                                <td width="75"><INPUT TYPE="text" name="folio_pedido" style="width:75px;" readOnly="true"></td>
                                                                 <td width="15"></td>
                                                             </tr>
-                                                            
                                                             <tr><td colspan="10" height="5"></td></tr>
                                                             <tr>
                                                                 <td width="10"></td>
@@ -195,145 +191,127 @@
 																	<input type="text" name="razoncliente" style="width:420px;" readOnly="true">
 																</td>
                                                             </tr>
-                                                            <tr><td colspan="9" height="5"></td></tr>
+                                                            <tr><td colspan="10" height="5"></td></tr>
                                                             <tr>
                                                                 <td width="10"></td>
                                                                 <td width="80">Direcci&oacute;n</td>
-                                                                <td colspan="8" width="405"><input type="text" name="dircliente" style="width:420px;" readOnly="true"></td>
+                                                                <td colspan="8" width="405"><INPUT TYPE="text" name="dircliente" style="width:420px;" readOnly="true"></td>
                                                             </tr>
-                                                            
-                                                        </table>
-														
-                                                    </td>
-                                                    
-                                                    
-                                                    
-													
-                                                    <td width="10"></td>
-                                                    <!--<td width="60"></td>-->
-													
-                                                    <td width="410" colspan="2" valign="top" style="border: solid 1px #454442;">
-                                                        <table border="0" class="gral">
+                                                            <tr><td colspan="10" height="5"></td></tr>
                                                             <tr>
                                                                 <td width="10"></td>
-                                                                <td width="370">Concepto&nbsp;para&nbsp;la&nbsp;Nota&nbsp;de&nbsp;Cr&eacute;dito</td>
-                                                                <td width="30"></td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td width="10"></td>
-                                                                <td width="370">
-																	<textarea name="concepto" rows="2" cols="60" style="width:370px; resize: none;"></textarea>
-                                                                </td>
-                                                                <td width="30"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_concepto"></div></td>
-                                                            </tr>
-															
-                                                        </table>
-                                                    </td>
-                                                </tr>
-												
-                                                <tr>
-                                                    <td colspan="4">   
-														<table border="0" class="gral"> 
-                                                            <tr>
-                                                                <td width="10" height="5"></td>
-                                                                <td width="70"></td>
-                                                                <td width="90"></td>
-                                                                <td width="10"></td>
-                                                                <td width="90"></td>
-                                                                <td width="10"></td>
-                                                                <td width="70"></td>
-                                                                <td width="30"></td>
-																<td width="75"></td>
-																<td></td>
-																<td></td>
-																<td width="30"></td>
-																<td width="55"></td>
-																<td width="35"></td>
-																<td></td>
-																<td width="75"></td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td width="10"></td>
-                                                                <td width="70">Moneda</td>
+                                                                <td width="80">Moneda</td>
                                                                 <td width="90">
                                                                     <SELECT NAME="moneda" style="width:90px;" title="Moneda de la factura"></SELECT>
+																	<input type="hidden" name="moneda_original" value="0">
                                                                 </td>
-                                                                <td width="10"></td>
-                                                                <td width="90" align="right">Tipo&nbsp;de&nbsp;cambio</td>
-                                                                <td width="10"></td>
-                                                                <td width="70">
-																	<input type="text" name="tipo_cambio" style="width:70px;">
-                                                                </td>
-                                                                <td width="30"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_tc"></div></td>
-																
-																<td width="75">Orden&nbsp;de&nbsp;compra</td>
-																<td>&nbsp;&nbsp;</td>
-																<td>
-																	<input type="text" name="orden_compra" style="width:75px;">
-																</td>
-																<td width="30"></td>
-																<td width="55">Vendedor</td>
-																<td width="210" colspan="3">
-																	<SELECT NAME="vendedor" style="width:210px"></SELECT>
-																</td>
+                                                                <td width="25"></td>
+                                                                <td width="50">T.&nbsp;&nbsp;C.</td>
+                                                                <td width="75"><INPUT TYPE="text" name="tipo_cambio" style="width:75px;"></td>
+                                                                <td width="25"></td>
+                                                                <td width="70">O.&nbsp;C.</td>
+                                                                <td width="75"><INPUT TYPE="text" name="orden_compra" style="width:75px;" readOnly="true"></td>
+                                                                <td width="15"></td>
                                                             </tr>
                                                             
-															
-															
-                                                            <tr><td colspan="16" height="5"></td></tr>
-                                                            
+                                                            <tr><td colspan="10" height="5"></td></tr>
                                                             <tr>
                                                                 <td width="10"></td>
                                                                 <td width="80">M&eacute;todo&nbsp;de&nbsp;pago</td>
-                                                                <td width="190" colspan="3">
-																	<SELECT NAME="select_metodo_pago" style="width:190px"></SELECT>
-                                                                </td>
+                                                                <td width="165" colspan="3"><SELECT NAME="select_metodo_pago" style="width:165px"></SELECT></td>
+                                                                <!--
+                                                                <td width="25"></td>
+                                                                <td width="50">T.&nbsp;&nbsp;C.</td>
+                                                                -->
+                                                                <td width="100" colspan="2" align="right">T&eacute;rminos&nbsp;de&nbsp;pago&nbsp;</td>
+                                                                <!--<td width="25"></td>-->
+                                                                <td width="145" colspan="2"><SELECT NAME="condiciones" style="width:150px" title="Terminos de pago"></SELECT></td>
+                                                                <!--<td width="75"></td>-->
+                                                                <td width="15"></td>
+                                                            </tr>
+                                                            <tr><td colspan="10" height="5"></td></tr>
+                                                            <tr>
                                                                 <td width="10"></td>
-                                                                <td width="175" colspan="3">
-																	<input type="text" name="digit" value="Ingrese los ultimos&nbsp;4&nbsp;Digitos&nbsp;de&nbsp;la Tarjeta" class="borde_oculto" readOnly="true" style="width:195px;">
-																</td>
-																<td>&nbsp;&nbsp;</td>
-																<td>
-																	<input type="text" name="no_cuenta" style="width:75px;" maxlength="20" readOnly="true">
-																</td>
-																<td width="30"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_digitos"></div></td>
-																<td width="90" colspan="2">T&eacute;rminos&nbsp;de&nbsp;pago</td>
-																<td>&nbsp;&nbsp;</td>
-																<td width="170">
-																	<SELECT NAME="condiciones" style="width:170px" title="Terminos de pago"></SELECT>
-																</td>
-																
+                                                                <td width="80">Vendedor</td>
+                                                                <td width="410" colspan="7"><SELECT NAME="vendedor" style="width:419px"></SELECT></td>
+                                                                <td width="15"></td>
                                                             </tr>
                                                         </table>
                                                     </td>
-                                                </tr>
-                                                
-                                                <tr>
-                                                    <td colspan="4">
+                                                    
+                                                    <td width="10"></td>
+                                                    <!--<td width="60"></td>-->
+													
+                                                    <td width="410" colspan="2" valign="top" style="border:solid 1px #454442;">
                                                         <table border="0" class="gral">
                                                             <tr>
                                                                 <td width="10"></td>
-                                                                <td width="80">Nota&nbsp;de&nbsp;Cr&eacute;dito</td>
+                                                                <td width="370" colspan="5">Concepto&nbsp;para&nbsp;la&nbsp;Nota&nbsp;de&nbsp;Cr&eacute;dito</td>
+                                                                <td width="25"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td width="10"></td>
+                                                                <td width="370" colspan="5">
+																	<textarea name="concepto" rows="2" cols="60" style="width:370px;  height:45px; resize:none;"></textarea>
+                                                                </td>
+                                                                <td width="30"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_concepto"></div></td>
+                                                            </tr>
+                                                            <tr><td colspan="7" height="5"></td></tr>
+                                                            <tr>
+                                                                <td width="10"></td>
+                                                                <td width="100">Nota&nbsp;de&nbsp;Cr&eacute;dito</td>
                                                                 <td width="90"><input type="text" name="nota_credito" style="width:90px; font-weight:bold;" readOnly="true"></td>
                                                                 <td width="30"></td>
-                                                                <td width="190">Tipo&nbsp;de&nbsp;cambio&nbsp;para&nbsp;la&nbsp;Nota&nbsp;de&nbsp;Cr&eacute;dito</td>
-                                                                <td width="70"><input type="text" name="tipo_cambio_nota" style="width:70px;"></td>
-                                                                <td width="30"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_tcnota"></div></td>
-                                                                <td width="180"></td>
-                                                                <td width="20"></td>
-                                                                <td align="right" width="160">
-																	<input type="button" id="registrar_devolucion" value="Registrar Devoluci&oacute;n" style="width:120px; font-weight: bold;">
-																</td>
-                                                            </tr>
+                                                                <td width="70">Fecha</td>
+                                                                <td width="80"><input type="text" name="fecha_nc" style="width:80px;" readOnly="true"></td>
+                                                                <td width="25"></td>
+														   </tr>
+															<tr><td colspan="7" height="5"></td></tr>
+															<tr>
+																<td width="10"></td>
+																<td width="100">Tipo&nbsp;de&nbsp;cambio</td>
+																<td width="90"><input type="text" name="tipo_cambio_nota" style="width:90px;"></td>
+																<td width="30"></td>
+																<td width="70"></td>
+																<td width="80"></td>
+																<td width="25"></td>
+															</tr>
+															<tr><td colspan="7" height="5"></td></tr>
+															<tr>
+																<td width="10"></td>
+																<td width="100">Tipo&nbsp;de&nbsp;movimiento</td>
+																<td width="270" colspan="4"><select name="select_tmov" style="width:270px"></select></td>
+																<!--
+																<td width="30"></td>
+																<td width="70"></td>
+																<td width="80"></td>
+																-->
+																<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_tmov"></div></td>
+															</tr>
+															<tr><td colspan="7" height="5"></td></tr>
+															<tr>
+																<td width="10"></td>
+																<td width="100"></td>
+																<td width="90"></td>
+																<td width="30"></td>
+																<td width="150" colspan="2" align="right"><input type="button" id="registrar_devolucion" value="Registrar Devoluci&oacute;n" style="width:120px; font-weight:bold;"></td>
+																<!--<td width="80"></td>-->
+																<td width="25"></td>
+															</tr>
                                                         </table>
                                                     </td>
                                                 </tr>
 												
-												
                                                 <tr>
-                                                    
+                                                    <td width="600" height="5"></td>
+                                                    <td width="10"></td>
+                                                    <td width="110"></td>
+                                                    <td width="300"></td>
+                                                </tr>
+                                                
+                                                <tr>
 													<td colspan="4" style="border-top:1px solid #C1DAD7; border-bottom:1px solid #C1DAD7; border-left: 1px solid #FFFFFF; border-right: 1px solid #FFFFFF;">
-														<table >
+														<table>
 															<thead>
 																<tr class="registros_pagos">
 																	<td class="grid" id="td_eliminar" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="30"><div class="delete">&nbsp;#</div></td>
@@ -349,15 +327,20 @@
 																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="125">&nbsp;Cantidad&nbsp;a&nbsp;devolver</td>
 																</tr>
 															</thead>
-														</table>
-														<div style="overflow:scroll; overflow-x:hidden; overflow-y:auto; width:1000; height:115px; border:1px solid #C1DAD7 !important;">	
-															<table class="tabla_facdevoluciones">
-																<tbody style="background-color: #FFFFFF;" valign="top" id="grid_productos">
-																	
-																</tbody>
-															</table>
-														</div>
-                                                        
+															<tbody>
+																<tr>
+																	<td colspan="10">
+																		<div style="overflow:scroll; overflow-x:hidden; overflow-y:auto; height:115px; border:1px solid #C1DAD7 !important;">	
+																			<table class="tabla_facdevoluciones">
+																				<tbody style="background-color:#FFFFFF;" valign="top" id="grid_productos">
+																					
+																				</tbody>
+																			</table>
+																		</div>
+																	</td>
+																</tr>
+															</tbody>
+														</table>                                                        
                                                     </td>
                                                 </tr>
 												
