@@ -3,7 +3,6 @@
  */
 package com.agnux.kemikal.controllers;
 import com.agnux.cfd.v2.Base64Coder;
-import com.agnux.common.helpers.FileHelper;
 import com.agnux.common.helpers.StringHelper;
 import com.agnux.common.obj.DataPost;
 import com.agnux.common.obj.ResourceProject;
@@ -11,16 +10,8 @@ import com.agnux.common.obj.UserSessionData;
 import com.agnux.kemikal.interfacedaos.CxcInterfaceDao;
 import com.agnux.kemikal.interfacedaos.GralInterfaceDao;
 import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
-import com.agnux.kemikal.reportes.PdfDepositos;
-import com.agnux.kemikal.reportes.PdfReporteAplicacionPago;
-import com.itextpdf.text.DocumentException;
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.logging.Level;
@@ -28,7 +19,6 @@ import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -37,9 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.ui.Model;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 /**
@@ -127,15 +115,16 @@ public class ClientsAntCancelController {
     //obtiene listado de pagos para el grid
     @RequestMapping(value="/getAllAnticipos.json", method = RequestMethod.POST)
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getAllAnticiposJson(
-           @RequestParam(value="orderby", required=true) String orderby,
-           @RequestParam(value="desc", required=true) String desc,
-           @RequestParam(value="items_por_pag", required=true) int items_por_pag,
-           @RequestParam(value="pag_start", required=true) int pag_start,
-           @RequestParam(value="display_pag", required=true) String display_pag,
-           @RequestParam(value="input_json", required=true) String input_json,
-           @RequestParam(value="cadena_busqueda", required=true) String cadena_busqueda,
-           @RequestParam(value="iu", required=true) String id_user_cod,
-       Model modcel) {
+        @RequestParam(value="orderby", required=true) String orderby,
+        @RequestParam(value="desc", required=true) String desc,
+        @RequestParam(value="items_por_pag", required=true) int items_por_pag,
+        @RequestParam(value="pag_start", required=true) int pag_start,
+        @RequestParam(value="display_pag", required=true) String display_pag,
+        @RequestParam(value="input_json", required=true) String input_json,
+        @RequestParam(value="cadena_busqueda", required=true) String cadena_busqueda,
+        @RequestParam(value="iu", required=true) String id_user_cod,
+        Model modcel
+    ) {
         
         HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
         HashMap<String,String> has_busqueda = StringHelper.convert2hash(StringHelper.ascii2string(cadena_busqueda));
@@ -143,7 +132,7 @@ public class ClientsAntCancelController {
         //Aplicativo de Cancelacion de Anticipos(CXC)
         Integer app_selected = 146;
         
-        //decodificar id de usuario
+        //Decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
         //System.out.println("id_usuario: "+id_usuario);
         

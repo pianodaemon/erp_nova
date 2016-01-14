@@ -20,13 +20,7 @@ import com.agnux.kemikal.interfacedaos.GralInterfaceDao;
 import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
 import com.agnux.kemikal.reportes.pdfCfd_CfdiTimbrado;
 import com.agnux.kemikal.reportes.pdfCfd_CfdiTimbradoFormato2;
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,19 +30,13 @@ import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * @author Noe Martinez
@@ -285,6 +273,7 @@ public class NotasCreditoController {
         ArrayList<HashMap<String, Object>> tipoCambioActual = new ArrayList<HashMap<String, Object>>();
         HashMap<String, Object> tc = new HashMap<String, Object>();
         HashMap<String, String> userDat = new HashMap<String, String>();
+        
         //Aplicativo notas de credito
         Integer app_selected = 70;
         
@@ -1096,6 +1085,33 @@ public class NotasCreditoController {
     }
     
     
+    //Obtiene los tipos de cancelacion
+    @RequestMapping(method = RequestMethod.POST, value="/getDataCancel.json")
+    public @ResponseBody HashMap<String,Object> getDataCancelJson(
+            @RequestParam(value="identificador", required=true) Integer identificador,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+        ) {
+        log.log(Level.INFO, "Ejecutando getDataCancelJson de {0}", NotasCreditoController.class.getName());
+        HashMap<String,Object> jsonretorno = new HashMap<String,Object>();
+        
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        
+        //Cancelacion de Notas de Credito(Numero de aplicativo FALSO, Solo es para mostrar un numero en el programa de definicion de asientos)
+        Integer app_selected = 2001;
+        
+        //Decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        //Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        
+        jsonretorno.put("TMov", this.getFacdao().getCtb_TiposDeMovimiento(id_empresa, app_selected));
+        
+        return jsonretorno;
+    }
     
     
     

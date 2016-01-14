@@ -254,7 +254,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         + "SELECT fac_docs.id,"
             +"fac_docs.folio_pedido,"
             +"fac_docs.serie_folio,"
-            +"to_char(fac_docs.momento_creacion,'dd/mm/yyyy') AS fecha,"
+            +"to_char(fac_docs.momento_creacion,'yyyy-mm-dd') AS fecha,"
             +"(case when fac_docs.momento_cancelacion is null then '' else to_char(fac_docs.momento_cancelacion,'dd/mm/yyyy') end) as fecha_can,"
             +"fac_docs.moneda_id,"
             + "(case when gral_mon.id is null then '' else gral_mon.iso_4217 end) as moneda_iso_4217, "
@@ -2340,6 +2340,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
             + "fac_nota_credito.serie_folio,"
             + "(case when fac_nota_credito.momento_expedicion is null then '' else to_char(fac_nota_credito.momento_expedicion,'dd/mm/yyyy') end) AS fecha_exp,"
             + "fac_nota_credito.ctb_tmov_id as tmov_id,"
+            + "fac_nota_credito.ctb_tmov_id_cancelacion as tmov_id_cancel,"
             + "fac_nota_credito.cxc_clie_id,"
             + "cxc_clie.numero_control AS no_cliente,"
             + "cxc_clie.razon_social,"
@@ -2359,6 +2360,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
             + "fac_nota_credito.serie_folio_factura as factura,"
             + "erp_h_facturas.moneda_id as id_moneda_factura, "
             + "fac_nota_credito.cancelado,"
+            + "fac_nota_credito.motivo_cancelacion as motivo_cancel,"
             + "erp_h_facturas.monto_total AS monto_factura, "
             + "erp_h_facturas.saldo_factura, "
             + "to_char(erp_h_facturas.momento_facturacion,'dd/mm/yyyy') AS fecha_factura,"
@@ -2378,6 +2380,9 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     row.put("serie_folio",rs.getString("serie_folio"));
                     row.put("fecha_exp",rs.getString("fecha_exp"));
                     row.put("tmov_id",rs.getInt("tmov_id"));
+                    row.put("tmov_id_cancel",rs.getInt("tmov_id_cancel"));
+                    row.put("cancelado",rs.getBoolean("cancelado"));
+                    row.put("motivo_cancel",rs.getString("motivo_cancel"));
                     row.put("cxc_clie_id",rs.getInt("cxc_clie_id"));
                     row.put("cxc_agen_id",String.valueOf(rs.getInt("cxc_agen_id")));
                     row.put("moneda_id",rs.getInt("moneda_id"));
@@ -2386,7 +2391,6 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     row.put("df_id",String.valueOf(rs.getInt("cxc_clie_df_id")));
                     row.put("concepto",rs.getString("concepto"));
                     row.put("observaciones",rs.getString("observaciones"));
-                    row.put("cancelado",String.valueOf(rs.getBoolean("cancelado")));
                     row.put("empresa_immex",String.valueOf(rs.getBoolean("empresa_immex")));
                     row.put("valor_impuesto",StringHelper.roundDouble(rs.getDouble("valor_impuesto"), 2));
                     row.put("tasa_retencion_immex",StringHelper.roundDouble(rs.getDouble("tasa_retencion_immex"), 2));
@@ -3196,13 +3200,15 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         String sql_to_query = ""
         + "SELECT "
             + "serie_folio AS folio_nota, "
+            + "(case when momento_expedicion is null then '' else to_char(momento_expedicion,'yyyy-mm-dd') end) as fecha_nc,"
             + "subtotal AS subtotal_nota, "
             + "impuesto AS impuesto_nota, "
             + "monto_retencion AS monto_ret_nota, "
             + "total AS total_nota, "
             + "tipo_cambio AS tc_nota,"
             + "monto_ieps,"
-            + "concepto "
+            + "concepto,"
+            + "ctb_tmov_id as tmov_id "
         + "FROM fac_nota_credito "
         + "WHERE serie_folio_factura='"+factura+"' AND cxc_clie_id="+idCliente+" AND gral_app_id_creacion=76;";
         
@@ -3213,6 +3219,8 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, Object> row = new HashMap<String, Object>();
                     row.put("folio_nota",rs.getString("folio_nota"));
+                    row.put("fecha_nc",rs.getString("fecha_nc"));
+                    row.put("tmov_id",rs.getInt("tmov_id"));
                     row.put("concepto_nota",rs.getString("concepto"));
                     row.put("subtotal_nota",StringHelper.roundDouble(rs.getString("subtotal_nota"),2));
                     row.put("monto_ieps_nota",StringHelper.roundDouble(rs.getString("monto_ieps"),2));
