@@ -622,21 +622,19 @@ $(function() {
 			if(accion_mode == 'edit'){
 				
 				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getFactura.json';
-				$arreglo = {'id_factura':id_to_show,
-							'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
-							};
+				$arreglo = {'id_factura':id_to_show, 'iu':$('#lienzo_recalculable').find('input[name=iu]').val()};
                                 
 				var $total_tr = $('#forma-facdevoluciones-window').find('input[name=total_tr]');
 				var $id_factura = $('#forma-facdevoluciones-window').find('input[name=id_factura]');
+				var $serie_folio = $('#forma-facdevoluciones-window').find('input[name=serie_folio]');
+				var $fecha = $('#forma-facdevoluciones-window').find('input[name=fecha]');
 				var $folio_pedido = $('#forma-facdevoluciones-window').find('input[name=folio_pedido]');
-				var $busca_cliente = $('#forma-facdevoluciones-window').find('a[href*=busca_cliente]');
 				var $id_cliente = $('#forma-facdevoluciones-window').find('input[name=id_cliente]');
 				var $rfc_cliente = $('#forma-facdevoluciones-window').find('input[name=rfccliente]');
 				var $razon_cliente = $('#forma-facdevoluciones-window').find('input[name=razoncliente]');
 				var $id_df = $('#forma-facdevoluciones-window').find('input[name=id_df]');
 				var $dir_cliente = $('#forma-facdevoluciones-window').find('input[name=dircliente]');
 				
-				var $serie_folio = $('#forma-facdevoluciones-window').find('input[name=serie_folio]');
 				var $select_moneda = $('#forma-facdevoluciones-window').find('select[name=moneda]');
 				var $tipo_cambio = $('#forma-facdevoluciones-window').find('input[name=tipo_cambio]');
 				var $orden_compra = $('#forma-facdevoluciones-window').find('input[name=orden_compra]');
@@ -650,9 +648,10 @@ $(function() {
 				var $select_vendedor = $('#forma-facdevoluciones-window').find('select[name=vendedor]');
 				
 				var $select_metodo_pago = $('#forma-facdevoluciones-window').find('select[name=select_metodo_pago]');
-				var $etiqueta_digit = $('#forma-facdevoluciones-window').find('input[name=digit]');
-				var $no_cuenta = $('#forma-facdevoluciones-window').find('input[name=no_cuenta]');
+				//var $etiqueta_digit = $('#forma-facdevoluciones-window').find('input[name=digit]');
+				//var $no_cuenta = $('#forma-facdevoluciones-window').find('input[name=no_cuenta]');
 				var $tipo_cambio_nota = $('#forma-facdevoluciones-window').find('input[name=tipo_cambio_nota]');
+				
 				
 				//grid de productos
 				var $grid_productos = $('#forma-facdevoluciones-window').find('#grid_productos');
@@ -669,6 +668,9 @@ $(function() {
 				
 				var $concepto = $('#forma-facdevoluciones-window').find('textarea[name=concepto]');
 				var $nota_credito = $('#forma-facdevoluciones-window').find('input[name=nota_credito]');
+				var $fecha_nc = $('#forma-facdevoluciones-window').find('input[name=fecha_nc]');
+				var $select_tmov = $('#forma-facdevoluciones-window').find('select[name=select_tmov]');
+				var $registrar_devolucion = $('#forma-facdevoluciones-window').find('#registrar_devolucion');
 				
 				//variables para totales de la Nota de Credito
 				var $subtotal_nota = $('#forma-facdevoluciones-window').find('input[name=subtotal_nota]');
@@ -676,8 +678,6 @@ $(function() {
 				var $impuesto_nota = $('#forma-facdevoluciones-window').find('input[name=impuesto_nota]');
 				var $impuesto_retenido_nota = $('#forma-facdevoluciones-window').find('input[name=impuesto_retenido_nota]');
 				var $total_nota = $('#forma-facdevoluciones-window').find('input[name=total_nota]');
-				
-				var $registrar_devolucion = $('#forma-facdevoluciones-window').find('#registrar_devolucion');
 				
 				var $cerrar_plugin = $('#forma-facdevoluciones-window').find('#close');
 				var $cancelar_plugin = $('#forma-facdevoluciones-window').find('#boton_cancelar');
@@ -694,7 +694,7 @@ $(function() {
 						
 						jAlert(data['msj'], 'Atencion!');
 						
-						if ( data['valor'] == "true" ){
+						if(data['valor']=="true"){
 							var remove = function() {$(this).remove();};
 							$('#forma-facdevoluciones-overlay').fadeOut(remove);
 							$get_datos_grid();
@@ -722,19 +722,16 @@ $(function() {
 								.parent()
 								.css({'display':'block'})
 								.easyTooltip({tooltipId: "easyTooltip2",content: tmp.split(':')[1]});
-
+								
 								//alert(tmp.split(':')[0]);
-
 								if(parseInt($("tr", $grid_productos).size())>0){
 									for (var i=1;i<=parseInt($("tr", $grid_productos).size());i++){
-										
 										if(tmp.split(':')[0]=='cantidad_dev'+i){
 											$('#forma-facdevoluciones-window').find('.facdevoluciones_div_one').css({'height':'550px'});
 											$('#forma-facdevoluciones-window').find('#div_warning_grid').css({'display':'block'});
 											
 											if(tmp.split(':')[0].substring(0, 12) == 'cantidad_dev'){
 												$grid_productos.find('input[name=cantidad_dev]').eq(parseInt(i) - 1) .css({'background' : '#d41000'});
-												//alert();
 											}
 											
 											var tr_warning = '<tr>';
@@ -748,7 +745,6 @@ $(function() {
 											tr_warning += '</tr>';
 											$grid_warning.append(tr_warning);
 										}
-
 									}
 								}
 							}
@@ -759,19 +755,20 @@ $(function() {
 					}
 				}
 				
-				var options = {dataType :  'json', success : respuestaProcesada};
+				var options = {dataType :  'json', success:respuestaProcesada};
 				$forma_selected.ajaxForm(options);
 				
-				//aqui se cargan los campos al editar
+				//Aqui se cargan los campos al editar
 				$.post(input_json,$arreglo,function(entry){
 					$id_factura.val(entry['datosFactura'][0]['id']);
+					$serie_folio.val(entry['datosFactura'][0]['serie_folio']);
+					$fecha.val(entry['datosFactura'][0]['fecha']);
 					$folio_pedido.val(entry['datosFactura'][0]['folio_pedido']);
 					$id_cliente.val(entry['datosFactura'][0]['cliente_id']);
 					$rfc_cliente.val(entry['datosFactura'][0]['rfc']);
 					$razon_cliente.val(entry['datosFactura'][0]['razon_social']);
 					$id_df.val(entry['datosFactura'][0]['df_id']);
 					$dir_cliente.val(entry['datosFactura'][0]['direccion']);
-					$serie_folio.val(entry['datosFactura'][0]['serie_folio']);
                     $orden_compra.val(entry['datosFactura'][0]['orden_compra']);
 					$tasa_retencion.val(entry['datosFactura'][0]['tasa_ret_immex']);
 					
@@ -784,26 +781,9 @@ $(function() {
 					$impuesto_retenido.val( $(this).agregar_comas(entry['datosFactura'][0]['monto_retencion']));
 					$total.val($(this).agregar_comas( entry['datosFactura'][0]['total']));
 					$saldo_fac.val($(this).agregar_comas( entry['datosFactura'][0]['saldo_fac']));
-					$no_cuenta.val(entry['datosFactura'][0]['no_cuenta']);
 					$tipo_cambio.val( entry['datosFactura'][0]['tipo_cambio'] );
 					
-					
-                    //form pago 2=Tarjeta Credito, 3=Tarjeta Debito
-                    if(parseInt(entry['datosFactura'][0]['fac_metodos_pago_id'])==2 || parseInt(entry['datosFactura'][0]['fac_metodos_pago_id']==3)){
-						$etiqueta_digit.val('Ingrese los ultimos 4 Digitos de la Tarjeta');
-					}
-                    
-                    //form pago 4=Cheque Nominativo, 5=Transferencia Electronica de Fondos
-                    if(parseInt(entry['datosFactura'][0]['fac_metodos_pago_id'])==4 || parseInt(entry['datosFactura'][0]['fac_metodos_pago_id']==5)){
-						if(parseInt(entry['datosFactura'][0]['moneda_id'])==1){
-							$etiqueta_digit.val('Numero de Cuenta para pagos en Pesos');
-						}else{
-							$etiqueta_digit.val('Numero de Cuenta para pagos en Dolares');
-						}
-					}
-					
-					
-					//carga select denominacion con todas las monedas
+					//Carga select denominacion con todas las monedas
 					$select_moneda.children().remove();
 					//var moneda_hmtl = '<option value="0">[--   --]</option>';
 					var moneda_hmtl = '';
@@ -816,10 +796,9 @@ $(function() {
 					});
 					$select_moneda.append(moneda_hmtl);
 					
-					
 					//carga select de vendedores
 					$select_vendedor.children().remove();
-					var hmtl_vendedor;
+					var hmtl_vendedor="";
 					$.each(entry['Vendedores'],function(entryIndex,vendedor){
 						if(entry['datosFactura']['0']['cxc_agen_id'] == vendedor['id']){
 							hmtl_vendedor += '<option value="' + vendedor['id'] + '" selected="yes" >' + vendedor['nombre_vendedor'] + '</option>';
@@ -829,10 +808,9 @@ $(function() {
 					});
 					$select_vendedor.append(hmtl_vendedor);
 					
-					
 					//carga select de condiciones
 					$select_condiciones.children().remove();
-					var hmtl_condiciones;
+					var hmtl_condiciones="";
 					$.each(entry['Condiciones'],function(entryIndex,condicion){
 						if(entry['datosFactura']['0']['terminos_id'] == condicion['id']){
 							hmtl_condiciones += '<option value="' + condicion['id'] + '" selected="yes" >' + condicion['descripcion'] + '</option>';
@@ -845,7 +823,7 @@ $(function() {
 					
 					//carga select de metodos de pago
 					$select_metodo_pago.children().remove();
-					var hmtl_metodo;
+					var hmtl_metodo="";
 					$.each(entry['MetodosPago'],function(entryIndex,metodo){
 						if(entry['datosFactura']['0']['fac_metodos_pago_id'] == metodo['id']){
 							hmtl_metodo += '<option value="' + metodo['id'] + '"  selected="yes">' + metodo['titulo'] + '</option>';
@@ -855,8 +833,6 @@ $(function() {
 					});
 					$select_metodo_pago.append(hmtl_metodo);
 					
-					
-					$busca_cliente.hide();
 					
 					var desactivado="";
 					var check="";
@@ -879,7 +855,6 @@ $(function() {
 								check="";
 								desactivado="";
 							}
-							
 							
 							var trr = '';
 							trr = '<tr>';
@@ -909,7 +884,6 @@ $(function() {
 								trr += '<INPUT type="text" 	name="importe'+ tr +'" 	value="'+  $(this).agregar_comas( prod['importe'] )  +'" id="import" class="borde_oculto" readOnly="true" style="width:86px; text-align:right;">';
 								trr += '<input type="hidden" name="totimpuesto'+ tr +'" id="totimp" value="'+  parseFloat(prod['importe']) * parseFloat(prod['tasa_iva']) +'">';
 							trr += '</td>';
-
 							
 							var tasaIeps=" ";
 							var importeIeps="";
@@ -923,12 +897,10 @@ $(function() {
 								trr += '<input type="text" name="tasaIeps" value="'+ tasaIeps +'" class="borde_oculto" id="tasaIeps" style="width:46px; text-align:right;" readOnly="true">';
 							trr += '</td>';
 							
-							
 							trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
 								trr += '<input type="text" name="importeIeps" value="'+ importeIeps +'" class="borde_oculto" id="importeIeps" style="width:76px; text-align:right;" readOnly="true">';
 							trr += '</td>';
 							
-									
 							trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="105">';
 								trr += '<input type="text" 		name="cantidad_dev" value="'+prod['cant_dev']+'" readOnly="true" id="cantdev" style="width:99px; background:#dddddd">';
 								trr += '<input type="hidden" 	name="importe_dev" id="impdev" value="0">';
@@ -939,16 +911,37 @@ $(function() {
 							
 							trr += '</tr>';
 							$grid_productos.append(trr);
-                            
 						});
 					}
 					//$calcula_totales();//llamada a la funcion que calcula totales 
 					
+					var tmov_id=0;
+					if(parseInt(entry['NCred'].length)>0){
+						tmov_id = entry['NCred'][0]['tmov_id'];
+					}
+					
+					$select_tmov.children().remove();
+					var tmov_hmtl = '<option value="0">[--- ---]</option>';
+					if(entry['TMov']){
+						if(parseInt(tmov_id)>0){
+							tmov_hmtl='';
+						}
+						$.each(entry['TMov'],function(entryIndex,mov){
+							if(parseInt(mov['id'])==parseInt(tmov_id)){
+								tmov_hmtl += '<option value="'+ mov['id'] +'" selected="yes">'+ mov['titulo'] + '</option>';
+							}else{
+								if(!cancelado){
+									tmov_hmtl += '<option value="'+ mov['id'] +'">'+ mov['titulo'] + '</option>';
+								}
+							}
+						});
+					}
+					$select_tmov.append(tmov_hmtl);
 					
 					
-					
-					if (entry['NCred'].length > 0){
+					if(parseInt(entry['NCred'].length)>0){
 						$nota_credito.val( entry['NCred'][0]['folio_nota'] );
+						$fecha_nc.val( entry['NCred'][0]['fecha_nc'] );
 						$tipo_cambio_nota.val( entry['NCred'][0]['tc_nota'] );
 						$subtotal_nota.val( entry['NCred'][0]['subtotal_nota'] );
 						$ieps_nota.val( entry['NCred'][0]['monto_ieps_nota'] );
@@ -962,7 +955,7 @@ $(function() {
 						$tipo_cambio_nota.attr("readonly", true);
 						$registrar_devolucion.attr('disabled','-1'); //deshabilitar
 					}else{
-						//aqui se debe poner el tipo de cambio actual
+						//Aqui se debe poner el tipo de cambio actual
 						$tipo_cambio_nota.val( entry['Tc'][0]['tipo_cambio'] );
 						
 						$grid_productos.find('input[name=cantidad_dev]').css({'background' : '#dddddd'});
@@ -972,21 +965,14 @@ $(function() {
 						aplicar_eventos_a_campos_del_grid($grid_productos);
 					}
 					
-					
-					
-					
 					$tipo_cambio.attr("readonly", true);
 					$folio_pedido.attr("readonly", true);
 					$orden_compra.attr("readonly", true);
 					$grid_productos.find('#cant').attr("readonly", true);//establece solo lectura campos cantidad del grid
 					$grid_productos.find('#cost').attr("readonly", true);//establece solo lectura campos costo del grid					
 					
-					
-					
-					
-					
-					//si el estado del comprobante es 0, esta cancelado
-					if(entry['datosFactura']['0']['estado']=='CANCELADO'){
+					//Si el estado del comprobante es 0, esta cancelado
+					if(entry['datosFactura'][0]['estado']=='CANCELADO'){
 						$tipo_cambio.val(entry['datosFactura']['0']['tipo_cambio']);
 						$rfc_cliente.attr('disabled','-1'); //deshabilitar
 						$folio_pedido.attr('disabled','-1'); //deshabilitar
@@ -1000,13 +986,14 @@ $(function() {
 						$select_condiciones.attr('disabled','-1'); //deshabilitar
 						$orden_compra.attr('disabled','-1'); //deshabilitar
 						$select_metodo_pago.attr('disabled','-1'); //deshabilitar
-						$no_cuenta.attr('disabled','-1'); //deshabilitar
+						//$no_cuenta.attr('disabled','-1'); //deshabilitar
 						$grid_productos.find('#cant').attr('disabled','-1'); //deshabilitar
 						$grid_productos.find('#cost').attr('disabled','-1'); //deshabilitar
 						$grid_productos.find('#import').attr('disabled','-1'); //deshabilitar
 						$grid_productos.find('#cantdev').attr('disabled','-1'); //deshabilitar
 						$grid_productos.find('input[name=micheck]').hide();//ocultar
 						
+						$select_tmov.attr('disabled','-1'); //deshabilitar
 						$subtotal.attr('disabled','-1'); //deshabilitar
 						$impuesto.attr('disabled','-1'); //deshabilitar
 						$impuesto_retenido.attr('disabled','-1'); //deshabilitar
@@ -1024,9 +1011,8 @@ $(function() {
 						$impuesto_retenido_nota.attr('disabled','-1'); //deshabilitar
 						$total_nota.attr('disabled','-1'); //deshabilitar
 					}
-				});//termina llamada json
-                
-                
+				});
+				//Termina llamada json
                 
                 
 				$registrar_devolucion.click(function(event){
@@ -1038,9 +1024,7 @@ $(function() {
 							//aqui no hay nada
 						}
 					});
-					
 				});
-                
                 
                 
 				$submit_actualizar.bind('click',function(){

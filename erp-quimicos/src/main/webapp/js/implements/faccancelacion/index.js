@@ -523,6 +523,7 @@ $(function() {
 			});
 			$select_tipo_cancelacion.append(tipo_hmtl);
 			
+			
 			$select_tmov.children().remove();
 			var tmov_hmtl = '<option value="0">[--- ---]</option>';
 			if(entry['TMov']){
@@ -542,10 +543,11 @@ $(function() {
 			$select_tmov.append(tmov_hmtl);
 		});
 		
+		
 		$boton_cancelfact.click(function(event){
 			event.preventDefault();
 			
-			if(parseInt($select_tmov.val())>0){
+			//if(parseInt($select_tmov.val())>0){
 				if($motivo_cancelacion.val()!=null && $motivo_cancelacion.val()!=""){
 					var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/cancelar_factura.json';
 					var $arreglo = {'id_factura':$id_factura.val(),'tipo_cancelacion':$select_tipo_cancelacion.val(),'tmov':$select_tmov.val(),'motivo':$motivo_cancelacion.val(),'iu':iu };
@@ -571,11 +573,13 @@ $(function() {
 				}else{
 					jAlert("Es necesario ingresar el motivo de la cancelaci&oacute;n", 'Atencion!');
 				}
+			/*
 			}else{
 				jAlert('Es necesario seleccionar el Tipo de Movimiento.', 'Atencion!', function(r) { 
 					$select_tmov.focus();
 				});
 			}
+			*/
 		});
 		
 		$boton_salir_cancelacion.click(function(event){
