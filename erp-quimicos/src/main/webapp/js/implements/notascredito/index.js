@@ -1498,9 +1498,11 @@ $(function() {
 						if(parseInt(entry['Datos'][0]['tmov_id'])>0){
 							tmov_hmtl='';
 						}else{
+							/*
 							if(!entry['Datos'][0]['cancelado']){
 								tmov_hmtl='';
 							}
+							*/
 						}
 						$.each(entry['TMov'],function(entryIndex,mov){
 							if(parseInt(mov['id'])==parseInt(entry['Datos'][0]['tmov_id'])){
@@ -1573,7 +1575,7 @@ $(function() {
 					
 					//Esta variable es para decidir  si va a evaluar que el monto de la nota de credito no sea mayor que en Saldo de la factura
 					var evaluar="false";
-					if(entry['Datos'][0]['serie_folio'].trim() == '' && nota_nota_cancelada.trim() != 'true'){
+					if(entry['Datos'][0]['serie_folio'].trim()=='' && !nota_nota_cancelada){
 						evaluar="true";
 					}
 					
