@@ -550,7 +550,7 @@ $(function() {
 			//if(parseInt($select_tmov.val())>0){
 				if($motivo_cancelacion.val()!=null && $motivo_cancelacion.val()!=""){
 					var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/cancelar_factura.json';
-					var $arreglo = {'id_factura':$id_factura.val(),'tipo_cancelacion':$select_tipo_cancelacion.val(),'tmov':$select_tmov.val(),'motivo':$motivo_cancelacion.val(),'iu':iu };
+					var $arreglo = {'id_factura':id_to_show,'tipo_cancelacion':$select_tipo_cancelacion.val(),'tmov':$select_tmov.val(),'motivo':$motivo_cancelacion.val(),'iu':iu };
 					
 					$.post(input_json,$arreglo,function(entry){
 						var cad = entry['success'].split(":");

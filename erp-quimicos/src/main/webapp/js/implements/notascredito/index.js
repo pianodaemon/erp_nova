@@ -1197,9 +1197,11 @@ $(function() {
 				if(parseInt(tmov_id)>0){
 					tmov_hmtl='';
 				}else{
+					/*
 					if(!cancelado){
 						tmov_hmtl='';
 					}
+					*/
 				}
 				$.each(entry['TMov'],function(entryIndex,mov){
 					if(parseInt(mov['id'])==parseInt(tmov_id)){

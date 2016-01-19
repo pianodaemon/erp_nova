@@ -49,9 +49,9 @@
 							<td width="200" class="proveedor">Raz&oacute;n Social</td>
 							<td width="90" class="proveedor"></td>
 							<td width="20">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-							<td width="60"></td>
-							<td width="25"></td>
-							<td width="95"></td>
+							<td width="75"></td>
+							<td width="20"></td>
+							<td width="75"></td>
 						</tr>	
 						<tr>
 							<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
@@ -65,10 +65,10 @@
 							<INPUT TYPE="text" name="razon_proveedor" style="width:300px;">
 							</td>
 							<td width="90" class="proveedor"><a href="buscar_proveedor" style="font-size:13px;">(Buscar)</a></td>
-							<td width="20">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-							<td width="50"><INPUT TYPE="button" id="boton_busqueda" value="Buscar"></td>
-							<td width="25"></td>
-							<td width="50"><INPUT TYPE="button" id="boton_genera_pdf" value="Generar PDF"></td>
+							<td width="25">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+							<td width="75"><INPUT TYPE="button" id="boton_busqueda" value="Buscar" style="width:75px;"></td>
+							<td width="20"></td>
+							<td width="75"><INPUT TYPE="button" id="boton_genera_pdf" value="PDF" style="width:75px;"></td>
 						</tr>	
 					</table>
                 </td>

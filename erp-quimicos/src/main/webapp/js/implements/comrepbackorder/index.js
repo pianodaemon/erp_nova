@@ -278,15 +278,15 @@ $(function() {
 					
 					var html_reporte = '<table class="table_main" width="1430">';
 					html_reporte +='<thead><tr>';
-					html_reporte +='<td class="grid_head" width="90">Orde Compra</td>';
+					html_reporte +='<td class="grid_head" width="90">Orden&nbsp;Compra</td>';
 					html_reporte +='<td class="grid_head" width="90">Fecha</td>';
-					html_reporte +='<td class="grid_head" width="320">Proveedor</td>';
-					html_reporte +='<td class="grid_head" width="120">Codigo Producto</td>';
-					html_reporte +='<td class="grid_head" width="300">Descripcion</td>';
+					html_reporte +='<td class="grid_head" width="320">Nombre&nbsp;del&nbsp;Proveedor</td>';
+					html_reporte +='<td class="grid_head" width="120">C&oacute;digo&nbsp;Producto</td>';
+					html_reporte +='<td class="grid_head" width="300">Descripci&oacute;n&nbsp;del&nbsp;Producto</td>';
 					html_reporte +='<td class="grid_head" width="100">Unidad</td>';
-					html_reporte +='<td class="grid_head" width="100">Cant. Venta</td>';
-					html_reporte +='<td class="grid_head" width="100">Cant. Recibida</td>';
-					html_reporte +='<td class="grid_head" width="105">Cant. Pendiente</td>';
+					html_reporte +='<td class="grid_head" width="100">Cantidad</td>';
+					html_reporte +='<td class="grid_head" width="100">Cant.&nbsp;Recibida</td>';
+					html_reporte +='<td class="grid_head" width="105">Cant.&nbsp;Pendiente</td>';
 					html_reporte +='<td class="grid_head" width="105">Estado</td>';
 					html_reporte +='</tr></thead>';
 					html_reporte +='<tbody>';

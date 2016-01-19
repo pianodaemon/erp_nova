@@ -323,61 +323,6 @@ $(function() {
 
 
 
-/*
-	//calcula totales(subtotal, impuesto, total)
-	$calcula_totales = function(){
-		var $campo_subtotal = $('#forma-comcomprasautoriza-window').find('input[name=subtotal]');
-		var $campo_impuesto = $('#forma-comcomprasautoriza-window').find('input[name=impuesto]');
-		var $campo_impuesto_retenido = $('#forma-comcomprasautoriza-window').find('input[name=impuesto_retenido]');
-		var $campo_total = $('#forma-comcomprasautoriza-window').find('input[name=total]');
-		//var $campo_tc = $('#forma-comcomprasautoriza-window').find('input[name=tc]');
-		var $valor_impuesto = $('#forma-comcomprasautoriza-window').find('input[name=valorimpuesto]');
-		var $grid_productos = $('#forma-comcomprasautoriza-window').find('#grid_productos');
-		var $empresa_immex = $('#forma-comcomprasautoriza-window').find('input[name=empresa_immex]');
-		var $tasa_ret_immex = $('#forma-comcomprasautoriza-window').find('input[name=tasa_ret_immex]');
-
-		var sumaSubTotal = 0; //es la suma de todos los importes
-		var sumaImpuesto = 0; //valor del iva
-		var impuestoRetenido = 0; //monto del iva retenido de acuerdo a la tasa de retencion immex
-		var sumaTotal = 0; //suma del subtotal + totalImpuesto
-
-		//si valor del impuesto es null o vacio, se le asigna un 0
-		if( $valor_impuesto.val()== null || $valor_impuesto.val()== ''){
-			$valor_impuesto.val(0);
-		}
-
-		$grid_productos.find('tr').each(function (index){
-			if(( $(this).find('#cost').val() != ' ') && ( $(this).find('#cant').val() != ' ' )){
-				//alert($(this).find('#cost').val());
-				//acumula los importes en la variable subtotal
-				sumaSubTotal = parseFloat(sumaSubTotal) + parseFloat(quitar_comas($(this).find('#import').val()));
-				//alert($(this).find('#import').val());
-				if($(this).find('#totimp').val() != ''){
-					//alert($(this).find('#totimp').val());
-					sumaImpuesto =  parseFloat(sumaImpuesto) + parseFloat($(this).find('#totimp').val());
-				}
-			}
-		});
-
-		//calcular  la tasa de retencion IMMEX
-		impuestoRetenido = parseFloat(sumaSubTotal) * parseFloat(parseFloat($tasa_ret_immex.val()));
-
-		//calcula el total sumando el subtotal y el impuesto menos la retencion
-		sumaTotal = parseFloat(sumaSubTotal) + parseFloat(sumaImpuesto) - parseFloat(impuestoRetenido);
-
-		//redondea a dos digitos el  subtotal y lo asigna  al campo subtotal
-		$campo_subtotal.val($(this).agregar_comas(  parseFloat(sumaSubTotal).toFixed(2)  ));
-		//redondea a dos digitos el impuesto y lo asigna al campo impuesto
-		$campo_impuesto.val($(this).agregar_comas(  parseFloat(sumaImpuesto).toFixed(2)  ));
-		//redondea a dos digitos el impuesto y lo asigna al campo retencion
-		$campo_impuesto_retenido.val($(this).agregar_comas(  parseFloat(impuestoRetenido).toFixed(2)  ));
-		//redondea a dos digitos la suma  total y se asigna al campo total
-		$campo_total.val($(this).agregar_comas(  parseFloat(sumaTotal).toFixed(2)  ));
-
-	}//termina calcular totales
-
-
-*/
 
 	var carga_formacomcomprasautoriza00_for_datagrid00 = function(id_to_show, accion_mode){
 		//aqui entra para eliminar una prefactura
@@ -423,40 +368,27 @@ $(function() {
 			var $id_orden_compra = $('#forma-comcomprasautoriza-window').find('input[name=id_orden_compra]');
 			var $accion_proceso = $('#forma-comcomprasautoriza-window').find('input[name=accion_proceso]');
 			var $folio = $('#forma-comcomprasautoriza-window').find('input[name=folio]');
-
-			var $busca_proveedor = $('#forma-comcomprasautoriza-window').find('a[href*=busca_proveedor]');
+			var $fecha = $('#forma-comcomprasautoriza-window').find('input[name=fecha]');
+			
 			var $id_proveedor = $('#forma-comcomprasautoriza-window').find('input[name=id_proveedor]');
-			var $noproveedor = $('#forma-comcomprasautoriza-window').find('input[name=noproveedor]');
+			var $no_prov = $('#forma-comcomprasautoriza-window').find('input[name=no_prov]');
+			var $rfc_prov = $('#forma-comcomprasautoriza-window').find('input[name=rfc_prov]');
 			var $razon_proveedor = $('#forma-comcomprasautoriza-window').find('input[name=razonproveedor]');
 			var $empresa_immex = $('#forma-comcomprasautoriza-window').find('input[name=empresa_immex]');
 			var $tasa_ret_immex = $('#forma-comcomprasautoriza-window').find('input[name=tasa_ret_immex]');
-                        var $grupo = $('#forma-comcomprasautoriza-window').find('input[name=grupo]');
-                        var $select_via_embarque = $('#forma-comcomprasautoriza-window').find('select[name=via_envarque]');
-                        var consigandoA= $('#forma-comcomprasautoriza-window').find('input[name=consigandoA]');
+			var $grupo = $('#forma-comcomprasautoriza-window').find('input[name=grupo]');
+			var $select_via_embarque = $('#forma-comcomprasautoriza-window').find('select[name=via_envarque]');
+			var consigandoA= $('#forma-comcomprasautoriza-window').find('input[name=consigandoA]');
 			var $select_moneda = $('#forma-comcomprasautoriza-window').find('select[name=select_moneda]');
 			var $select_moneda_original = $('#forma-comcomprasautoriza-window').find('input[name=select_moneda_original]');
 			var $tipo_cambio = $('#forma-comcomprasautoriza-window').find('input[name=tipo_cambio]');
-			var $tipo_cambio_original = $('#forma-comcomprasautoriza-window').find('input[name=tipo_cambio_original]');
 			var $orden_compra = $('#forma-comcomprasautoriza-window').find('input[name=orden_compra]');
-
 			var $id_impuesto = $('#forma-comcomprasautoriza-window').find('input[name=id_impuesto]');
 			var $valor_impuesto = $('#forma-comcomprasautoriza-window').find('input[name=valorimpuesto]');
-
 			var $observaciones = $('#forma-comcomprasautoriza-window').find('textarea[name=observaciones]');
 			var $select_condiciones = $('#forma-comcomprasautoriza-window').find('select[name=select_condiciones]');
-
 			var $transporte = $('#forma-comcomprasautoriza-window').find('input[name=transporte]');
-
-
-			//var $select_almacen = $('#forma-comcomprasautoriza-window').find('select[name=almacen]');
-			var $sku_producto = $('#forma-comcomprasautoriza-window').find('input[name=sku_producto]');
-			var $nombre_producto = $('#forma-comcomprasautoriza-window').find('input[name=nombre_producto]');
-
-			//buscar producto
-			var $busca_sku = $('#forma-comcomprasautoriza-window').find('a[href*=busca_sku]');
-			//href para agregar producto al grid
-			var $agregar_producto = $('#forma-comcomprasautoriza-window').find('a[href*=agregar_producto]');
-
+			
 			var $autorizar = $('#forma-comcomprasautoriza-window').find('#autorizar');
 			var $descargarpdf = $('#forma-comcomprasautoriza-window').find('#descargarpdf');
 			var $cancelar_orden_compra = $('#forma-comcomprasautoriza-window').find('#cancelar_ordencompra');
@@ -478,13 +410,9 @@ $(function() {
 			var $cancelar_plugin = $('#forma-comcomprasautoriza-window').find('#boton_cancelar');
 			var $submit_actualizar = $('#forma-comcomprasautoriza-window').find('#submit');
 
-			//ocultar boton descargar y facturar. Despues de facturar debe mostrarse
-			//$boton_descargarpdf.hide();
-			//$boton_cancelarfactura.hide();
-			$busca_proveedor.hide();
+			
 			$empresa_immex.val('false');
-			$tasa_ret_immex.val('0');
-			$busca_proveedor.hide();
+			$tasa_ret_immex.val(0);
 			$cancelado.hide();
 			$autorizar.hide();
 			$cancelar_orden_compra.hide();
@@ -492,9 +420,7 @@ $(function() {
 			if(accion_mode == 'edit'){
 				$accion_proceso.attr({'value' : "autorizar"});
 				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getOrden_Compra.json';
-				$arreglo = {'id_orden_compra':id_to_show,
-                                            'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
-                                            };
+				var $arreglo = {'id_orden_compra':id_to_show,'iu':$('#lienzo_recalculable').find('input[name=iu]').val()};
 
 				var respuestaProcesada = function(data){
 					if ( data['success'] == "true" ){
@@ -507,8 +433,8 @@ $(function() {
 							//	jAlert(data['actualizo'], 'Atencion!');
 							//}
 						}
-                                                if($accion_proceso.val() == 'autorizar'){
-                                            		//if ( data['actualizo'] == "1" ){
+						if($accion_proceso.val() == 'autorizar'){
+							//if ( data['actualizo'] == "1" ){
 								jAlert("La Orden Compra fue Autorizada con &eacute;xito", 'Atencion!');
 							//}else{
 							//	jAlert(data['actualizo'], 'Atencion!');
@@ -591,31 +517,32 @@ $(function() {
 
 				//aqui se cargan los campos al editar
 				$.post(input_json,$arreglo,function(entry){
-					//$tasa_ret_immex.val(entry['datosCompra']['0']['tasa_retencion_immex']);
-					$id_orden_compra.val(entry['datosOrdenCompra']['0']['id']);
-					$folio.val(entry['datosOrdenCompra']['0']['folio']);
-					$id_proveedor.val(entry['datosOrdenCompra']['0']['proveedor_id']);
-					$noproveedor.val(entry['datosOrdenCompra']['0']['rfc']);
-					$razon_proveedor.val(entry['datosOrdenCompra']['0']['razon_social']);
-					$grupo.val(entry['datosOrdenCompra']['0']['grupo']);
-					consigandoA.val(entry['datosOrdenCompra']['0']['consignado_a']);
-					$observaciones.text(entry['datosOrdenCompra']['0']['observaciones']);
-					$orden_compra.val(entry['datosOrdenCompra']['0']['orden_compra']);
-					$transporte.val(entry['datosOrdenCompra']['0']['transporte']);
-					$tipo_cambio.val(entry['datosOrdenCompra']['0']['tipo_cambio']);
+					$id_orden_compra.val(entry['Datos'][0]['id']);
+					$folio.val(entry['Datos'][0]['folio']);
+					$fecha.val(entry['Datos'][0]['fecha']);
+					$id_proveedor.val(entry['Datos'][0]['proveedor_id']);
+					$no_prov.val(entry['Datos'][0]['no_proveedor']);
+					$rfc_prov.val(entry['Datos'][0]['rfc']);
+					$razon_proveedor.val(entry['Datos'][0]['razon_social']);
+					$grupo.val(entry['Datos'][0]['grupo']);
+					consigandoA.val(entry['Datos'][0]['consignado_a']);
+					$observaciones.text(entry['Datos'][0]['observaciones']);
+					$orden_compra.val(entry['Datos'][0]['orden_compra']);
+					$transporte.val(entry['Datos'][0]['transporte']);
+					$tipo_cambio.val(entry['Datos'][0]['tipo_cambio']);
 					
-					$subtotal.val(entry['datosOrdenCompra'][0]['subtotal']);
-					$impuesto.val(entry['datosOrdenCompra'][0]['impuesto']);
-					$total.val(entry['datosOrdenCompra'][0]['total']);
+					$subtotal.val(entry['Datos'][0]['subtotal']);
+					$impuesto.val(entry['Datos'][0]['impuesto']);
+					$total.val(entry['Datos'][0]['total']);
 
 					//carga select denominacion con todas las monedas
 					$select_moneda.children().remove();
 					var moneda_hmtl = '';
 					$.each(entry['Monedas'],function(entryIndex,moneda){
-						if(moneda['id'] == entry['datosOrdenCompra']['0']['moneda_id']){
+						if(moneda['id'] == entry['Datos'][0]['moneda_id']){
 							moneda_hmtl += '<option value="' + moneda['id'] + '"  selected="yes">' + moneda['descripcion'] + '</option>';
 						}/*else{
-							//if(parseInt(entry['datosCompra']['0']['proceso_flujo_id'])==4){
+							//if(parseInt(entry['datosCompra'][0]['proceso_flujo_id'])==4){
 							//	moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
 							//}
 						}*/
@@ -623,18 +550,18 @@ $(function() {
 					$select_moneda.append(moneda_hmtl);
 
 
-					$id_impuesto.val(entry['iva']['0']['id_impuesto']);
-					$valor_impuesto.val(entry['iva']['0']['valor_impuesto']);
+					$id_impuesto.val(entry['iva'][0]['id_impuesto']);
+					$valor_impuesto.val(entry['iva'][0]['valor_impuesto']);
 
 					$select_condiciones.children().remove();
 					var terminos_html = '';
 					$.each(entry['Condiciones'],function(entryIndex,Condiciones){
-						if(Condiciones['id'] == entry['datosOrdenCompra']['0']['cxp_prov_credias_id']){
+						if(Condiciones['id'] == entry['Datos'][0]['cxp_prov_credias_id']){
 							terminos_html += '<option value="' + Condiciones['id'] + '"  selected="yes">' + Condiciones['descripcion'] + '</option>';
 							//$select_moneda_original.val(moneda['id']);
 						}
                                                 //else{
-						//	if(parseInt(entry['datosOrdenCompra']['0']['status'])==0){
+						//	if(parseInt(entry['Datos'][0]['status'])==0){
 						//		terminos_html += '<option value="' + Condiciones['id'] + '"  >' + Condiciones['descripcion'] + '</option>';
 						//	}
 						//}
@@ -649,11 +576,11 @@ $(function() {
 					$select_via_embarque.children().remove();
 					var via_embarque_html = '';
 					$.each(entry['via_embarque'],function(entryIndex,via_embarque){
-						if(via_embarque['id'] == entry['datosOrdenCompra']['0']['tipo_embarque_id']){
+						if(via_embarque['id'] == entry['Datos'][0]['tipo_embarque_id']){
 							via_embarque_html += '<option value="' + via_embarque['id'] + '"  selected="yes">' + via_embarque['tipo_embarque'] + '</option>';
 							//$select_moneda_original.val(moneda['id']);
 						}/*else{
-							if(parseInt(entry['datosOrdenCompra']['0']['status'])==0){
+							if(parseInt(entry['Datos'][0]['status'])==0){
 								via_embarque_html += '<option value="' + via_embarque['id'] + '"  >' + via_embarque['tipo_embarque'] + '</option>';
 							}
 						}*/
@@ -792,22 +719,20 @@ $(function() {
 					//oculta los estatus de compra antes de que se verifique su estado
 					//$cancelar_pedido.hide();
 					$submit_actualizar.hide();
-					$busca_sku.hide();
-					$agregar_producto.hide();
 					$cancelado.hide();
 					$autorizar.hide();
 
-					var proceso_flujo = entry['datosOrdenCompra']['0']['status'];
+					var proceso_flujo = entry['Datos'][0]['status'];
 
 					//proceso_flujo_id=0 :Orden Generada
-					if(entry['datosOrdenCompra']['0']['status']==0){
+					if(entry['Datos'][0]['status']==0){
 						$autorizar.show();
 						$cancelar_orden_compra.show();
 						$autorizado.hide();
 					}
 
 					//proceso_flujo_id=1 :Autorizado
-					if(entry['datosOrdenCompra']['0']['status']==1){
+					if(entry['Datos'][0]['status']==1){
 						$autorizado.show();
 						//$cancelar_pedido.hide();
 						$submit_actualizar.hide();
@@ -816,7 +741,7 @@ $(function() {
 					}
 
 					//si es refacturacion, no se puede cambiar los datos del grid, solo el header de la factura
-					if(entry['datosOrdenCompra']['0']['status']==2){
+					if(entry['Datos'][0]['status']==2){
 
 						$submit_actualizar.hide();
 						$autorizado.hide();
@@ -826,8 +751,8 @@ $(function() {
 
 						$folio.attr('disabled','-1'); //deshabilitar
 						$grupo.attr('disabled','-1'); //deshabilitar
-						$nombre_producto.attr('disabled','-1'); //deshabilitar
-						$noproveedor.attr('disabled','-1'); //deshabilitar
+						
+						$no_prov.attr('disabled','-1'); //deshabilitar
 						$razon_proveedor.attr('disabled','-1'); //deshabilitar
 						$observaciones.attr('disabled','-1'); //deshabilitar
 						$tipo_cambio.attr('disabled','-1'); //deshabilitar
@@ -852,10 +777,7 @@ $(function() {
 
 
 					$submit_actualizar.hide();
-					$busca_sku.hide();
-					$agregar_producto.hide();
-					$sku_producto.hide();
-					$nombre_producto.hide();
+					
 					$observaciones.attr("readonly", true);
 					$tipo_cambio.attr("readonly", true);
 					$orden_compra.attr("readonly", true);
@@ -876,39 +798,8 @@ $(function() {
 						return false;
 					}
 				});
-
-
-				//buscador de clientes
-				$busca_proveedor.click(function(event){
-					event.preventDefault();
-					$busca_proveedor();
-				});
-
-
-				//buscador de productos
-				$busca_sku.click(function(event){
-					event.preventDefault();
-					$busca_productos($sku_producto.val());
-				});
-
-				//agregar producto al grid
-				$agregar_producto.click(function(event){
-					event.preventDefault();
-					$buscador_presentaciones_producto($id_proveedor, $noproveedor.val(), $sku_producto.val(),$nombre_producto,$grid_productos,$select_moneda,$tipo_cambio);
-				});
-
-
-				//ejecutar clic del href Agregar producto al pulsar enter en el campo sku del producto
-				$sku_producto.keypress(function(e){
-					if(e.which == 13){
-						$agregar_producto.trigger('click');
-						return false;
-					}
-				});
-
-
-
-
+				
+				
 				$autorizar.click(function(e){
 					$accion_proceso.attr({'value' : "autorizar"});
 					jConfirm('Confirmar Autorizacion de la  Orden de Compra?', 'Dialogo de Confirmacion', function(r) {
@@ -931,7 +822,7 @@ $(function() {
 					jConfirm('Desea Cancelar la Orden de Compra?', 'Dialogo de Confirmacion', function(r) {
 						// If they confirmed, manually trigger a form submission
 						if (r) {
-                                                       $submit_actualizar.parents("FORM").submit();
+						   $submit_actualizar.parents("FORM").submit();
 						}else{
 							$accion_proceso.attr({'value' : "edit"});
 						}
@@ -943,10 +834,8 @@ $(function() {
 
 				$descargarpdf.click(function(event){
 					event.preventDefault();
-					var id_orden_compra = $id_orden_compra.val();
-					if($id_orden_compra.val() != 0 ){
-						var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
-						var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/get_genera_pdf_orden_compra/'+id_orden_compra+'/'+iu+'/out.json';
+					if(parseInt($id_orden_compra.val())>0 ){
+						var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/getPdf/'+$id_orden_compra.val() +'/'+ $('#forma-comcomprasautoriza-window').find('select[name=select_export]').val() +'/'+ $('#lienzo_recalculable').find('input[name=iu]').val() +'/out.json';
 						window.location.href=input_json;
 					}else{
 						jAlert("Nose esta enviando el identificador  de la Orden de Compra","Atencion!!!")
