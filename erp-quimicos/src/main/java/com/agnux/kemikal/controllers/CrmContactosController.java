@@ -233,7 +233,6 @@ public class CrmContactosController {
         
         Razon_Social = "%"+StringHelper.isNullString(String.valueOf(Razon_Social))+"%";
         Rfc = "%"+StringHelper.isNullString(String.valueOf(Rfc))+"%";
-        Identificador_Cliente_Prospecto = Identificador_Cliente_Prospecto;
         
         cliente_Prospecto = this.getCrmDao().getBuscadorCliente_Prospecto(Razon_Social, Rfc,Identificador_Cliente_Prospecto, id_empresa);
         
@@ -261,10 +260,13 @@ public class CrmContactosController {
             @RequestParam(value="correo_2", required=true) String correo_2,
             @RequestParam(value="observaciones", required=true) String observaciones,
             @RequestParam(value="select_agente", required=true) String agente,
+            @RequestParam(value="check_decisor", required=false) String check_decisor,
+            @RequestParam(value="departamento", required=true) String departamento,
+            @RequestParam(value="puesto", required=true) String puesto,
             @ModelAttribute("user") UserSessionData user,
             Model model
-            ) {
-        
+        ) {	
+
         HashMap<String, String> jsonretorno = new HashMap<String, String>();
         HashMap<String, String> succes = new HashMap<String, String>();
         Integer app_selected = 127;//catalogo de contactos
@@ -275,18 +277,24 @@ public class CrmContactosController {
         String extra_data_array = "'sin datos'";
         String actualizo = "0";
         
-        System.out.println("Me imprime esto ----->"+id);
         if(id==0){
             command_selected="new";
         }else{
            command_selected = "edit"; 
         }
         
-        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id+"___"+tipo_contacto+"___"+folio
-                +"___"+id_cliente+"___"+nombre+"___"+apellido_paterno+"___"+apellido_materno+"___"+telefono_1
-                +"___"+telefono_2+"___"+fax+"___"+telefono_directo+"___"+correo_1+"___"+correo_2+"___"+observaciones+"___"+agente;//6
+        check_decisor = StringHelper.verificarCheckBox(check_decisor);
         
-        System.out.println("La cadena que se envia:"+"___"+data_string);
+        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id+"___"+tipo_contacto+"___"+folio
+                +"___"+id_cliente+"___"+nombre.trim().toUpperCase()+"___"+apellido_paterno.trim().toUpperCase()+"___"+apellido_materno.trim().toUpperCase()+"___"+telefono_1.trim()
+                +"___"+telefono_2.trim()+"___"+fax.trim()+"___"+telefono_directo.trim()+"___"+correo_1.trim()+"___"+correo_2.trim()+"___"+
+                observaciones.trim().toUpperCase()+"___"+
+                agente+"___"+
+                departamento.trim().toUpperCase()+"___"+
+                puesto.trim().toUpperCase()+"___"+
+                check_decisor;
+        
+        //System.out.println("La cadena que se envia:"+"___"+data_string);
         
         succes = this.getCrmDao().selectFunctionValidateAaplicativo(data_string, app_selected, extra_data_array);
         log.log(Level.INFO, "despues de validacion {0}", String.valueOf(succes.get("success")));

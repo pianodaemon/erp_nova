@@ -10,7 +10,6 @@ import com.agnux.common.obj.DataPost;
 import com.agnux.common.obj.ResourceProject;
 import com.agnux.common.obj.UserSessionData;
 import com.agnux.kemikal.interfacedaos.CrmInterfaceDao;
-import com.agnux.kemikal.interfacedaos.CxcInterfaceDao;
 import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -73,10 +72,8 @@ public class CrmRegistroLlamadasController {
         infoConstruccionTabla.put("fecha", "Fecha:100");
         infoConstruccionTabla.put("hora", "Hora:100");
         
-        
-        
-        
         ModelAndView x = new ModelAndView("crmregistrollamadas/startup", "title", "Registro de  Llamadas");
+        
         x = x.addObject("layoutheader", resource.getLayoutheader());
         x = x.addObject("layoutmenu", resource.getLayoutmenu());
         x = x.addObject("layoutfooter", resource.getLayoutfooter());
@@ -127,8 +124,6 @@ public class CrmRegistroLlamadasController {
         
         String data_string = app_selected+"___"+id_usuario+"___"+folio+"___"+tipo_visita+"___"+contacto+"___"+agente+"___"+fecha_inicial+"___"+fecha_final;
         
-        
-        System.out.println("Cadena del Buscador__"+data_string);
         //obtiene total de registros en base de datos, con los parametros de busqueda
         int total_items = this.getCrmDao().countAll(data_string);
         
@@ -142,6 +137,7 @@ public class CrmRegistroLlamadasController {
         
         //obtiene los registros para el grid, de acuerdo a los parametros de busqueda
         jsonretorno.put("Data", this.getCrmDao().getRegistroLlamadas_PaginaGrid(data_string, offset, items_por_pag, orderby, desc));
+        
         //obtiene el hash para los datos que necesita el datagrid
         jsonretorno.put("DataForGrid", dataforpos.formaHashForPos(dataforpos));
         
@@ -304,7 +300,6 @@ public class CrmRegistroLlamadasController {
             command_selected = "edit";
         }
         
-        
         String data_string = 
         app_selected//1
         +"___"+command_selected//2
@@ -327,9 +322,6 @@ public class CrmRegistroLlamadasController {
         +"___"+observaciones//19
         +"___"+fecha_cita_proxima//20
         +"___"+hora_prox_cita;//21
-        
-        
-        System.out.println("data_string: "+data_string);
         
         succes = this.getCrmDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
         

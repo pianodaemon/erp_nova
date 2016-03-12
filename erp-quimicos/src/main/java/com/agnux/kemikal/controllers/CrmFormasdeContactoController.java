@@ -105,11 +105,8 @@ public class CrmFormasdeContactoController {
         
        // Integer id = Integer.parseInt(userDat.get("id"));
        
-        System.out.println("Esto es trae la ID ----->"+id);
         if( id != 0 ){
             datosForma = this.getCrmDao().getFormasContacto_Datos(id);
-            
-            System.out.println("Esto es lo que estoy mostrando:"+"___"+datosForma);
         }
         
        //datos formas de contacto es lo que me trajo de la consulta y los pone en el json
@@ -145,8 +142,6 @@ public class CrmFormasdeContactoController {
         
         String data_string = app_selected+"___"+id_usuario+"___"+descripcion;
         
-        System.out.println("Esto es lo que busca "+"---->"+data_string);
-        
         //obtiene total de registros en base de datos, con los parametros de busqueda
         int total_items = this.getCrmDao().countAll(data_string);              
                 
@@ -161,7 +156,7 @@ public class CrmFormasdeContactoController {
         
         //obtiene los registros para el grid, de acuerdo a los parametros de busqueda
         jsonretorno.put("Data", this.getCrmDao().getFormasContacto_PaginaGrid(data_string, offset, items_por_pag, orderby, desc,id_empresa));
-        System.out.println("Me imprime ---->"+jsonretorno);   
+        
         //obtiene el hash para los datos que necesita el datagrid
         jsonretorno.put("DataForGrid", dataforpos.formaHashForPos(dataforpos));
         
@@ -186,17 +181,13 @@ public class CrmFormasdeContactoController {
         String extra_data_array = "'sin datos'";
         String actualizo = "0";
         
-        System.out.println("Me imprime esto ----->"+id);
         if(id==0){
             command_selected="new";
         }else{
            command_selected = "edit"; 
         }
-        
        
         String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id+"___"+descripcion.toUpperCase();//6
-        
-        System.out.println("La cadena que se envia:"+"___"+data_string);
         
         succes = this.getCrmDao().selectFunctionValidateAaplicativo(data_string, app_selected, extra_data_array);
         log.log(Level.INFO, "despues de validacion {0}", String.valueOf(succes.get("success")));

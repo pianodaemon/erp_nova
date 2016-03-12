@@ -291,6 +291,7 @@ public class CrmRegistroVisitasController {
         @RequestParam(value="fecha_proxima_visita", required=true) String fecha_proxima_visita,
         @RequestParam(value="hora_proxima_visita", required=true) String hora_proxima_visita,
         @RequestParam(value="comentarios_proxima_visita", required=true) String comentarios_proxima_visita,
+        @RequestParam(value="productos", required=true) String productos,
         Model model,@ModelAttribute("user") UserSessionData user
         ) {
         Integer app_selected = 115;//Aplicativo de Registro de Visitas
@@ -329,9 +330,10 @@ public class CrmRegistroVisitasController {
         +"___"+observaciones_visita.toUpperCase()
         +"___"+fecha_proxima_visita
         +"___"+hora_proxima_visita
-        +"___"+comentarios_proxima_visita.toUpperCase();
+        +"___"+comentarios_proxima_visita.toUpperCase()
+        +"___"+productos.toUpperCase();
         
-        System.out.println("data_string: "+data_string);
+        //System.out.println("data_string: "+data_string);
         
         succes = this.getCrmDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
         

@@ -7,6 +7,11 @@ $(function() {
 		return work.join(',');
 	};
 	
+    //Arreglo para select  de Forma de calculo
+    var arrayPrioridad = {1:"Baja", 2:"Media", 3:"Alta"};
+    var arrayMuestra = {1:"N/A", 2:"Pendiente", 3:"OK"};
+			
+		
 	$('#header').find('#header1').find('span.emp').text($('#lienzo_recalculable').find('input[name=emp]').val());
 	$('#header').find('#header1').find('span.suc').text($('#lienzo_recalculable').find('input[name=suc]').val());
         
@@ -14,12 +19,12 @@ $(function() {
 	$username.text($('#lienzo_recalculable').find('input[name=user]').val());
 	
 	var $contextpath = $('#lienzo_recalculable').find('input[name=contextpath]');
-	var controller = $contextpath.val()+"/controllers/crmregistrovisitas";
+	var controller = $contextpath.val()+"/controllers/crmregistroproyectos";
     
 	//Barra para las acciones
 	$('#barra_acciones').append($('#lienzo_recalculable').find('.table_acciones'));
 	$('#barra_acciones').find('.table_acciones').css({'display':'block'});
-	var $new_crmregistrovisitas = $('#barra_acciones').find('.table_acciones').find('a[href*=new_item]');
+	var $new_crmregistroproyectos = $('#barra_acciones').find('.table_acciones').find('a[href*=new_item]');
 	var $visualiza_buscador = $('#barra_acciones').find('.table_acciones').find('a[href*=visualiza_buscador]');
 	
 	$('#barra_acciones').find('.table_acciones').find('#nItem').mouseover(function(){
@@ -37,7 +42,7 @@ $(function() {
 	});
 	
 	//aqui va el titulo del catalogo
-	$('#barra_titulo').find('#td_titulo').append('Registro de Visitas');
+	$('#barra_titulo').find('#td_titulo').append(document.title);
 	
 	//barra para el buscador 
 	$('#barra_buscador').append($('#lienzo_recalculable').find('.tabla_buscador'));
@@ -45,8 +50,7 @@ $(function() {
 	
 	var $cadena_busqueda = "";
 	var $busqueda_folio = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_folio]');
-	var $busqueda_tipo_visita = $('#barra_buscador').find('.tabla_buscador').find('select[name=busqueda_tipo_visita]');
-	var $busqueda_contacto = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_contacto]');
+	var $busqueda_proyecto = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_proyecto]');
 	var $busqueda_agente = $('#barra_buscador').find('.tabla_buscador').find('select[name=busqueda_agente]');
 	var $busqueda_fecha_inicial = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_fecha_inicial]');
 	var $busqueda_fecha_final = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_fecha_final]');
@@ -54,19 +58,11 @@ $(function() {
 	var $buscar = $('#barra_buscador').find('.tabla_buscador').find('#boton_buscador');
 	var $limpiar = $('#barra_buscador').find('.tabla_buscador').find('#boton_limpiar');
 	
-	var html = '';
-	$busqueda_tipo_visita.children().remove();
-	html='<option value="0">[-- Todos --]</option>';
-	html+='<option value="1">Cliente</option>';
-	html+='<option value="2">Prospecto</option>';
-	$busqueda_tipo_visita.append(html);
-	
 	var to_make_one_search_string = function(){
 		var valor_retorno = "";
 		var signo_separador = "=";
 		valor_retorno += "folio" + signo_separador + $busqueda_folio.val() + "|";
-		valor_retorno += "tipo_visita" + signo_separador + $busqueda_tipo_visita.val() + "|";
-		valor_retorno += "contacto" + signo_separador + $busqueda_contacto.val() + "|";
+		valor_retorno += "proyecto" + signo_separador + $busqueda_proyecto.val() + "|";
 		valor_retorno += "agente" + signo_separador + $busqueda_agente.val() + "|";
 		valor_retorno += "fecha_inicial" + signo_separador + $busqueda_fecha_inicial.val() + "|";
 		valor_retorno += "fecha_final" + signo_separador + $busqueda_fecha_final.val() + "|"
@@ -90,16 +86,10 @@ $(function() {
 	$limpiar.click(function(event){
 		event.preventDefault();
 		$busqueda_folio.val('');
-		$busqueda_contacto.val('');
+		$busqueda_proyecto.val('');
 		$busqueda_fecha_inicial.val('');
 		$busqueda_fecha_final.val('');
 		$busqueda_agente.find('option[index=0]').attr('selected','selected');
-		
-		$busqueda_tipo_visita.children().remove();
-		var tipos_hmtl = '<option value="0" selected="yes">[-- Todos --]</option>';
-		tipos_hmtl += '<option value="1">Cliente</option>';
-		tipos_hmtl += '<option value="2">Prospecto</option>';
-		$busqueda_tipo_visita.append(tipos_hmtl);
 		
 		//esto se hace para reinicar los valores del select de agentes
 		var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAgentesParaBuscador.json';
@@ -143,6 +133,7 @@ $(function() {
 			 $('#barra_buscador').find('.tabla_buscador').css({'display':'block'});
 			 $('#barra_buscador').animate({height: '60px'}, 500);
 			 $('#cuerpo').css({'height': pix_alto});
+			 $busqueda_folio.focus();
 		}else{
 			 TriggerClickVisializaBuscador=0;
 			 var height2 = $('#cuerpo').css('height');
@@ -151,9 +142,17 @@ $(function() {
 			 
 			 $('#barra_buscador').animate({height:'0px'}, 500);
 			 $('#cuerpo').css({'height': pix_alto});
+			 
+			 $visualiza_buscador.focus();
 		};
+		
 	});
 	
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_folio, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_proyecto, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_agente, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_fecha_inicial, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_fecha_final, $buscar);
 	
 	
 	var input_json_agente = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAgentesParaBuscador.json';
@@ -180,7 +179,7 @@ $(function() {
 	});
 	
 	
-
+	
 	//----------------------------------------------------------------
 	//valida la fecha seleccionada
 	function mayor(fecha, fecha2){
@@ -302,39 +301,58 @@ $(function() {
 	
 	
 	
+	//Carga los campos select con los datos que recibe como parametro
+	$carga_campos_select = function($campo_select, arreglo_elementos, elemento_seleccionado, texto_elemento_cero){
+		$campo_select.children().remove();
+		var select_html = '';
+		if(texto_elemento_cero.trim()!=''){
+			select_html = '<option value="0">'+texto_elemento_cero+'</option>';
+		}
+		
+		for(var i in arreglo_elementos){
+			if( parseInt(i) == parseInt(elemento_seleccionado) ){
+				select_html += '<option value="' + i + '" selected="yes">' + arreglo_elementos[i] + '</option>';
+			}else{
+				select_html += '<option value="' + i + '"  >' + arreglo_elementos[i] + '</option>';
+			}
+		}
+		$campo_select.append(select_html);
+	}
+	
+	
 	$tabs_li_funxionalidad = function(){
-		$('#forma-crmregistrovisitas-window').find('#submit').mouseover(function(){
-			$('#forma-crmregistrovisitas-window').find('#submit').removeAttr("src").attr("src","../../img/modalbox/bt1.png");
+		$('#forma-crmregistroproyectos-window').find('#submit').mouseover(function(){
+			$('#forma-crmregistroproyectos-window').find('#submit').removeAttr("src").attr("src","../../img/modalbox/bt1.png");
 			//$('#forma-centrocostos-window').find('#submit').css({backgroundImage:"url(../../img/modalbox/bt1.png)"});
 		});
-		$('#forma-crmregistrovisitas-window').find('#submit').mouseout(function(){
-			$('#forma-crmregistrovisitas-window').find('#submit').removeAttr("src").attr("src","../../img/modalbox/btn1.png");
+		$('#forma-crmregistroproyectos-window').find('#submit').mouseout(function(){
+			$('#forma-crmregistroproyectos-window').find('#submit').removeAttr("src").attr("src","../../img/modalbox/btn1.png");
 			//$('#forma-centrocostos-window').find('#submit').css({backgroundImage:"url(../../img/modalbox/btn1.png)"});
 		});
-		$('#forma-crmregistrovisitas-window').find('#boton_cancelar').mouseover(function(){
-			$('#forma-crmregistrovisitas-window').find('#boton_cancelar').css({backgroundImage:"url(../../img/modalbox/bt2.png)"});
+		$('#forma-crmregistroproyectos-window').find('#boton_cancelar').mouseover(function(){
+			$('#forma-crmregistroproyectos-window').find('#boton_cancelar').css({backgroundImage:"url(../../img/modalbox/bt2.png)"});
 		})
-		$('#forma-crmregistrovisitas-window').find('#boton_cancelar').mouseout(function(){
-			$('#forma-crmregistrovisitas-window').find('#boton_cancelar').css({backgroundImage:"url(../../img/modalbox/btn2.png)"});
+		$('#forma-crmregistroproyectos-window').find('#boton_cancelar').mouseout(function(){
+			$('#forma-crmregistroproyectos-window').find('#boton_cancelar').css({backgroundImage:"url(../../img/modalbox/btn2.png)"});
 		});
 		
-		$('#forma-crmregistrovisitas-window').find('#close').mouseover(function(){
-			$('#forma-crmregistrovisitas-window').find('#close').css({backgroundImage:"url(../../img/modalbox/close_over.png)"});
+		$('#forma-crmregistroproyectos-window').find('#close').mouseover(function(){
+			$('#forma-crmregistroproyectos-window').find('#close').css({backgroundImage:"url(../../img/modalbox/close_over.png)"});
 		});
-		$('#forma-crmregistrovisitas-window').find('#close').mouseout(function(){
-			$('#forma-crmregistrovisitas-window').find('#close').css({backgroundImage:"url(../../img/modalbox/close.png)"});
+		$('#forma-crmregistroproyectos-window').find('#close').mouseout(function(){
+			$('#forma-crmregistroproyectos-window').find('#close').css({backgroundImage:"url(../../img/modalbox/close.png)"});
 		});		
 		
-		$('#forma-crmregistrovisitas-window').find(".contenidoPes").hide(); //Hide all content
-		$('#forma-crmregistrovisitas-window').find("ul.pestanas li:first").addClass("active").show(); //Activate first tab
-		$('#forma-crmregistrovisitas-window').find(".contenidoPes:first").show(); //Show first tab content
+		$('#forma-crmregistroproyectos-window').find(".contenidoPes").hide(); //Hide all content
+		$('#forma-crmregistroproyectos-window').find("ul.pestanas li:first").addClass("active").show(); //Activate first tab
+		$('#forma-crmregistroproyectos-window').find(".contenidoPes:first").show(); //Show first tab content
 		
 		//On Click Event
-		$('#forma-crmregistrovisitas-window').find("ul.pestanas li").click(function() {
-			$('#forma-crmregistrovisitas-window').find(".contenidoPes").hide();
-			$('#forma-crmregistrovisitas-window').find("ul.pestanas li").removeClass("active");
+		$('#forma-crmregistroproyectos-window').find("ul.pestanas li").click(function() {
+			$('#forma-crmregistroproyectos-window').find(".contenidoPes").hide();
+			$('#forma-crmregistroproyectos-window').find("ul.pestanas li").removeClass("active");
 			var activeTab = $(this).find("a").attr("href");
-			$('#forma-crmregistrovisitas-window').find( activeTab , "ul.pestanas li" ).fadeIn().show();
+			$('#forma-crmregistroproyectos-window').find( activeTab , "ul.pestanas li" ).fadeIn().show();
 			$(this).addClass("active");
 			return false;
 		});
@@ -428,8 +446,8 @@ $(function() {
 					var razon_social_buscador=$(this).find('span.razon_social_buscador').html();
 					var rfc_buscador=$(this).find('span.rfc_buscador').html();
 					
-					$('#forma-crmregistrovisitas-window').find('input[name=id_contacto]').val(id_contacto);
-					$('#forma-crmregistrovisitas-window').find('input[name=contacto]').val(contacto_buscador);
+					$('#forma-crmregistroproyectos-window').find('input[name=id_contacto]').val(id_contacto);
+					$('#forma-crmregistroproyectos-window').find('input[name=contacto]').val(contacto_buscador);
 					
 					//oculta la ventana de busqueda
 					var remove = function() {$(this).remove();};
@@ -453,68 +471,176 @@ $(function() {
 	
 	
 	
+	//buscador de proveedores
+	var $busca_proveedores = function(no_proveedor, nombre_proveedor){
+		$(this).modalPanel_Buscaproveedor();
+		var $dialogoc =  $('#forma-buscaproveedor-window');
+		$dialogoc.append($('div.buscador_proveedores').find('table.formaBusqueda_proveedores').clone());
+		$('#forma-buscaproveedor-window').css({ "margin-left": -200, 	"margin-top": -200  });
+		
+		var $tabla_resultados = $('#forma-buscaproveedor-window').find('#tabla_resultado');
+		var $campo_no_proveedor = $('#forma-buscaproveedor-window').find('input[name=campo_no_proveedor]');
+		var $campo_rfc = $('#forma-buscaproveedor-window').find('input[name=campo_rfc]');
+		var $campo_nombre = $('#forma-buscaproveedor-window').find('input[name=campo_nombre]');
+		
+		var $buscar_plugin_proveedor = $('#forma-buscaproveedor-window').find('#busca_proveedor_modalbox');
+		var $cancelar_plugin_busca_proveedor = $('#forma-buscaproveedor-window').find('#cencela');
+			
+		$('#forma-entradamercancias-window').find('input[name=tipo_proveedor]').val('');
+			
+		//funcionalidad botones
+		$buscar_plugin_proveedor.mouseover(function(){
+			$(this).removeClass("onmouseOutBuscar").addClass("onmouseOverBuscar");
+		});
+		$buscar_plugin_proveedor.mouseout(function(){
+			$(this).removeClass("onmouseOverBuscar").addClass("onmouseOutBuscar");
+		});
+		   
+		$cancelar_plugin_busca_proveedor.mouseover(function(){
+			$(this).removeClass("onmouseOutCancelar").addClass("onmouseOverCancelar");
+		});
+		$cancelar_plugin_busca_proveedor.mouseout(function(){
+			$(this).removeClass("onmouseOverCancelar").addClass("onmouseOutCancelar");
+		});
+		
+		$campo_no_proveedor.val(no_proveedor);
+		$campo_nombre.val(nombre_proveedor);
+		
+		$campo_nombre.focus();
+		
+		//click buscar proveedor
+		$buscar_plugin_proveedor.click(function(event){
+			//event.preventDefault();
+			var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getProveedores.json';
+			var $arreglo = {'rfc':$campo_rfc.val(), 'no_prov':$campo_no_proveedor.val(), 'nombre':$campo_nombre.val(), 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
+						
+			var trr = '';
+			$tabla_resultados.children().remove();
+			$.post(input_json,$arreglo,function(entry){
+				$.each(entry['proveedores'],function(entryIndex,proveedor){
+					trr = '<tr>';
+						trr += '<td width="120">';
+							trr += '<input type="hidden" id="id_prov" value="'+proveedor['id']+'">';
+							//trr += '<input type="hidden" id="tipo_prov" value="'+proveedor['proveedortipo_id']+'">';
+							//trr += '<input type="hidden" id="no_prov" value="'+proveedor['no_proveedor']+'">';
+							//trr += '<input type="hidden" id="impto_id" value="'+proveedor['impuesto_id']+'">';
+							//trr += '<input type="hidden" id="valor_impto" value="'+proveedor['valor_impuesto']+'">';
+							trr += '<span class="rfc">'+proveedor['rfc']+'</span>';
+						trr += '</td>';
+						trr += '<td width="250"><span id="razon_social">'+proveedor['razon_social']+'</span></td>';
+						trr += '<td width="250"><span class="direccion">'+proveedor['direccion']+'</span></td>';
+					trr += '</tr>';
+					
+					$tabla_resultados.append(trr);
+				});
+				$tabla_resultados.find('tr:odd').find('td').css({ 'background-color' : '#e7e8ea'});
+				$tabla_resultados.find('tr:even').find('td').css({ 'background-color' : '#FFFFFF'});
+				
+				$('tr:odd' , $tabla_resultados).hover(function () {
+					$(this).find('td').css({ background : '#FBD850'});
+				}, function() {
+					$(this).find('td').css({'background-color':'#e7e8ea'});
+				});
+				$('tr:even' , $tabla_resultados).hover(function () {
+					$(this).find('td').css({'background-color':'#FBD850'});
+				}, function() {
+					$(this).find('td').css({'background-color':'#FFFFFF'});
+				});
+				
+				//seleccionar un producto del grid de resultados
+				$tabla_resultados.find('tr').click(function(){
+					$('#forma-crmregistroproyectos-window').find('input[name=id_prov]').val($(this).find('#id_prov').val());
+					$('#forma-crmregistroproyectos-window').find('input[name=proveedor]').val($(this).find('#razon_social').html());
+					
+					//elimina la ventana de busqueda
+					var remove = function() { $(this).remove(); };
+					$('#forma-buscaproveedor-overlay').fadeOut(remove);
+					
+					$('#forma-crmregistroproyectos-window').find('input[name=proveedor]').focus();
+				});
+			});
+		});
+		
+		if ($campo_no_proveedor.val()!='' || $campo_nombre.val()!=''){
+			$buscar_plugin_proveedor.trigger('click');
+		}
+		
+		$(this).aplicarEventoKeypressEjecutaTrigger($campo_no_proveedor, $buscar_plugin_proveedor);
+		$(this).aplicarEventoKeypressEjecutaTrigger($campo_rfc, $buscar_plugin_proveedor);
+		$(this).aplicarEventoKeypressEjecutaTrigger($campo_nombre, $buscar_plugin_proveedor);
+		
+		$cancelar_plugin_busca_proveedor.click(function(event){
+			//event.preventDefault();
+			var remove = function() { $(this).remove(); };
+			$('#forma-buscaproveedor-overlay').fadeOut(remove);
+			$('#forma-crmregistroproyectos-window').find('input[name=proveedor]').focus();
+		});
+	}//termina buscador de proveedores
+	
+	
 	
 	
 	//nuevo
-	$new_crmregistrovisitas.click(function(event){
+	$new_crmregistroproyectos.click(function(event){
 		event.preventDefault();
 		var id_to_show = 0;
-		$(this).modalPanel_crmregistrovisitas();
+		$(this).modalPanel_crmregistroproyectos();
 		
-		var form_to_show = 'formacrmregistrovisitas';
+		var form_to_show = 'formacrmregistroproyectos';
 		$('#' + form_to_show).each (function(){this.reset();});
 		var $forma_selected = $('#' + form_to_show).clone();
 		$forma_selected.attr({id : form_to_show + id_to_show});
 		
-		$('#forma-crmregistrovisitas-window').css({"margin-left": -400, 	"margin-top": -265});
-		$forma_selected.prependTo('#forma-crmregistrovisitas-window');
+		$('#forma-crmregistroproyectos-window').css({"margin-left": -400, 	"margin-top": -265});
+		$forma_selected.prependTo('#forma-crmregistroproyectos-window');
 		$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
 		$tabs_li_funxionalidad();		
 		
-		var $identificador = $('#forma-crmregistrovisitas-window').find('input[name=identificador]');
-		var $folio = $('#forma-crmregistrovisitas-window').find('input[name=folio]');
-		var $select_agente = $('#forma-crmregistrovisitas-window').find('select[name=select_agente]');
-		var $id_contacto = $('#forma-crmregistrovisitas-window').find('input[name=id_contacto]');
-		var $contacto = $('#forma-crmregistrovisitas-window').find('input[name=contacto]');
-		var $busca_contacto = $('#forma-crmregistrovisitas-window').find('#busca_contacto');
+		var $identificador = $('#forma-crmregistroproyectos-window').find('input[name=identificador]');
+		var $folio = $('#forma-crmregistroproyectos-window').find('input[name=folio]');
+		var $fecha_alta = $('#forma-crmregistroproyectos-window').find('input[name=fecha_alta]');
+		var $nombre = $('#forma-crmregistroproyectos-window').find('input[name=nombre]');
+		var $descripcion = $('#forma-crmregistroproyectos-window').find('textarea[name=descripcion]');
+		var $select_agente = $('#forma-crmregistroproyectos-window').find('select[name=select_agente]');
 		
-		var $fecha = $('#forma-crmregistrovisitas-window').find('input[name=fecha]');
-		var $hora_visita = $('#forma-crmregistrovisitas-window').find('input[name=hora_visita]');
-		var $hora_duracion = $('#forma-crmregistrovisitas-window').find('input[name=hora_duracion]');
+		var $id_contacto = $('#forma-crmregistroproyectos-window').find('input[name=id_contacto]');
+		var $contacto = $('#forma-crmregistroproyectos-window').find('input[name=contacto]');
+		var $busca_contacto = $('#forma-crmregistroproyectos-window').find('#busca_contacto');
 		
-		var $select_motivo_visita = $('#forma-crmregistrovisitas-window').find('select[name=select_motivo_visita]');
-		var $select_calif_visita = $('#forma-crmregistrovisitas-window').find('select[name=select_calif_visita]');
-		var $select_tipo_seguimiento = $('#forma-crmregistrovisitas-window').find('select[name=select_tipo_seguimiento]');
-		var $select_oportunidad = $('#forma-crmregistrovisitas-window').find('select[name=select_oportunidad]');
+		var $id_prov = $('#forma-crmregistroproyectos-window').find('input[name=id_prov]');
+		var $proveedor = $('#forma-crmregistroproyectos-window').find('input[name=proveedor]');
+		var $busca_proveedor = $('#forma-crmregistroproyectos-window').find('#busca_proveedor');
 		
-		var $recusrsos_visita = $('#forma-crmregistrovisitas-window').find('textarea[name=recusrsos_visita]');
-		var $resultado_visita = $('#forma-crmregistrovisitas-window').find('textarea[name=resultado_visita]');
-		var $observaciones_visita = $('#forma-crmregistrovisitas-window').find('textarea[name=observaciones_visita]');
+		var $fecha_inicio = $('#forma-crmregistroproyectos-window').find('input[name=fecha_inicio]');
+		var $fecha_fin = $('#forma-crmregistroproyectos-window').find('input[name=fecha_fin]');
 		
-		var $fecha_proxima_visita = $('#forma-crmregistrovisitas-window').find('input[name=fecha_proxima_visita]');
-		var $hora_proxima_visita = $('#forma-crmregistrovisitas-window').find('input[name=hora_proxima_visita]');
-		var $comentarios_proxima_visita = $('#forma-crmregistrovisitas-window').find('textarea[name=comentarios_proxima_visita]');
+		var $select_estatus = $('#forma-crmregistroproyectos-window').find('select[name=select_estatus]');
+		var $select_prioridad = $('#forma-crmregistroproyectos-window').find('select[name=select_prioridad]');
+		var $select_muestra = $('#forma-crmregistroproyectos-window').find('select[name=select_muestra]');
 		
-		var $cerrar_plugin = $('#forma-crmregistrovisitas-window').find('#close');
-		var $cancelar_plugin = $('#forma-crmregistrovisitas-window').find('#boton_cancelar');
-		var $submit_actualizar = $('#forma-crmregistrovisitas-window').find('#submit');
+		var $observaciones = $('#forma-crmregistroproyectos-window').find('textarea[name=observaciones]');
+		
+		var $cerrar_plugin = $('#forma-crmregistroproyectos-window').find('#close');
+		var $cancelar_plugin = $('#forma-crmregistroproyectos-window').find('#boton_cancelar');
+		var $submit_actualizar = $('#forma-crmregistroproyectos-window').find('#submit');
 		
 		$folio.css({'background' : '#DDDDDD'});
+		$fecha_alta.css({'background' : '#DDDDDD'});
 		$identificador.attr({'value' : 0});
 		$id_contacto.attr({'value' : 0});
-		$hora_visita.attr({'value' : '00:00'});
-		$hora_duracion.attr({'value' : '00:00'});
-		$hora_proxima_visita.attr({'value' : '00:00'});
+		$id_prov.attr({'value' : 0});
+		$fecha_alta.val(mostrarFecha());
+		
 		var respuestaProcesada = function(data){
 			if ( data['success'] == "true" ){
-				jAlert("La visita se registr&oacute; con &eacute;xito", 'Atencion!');
+				jAlert("El Proyecto se registr&oacute; con &eacute;xito", 'Atencion!');
 				var remove = function() {$(this).remove();};
-				$('#forma-crmregistrovisitas-overlay').fadeOut(remove);
+				$('#forma-crmregistroproyectos-overlay').fadeOut(remove);
 				//refresh_table();
 				$get_datos_grid();
 			}else{
 				// Desaparece todas las interrogaciones si es que existen
-				$('#forma-crmregistrovisitas-window').find('div.interrogacion').css({'display':'none'});
+				$('#forma-crmregistroproyectos-window').find('div.interrogacion').css({'display':'none'});
 				
 				var valor = data['success'].split('___');
                                      
@@ -524,7 +650,7 @@ $(function() {
 					longitud = tmp.split(':');
 					//telUno: Numero Telefonico no Valido___
 					if( longitud.length > 1 ){
-						$('#forma-crmregistrovisitas-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')						
+						$('#forma-crmregistroproyectos-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')						
 						.parent()
 						.css({'display':'block'})
 						.easyTooltip({tooltipId: "easyTooltip2",content: tmp.split(':')[1]});
@@ -535,8 +661,8 @@ $(function() {
 		var options = {dataType :  'json', success : respuestaProcesada};
 		$forma_selected.ajaxForm(options);
 		
-		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getRegistroVisita.json';
-		$arreglo = {'id':id_to_show, 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
+		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getRegistroProyecto.json';
+		var $arreglo = {'id':id_to_show, 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
 		
 		$.post(input_json,$arreglo,function(entry){
 			
@@ -559,55 +685,36 @@ $(function() {
 			});
 			$select_agente.append(agente_hmtl);
 			
-			
-			//Alimentando los campos select de Motivos
-			$select_motivo_visita.children().remove();
-			var motivo_hmtl = '';
-			$.each(entry['Motivos'],function(entryIndex,motivo){
-				motivo_hmtl += '<option value="' + motivo['id'] + '"  >' + motivo['descripcion'] + '</option>';
+			$select_estatus.children().remove();
+			var estatus_hmtl='';
+			$.each(entry['Estatus'],function(entryIndex,estat){
+				estatus_hmtl += '<option value="' + estat['id'] + '" >' + estat['titulo'] + '</option>';
 			});
-			$select_motivo_visita.append(motivo_hmtl);
-			
-			//Alimentando los campos select de Calificaciones de Visita
-			$select_calif_visita.children().remove();
-			var calif_hmtl = '';
-			$.each(entry['Calificaciones'],function(entryIndex,calif){
-				calif_hmtl += '<option value="' + calif['id'] + '"  >' + calif['titulo'] + '</option>';
-			});
-			$select_calif_visita.append(calif_hmtl);
-			
-			//Alimentando los campos select de Seguimiento
-			$select_tipo_seguimiento.children().remove();
-			var seguimiento_hmtl = '';
-			$.each(entry['Seguimientos'],function(entryIndex,seg){
-				seguimiento_hmtl += '<option value="' + seg['id'] + '"  >' + seg['titulo'] + '</option>';
-			});
-			$select_tipo_seguimiento.append(seguimiento_hmtl);
-			
-			//Alimentando los campos select de oportunidad
-			$select_oportunidad.children().remove();
-			var oportunidad_hmtl = '<option value="1" selected="yes">Si</option>';
-			oportunidad_hmtl += '<option value="0">No</option>';
-			$select_oportunidad.append(oportunidad_hmtl);
+			$select_estatus.append(estatus_hmtl);
 			
 		},"json");//termina llamada json
         
-        //$('.input1').TimepickerInputMask();
-        
-        $hora_visita.TimepickerInputMask();
-		$hora_duracion.TimepickerInputMask();
-        $hora_proxima_visita.TimepickerInputMask();
-        
-        //fecha de la visita
-		$fecha.click(function (s){
+		//cargar select
+		var elemento_seleccionado = 0;
+		var cadena_elemento_cero ="";
+		$carga_campos_select($select_prioridad, arrayPrioridad, elemento_seleccionado, cadena_elemento_cero);
+		
+		//cargar select
+		elemento_seleccionado = 0;
+		cadena_elemento_cero ="";
+		$carga_campos_select($select_muestra, arrayMuestra, elemento_seleccionado, cadena_elemento_cero);
+		
+		
+		
+		$fecha_inicio.click(function (s){
 			var a=$('div.datepicker');
 			a.css({'z-index':100});
 		});
 			
-		$fecha.DatePicker({
+		$fecha_inicio.DatePicker({
 			format:'Y-m-d',
-			date: $(this).val(),
-			current: $(this).val(),
+			date: $fecha_inicio.val(),
+			current: $fecha_inicio.val(),
 			starts: 1,
 			position: 'bottom',
 			locale: {
@@ -620,29 +727,28 @@ $(function() {
 			},
 			onChange: function(formated, dates){
 				var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
-				$fecha.val(formated);
+				$fecha_inicio.val(formated);
 				if (formated.match(patron) ){
-					var valida_fecha=mayor($fecha.val(),mostrarFecha());
+					var valida_fecha=mayor($fecha_inicio.val(),mostrarFecha());
 					
 					if (valida_fecha==true){
 						jAlert("Fecha no valida",'! Atencion');
-						$fecha.val(mostrarFecha());
+						$fecha_inicio.val(mostrarFecha());
 					}else{
-						$fecha.DatePickerHide();	
+						$fecha_inicio.DatePickerHide();	
 					}
 				}
 			}
 		});
 		
-			
-        
-        //fecha para la proxima visita
-		$fecha_proxima_visita.click(function (s){
+		
+		
+		$fecha_fin.click(function (s){
 			var a=$('div.datepicker');
 			a.css({'z-index':100});
 		});
 		
-		$fecha_proxima_visita.DatePicker({
+		$fecha_fin.DatePicker({
 			format:'Y-m-d',
 			date: $(this).val(),
 			current: $(this).val(),
@@ -658,15 +764,15 @@ $(function() {
 			},
 			onChange: function(formated, dates){
 				var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
-				$fecha_proxima_visita.val(formated);
+				$fecha_fin.val(formated);
 				if (formated.match(patron) ){
-					var valida_fecha=mayor($fecha_proxima_visita.val(),mostrarFecha());
+					var valida_fecha=mayor($fecha_fin.val(),mostrarFecha());
 					
 					if (valida_fecha==true){
-						$fecha_proxima_visita.DatePickerHide();	
+						$fecha_fin.DatePickerHide();	
 					}else{
 						jAlert("Fecha no valida, debe ser mayor a la actual.",'! Atencion');
-						$fecha_proxima_visita.val(mostrarFecha());
+						$fecha_fin.val(mostrarFecha());
 					}
 				}
 			}
@@ -674,22 +780,35 @@ $(function() {
         
         
         
-        //buscar contacto
         $busca_contacto.click(function(event){
 			event.preventDefault();
 			$busca_contactos($contacto.val());
         });
         
+        $busca_proveedor.click(function(event){
+			event.preventDefault();
+			$busca_proveedores('', $proveedor.val().trim())
+        });
         
+        
+		$submit_actualizar.bind('click',function(){
+			if($contacto.val().trim()==''){
+				$id_contacto.val(0);
+			}
+			
+			if($proveedor.val().trim()==''){
+				$id_prov.val(0);
+			}
+		});
         
         $cerrar_plugin.bind('click',function(){
 			var remove = function() {$(this).remove();};
-			$('#forma-crmregistrovisitas-overlay').fadeOut(remove);
+			$('#forma-crmregistroproyectos-overlay').fadeOut(remove);
 		});
 		
 		$cancelar_plugin.click(function(event){
 			var remove = function() {$(this).remove();};
-			$('#forma-crmregistrovisitas-overlay').fadeOut(remove);
+			$('#forma-crmregistroproyectos-overlay').fadeOut(remove);
 			$buscar.trigger('click');
 		});		
 	});
@@ -706,15 +825,15 @@ $(function() {
 			$arreglo = {'id':id_to_show,
 						'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
 						};
-			jConfirm('Realmente desea eliminar la Visita seleccionada', 'Dialogo de confirmacion', function(r) {
+			jConfirm('Realmente desea eliminar el registro seleccionado?', 'Dialogo de confirmacion', function(r) {
 				if (r){
 					$.post(input_json,$arreglo,function(entry){
 						if ( entry['success'] == '1' ){
-							jAlert("La Visita fue eliminada exitosamente", 'Atencion!');
+							jAlert("El registro fue eliminada exitosamente", 'Atencion!');
 							$get_datos_grid();
 						}
 						else{
-							jAlert("La Visita no pudo ser eliminada", 'Atencion!');
+							jAlert("El registro no pudo ser eliminada", 'Atencion!');
 						}
 					},"json");
 				}
@@ -722,71 +841,69 @@ $(function() {
             
 		}else{
 			//aqui  entra para editar un registro
-			var form_to_show = 'formacrmregistrovisitas';
+			var form_to_show = 'formacrmregistroproyectos';
 			
 			$('#' + form_to_show).each (function(){this.reset();});
 			var $forma_selected = $('#' + form_to_show).clone();
 			$forma_selected.attr({id : form_to_show + id_to_show});
 			
-			$(this).modalPanel_crmregistrovisitas();
-			$('#forma-crmregistrovisitas-window').css({"margin-left": -400, 	"margin-top": -265});
+			$(this).modalPanel_crmregistroproyectos();
+			$('#forma-crmregistroproyectos-window').css({"margin-left": -400, 	"margin-top": -265});
 			
-			$forma_selected.prependTo('#forma-crmregistrovisitas-window');
+			$forma_selected.prependTo('#forma-crmregistroproyectos-window');
 			$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
 			
 			$tabs_li_funxionalidad();
                         
-			var $identificador = $('#forma-crmregistrovisitas-window').find('input[name=identificador]');
-			var $folio = $('#forma-crmregistrovisitas-window').find('input[name=folio]');
-			var $select_agente = $('#forma-crmregistrovisitas-window').find('select[name=select_agente]');
-			var $id_contacto = $('#forma-crmregistrovisitas-window').find('input[name=id_contacto]');
-			var $contacto = $('#forma-crmregistrovisitas-window').find('input[name=contacto]');
-			var $busca_contacto = $('#forma-crmregistrovisitas-window').find('#busca_contacto');
+			var $identificador = $('#forma-crmregistroproyectos-window').find('input[name=identificador]');
+			var $folio = $('#forma-crmregistroproyectos-window').find('input[name=folio]');
+			var $fecha_alta = $('#forma-crmregistroproyectos-window').find('input[name=fecha_alta]');
+			var $nombre = $('#forma-crmregistroproyectos-window').find('input[name=nombre]');
+			var $descripcion = $('#forma-crmregistroproyectos-window').find('textarea[name=descripcion]');
+			var $select_agente = $('#forma-crmregistroproyectos-window').find('select[name=select_agente]');
 			
-			var $fecha = $('#forma-crmregistrovisitas-window').find('input[name=fecha]');
-			var $hora_visita = $('#forma-crmregistrovisitas-window').find('input[name=hora_visita]');
-			var $hora_duracion = $('#forma-crmregistrovisitas-window').find('input[name=hora_duracion]');
+			var $id_contacto = $('#forma-crmregistroproyectos-window').find('input[name=id_contacto]');
+			var $contacto = $('#forma-crmregistroproyectos-window').find('input[name=contacto]');
+			var $busca_contacto = $('#forma-crmregistroproyectos-window').find('#busca_contacto');
 			
-			var $select_motivo_visita = $('#forma-crmregistrovisitas-window').find('select[name=select_motivo_visita]');
-			var $select_calif_visita = $('#forma-crmregistrovisitas-window').find('select[name=select_calif_visita]');
-			var $select_tipo_seguimiento = $('#forma-crmregistrovisitas-window').find('select[name=select_tipo_seguimiento]');
-			var $select_oportunidad = $('#forma-crmregistrovisitas-window').find('select[name=select_oportunidad]');
+			var $id_prov = $('#forma-crmregistroproyectos-window').find('input[name=id_prov]');
+			var $proveedor = $('#forma-crmregistroproyectos-window').find('input[name=proveedor]');
+			var $busca_proveedor = $('#forma-crmregistroproyectos-window').find('#busca_proveedor');
 			
-			var $recusrsos_visita = $('#forma-crmregistrovisitas-window').find('textarea[name=recusrsos_visita]');
-			var $resultado_visita = $('#forma-crmregistrovisitas-window').find('textarea[name=resultado_visita]');
-			var $observaciones_visita = $('#forma-crmregistrovisitas-window').find('textarea[name=observaciones_visita]');
+			var $fecha_inicio = $('#forma-crmregistroproyectos-window').find('input[name=fecha_inicio]');
+			var $fecha_fin = $('#forma-crmregistroproyectos-window').find('input[name=fecha_fin]');
 			
-			var $fecha_proxima_visita = $('#forma-crmregistrovisitas-window').find('input[name=fecha_proxima_visita]');
-			var $hora_proxima_visita = $('#forma-crmregistrovisitas-window').find('input[name=hora_proxima_visita]');
-			var $comentarios_proxima_visita = $('#forma-crmregistrovisitas-window').find('textarea[name=comentarios_proxima_visita]');
-			var $productos = $('#forma-crmregistrovisitas-window').find('textarea[name=productos]');
+			var $select_estatus = $('#forma-crmregistroproyectos-window').find('select[name=select_estatus]');
+			var $select_prioridad = $('#forma-crmregistroproyectos-window').find('select[name=select_prioridad]');
+			var $select_muestra = $('#forma-crmregistroproyectos-window').find('select[name=select_muestra]');
 			
-			var $cerrar_plugin = $('#forma-crmregistrovisitas-window').find('#close');
-			var $cancelar_plugin = $('#forma-crmregistrovisitas-window').find('#boton_cancelar');
-			var $submit_actualizar = $('#forma-crmregistrovisitas-window').find('#submit');
+			var $observaciones = $('#forma-crmregistroproyectos-window').find('textarea[name=observaciones]');
 			
+			var $cerrar_plugin = $('#forma-crmregistroproyectos-window').find('#close');
+			var $cancelar_plugin = $('#forma-crmregistroproyectos-window').find('#boton_cancelar');
+			var $submit_actualizar = $('#forma-crmregistroproyectos-window').find('#submit');
 			
 			$folio.css({'background' : '#DDDDDD'});
-			$hora_visita.attr({'value' : '00:00'});
-			$hora_duracion.attr({'value' : '00:00'});
-			$hora_proxima_visita.attr({'value' : '00:00'});
-			//$busca_contacto.hide();
+			$fecha_alta.css({'background' : '#DDDDDD'});
+			$identificador.attr({'value' : 0});
+			$id_contacto.attr({'value' : 0});
+			$id_prov.attr({'value' : 0});
 			
 			if(accion_mode == 'edit'){
                                 
-				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getRegistroVisita.json';
+				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getRegistroProyecto.json';
 				$arreglo = {'id':id_to_show, 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
 				
 				var respuestaProcesada = function(data){
 					if ( data['success'] == "true" ){
 						jAlert("El registro se actualiz&oacute; con &eacute;xito", 'Atencion!');
 						var remove = function() {$(this).remove();};
-						$('#forma-crmregistrovisitas-overlay').fadeOut(remove);
+						$('#forma-crmregistroproyectos-overlay').fadeOut(remove);
 						//refresh_table();
 						$get_datos_grid();
 					}else{
 						// Desaparece todas las interrogaciones si es que existen
-						$('#forma-crmregistrovisitas-window').find('div.interrogacion').css({'display':'none'});
+						$('#forma-crmregistroproyectos-window').find('div.interrogacion').css({'display':'none'});
 						
 						var valor = data['success'].split('___');
 											 
@@ -796,7 +913,7 @@ $(function() {
 							longitud = tmp.split(':');
 							//telUno: Numero Telefonico no Valido___
 							if( longitud.length > 1 ){
-								$('#forma-crmregistrovisitas-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')						
+								$('#forma-crmregistroproyectos-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')						
 								.parent()
 								.css({'display':'block'})
 								.easyTooltip({tooltipId: "easyTooltip2",content: tmp.split(':')[1]});
@@ -810,33 +927,29 @@ $(function() {
 				
 				//aqui se cargan los campos al editar
 				$.post(input_json,$arreglo,function(entry){
+					
 					$identificador.attr({'value' : entry['Datos'][0]['id']});
 					$folio.attr({'value' : entry['Datos'][0]['folio']});
+					$fecha_alta.attr({'value' : entry['Datos'][0]['fecha']});
+					$nombre.attr({'value' : entry['Datos'][0]['titulo']});
+					$descripcion.text(entry['Datos'][0]['descripcion']);
 					
 					$id_contacto.attr({'value' : entry['Datos'][0]['contacto_id']});
-					$contacto.attr({'value' : entry['Datos'][0]['nombre_contacto']});
-
-					$fecha.attr({'value' : entry['Datos'][0]['fecha']});
-					$hora_visita.attr({'value' : entry['Datos'][0]['hora']});
-					$hora_visita.TimepickerInputMask();
-					$hora_duracion.attr({'value' : entry['Datos'][0]['duracion']});
-					$hora_duracion.TimepickerInputMask();
-				
-					$recusrsos_visita.text(entry['Datos'][0]['recursos_utilizados']);
-					$resultado_visita.text(entry['Datos'][0]['resultado']);
-					$observaciones_visita.text(entry['Datos'][0]['observaciones']);
-					$productos.text(entry['Datos'][0]['productos']);
+					$contacto.attr({'value' : entry['Datos'][0]['proveedor']});
 					
-					$fecha_proxima_visita.attr({'value' : entry['Datos'][0]['fecha_sig_visita']});
-					$hora_proxima_visita.attr({'value' : entry['Datos'][0]['hora_sig_visita']});
-					$hora_proxima_visita.TimepickerInputMask();
-					$comentarios_proxima_visita.text(entry['Datos'][0]['comentarios_sig_visita']);
+					$id_prov.attr({'value' : entry['Datos'][0]['prov_id']});
+					$proveedor.attr({'value' : entry['Datos'][0]['contacto']});
+					
+					$fecha_inicio.attr({'value' : entry['Datos'][0]['fecha_inicio']});
+					$fecha_fin.attr({'value' : entry['Datos'][0]['fecha_fin']});
+					
+					$observaciones.text(entry['Datos'][0]['observaciones']);
 					
 					//Alimentando los campos select_agente
 					$select_agente.children().remove();
 					var agente_hmtl='';
 					$.each(entry['Agentes'],function(entryIndex,agente){
-						if(parseInt(agente['id'])==parseInt(entry['Datos'][0]['empleado_id'])){
+						if(parseInt(agente['id'])==parseInt(entry['Datos'][0]['agen_id'])){
 							agente_hmtl += '<option value="' + agente['id'] + '" selected="yes">' + agente['nombre_agente'] + '</option>';
 						}else{
 							agente_hmtl += '<option value="' + agente['id'] + '" >' + agente['nombre_agente'] + '</option>';
@@ -844,74 +957,51 @@ $(function() {
 					});
 					$select_agente.append(agente_hmtl);
 					
-					//Alimentando los campos select de Motivos
-					$select_motivo_visita.children().remove();
-					var motivo_hmtl = '';
-					$.each(entry['Motivos'],function(entryIndex,motivo){
-						if(parseInt(motivo['id'])==parseInt(entry['Datos'][0]['motivo_id'])){
-							motivo_hmtl += '<option value="' + motivo['id'] + '" selected="yes">' + motivo['descripcion'] + '</option>';
+					$select_estatus.children().remove();
+					var estatus_hmtl='';
+					$.each(entry['Estatus'],function(entryIndex,estat){
+						if(parseInt(estat['id'])==parseInt(entry['Datos'][0]['estatus_id'])){
+							estatus_hmtl += '<option value="' + estat['id'] + '" selected="yes">' + estat['titulo'] + '</option>';
 						}else{
-							motivo_hmtl += '<option value="' + motivo['id'] + '"  >' + motivo['descripcion'] + '</option>';
+							estatus_hmtl += '<option value="' + estat['id'] + '" >' + estat['titulo'] + '</option>';
 						}
 					});
-					$select_motivo_visita.append(motivo_hmtl);
+					$select_estatus.append(estatus_hmtl);
 					
-					//Alimentando los campos select de Calificaciones de Visita
-					$select_calif_visita.children().remove();
-					var calif_hmtl = '';
-					$.each(entry['Calificaciones'],function(entryIndex,calif){
-						if(parseInt(calif['id'])==parseInt(entry['Datos'][0]['calificacion_id'])){
-							calif_hmtl += '<option value="' + calif['id'] + '" selected="yes">' + calif['titulo'] + '</option>';
-						}else{
-							calif_hmtl += '<option value="' + calif['id'] + '"  >' + calif['titulo'] + '</option>';
-						}
-					});
-					$select_calif_visita.append(calif_hmtl);
 					
-					//Alimentando los campos select de Seguimiento
-					$select_tipo_seguimiento.children().remove();
-					var seguimiento_hmtl = '';
-					$.each(entry['Seguimientos'],function(entryIndex,seg){
-						if(parseInt(seg['id'])==parseInt(entry['Datos'][0]['seguimiento_id'])){
-							seguimiento_hmtl += '<option value="' + seg['id'] + '" selected="yes">' + seg['titulo'] + '</option>';
-						}else{
-							seguimiento_hmtl += '<option value="' + seg['id'] + '"  >' + seg['titulo'] + '</option>';
-						}
-					});
-					$select_tipo_seguimiento.append(seguimiento_hmtl);
+					//cargar select
+					var elemento_seleccionado = entry['Datos'][0]['prioridad'];
+					var cadena_elemento_cero ="";
+					$carga_campos_select($select_prioridad, arrayPrioridad, elemento_seleccionado, cadena_elemento_cero);
 					
-					//Alimentando los campos select de oportunidad
-					$select_oportunidad.children().remove();
-					var oportunidad_hmtl ='';
-					if(parseInt(entry['Datos'][0]['deteccion_oportunidad']) == 1){
-						oportunidad_hmtl= '<option value="1" selected="yes">Si</option>';
-						oportunidad_hmtl += '<option value="0">No</option>';
-					}else{
-						oportunidad_hmtl= '<option value="1">Si</option>';
-						oportunidad_hmtl += '<option value="0" selected="yes">No</option>';
-					}
-					$select_oportunidad.append(oportunidad_hmtl);
+					//cargar select
+					elemento_seleccionado = entry['Datos'][0]['muestra'];
+					cadena_elemento_cero ="[--- ---]";
+					$carga_campos_select($select_muestra, arrayMuestra, elemento_seleccionado, cadena_elemento_cero);
 					
 				},"json");//termina llamada json
 				
 				
-				//buscar contacto
 				$busca_contacto.click(function(event){
 					event.preventDefault();
 					$busca_contactos($contacto.val());
 				});
 				
+				$busca_proveedor.click(function(event){
+					event.preventDefault();
+					$busca_proveedores('', $proveedor.val().trim())
+				});
+        
 				
-				//fecha de la visita
-				$fecha.click(function (s){
+				$fecha_inicio.click(function (s){
 					var a=$('div.datepicker');
 					a.css({'z-index':100});
 				});
 					
-				$fecha.DatePicker({
+				$fecha_inicio.DatePicker({
 					format:'Y-m-d',
-					date: $fecha.val(),
-					current: $fecha.val(),
+					date: $fecha_inicio.val(),
+					current: $fecha_inicio.val(),
 					starts: 1,
 					position: 'bottom',
 					locale: {
@@ -924,32 +1014,31 @@ $(function() {
 					},
 					onChange: function(formated, dates){
 						var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
-						$fecha.val(formated);
+						$fecha_inicio.val(formated);
 						if (formated.match(patron) ){
-							var valida_fecha=mayor($fecha.val(),mostrarFecha());
+							var valida_fecha=mayor($fecha_inicio.val(),mostrarFecha());
 							
 							if (valida_fecha==true){
 								jAlert("Fecha no valida",'! Atencion');
-								$fecha.val(mostrarFecha());
+								$fecha_inicio.val(mostrarFecha());
 							}else{
-								$fecha.DatePickerHide();	
+								$fecha_inicio.DatePickerHide();	
 							}
 						}
 					}
 				});
 				
-					
 				
-				//fecha para la proxima visita
-				$fecha_proxima_visita.click(function (s){
+				
+				$fecha_fin.click(function (s){
 					var a=$('div.datepicker');
 					a.css({'z-index':100});
 				});
 				
-				$fecha_proxima_visita.DatePicker({
+				$fecha_fin.DatePicker({
 					format:'Y-m-d',
-					date: $fecha_proxima_visita.val(),
-					current: $fecha_proxima_visita.val(),
+					date: $fecha_fin.val(),
+					current: $fecha_fin.val(),
 					starts: 1,
 					position: 'bottom',
 					locale: {
@@ -962,30 +1051,40 @@ $(function() {
 					},
 					onChange: function(formated, dates){
 						var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
-						$fecha_proxima_visita.val(formated);
+						$fecha_fin.val(formated);
 						if (formated.match(patron) ){
-							var valida_fecha=mayor($fecha_proxima_visita.val(),mostrarFecha());
+							var valida_fecha=mayor($fecha_fin.val(),mostrarFecha());
 							
 							if (valida_fecha==true){
-								$fecha_proxima_visita.DatePickerHide();	
+								$fecha_fin.DatePickerHide();	
 							}else{
 								jAlert("Fecha no valida, debe ser mayor a la actual.",'! Atencion');
-								$fecha_proxima_visita.val(mostrarFecha());
+								$fecha_fin.val(mostrarFecha());
 							}
 						}
 					}
 				});
+
 				
-				
+				$submit_actualizar.bind('click',function(){
+					if($contacto.val().trim()==''){
+						$id_contacto.val(0);
+					}
+					
+					if($proveedor.val().trim()==''){
+						$id_prov.val(0);
+					}
+				});
+						
 				//Ligamos el boton cancelar al evento click para eliminar la forma
 				$cancelar_plugin.bind('click',function(){
 					var remove = function() {$(this).remove();};
-					$('#forma-crmregistrovisitas-overlay').fadeOut(remove);
+					$('#forma-crmregistroproyectos-overlay').fadeOut(remove);
 				});
 				
 				$cerrar_plugin.bind('click',function(){
 					var remove = function() {$(this).remove();};
-					$('#forma-crmregistrovisitas-overlay').fadeOut(remove);
+					$('#forma-crmregistroproyectos-overlay').fadeOut(remove);
 					$buscar.trigger('click');
 				});
 			}
@@ -993,11 +1092,11 @@ $(function() {
 	}
     
     $get_datos_grid = function(){
-        var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAllRegistroVisitas.json';
+        var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAllRegistros.json';
         
         var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
         
-        $arreglo = {'orderby':'id','desc':'DESC','items_por_pag':10,'pag_start':1,'display_pag':10,'input_json':'/'+controller+'/getAllRegistroVisitas.json', 'cadena_busqueda':$cadena_busqueda, 'iu':iu}
+        var $arreglo = {'orderby':'id','desc':'DESC','items_por_pag':10,'pag_start':1,'display_pag':10,'input_json':'/'+controller+'/getAllRegistros.json', 'cadena_busqueda':$cadena_busqueda, 'iu':iu}
         
         $.post(input_json,$arreglo,function(data){
             

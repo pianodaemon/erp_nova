@@ -309,11 +309,9 @@ public class CrmProspectosController {
             +"___"+select_tipoindustria
             +"___"+observaciones;
             
-            
-            System.out.println("data_string: "+data_string);
+            //System.out.println("data_string: "+data_string);
             
             succes = this.getCrmDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
-                                 
             
             log.log(Level.INFO, "despues de validacion {0}", String.valueOf(succes.get("success")));
             if( String.valueOf(succes.get("success")).equals("true") ){

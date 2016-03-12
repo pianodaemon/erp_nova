@@ -24,26 +24,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
  *
- * @author luiscarrillo
- * app_selected 123
- * consecutivo de folio 40
+ * @author Noe Martinez
+ * gpmarsan@gmail.com
+ * 25/febrero/2015
+ * 
  */
 @Controller
 @SessionAttributes({"user"})
-@RequestMapping("/crmmetas/")
-public class CrmMetasController {
+@RequestMapping("/crmregistroproyectos/")
+public class CrmRegistroProyectosController {
     ResourceProject resource = new ResourceProject();
-    private static final Logger log  = Logger.getLogger(CrmMetasController.class.getName());
+    private static final Logger log  = Logger.getLogger(CrmRegistroProyectosController.class.getName());
     
     @Autowired
     @Qualifier("daoCrm")
@@ -52,7 +48,6 @@ public class CrmMetasController {
     @Autowired
     @Qualifier("daoHome")   //permite controlar usuarios que entren
     private HomeInterfaceDao HomeDao;
-    
     
     public CrmInterfaceDao getCrmDao() {
         return CrmlDao;
@@ -64,20 +59,21 @@ public class CrmMetasController {
     
     
     @RequestMapping(value="/startup.agnux")
-    public ModelAndView startUp(HttpServletRequest request, HttpServletResponse response, 
-            @ModelAttribute("user") UserSessionData user
-            )throws ServletException, IOException {
+    public ModelAndView startUp(HttpServletRequest request, HttpServletResponse response, @ModelAttribute("user") UserSessionData user)
+            throws ServletException, IOException {
         
-        log.log(Level.INFO, "Ejecutando starUp de {0}", CrmMetasController.class.getName());
+        log.log(Level.INFO, "Ejecutando starUp de {0}", CrmRegistroProyectosController.class.getName());
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
-        infoConstruccionTabla.put("id", "Acciones:70");
-        infoConstruccionTabla.put("folio", "Folio:100");
-        infoConstruccionTabla.put("agente","Agente:300");
-        infoConstruccionTabla.put("ano","A&ntilde;o:100");
-        infoConstruccionTabla.put("mes","Mes:100");
         
+        infoConstruccionTabla.put("id", "Acciones:90");
+        infoConstruccionTabla.put("folio", "Folio:80");
+        infoConstruccionTabla.put("fecha", "Fecha:80");
+        infoConstruccionTabla.put("proyecto", "Proyecto:280");
+        infoConstruccionTabla.put("agente", "Asignado&nbsp;a:280");
+        infoConstruccionTabla.put("estatus", "Estatus:200");
         
-        ModelAndView x = new ModelAndView("crmmetas/startup", "title", "Registro&nbsp;de&nbsp;Metas");
+        ModelAndView x = new ModelAndView("crmregistroproyectos/startup", "title", "Registro de Proyectos");
+        
         x = x.addObject("layoutheader", resource.getLayoutheader());
         x = x.addObject("layoutmenu", resource.getLayoutmenu());
         x = x.addObject("layoutfooter", resource.getLayoutfooter());
@@ -88,6 +84,7 @@ public class CrmMetasController {
         x = x.addObject("sucursal", user.getSucursal());
         
         String userId = String.valueOf(user.getUserId());
+        
         String codificado = Base64Coder.encodeString(userId);
         
         //id de usuario codificado
@@ -96,9 +93,9 @@ public class CrmMetasController {
         return x;
     }
     
-    //Muestra los datos en el Grid
-    @RequestMapping(value="/getAllCodigos.json", method = RequestMethod.POST)
-     public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getAllCodigosJson(
+    //Obtener todos los registros de Visitas del Agente
+    @RequestMapping(value="/getAllRegistros.json", method = RequestMethod.POST)
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getAllRegistrosJson(
            @RequestParam(value="orderby", required=true) String orderby,
            @RequestParam(value="desc", required=true) String desc,
            @RequestParam(value="items_por_pag", required=true) int items_por_pag,
@@ -107,32 +104,28 @@ public class CrmMetasController {
            @RequestParam(value="input_json", required=true) String input_json,
            @RequestParam(value="cadena_busqueda", required=true) String cadena_busqueda,
            @RequestParam(value="iu", required=true) String id_user_cod,
-           Model modcel) {
+       Model modcel) {
         
         HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
         HashMap<String,String> has_busqueda = StringHelper.convert2hash(StringHelper.ascii2string(cadena_busqueda));
-        HashMap<String, String> userDat = new HashMap<String, String>();
         
-        
-        //aplicativo catalogo de marcas 
-        Integer app_selected = 123;
+        //Aplicativo de Registro de Proyectos(CRM)
+        Integer app_selected = 207;
         
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
-        userDat = this.getHomeDao().getUserById(id_usuario);
-        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        
         //variables para el buscador
-        //String descripcion = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("descripcion")))+"%";
+        String folio = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("folio")))+"%";
+        String proyecto = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("proyecto")))+"%";
         String agente = String.valueOf(has_busqueda.get("agente"));
+        String fecha_inicial = ""+StringHelper.isNullString(String.valueOf(has_busqueda.get("fecha_inicial")))+"";
+        String fecha_final = ""+StringHelper.isNullString(String.valueOf(has_busqueda.get("fecha_final")))+"";
         
-        String data_string = app_selected+"___"+id_usuario+"___"+agente;
-        
-        //System.out.println("Esto es lo que busca "+"---->"+data_string);
+        String data_string = app_selected+"___"+id_usuario+"___"+folio+"___"+proyecto+"___"+agente+"___"+fecha_inicial+"___"+fecha_final;
         
         //obtiene total de registros en base de datos, con los parametros de busqueda
-        int total_items = this.getCrmDao().countAll(data_string);              
-         
-        //System.out.println("Cantidad en el COUNT"+total_items);
+        int total_items = this.getCrmDao().countAll(data_string);
         
         //calcula el total de paginas
         int total_pags = resource.calculaTotalPag(total_items,items_por_pag);
@@ -141,18 +134,19 @@ public class CrmMetasController {
         DataPost dataforpos = new DataPost(orderby, desc, items_por_pag, pag_start, display_pag, input_json, cadena_busqueda,total_items,total_pags, id_user_cod);
         
         int offset = resource.__get_inicio_offset(items_por_pag, pag_start);
-       
-        //obtiene los registros para el grid, de acuerdo a los parametros de busqueda
-       
-        jsonretorno.put("Data", this.getCrmDao().getRegistroMetas_PaginaGrid(data_string, offset, items_por_pag, orderby, desc));
         
+        //obtiene los registros para el grid, de acuerdo a los parametros de busqueda
+        jsonretorno.put("Data", this.getCrmDao().getCrmRegistroProyectos_PaginaGrid(data_string, offset, items_por_pag, orderby, desc));
         //obtiene el hash para los datos que necesita el datagrid
         jsonretorno.put("DataForGrid", dataforpos.formaHashForPos(dataforpos));
-        //obtiene los agentes para el buscador
-         
         
         return jsonretorno;
     }
+    
+    
+    
+    
+    
     //obtiene los Agentes para el Buscador pricipal del Aplicativo
     @RequestMapping(method = RequestMethod.POST, value="/getAgentesParaBuscador.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getAgentesParaBuscador(
@@ -182,22 +176,22 @@ public class CrmMetasController {
         jsonretorno.put("Agentes", agentes);
         return jsonretorno;
     }
-    //obtiene los agentes
-    @RequestMapping(method = RequestMethod.POST, value="/getMetas.json")
-    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getRegistroMetasJson(
+    
+    
+    
+    @RequestMapping(method = RequestMethod.POST, value="/getRegistroProyecto.json")
+    public @ResponseBody HashMap<String,Object> getRegistroVisitaJson(
             @RequestParam(value="id", required=true) Integer id,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
             ) {
         
-        log.log(Level.INFO, "Ejecutando getRegistroMetasJson de {0}", CrmMetasController.class.getName());
-        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        log.log(Level.INFO, "Ejecutando getRegistroProyectoJson de {0}", CrmRegistroProyectosController.class.getName());
+        HashMap<String,Object> jsonretorno = new HashMap<String,Object>();
         HashMap<String, String> userDat = new HashMap<String, String>();
-        ArrayList<HashMap<String, String>> datos = new ArrayList<HashMap<String, String>>();
-        ArrayList<HashMap<String, String>> agentes = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, Object>> datos = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, String>> arrayExtra = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> extra = new HashMap<String, String>();
-        
         
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
@@ -206,50 +200,103 @@ public class CrmMetasController {
         Integer id_agente = Integer.parseInt(userDat.get("empleado_id"));
         
         if( id != 0  ){
-            datos = this.getCrmDao().getCrmRegistoMetas_Datos(id);
+            datos = this.getCrmDao().getCrmRegistroProyectos_Datos(id);
         }
         
-        agentes = this.getCrmDao().getAgentes(id_empresa);
         extra = this.getCrmDao().getUserRol(id_usuario);
         extra.put("id_agente", String.valueOf(id_agente));
         arrayExtra.add(0,extra);
         
         jsonretorno.put("Datos", datos);
         jsonretorno.put("Extra", arrayExtra);
-        jsonretorno.put("Agentes", agentes);
-        
+        jsonretorno.put("Agentes", this.getCrmDao().getAgentes(id_empresa));
+        jsonretorno.put("Estatus", this.getCrmDao().getCrmRegistroProyectos_Estatus(id_empresa));
         
         return jsonretorno;
     }
+    
+    
+    
+    //obtiene los Contactos para el buscador
+    @RequestMapping(method = RequestMethod.POST, value="/get_buscador_contactos.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getBuscadorContactoJson(
+            @RequestParam(value="buscador_nombre", required=true) String nombre,
+            @RequestParam(value="buscador_apellidop", required=true) String apellidop,
+            @RequestParam(value="buscador_apellidom", required=true) String apellidom,
+            @RequestParam(value="buscador_tipo_contacto", required=true) String tipo_contacto,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+            ) {
+        
+        log.log(Level.INFO, "Ejecutando getBuscadorContactoJson de {0}", CrmRegistroProyectosController.class.getName());
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        ArrayList<HashMap<String, String>> contactos = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        
+        //decodificar id de usuario
+        userDat = this.getHomeDao().getUserById(Integer.parseInt(Base64Coder.decodeString(id_user)));
+        
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        
+        nombre = "%"+StringHelper.isNullString(String.valueOf(nombre))+"%";
+        apellidop = "%"+StringHelper.isNullString(String.valueOf(apellidop))+"%";
+        apellidom = "%"+StringHelper.isNullString(String.valueOf(apellidom))+"%";
+        
+        contactos = this.getCrmDao().getBuscadorContactos(nombre, apellidop, apellidom, tipo_contacto, id_empresa);
+        
+        jsonretorno.put("contactos", contactos);
+        
+        return jsonretorno;
+    }
+    
+    //Obtiene los proveedores para el buscador
+    @RequestMapping(method = RequestMethod.POST, value="/getProveedores.json")
+    public @ResponseBody HashMap<String,Object> getProveedoresJson(
+            @RequestParam(value="rfc", required=true) String rfc,
+            @RequestParam(value="no_prov", required=true) String no_prov,
+            @RequestParam(value="nombre", required=true) String nombre,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+        ) {
+        
+        log.log(Level.INFO, "Ejecutando getProveedoresJson de {0}", CrmRegistroProyectosController.class.getName());
+        HashMap<String,Object> jsonretorno = new HashMap<String,Object>();
+        ArrayList<HashMap<String, Object>> proveedores = new ArrayList<HashMap<String, Object>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        
+        proveedores = this.getCrmDao().getBuscadorProveedores(rfc.trim().toUpperCase(), no_prov.trim().toUpperCase(), nombre.trim().toUpperCase(),id_empresa);
+        
+        jsonretorno.put("proveedores", proveedores);
+        
+        return jsonretorno;
+    }
+    
     
     //crear y editar un cliente
     @RequestMapping(method = RequestMethod.POST, value="/edit.json")
     public @ResponseBody HashMap<String, String> editJson(
         @RequestParam(value="identificador", required=true) String identificador,
-        @RequestParam(value="agente", required=true) String select_agente,
-        
-        @RequestParam(value="opciones", required=true) String opciones,
-        @RequestParam(value="cant_llamadas", required=true) String cant_llamadas,
-        @RequestParam(value="cant_visitas", required=true) String cant_visitas,
-        @RequestParam(value="cant_prospectos", required=true) String cant_prospectos,
-        @RequestParam(value="ano", required=true) String ano,
-        @RequestParam(value="cant_cotizaciones", required=true) String cant_cotizaciones,
-        @RequestParam(value="cant_cotizaciones2", required=true) String cant_cotizaciones2,
-        @RequestParam(value="cant_oportunidades", required=true) String cant_oportunidades,
-        @RequestParam(value="cant_oportunidades2", required=true) String cant_oportunidades2,
-        @RequestParam(value="mes", required=true) String mes,
-        @RequestParam(value="monto_cotizaciones", required=true) String monto_cotizaciones,
-        @RequestParam(value="monto_cotizaciones2", required=true) String monto_cotizaciones2,
-        @RequestParam(value="monto_oportunidades", required=true) String monto_oportunidades,
-        @RequestParam(value="monto_oportunidades2", required=true) String monto_oportunidades2,
-        @RequestParam(value="ventas_clientes", required=true) String ventas_clientes,
-        @RequestParam(value="ventas_opor_clientes", required=true) String ventas_opor_clientes,
-        @RequestParam(value="ventas_prospecto", required=true) String ventas_prospecto,
-        
-        
+        @RequestParam(value="nombre", required=true) String nombre,
+        @RequestParam(value="descripcion", required=true) String descripcion,
+        @RequestParam(value="select_agente", required=true) String select_agente,
+        @RequestParam(value="id_contacto", required=true) String id_contacto,
+        @RequestParam(value="id_prov", required=true) String id_prov,
+        @RequestParam(value="fecha_inicio", required=true) String fecha_inicio,
+        @RequestParam(value="fecha_fin", required=true) String fecha_fin,
+        @RequestParam(value="select_estatus", required=true) String select_estatus,
+        @RequestParam(value="select_prioridad", required=true) String select_prioridad,
+        @RequestParam(value="select_muestra", required=true) String select_muestra,
+        @RequestParam(value="observaciones", required=true) String observaciones,
         Model model,@ModelAttribute("user") UserSessionData user
-        ) {
-        Integer app_selected = 123;//Aplicativo de Registro de Metas
+    ) {
+        
+        //Aplicativo de Registro de Proyectos(CRM)
+        Integer app_selected = 207;
         String command_selected = "new";
         Integer id_usuario= user.getUserId();//variable para el id  del usuario
         String arreglo[];
@@ -266,33 +313,9 @@ public class CrmMetasController {
             command_selected = "edit";
         }
         
+        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+identificador+"___"+nombre.toUpperCase()+"___"+descripcion.toUpperCase()+"___"+select_agente+"___"+id_contacto+"___"+id_prov+"___"+fecha_inicio+"___"+fecha_fin+"___"+select_estatus+"___"+select_prioridad+"___"+select_muestra+"___"+observaciones.toUpperCase();
         
-        
-        String data_string = 
-        app_selected//1
-        +"___"+command_selected//2
-        +"___"+id_usuario//3
-        +"___"+identificador//4
-        +"___"+select_agente//5
-        +"___"+opciones//6
-        +"___"+cant_llamadas//7
-        +"___"+cant_visitas//8
-        +"___"+cant_prospectos//9
-        +"___"+ano//10
-        +"___"+mes//11
-        +"___"+cant_cotizaciones	//12
-        +"___"+cant_cotizaciones2//13
-        +"___"+cant_oportunidades//14
-        +"___"+cant_oportunidades2//15
-        +"___"+monto_cotizaciones//16
-        +"___"+monto_cotizaciones2//17
-        +"___"+monto_oportunidades//18
-        +"___"+monto_oportunidades2//19
-        +"___"+ventas_clientes//20
-        +"___"+ventas_opor_clientes//21	
-        +"___"+ventas_prospecto;//22	
-        
-        //System.out.println("Esto estoy enviando: "+data_string);
+        //System.out.println("data_string: "+data_string);
         
         succes = this.getCrmDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
         
@@ -317,11 +340,12 @@ public class CrmMetasController {
             Model model
             ) {
         
-        System.out.println("Borrado logico de Registro de Metas");
+        System.out.println("Borrado logico de Registro de Visita");
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
         
-        Integer app_selected = 123;//Aplicativo de Registro de Visitas
+        //Aplicativo de Registro de Proyectos(CRM)
+        Integer app_selected = 207;
         String command_selected = "delete";
         String extra_data_array = "'sin datos'";
         
@@ -333,6 +357,4 @@ public class CrmMetasController {
         
         return jsonretorno;
     }
-    
-    
 }

@@ -2378,6 +2378,9 @@ $(function() {
 			$select_tmov.children().remove();
 			var tmov_hmtl = '';
 			if(entry['TMov']){
+				if(parseInt(entry['TMov'].length) <= 0 ){
+					tmov_hmtl += '<option value="0">[--- ---]</option>';
+				}
 				$.each(entry['TMov'],function(entryIndex,mov){
 					tmov_hmtl += '<option value="'+ mov['id'] +'">'+ mov['titulo'] + '</option>';
 				});

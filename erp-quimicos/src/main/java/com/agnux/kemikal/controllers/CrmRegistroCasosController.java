@@ -132,7 +132,7 @@ public class CrmRegistroCasosController {
        
         //                        1                 2               3         4                   5                       6                     7                8              9                                                                        
         String data_string = app_selected+"___"+id_usuario+"___"+folio+"___"+tipo+"___"+id_cliente_prospecto+"___"+cliente_prospecto+"___"+prioridad+"___"+fecha_cierre+"___"+agente;
-        System.out.println("Cadena que se esta enviando al buscador:::   "+data_string);
+        
         //obtiene total de registros en base de datos, con los parametros de busqueda
         int total_items = this.getCrmDao().countAll(data_string);
         
@@ -248,7 +248,6 @@ public class CrmRegistroCasosController {
         
         Razon_Social = "%"+StringHelper.isNullString(String.valueOf(Razon_Social))+"%";
         Rfc = "%"+StringHelper.isNullString(String.valueOf(Rfc))+"%";
-        Identificador_Cliente_Prospecto = Identificador_Cliente_Prospecto;
         
         cliente_Prospecto = this.getCrmDao().getBuscadorCliente_Prospecto(Razon_Social, Rfc,Identificador_Cliente_Prospecto, id_empresa);
         
@@ -308,9 +307,6 @@ select_tipo_caso	5
             command_selected = "edit";
         }
         
-        
-        
-        
         String data_string = 
         app_selected
         +"___"+command_selected
@@ -327,8 +323,7 @@ select_tipo_caso	5
         +"___"+tipo_pluguin
         +"___"+agente_id;
         
-        System.out.println("data_string: "+data_string);
-        
+        //System.out.println("data_string: "+data_string);
         succes = this.getCrmDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
         
         log.log(Level.INFO, "despues de validacion {0}", String.valueOf(succes.get("success")));

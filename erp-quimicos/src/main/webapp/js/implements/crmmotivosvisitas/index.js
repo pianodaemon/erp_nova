@@ -152,6 +152,8 @@ $(function() {
 		});
 
 	}
+	
+	
 	//nuevos puestos
 	$new_crmmotivovisita.click(function(event){
             
@@ -171,11 +173,9 @@ $(function() {
                 
 		//campos de la vista
 		var $campo_id = $('#forma-crmmotivosvisitas-window').find('input[name=identificador]'); 
-                
+		var $id=$('#forma-crmmotivosvisitas-window').find('input[name=id]');
+		var $descripcion = $('#forma-crmmotivosvisitas-window').find('textarea[name=descripcion]');
 		
-                var $id=$('#forma-crmmotivosvisitas-window').find('input[name=id]');
-                var $descripcion = $('#forma-crmmotivosvisitas-window').find('textarea[name=descripcion]');
-                			
 		//botones		
 		var $cerrar_plugin = $('#forma-crmmotivosvisitas-window').find('#close');
 		var $cancelar_plugin = $('#forma-crmmotivosvisitas-window').find('#boton_cancelar');
@@ -200,10 +200,10 @@ $(function() {
 					tmp = data['success'].split('___')[element];
 					longitud = tmp.split(':');
 					if( longitud.length > 1 ){
-                                            $('#forma-crmmotivosvisitas-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
-                                            .parent()
-                                            .css({'display':'block'})
-                                            .easyTooltip({tooltipId: "easyTooltip2",content: tmp.split(':')[1]});
+						$('#forma-crmmotivosvisitas-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
+						.parent()
+						.css({'display':'block'})
+						.easyTooltip({tooltipId: "easyTooltip2",content: tmp.split(':')[1]});
 					}
 				}
 			}
@@ -211,15 +211,12 @@ $(function() {
 		var options = {dataType :  'json', success : respuestaProcesada};
 		$forma_selected.ajaxForm(options);
                 
-                var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getMotivoVisita.json';
-		var parametros={
-                    id:$campo_id.val(),
-                    iu: $('#lienzo_recalculable').find('input[name=iu]').val()
-                }
-                //alert($('#lienzo_recalculable').find('input[name=iu]').val())
-                $.post(input_json,parametros,function(entry){
-                        
-                });//termina llamada json
+		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getMotivoVisita.json';
+		var parametros={id:$campo_id.val(),iu: $('#lienzo_recalculable').find('input[name=iu]').val()};
+		//alert($('#lienzo_recalculable').find('input[name=iu]').val())
+		$.post(input_json,parametros,function(entry){
+				
+		});//termina llamada json
 		
                 
 		$cerrar_plugin.bind('click',function(){

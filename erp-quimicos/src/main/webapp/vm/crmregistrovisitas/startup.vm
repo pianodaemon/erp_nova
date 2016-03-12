@@ -186,7 +186,7 @@
                                                 
                                                 <tr>
                                                     <td valign="top"  > 
-                                                        <table border="0" class="gral">
+                                                        <table border="0" class="gral" style="margin:0px; padding:0px;">
                                                             <tr>
                                                                 <td width="10"></td>
                                                                 <td width="70">Fecha Visita</td>
@@ -237,7 +237,7 @@
                                                                 <td width="25"></td>
                                                             </tr>
                                                             <tr>
-                                                                <td colspan="11" height="10"></td>
+                                                                <td colspan="11" height="8"></td>
                                                                 <td width="25"></td>
                                                                 <td width="25"></td>
                                                                 <!--<td width="30"></td>-->
@@ -267,7 +267,7 @@
                                                                 <td width="25"></td>
                                                             </tr>
                                                             <tr>
-                                                                <td colspan="11" height="10"></td>
+                                                                <td colspan="11" height="8"></td>
                                                                 <td width="25"></td>
                                                                 <td width="25"></td>
 																<td width="350" rowspan="3">
@@ -299,7 +299,7 @@
                                                                 <td width="25"></td>
                                                             </tr>
                                                             <tr>
-                                                                <td colspan="11" height="10"></td>
+                                                                <td colspan="11" height="8"></td>
                                                                 <td width="25"></td>
                                                                 <td width="25"></td>
                                                                 <!--<td width="350"></td>-->
@@ -329,7 +329,7 @@
                                                                 <td width="25"></td>
                                                             </tr>
                                                             <tr>
-                                                                <td colspan="11" height="10"></td>
+                                                                <td colspan="11" height="8"></td>
                                                                 <td width="25"></td>
                                                                 <td width="25"></td>
 																<td width="350" rowspan="3">
@@ -365,10 +365,33 @@
                                                                 <td width="25"></td>
                                                             </tr>
                                                             <tr>
-                                                                <td colspan="11" height="10"></td>
+                                                                <td colspan="11" height="8"></td>
                                                                 <td width="25"></td>
                                                                 <td width="25"></td>
                                                                 <!--<td width="350"></td>-->
+                                                                <td width="25"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td width="10">&nbsp;</td>
+                                                                <td width="70" colspan="11">Productos</td>
+                                                                <td width="25"></td>
+                                                                <td width="350"></td>
+                                                                <td width="25"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td width="10">&nbsp;</td>
+                                                                <td width="70" colspan="11">
+																	<textarea name="productos" cols="60" rows="1" style="width:350px; height:35px; resize:none;"></textarea>
+                                                                </td>
+                                                                <td width="25"></td>
+                                                                <td width="350"></td>
+                                                                <td width="25"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td colspan="11" height="5"></td>
+                                                                <td width="25"></td>
+                                                                <td width="25"></td>
+                                                                <td width="350"></td>
                                                                 <td width="25"></td>
                                                             </tr>
                                                         </table>
@@ -378,9 +401,10 @@
                                                     <td valign="top"> 
 														<fieldset style="border: solid 1px #313E74;" class="gral">
 															<legend>&nbsp;Proxima&nbsp;Visita&nbsp;</legend> 
-															<ol valign="top">
-																<table border="0">
+															<ol valign="top" style="margin:0px; padding:0px;">
+																<table border="0" style="margin:0px; padding:0px;">
 																	<tr>
+																		<td width="10"></td>
 																		<td width="50">Fecha</td>
 																		<td width="100" colspan="4"><input type="text" name="fecha_proxima_visita" style="width:100px;" readOnly="true"></td>
 																		<!--
@@ -399,6 +423,7 @@
 																		<td width="25"></td>
 																	</tr>
 																	<tr>
+																		<td width="10"></td>
 																		<td colspan="10" height="10"></td>
 																		<td width="25"></td>
 																		<td width="25"></td>
@@ -408,6 +433,7 @@
 																		<td width="25"></td>
 																	</tr>
 																	<tr>
+																		<td width="10"></td>
 																		<td width="50">Hora</td>
 																		<td width="45" colspan="3" ><input type="text" name="hora_proxima_visita" style="width:45px;"></td>
 																		<!--
@@ -426,10 +452,19 @@
 																		<td width="25"></td>
 																	</tr>
 																	<tr>
+																		<td width="10"></td>
 																		<td colspan="10" height="8"></td>
 																		<td width="25"></td>
 																		<td width="25"></td>
 																		<!--<td width="350"></td>-->
+																		<td width="25"></td>
+																	</tr>
+																	<tr>
+																		<td width="10"></td>
+																		<td colspan="10" height="5"></td>
+																		<td width="25"></td>
+																		<td width="25"></td>
+																		<td width="350"></td>
 																		<td width="25"></td>
 																	</tr>
 																	

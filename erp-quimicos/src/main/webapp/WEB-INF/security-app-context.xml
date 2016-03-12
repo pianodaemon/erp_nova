@@ -105,6 +105,7 @@ xmlns:beans="http://www.springframework.org/schema/beans"
         ROLE_CRM_REGISTRO_METAS,
         ROLE_CRM_REGISTRO_CASOS,
         ROLE_CRM_CONSULTAS,
+        ROLE_CRM_REGISTRO_PROYECTO,
         ROLE_CONTROL_COSTOS,
         ROLE_ACTUALIZA_PRECIOS,
         ROLE_PRO_FORMULAS_DESARROLLO,
@@ -256,6 +257,7 @@ xmlns:beans="http://www.springframework.org/schema/beans"
         <intercept-url pattern="/controllers/crmprospectos/startup.agnux" access="ROLE_ADMIN,ROLE_CRM_CATALOGO_PROSPECTOS" /><!--Vale-->
         <intercept-url pattern="/controllers/crmcontactos/startup.agnux" access="ROLE_ADMIN,ROLE_CRM_CATALOGO_CONTACTOS" /><!--Paco-->
         <intercept-url pattern="/controllers/crmregistrovisitas/startup.agnux" access="ROLE_ADMIN,ROLE_CRM_REGISTRO_VISITA" /><!--Noe-->
+        <intercept-url pattern="/controllers/crmregistroproyectos/startup.agnux" access="ROLE_ADMIN,ROLE_CRM_REGISTRO_PROYECTO" /><!--Noe-->
         <intercept-url pattern="/controllers/crmregistrollamadas/startup.agnux" access="ROLE_ADMIN,ROLE_CRM_REGISTRO_LLAMADAS" /><!--Luis-->
         <intercept-url pattern="/controllers/crmoportunidades/startup.agnux" access="ROLE_ADMIN,ROLE_CRM_REGISTRO_OPORTUNIDADES" /><!--Paco-->
         <intercept-url pattern="/controllers/crmmetas/startup.agnux" access="ROLE_ADMIN,ROLE_CRM_REGISTRO_METAS" /><!--Luis-->

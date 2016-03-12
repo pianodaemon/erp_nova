@@ -342,7 +342,7 @@ $(function() {
             var $forma_selected = $('#' + form_to_show).clone();
             $forma_selected.attr({id : form_to_show + id_to_show});
             
-            $('#forma-crmcontactos-window').css({"margin-left": -200, 	"margin-top": -200});
+            $('#forma-crmcontactos-window').css({"margin-left": -200, 	"margin-top": -220});
             $forma_selected.prependTo('#forma-crmcontactos-window');
             $forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
             $tabs_li_funxionalidad();
@@ -366,10 +366,11 @@ $(function() {
             var $telefono_directo = $('#forma-crmcontactos-window').find('input[name=telefono_directo]');
             var $correo_1 = $('#forma-crmcontactos-window').find('input[name=correo_1]');
             var $correo_2 = $('#forma-crmcontactos-window').find('input[name=correo_2]');
+            var $check_decisor = $('#forma-crmcontactos-window').find('input[name=check_decisor]');
+            var $departamento = $('#forma-crmcontactos-window').find('input[name=departamento]');
+            var $puesto = $('#forma-crmcontactos-window').find('input[name=puesto]');
             
             var $busca_cliente = $('#forma-crmcontactos-window').find('a[href*=busca_cliente]');
-            
-            
             
             //botones
             var $cerrar_plugin = $('#forma-crmcontactos-window').find('#close');
@@ -414,8 +415,6 @@ $(function() {
             
             //alert($('#lienzo_recalculable').find('input[name=iu]').val())
             $.post(input_json,parametros,function(entry){
-                
-                
                 $select_agente.children().remove();
                 var agente_hmtl = '';
                 if(parseInt(entry['Extra'][0]['exis_rol_admin']) > 0){
@@ -472,11 +471,10 @@ $(function() {
 			jConfirm('Realmente desea eliminar el contacto seleccionado', 'Dialogo de confirmacion', function(r) {
 				if (r){
 					$.post(input_json,$arreglo,function(entry){
-						if ( entry['success'] == '1' ){
+						if(entry['success']=='1'){
 							jAlert("El contacto fue eliminado exitosamente", 'Atencion!');
 							$get_datos_grid();
-						}
-						else{
+						}else{
 							jAlert("El contacto  no pudo ser eliminado", 'Atencion!');
 						}
 					},"json");
@@ -492,7 +490,7 @@ $(function() {
 			var $forma_selected = $('#' + form_to_show).clone();
 			$forma_selected.attr({id : form_to_show + id_to_show});
 			
-			$('#forma-crmcontactos-window').css({"margin-left": -200, 	"margin-top": -200});
+			$('#forma-crmcontactos-window').css({"margin-left": -200, 	"margin-top": -220});
 			$forma_selected.prependTo('#forma-crmcontactos-window');
 			$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
 			$tabs_li_funxionalidad();
@@ -517,7 +515,10 @@ $(function() {
 			var $correo_1 = $('#forma-crmcontactos-window').find('input[name=correo_1]');
 			var $correo_2 = $('#forma-crmcontactos-window').find('input[name=correo_2]');
 			var $observaciones = $('#forma-crmcontactos-window').find('textarea[name=observaciones]');
-			
+			var $check_decisor = $('#forma-crmcontactos-window').find('input[name=check_decisor]');
+            var $departamento = $('#forma-crmcontactos-window').find('input[name=departamento]');
+            var $puesto = $('#forma-crmcontactos-window').find('input[name=puesto]');
+            
 			var $busca_cliente = $('#forma-crmcontactos-window').find('a[href*=busca_cliente]');
 			$busca_cliente.hide();
 			
@@ -567,19 +568,22 @@ $(function() {
 				
 				//aqui se cargan los campos al editar
 				$.post(input_json,$arreglo,function(entry){
-					$campo_id.val(entry['Contacto']['0']['id']);
-					$folio.val(entry['Contacto']['0']['folio']);
-					$nombre.val(entry['Contacto']['0']['nombre']);
-					$apellido_paterno.val(entry['Contacto']['0']['apellido_paterno']);
-					$apellido_materno.val(entry['Contacto']['0']['apellido_materno']);
-					$telefono_2.val(entry['Contacto']['0']['telefono2']);
-					$telefono_1.val(entry['Contacto']['0']['telefono1']);
-					$fax.val(entry['Contacto']['0']['fax']);
-					$telefono_directo.val(entry['Contacto']['0']['telefono_directo']);
-					$correo_1.val(entry['Contacto']['0']['email']);
-					$correo_2.val(entry['Contacto']['0']['email2']);
-					$observaciones.text(entry['Contacto']['0']['observaciones']);
-					
+					$campo_id.val(entry['Contacto'][0]['id']);
+					$folio.val(entry['Contacto'][0]['folio']);
+					$nombre.val(entry['Contacto'][0]['nombre']);
+					$apellido_paterno.val(entry['Contacto'][0]['apellido_paterno']);
+					$apellido_materno.val(entry['Contacto'][0]['apellido_materno']);
+					$telefono_2.val(entry['Contacto'][0]['telefono2']);
+					$telefono_1.val(entry['Contacto'][0]['telefono1']);
+					$fax.val(entry['Contacto'][0]['fax']);
+					$telefono_directo.val(entry['Contacto'][0]['telefono_directo']);
+					$correo_1.val(entry['Contacto'][0]['email']);
+					$correo_2.val(entry['Contacto'][0]['email2']);
+					$observaciones.text(entry['Contacto'][0]['observaciones']);
+					$check_decisor.attr('checked',  (entry['Contacto'][0]['decisor'] == 'true')? true:false );
+					$departamento.val(entry['Contacto'][0]['departamento']);
+					$puesto.val(entry['Contacto'][0]['puesto']);
+            
 					$tipo_contacto.children().remove();
 					$html_tipo = "";
 					if(entry['Contacto']['0']['observaciones'] == 1){
@@ -589,7 +593,7 @@ $(function() {
 					}
 					$tipo_contacto.append($html_tipo);
 					
-					if(entry['Contacto']['0']['cliente'] != "" && entry['Contacto']['0']['cliente'] != null ){
+					if(entry['Contacto']['0']['cliente'].trim() != "" && entry['Contacto']['0']['cliente'] != null ){
 						$id_cliente.val(entry['Contacto']['0']['cliente'].split("___")[0]);
 						$rfc.val(entry['Contacto']['0']['cliente'].split("___")[1]);
 						$razon_social.val(entry['Contacto']['0']['cliente'].split("___")[2]);

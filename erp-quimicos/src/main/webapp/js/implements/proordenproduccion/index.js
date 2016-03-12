@@ -3572,11 +3572,11 @@ $(function() {
                 
                 $agregar_producto.click(function(event){
                     event.preventDefault();
-                    if(/^[A-Za-z0-9]*$/.test($sku_tmp.val())){
+                    //if(/^[A-Za-z0-9]*$/.test($sku_tmp.val())){
+					if($sku_tmp.val().trim()!=''){
                         $tipo = parseInt($select_tipoorden.val());
                         if($tipo == 3){
                             //Esta parte es para las ordende de produccioin de productos en desarrollo, 
-                            
                             $seleccionar_version_de_formula($sku_tmp.val(), $tipo);
                             
                             //$opbtiene_datos_producto_por_sku($sku_tmp.val());
