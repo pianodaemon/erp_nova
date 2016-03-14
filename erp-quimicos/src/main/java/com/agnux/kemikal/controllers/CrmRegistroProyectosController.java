@@ -291,6 +291,7 @@ public class CrmRegistroProyectosController {
         @RequestParam(value="select_estatus", required=true) String select_estatus,
         @RequestParam(value="select_prioridad", required=true) String select_prioridad,
         @RequestParam(value="select_muestra", required=true) String select_muestra,
+        @RequestParam(value="monto", required=true) String monto,
         @RequestParam(value="observaciones", required=true) String observaciones,
         Model model,@ModelAttribute("user") UserSessionData user
     ) {
@@ -313,7 +314,7 @@ public class CrmRegistroProyectosController {
             command_selected = "edit";
         }
         
-        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+identificador+"___"+nombre.toUpperCase()+"___"+descripcion.toUpperCase()+"___"+select_agente+"___"+id_contacto+"___"+id_prov+"___"+fecha_inicio+"___"+fecha_fin+"___"+select_estatus+"___"+select_prioridad+"___"+select_muestra+"___"+observaciones.toUpperCase();
+        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+identificador+"___"+nombre.toUpperCase()+"___"+descripcion.toUpperCase()+"___"+select_agente+"___"+id_contacto+"___"+id_prov+"___"+fecha_inicio+"___"+fecha_fin+"___"+select_estatus+"___"+select_prioridad+"___"+select_muestra+"___"+observaciones.toUpperCase()+"___"+monto;
         
         //System.out.println("data_string: "+data_string);
         

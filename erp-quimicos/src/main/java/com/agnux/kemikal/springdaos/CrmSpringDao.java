@@ -2114,6 +2114,7 @@ public class CrmSpringDao implements CrmInterfaceDao{
             + "proy.crm_proyecto_estatus_id as estatus_id,"
             + "proy.prioridad,"
             + "proy.muestra,"
+            + "proy.monto,"
             + "proy.observaciones "
         + "from crm_registro_proyecto as proy "
         + "left join cxp_prov on cxp_prov.id=proy.cxp_prov_id "
@@ -2141,6 +2142,7 @@ public class CrmSpringDao implements CrmInterfaceDao{
                     row.put("estatus_id",rs.getInt("estatus_id"));
                     row.put("prioridad",rs.getInt("prioridad"));
                     row.put("muestra",rs.getInt("muestra"));
+                    row.put("monto",StringHelper.roundDouble(rs.getDouble("monto"),2));
                     row.put("observaciones",rs.getString("observaciones"));
                     
                     return row;

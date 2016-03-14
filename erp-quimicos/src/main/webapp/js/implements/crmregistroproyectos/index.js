@@ -225,7 +225,18 @@ $(function() {
 	}
 
 
-	
+	//Funcion para aplicar evento focus
+	var $aplicar_evento_focus = function($campo){
+		$campo.focus(function(e){
+			if($(this).val().trim()==''){
+				$(this).val('');
+			}else{
+				if(parseFloat($(this).val())<=0){
+					$(this).val('');
+				}
+			}
+		});
+	}
 	
         
         
@@ -613,6 +624,7 @@ $(function() {
 		
 		var $fecha_inicio = $('#forma-crmregistroproyectos-window').find('input[name=fecha_inicio]');
 		var $fecha_fin = $('#forma-crmregistroproyectos-window').find('input[name=fecha_fin]');
+		var $monto = $('#forma-crmregistroproyectos-window').find('input[name=monto]');
 		
 		var $select_estatus = $('#forma-crmregistroproyectos-window').find('select[name=select_estatus]');
 		var $select_prioridad = $('#forma-crmregistroproyectos-window').find('select[name=select_prioridad]');
@@ -630,6 +642,7 @@ $(function() {
 		$id_contacto.attr({'value' : 0});
 		$id_prov.attr({'value' : 0});
 		$fecha_alta.val(mostrarFecha());
+		$monto.attr({'value' :parseFloat(0).toFixed(2)});
 		
 		var respuestaProcesada = function(data){
 			if ( data['success'] == "true" ){
@@ -778,8 +791,25 @@ $(function() {
 			}
 		});
         
+		$monto.keypress(function(e){
+			// Permitir  numeros, borrar, suprimir, TAB, puntos, comas
+			if (e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
+				return true;
+			}else {
+				return false;
+			}
+		});
         
-        
+		$aplicar_evento_focus($monto);
+		
+		$monto.blur(function(){
+			if($(this).val().trim()==''){
+				$(this).val(0);
+			}
+			
+			$(this).val(parseFloat($(this).val()).toFixed(2));
+		});
+		
         $busca_contacto.click(function(event){
 			event.preventDefault();
 			$busca_contactos($contacto.val());
@@ -872,6 +902,7 @@ $(function() {
 			
 			var $fecha_inicio = $('#forma-crmregistroproyectos-window').find('input[name=fecha_inicio]');
 			var $fecha_fin = $('#forma-crmregistroproyectos-window').find('input[name=fecha_fin]');
+			var $monto = $('#forma-crmregistroproyectos-window').find('input[name=monto]');
 			
 			var $select_estatus = $('#forma-crmregistroproyectos-window').find('select[name=select_estatus]');
 			var $select_prioridad = $('#forma-crmregistroproyectos-window').find('select[name=select_prioridad]');
@@ -888,6 +919,7 @@ $(function() {
 			$identificador.attr({'value' : 0});
 			$id_contacto.attr({'value' : 0});
 			$id_prov.attr({'value' : 0});
+			$monto.attr({'value' :parseFloat(0).toFixed(2)});
 			
 			if(accion_mode == 'edit'){
                                 
@@ -942,6 +974,7 @@ $(function() {
 					
 					$fecha_inicio.attr({'value' : entry['Datos'][0]['fecha_inicio']});
 					$fecha_fin.attr({'value' : entry['Datos'][0]['fecha_fin']});
+					$monto.attr({'value' : entry['Datos'][0]['monto']});
 					
 					$observaciones.text(entry['Datos'][0]['observaciones']);
 					
@@ -981,6 +1014,25 @@ $(function() {
 					
 				},"json");//termina llamada json
 				
+				
+				$monto.keypress(function(e){
+					// Permitir  numeros, borrar, suprimir, TAB, puntos, comas
+					if (e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
+						return true;
+					}else {
+						return false;
+					}
+				});
+				
+				$aplicar_evento_focus($monto);
+				
+				$monto.blur(function(){
+					if($(this).val().trim()==''){
+						$(this).val(0);
+					}
+					
+					$(this).val(parseFloat($(this).val()).toFixed(2));
+				});
 				
 				$busca_contacto.click(function(event){
 					event.preventDefault();
