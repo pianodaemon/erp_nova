@@ -293,6 +293,142 @@ $(function() {
 	}
 			
 	
+	
+	//buscador de productos
+	var $busca_cta_sat = function(codigo, descripcion){
+		//limpiar_campos_grids();
+		$(this).modalPanel_cuentasat();
+		var $dialogoc =  $('#forma-cuentasat-window');
+		//var $dialogoc.prependTo('#forma-buscaproduct-window');
+		$dialogoc.append($('div.buscador_cuentasat').find('table.formaBusqueda_cuentasat').clone());
+		
+		$('#forma-cuentasat-window').css({"margin-left": -200, 	"margin-top": -180});
+		
+		var $tabla_resultados = $('#forma-cuentasat-window').find('#tabla_resultado');
+		
+		var $campo_codigo_sat = $('#forma-cuentasat-window').find('input[name=campo_codigo_sat]');
+		var $campo_descripcion_sat = $('#forma-cuentasat-window').find('input[name=campo_descripcion_sat]');
+		
+		var $buscar_plugin_producto = $('#forma-cuentasat-window').find('#busca_producto_modalbox');
+		var $cancelar_plugin_busca_producto = $('#forma-cuentasat-window').find('#cencela');
+		
+		//funcionalidad botones
+		$buscar_plugin_producto.mouseover(function(){
+			$(this).removeClass("onmouseOutBuscar").addClass("onmouseOverBuscar");
+		});
+		$buscar_plugin_producto.mouseout(function(){
+			$(this).removeClass("onmouseOverBuscar").addClass("onmouseOutBuscar");
+		});
+		   
+		$cancelar_plugin_busca_producto.mouseover(function(){
+			$(this).removeClass("onmouseOutCancelar").addClass("onmouseOverCancelar");
+		});
+		$cancelar_plugin_busca_producto.mouseout(function(){
+			$(this).removeClass("onmouseOverCancelar").addClass("onmouseOutCancelar");
+		});
+		
+		//Aqui asigno al campo sku del buscador si el usuario ingresó un sku antes de hacer clic en buscar en la ventana principal
+		$campo_codigo_sat.val(codigo);
+		
+		//asignamos la descripcion del producto, si el usuario capturo la descripcion antes de abrir el buscador
+		$campo_descripcion_sat.val(descripcion);
+		
+		
+		
+		//click buscar productos
+		$buscar_plugin_producto.click(function(event){
+			//event.preventDefault();
+			var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getCtaAgrupadorSat.json';
+			var $arreglo = {'codigo':$campo_codigo_sat.val(), 'descripcion':$campo_descripcion_sat.val(), 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() }
+			
+			var trr = '';
+			$tabla_resultados.children().remove();
+			$.post(input_json,$arreglo,function(entry){
+				$.each(entry['Ctas'],function(entryIndex,cta){
+					trr = '<tr>';
+						trr += '<td width="70"><span class="nivel">'+cta['nivel']+'</span></td>';
+						trr += '<td width="140">';
+							trr += '<input type="hidden" name="id_sat" value="'+cta['id']+'">';
+							trr += '<span class="codigo_sat">'+cta['codigo']+'</span>';
+						trr += '</td>';
+						trr += '<td width="360"><span class="titulo_sat">'+cta['nombre']+'</span></td>';
+					trr += '</tr>';
+					$tabla_resultados.append(trr);
+				});
+				$tabla_resultados.find('tr:odd').find('td').css({'background-color' : '#e7e8ea'});
+				$tabla_resultados.find('tr:even').find('td').css({'background-color' : '#FFFFFF'});
+				
+				$('tr:odd' , $tabla_resultados).hover(function () {
+					$(this).find('td').css({background : '#FBD850'});
+				}, function() {
+					//$(this).find('td').css({'background-color':'#DDECFF'});
+					$(this).find('td').css({'background-color':'#e7e8ea'});
+				});
+				
+				$('tr:even' , $tabla_resultados).hover(function () {
+					$(this).find('td').css({'background-color':'#FBD850'});
+				}, function() {
+					$(this).find('td').css({'background-color':'#FFFFFF'});
+				});
+				
+				//seleccionar un producto del grid de resultados
+				$tabla_resultados.find('tr').click(function(){
+					$('#forma-cuentascontables-window').find('input[name=ctasat_id]').val($(this).find('input[name=id_sat]').val());
+					$('#forma-cuentascontables-window').find('input[name=cta_sat]').val($(this).find('span.codigo_sat').html());
+					$('#forma-cuentascontables-window').find('input[name=desc_cta_sat]').val($(this).find('span.titulo_sat').html());
+					
+					//elimina la ventana de busqueda
+					var remove = function() {$(this).remove();};
+					$('#forma-cuentasat-overlay').fadeOut(remove);
+					//asignar el enfoque al campo sku del producto
+					$('#forma-cuentascontables-window').find('input[name=cta_sat]').focus();
+				});
+				
+			});//termina llamada json
+		});
+		
+		//si hay algo en el campo sku al cargar el buscador, ejecuta la busqueda
+		if($campo_codigo_sat.val() != ''){
+			$buscar_plugin_producto.trigger('click');
+		}
+		
+		$(this).aplicarEventoKeypressEjecutaTrigger($campo_codigo_sat, $buscar_plugin_producto);
+		$(this).aplicarEventoKeypressEjecutaTrigger($campo_descripcion_sat, $buscar_plugin_producto);
+		
+		$cancelar_plugin_busca_producto.click(function(event){
+			//event.preventDefault();
+			var remove = function() {$(this).remove();};
+			$('#forma-cuentasat-overlay').fadeOut(remove);
+			$('#forma-cuentascontables-window').find('input[name=cta_sat]').focus();
+		});
+		
+		$campo_codigo_sat.focus();
+		
+	}//termina buscador de productos
+	
+	
+	
+	var $busca_datos_cta_sat = function($codigo){
+		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getCtaSat.json';
+		var $arreglo = {'codigo':$codigo.val().trim()};
+		
+		$.post(input_json,$arreglo,function(entry){
+			if(parseInt(entry['Cta'].length) > 0 ){
+				$('#forma-cuentascontables-window').find('input[name=ctasat_id]').val(entry['Cta'][0]['id']);
+				$('#forma-cuentascontables-window').find('input[name=cta_sat]').val(entry['Cta'][0]['codigo']);
+				$('#forma-cuentascontables-window').find('input[name=desc_cta_sat]').val(entry['Cta'][0]['nombre']);
+			}else{
+				$('#forma-cuentascontables-window').find('input[name=ctasat_id]').val(0);
+				//$('#forma-cuentascontables-window').find('input[name=cta_sat]').val();
+				$('#forma-cuentascontables-window').find('input[name=desc_cta_sat]').val('');
+				
+				jAlert('La cuenta agrupadora del SAT no existe.', 'Atencion!', function(r) { 
+					$('#forma-cuentascontables-window').find('input[name=cta_sat]').focus(); 
+				});
+			}
+		});//termina llamada json
+	}
+	
 	//nuevo 
 	$new_centro_costo.click(function(event){
 		event.preventDefault();
@@ -332,6 +468,10 @@ $(function() {
 		var $descripcion_es = $('#forma-cuentascontables-window').find('input[name=descripcion_es]');
 		var $descripcion_in = $('#forma-cuentascontables-window').find('input[name=descripcion_in]');
 		var $descripcion_otro = $('#forma-cuentascontables-window').find('input[name=descripcion_otro]');
+		
+		var $ctasat_id = $('#forma-cuentascontables-window').find('input[name=ctasat_id]');
+		var $cta_sat = $('#forma-cuentascontables-window').find('input[name=cta_sat]');
+		var $desc_cta_sat = $('#forma-cuentascontables-window').find('input[name=desc_cta_sat]');
 		
 		var $cerrar_plugin = $('#forma-cuentascontables-window').find('#close');
 		var $cancelar_plugin = $('#forma-cuentascontables-window').find('#boton_cancelar');
@@ -496,6 +636,26 @@ $(function() {
 			$descripcion.val($(this).val());
 		});
 		
+		
+		$('#forma-cuentascontables-window').find('a[href=busca_codigo_sat]').click(function(event){
+			event.preventDefault();
+			$busca_cta_sat($cta_sat.val(), $desc_cta_sat.val());
+		});
+		
+		$cta_sat.blur(function(){
+			if($(this).val().trim()!=''){
+				if(parseInt($ctasat_id.val())<=0){
+					$busca_datos_cta_sat($cta_sat);
+				}
+			}
+		});
+							
+		$cta_sat.keypress(function(e){
+			if(e.which == 8) {
+				$ctasat_id.val(0);
+			}
+		});
+		
 		$cerrar_plugin.bind('click',function(){
 			var remove = function() { $(this).remove(); };
 			$('#forma-cuentascontables-overlay').fadeOut(remove);
@@ -575,6 +735,10 @@ $(function() {
 			var $descripcion_in = $('#forma-cuentascontables-window').find('input[name=descripcion_in]');
 			var $descripcion_otro = $('#forma-cuentascontables-window').find('input[name=descripcion_otro]');
 			
+			var $ctasat_id = $('#forma-cuentascontables-window').find('input[name=ctasat_id]');
+			var $cta_sat = $('#forma-cuentascontables-window').find('input[name=cta_sat]');
+			var $desc_cta_sat = $('#forma-cuentascontables-window').find('input[name=desc_cta_sat]');
+			
 			var $cerrar_plugin = $('#forma-cuentascontables-window').find('#close');
 			var $cancelar_plugin = $('#forma-cuentascontables-window').find('#boton_cancelar');
 			var $submit_actualizar = $('#forma-cuentascontables-window').find('#submit');
@@ -648,7 +812,10 @@ $(function() {
 					$descripcion_in.attr({ 'value' : entry['Cc'][0]['descripcion_ing'] });
 					$descripcion_otro.attr({ 'value' : entry['Cc'][0]['descripcion_otr'] });
 					
-					
+					$ctasat_id.attr({ 'value' : entry['Cc'][0]['ctasat_id'] });
+					$cta_sat.attr({ 'value' : entry['Cc'][0]['codigo_sat'] });
+					$desc_cta_sat.attr({ 'value' : entry['Cc'][0]['nombre_cta_sat'] });
+			
 					$select_sucursal.children().remove();
 					var suc_hmtl = '';
 					$.each(ArraySuc,function(entryIndex,suc){
@@ -786,8 +953,6 @@ $(function() {
 					$select_estatus.children().remove();
 					$select_estatus.append(estatus_hmtl);
 					
-					
-					
 					$select_cuenta_mayor.change(function(){
 						var valor = $(this).val();
 						if(parseInt($select_centro_costo.val())<=0){
@@ -799,7 +964,6 @@ $(function() {
 						}
 					});
 					
-					
 					$cuenta.focus();
 				},"json");//termina llamada json
 				
@@ -810,7 +974,26 @@ $(function() {
 				$descripcion_es.change(function(){
 					$descripcion.val($(this).val());
 				});
-		
+				
+				$('#forma-cuentascontables-window').find('a[href=busca_codigo_sat]').click(function(event){
+					event.preventDefault();
+					$busca_cta_sat($cta_sat.val(), $desc_cta_sat.val());
+				});
+				
+				$cta_sat.blur(function(){
+					if($(this).val().trim()!=''){
+						if(parseInt($ctasat_id.val())<=0){
+							$busca_datos_cta_sat($cta_sat);
+						}
+					}
+				});
+				
+				$cta_sat.keypress(function(e){
+					if(e.which == 8) {
+						$ctasat_id.val(0);
+					}
+				});
+				
 				//Ligamos el boton cancelar al evento click para eliminar la forma
 				$cancelar_plugin.bind('click',function(){
 					var remove = function() { $(this).remove(); };

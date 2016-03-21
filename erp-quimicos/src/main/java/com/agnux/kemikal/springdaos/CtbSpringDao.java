@@ -405,35 +405,38 @@ public class CtbSpringDao implements CtbInterfaceDao{
     }
     
     
-    
-    
+
     @Override
     public ArrayList<HashMap<String, Object>> getCuentasContables_Datos(Integer id) {
         String sql_query = ""
                 + "SELECT "
-                    + "id, "
-                    + "(CASE WHEN cta=0 THEN '' ELSE cta::character varying END) AS cta, "
-                    + "(CASE WHEN subcta=0 THEN '' ELSE subcta::character varying END) AS subcta, "
-                    + "(CASE WHEN ssubcta=0 THEN '' ELSE ssubcta::character varying END) AS ssubcta, "
-                    + "(CASE WHEN sssubcta=0 THEN '' ELSE sssubcta::character varying END) AS sssubcta, "
-                    + "(CASE WHEN ssssubcta=0 THEN '' ELSE ssssubcta::character varying END) AS ssssubcta, "
-                    + "cta_mayor, "
-                    + "clasifica, "
-                    + "detalle, "
-                    + "descripcion, "
-                    + "descripcion_ing, "
-                    + "descripcion_otr, "
-                    + "nivel_cta, "
-                    + "consolida, "
-                    + "estatus,"
-                    + "ctb_cc_id as cc_id,"
-                    + "gral_suc_id as suc_id,"
-                    + "nivel,"
-                    + "tipo,"
-                    + "naturaleza,"
-                    + "ctb_app_id as agrupa_id "
+                    + "ctb_cta.id, "
+                    + "(CASE WHEN ctb_cta.cta=0 THEN '' ELSE ctb_cta.cta::character varying END) AS cta, "
+                    + "(CASE WHEN ctb_cta.subcta=0 THEN '' ELSE ctb_cta.subcta::character varying END) AS subcta, "
+                    + "(CASE WHEN ctb_cta.ssubcta=0 THEN '' ELSE ctb_cta.ssubcta::character varying END) AS ssubcta, "
+                    + "(CASE WHEN ctb_cta.sssubcta=0 THEN '' ELSE ctb_cta.sssubcta::character varying END) AS sssubcta, "
+                    + "(CASE WHEN ctb_cta.ssssubcta=0 THEN '' ELSE ctb_cta.ssssubcta::character varying END) AS ssssubcta, "
+                    + "ctb_cta.cta_mayor, "
+                    + "ctb_cta.clasifica, "
+                    + "ctb_cta.detalle, "
+                    + "ctb_cta.descripcion, "
+                    + "ctb_cta.descripcion_ing, "
+                    + "ctb_cta.descripcion_otr, "
+                    + "ctb_cta.nivel_cta, "
+                    + "ctb_cta.consolida, "
+                    + "ctb_cta.estatus,"
+                    + "ctb_cta.ctb_cc_id as cc_id,"
+                    + "ctb_cta.gral_suc_id as suc_id,"
+                    + "ctb_cta.nivel,"
+                    + "ctb_cta.tipo,"
+                    + "ctb_cta.naturaleza,"
+                    + "ctb_cta.ctb_app_id as agrupa_id,"
+                    + "(case when ctb_cta_sat.id is null then 0 else ctb_cta_sat.id end) as ctasat_id,"
+                    + "(case when ctb_cta_sat.codigo is null then '' else ctb_cta_sat.codigo end) as codigo_sat,"
+                    + "(case when ctb_cta_sat.nombre is null then '' else ctb_cta_sat.nombre end) as nombre_cta_sat "
                 + "FROM ctb_cta "
-                + "WHERE id=?;";
+                + "left join ctb_cta_sat on ctb_cta_sat.id=ctb_cta.ctb_cta_sat_id "
+                + "WHERE ctb_cta.id=?;";
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_query,  
             new Object[]{new Integer(id)}, new RowMapper() {
@@ -460,6 +463,10 @@ public class CtbSpringDao implements CtbInterfaceDao{
                     row.put("tipo",rs.getInt("tipo"));
                     row.put("naturaleza",rs.getInt("naturaleza"));
                     row.put("agrupa_id",rs.getInt("agrupa_id"));
+                    
+                    row.put("ctasat_id",rs.getInt("ctasat_id"));
+                    row.put("codigo_sat",rs.getString("codigo_sat"));
+                    row.put("nombre_cta_sat",rs.getString("nombre_cta_sat"));
                     return row;
                 }
             }
@@ -2128,6 +2135,52 @@ public class CtbSpringDao implements CtbInterfaceDao{
             }
         );
         return hm;
+    }
+    
+    
+    //Buscador de cuentas agrupadoras del sat
+    @Override
+    public ArrayList<HashMap<String, Object>>  getBuscadorCuentasAgrupadorasSat(String codigo, String descripcion) {
+        String sql_query = "SELECT id,nivel,codigo,nombre FROM ctb_cta_sat WHERE borrado_logico=false and codigo ilike '%"+codigo+"%' and nombre ilike '%"+descripcion+"%';";
+        
+        ArrayList<HashMap<String, Object>> anios = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("nivel",rs.getInt("nivel"));
+                    row.put("codigo",rs.getString("codigo"));
+                    row.put("nombre",rs.getString("nombre"));
+                    return row;
+                }
+            }
+        );
+        return anios;
+    }
+    
+    
+    //Buscador datos de una cuenta especifica
+    @Override
+    public ArrayList<HashMap<String, Object>>  getDataCtaSat(String codigo) {
+        String sql_query = "SELECT id,nivel,codigo,nombre FROM ctb_cta_sat WHERE borrado_logico=false and upper(trim(codigo))='"+codigo.toUpperCase().trim()+"';";
+        
+        ArrayList<HashMap<String, Object>> anios = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("nivel",rs.getInt("nivel"));
+                    row.put("codigo",rs.getString("codigo"));
+                    row.put("nombre",rs.getString("nombre"));
+                    return row;
+                }
+            }
+        );
+        return anios;
     }
     
     

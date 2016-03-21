@@ -128,4 +128,7 @@ public interface CtbInterfaceDao {
     //Metodo para busqueda de movimientos para la Generacion de Polizas
     public ArrayList<HashMap<String, Object>> getCtbGeneraPolizas_busquedaDatos(String data_string);
     
+    //Buscador de cuentas agrupadoras del sat
+    public ArrayList<HashMap<String, Object>>  getBuscadorCuentasAgrupadorasSat(String codigo, String descripcion);
+    public ArrayList<HashMap<String, Object>>  getDataCtaSat(String codigo);
 }

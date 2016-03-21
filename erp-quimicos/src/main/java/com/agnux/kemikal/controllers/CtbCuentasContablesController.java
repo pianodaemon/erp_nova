@@ -235,6 +235,45 @@ public class CtbCuentasContablesController {
     
     
     
+    //Buscador de cuentas agrupadoras del sat
+    @RequestMapping(method = RequestMethod.POST, value="/getCtaAgrupadorSat.json")
+    public @ResponseBody HashMap<String,Object> getCtaAgrupadorSatJson(
+            @RequestParam(value="codigo", required=true) String codigo,
+            @RequestParam(value="descripcion", required=true) String descripcion,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+        ) {
+        
+        HashMap<String,Object> jsonretorno = new HashMap<String,Object>();
+        /*
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        */
+        jsonretorno.put("Ctas", this.getCtbDao().getBuscadorCuentasAgrupadorasSat(codigo,descripcion));
+        
+        return jsonretorno;
+    }
+    
+    
+    //Buscador datos de una cuenta en especifico
+    @RequestMapping(method = RequestMethod.POST, value="/getCtaSat.json")
+    public @ResponseBody HashMap<String,Object> getCtaSatJson(
+            @RequestParam(value="codigo", required=true) String codigo,
+            Model model
+        ) {
+        
+        HashMap<String,Object> jsonretorno = new HashMap<String,Object>();
+        jsonretorno.put("Cta", this.getCtbDao().getDataCtaSat(codigo));
+        
+        return jsonretorno;
+    }
+    
+    
     
     //crear y editar
     @RequestMapping(method = RequestMethod.POST, value="/edit.json")
@@ -258,6 +297,7 @@ public class CtbCuentasContablesController {
             @RequestParam(value="select_nivel", required=false) String select_nivel,
             @RequestParam(value="select_naturaleza", required=false) String select_naturaleza,
             @RequestParam(value="select_tipo_cta", required=false) String select_tipo_cta,
+            @RequestParam(value="ctasat_id", required=false) String ctasat_id,
             Model model,@ModelAttribute("user") UserSessionData user
         ) {
         
@@ -283,8 +323,9 @@ public class CtbCuentasContablesController {
         }
         
         select_sucursal = StringHelper.verificarSelect(select_sucursal);
+        ctasat_id = StringHelper.verificarSelect(ctasat_id);
         
-        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id+"___"+cuenta+"___"+scuenta+"___"+sscuenta+"___"+ssscuenta+"___"+sssscuenta+"___"+cuenta_mayor+"___"+estatus+"___"+cta_detalle+"___"+descripcion_es.toUpperCase()+"___"+descripcion_in.toUpperCase()+"___"+descripcion_otro.toUpperCase()+"___"+select_centro_costo+"___"+select_sucursal+"___"+select_nivel+"___"+select_naturaleza+"___"+select_tipo_cta+"___"+select_agrupador;
+        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id+"___"+cuenta+"___"+scuenta+"___"+sscuenta+"___"+ssscuenta+"___"+sssscuenta+"___"+cuenta_mayor+"___"+estatus+"___"+cta_detalle+"___"+descripcion_es.toUpperCase()+"___"+descripcion_in.toUpperCase()+"___"+descripcion_otro.toUpperCase()+"___"+select_centro_costo+"___"+select_sucursal+"___"+select_nivel+"___"+select_naturaleza+"___"+select_tipo_cta+"___"+select_agrupador+"___"+ctasat_id;
         
         succes = this.getCtbDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
         
