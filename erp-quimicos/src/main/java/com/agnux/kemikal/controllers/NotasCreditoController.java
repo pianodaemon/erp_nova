@@ -380,7 +380,7 @@ public class NotasCreditoController {
             @RequestParam(value="factura", required=true) String factura,
             @RequestParam(value="generar", required=true) String generar,
             @RequestParam(value="fac_saldado", required=true) String fac_saldado,
-            @RequestParam(value="select_tmov", required=true) Integer select_tmov,
+            @RequestParam(value="select_tmov", required=false) String select_tmov,
             @ModelAttribute("user") UserSessionData user
         ) throws Exception {
             
@@ -436,6 +436,8 @@ public class NotasCreditoController {
             }else{
                 command_selected = "edit";
             }
+            
+            select_tmov = StringHelper.verificarSelect(select_tmov);
             
             String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_nota_credito+"___"+id_cliente+"___"+id_impuesto+"___"+valor_impuesto+"___"+observaciones.toUpperCase()+"___"+select_moneda+"___"+select_vendedor+"___"+concepto.toUpperCase()+"___"+tipo_cambio+"___"+importe+"___"+impuesto+"___"+retencion+"___"+total+"___"+factura+"___"+select_tmov;
             //System.out.println("data_string: "+data_string);
@@ -848,7 +850,7 @@ public class NotasCreditoController {
     @RequestMapping(method = RequestMethod.POST, value="/cancelarNotaCredito.json")
     public @ResponseBody HashMap<String, String> cancelarNotaCreditoJson(
             @RequestParam(value="id_nota", required=true) Integer id_nota,
-            @RequestParam(value="tmov", required=true) Integer tmov,
+            @RequestParam(value="tmov", required=false) String tmov,
             @RequestParam(value="motivo", required=true) String motivo_cancelacion,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
@@ -888,6 +890,7 @@ public class NotasCreditoController {
         
         System.out.println("Tipo::"+tipo_facturacion+" | noPac::"+noPac+" | Ambiente::"+ambienteFac);
         
+        tmov = StringHelper.verificarSelect(tmov);
         
         String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_nota+"___"+motivo_cancelacion.toUpperCase()+"___"+tipo_facturacion+"___"+tmov;
         

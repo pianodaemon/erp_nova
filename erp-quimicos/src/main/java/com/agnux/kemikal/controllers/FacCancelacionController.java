@@ -315,7 +315,7 @@ public class FacCancelacionController {
     public @ResponseBody HashMap<String, String> getCancelarFactura(
             @RequestParam(value="id_factura", required=true) Integer id_factura,
             @RequestParam(value="tipo_cancelacion", required=true) Integer tipo_cancelacion,
-            @RequestParam(value="tmov", required=true) Integer tmov,
+            @RequestParam(value="tmov", required=false) String tmov,
             @RequestParam(value="motivo", required=true) String motivo_cancelacion,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
@@ -344,6 +344,8 @@ public class FacCancelacionController {
         String valorRespuesta="false";
         String msjRespuesta="";
         
+        tmov = StringHelper.verificarSelect(tmov);
+                
         String data_string = app_selected +"___"+ command_selected +"___"+ id_usuario +"___"+ id_factura +"___"+ tipo_cancelacion +"___"+ motivo_cancelacion.toUpperCase() +"___"+ tmov;
         
         validacion = this.getFacdao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
