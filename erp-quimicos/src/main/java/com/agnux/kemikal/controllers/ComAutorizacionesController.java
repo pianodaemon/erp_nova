@@ -213,7 +213,7 @@ public class ComAutorizacionesController {
 
         jsonretorno.put("via_embarque", via_envarque);
 
-        jsonretorno.put("datosOrdenCompra", datosOrdenCompra);
+        jsonretorno.put("Datos", datosOrdenCompra);
         jsonretorno.put("datosGrid", datosGrid);
         jsonretorno.put("iva", valorIva);
         jsonretorno.put("Monedas", monedas);
