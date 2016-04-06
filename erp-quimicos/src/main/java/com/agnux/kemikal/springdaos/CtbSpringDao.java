@@ -7,10 +7,7 @@ import com.agnux.common.helpers.StringHelper;
 import com.agnux.kemikal.interfacedaos.CtbInterfaceDao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -2183,5 +2180,32 @@ public class CtbSpringDao implements CtbInterfaceDao{
         return anios;
     }
     
+    
+    //Obtiene los datos de las cuentas contables para el xml
+    @Override
+    public ArrayList<LinkedHashMap<String,String>> getCtbXml_CuentasContables(String data_string) {
+        
+        String sql_to_query = "select * from ctb_reporte(?) as foo(codagrup character varying,numcta text,subctade text,descripcion character varying,natur text,nivel character varying);"; 
+        System.out.println("data_string: "+data_string);
+        System.out.println("getCtbXml_CuentasContables= "+sql_to_query);
+        ArrayList<LinkedHashMap<String,String>> hm_facturas = (ArrayList<LinkedHashMap<String,String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{data_string}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    LinkedHashMap<String, String> row = new LinkedHashMap<String, String>();
+                    row.put("codAgrup",rs.getString("codagrup"));
+                    row.put("numCta",rs.getString("numcta"));
+                    row.put("subCtaDe",rs.getString("subctade"));
+                    row.put("desc",rs.getString("descripcion"));
+                    row.put("natur",rs.getString("natur"));
+                    row.put("nivel",rs.getString("nivel"));
+                    
+                    return row;
+                }
+            }
+        );
+        return hm_facturas;
+    }
     
 }

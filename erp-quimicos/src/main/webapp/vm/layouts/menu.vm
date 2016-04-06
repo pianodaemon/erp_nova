@@ -511,6 +511,13 @@
 											</li>
 											
 											<li>
+												<a href="#" class="sub">Electr&oacute;nica &raquo;</a>
+												<ul>
+													<li class="topline"><a href="../ctbxmlcuentascontables/startup.agnux">Cuentas Contables</a></li>
+												</ul>
+											</li>
+											
+											<li>
 												<a href="../ctbpar/startup.agnux">Configuraci&oacute;n</a>
 											</li>
 											

@@ -251,6 +251,14 @@ public class GralSpringDao implements GralInterfaceDao{
     }
     
     @Override
+    public String getFicheroXslCuentasContables(Integer id_empresa, Integer id_sucursal) {
+        String sql_to_query = "select fac_cfds_conf.archivo_xsl_cadena_ctas_contables from fac_cfds_conf where fac_cfds_conf.empresa_id="+id_empresa+" AND fac_cfds_conf.gral_suc_id="+id_sucursal+";";
+        Map<String, Object> map_certificado = this.getJdbcTemplate().queryForMap(sql_to_query);
+        String fichero_xsl = map_certificado.get("archivo_xsl_cadena_ctas_contables").toString();
+        return fichero_xsl;
+    }
+    
+    @Override
     public String getFicheroXslTimbre(Integer id_empresa, Integer id_sucursal) {
         String sql_to_query = "select fac_cfds_conf.archivo_xsl_cadena_timbre from fac_cfds_conf where fac_cfds_conf.empresa_id="+id_empresa+" AND fac_cfds_conf.gral_suc_id="+id_sucursal+";";
         Map<String, Object> map_certificado = this.getJdbcTemplate().queryForMap(sql_to_query);
@@ -266,6 +274,14 @@ public class GralSpringDao implements GralInterfaceDao{
         return fichero;
     }
     
+
+    @Override
+    public String getFicheroXsdXmlCuentasContables(Integer id_empresa, Integer id_sucursal) {
+        String sql_to_query = "select fac_cfds_conf.archivo_xsd_ctas_contables from fac_cfds_conf where fac_cfds_conf.empresa_id="+id_empresa+" AND fac_cfds_conf.gral_suc_id="+id_sucursal+";";
+        Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_to_query);
+        String fichero = map.get("archivo_xsd_ctas_contables").toString();
+        return fichero;
+    }
 /*
     @Override
     public String getFicheroXsdRefId(Integer id_empresa, Integer id_sucursal) {

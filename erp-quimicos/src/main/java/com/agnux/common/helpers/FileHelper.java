@@ -31,7 +31,6 @@ public class FileHelper {
         
     	File fichero = new File (dir_fichero,archivo);
         try {
-            
             if (fichero.createNewFile()){
                 System.out.println("Se ha creado el Fichero: " + dir_fichero + "/" + archivo);
             }
@@ -59,9 +58,41 @@ public class FileHelper {
         }
         
 	return valor_retorno;
-        
     }
 
+    public static boolean createFileWithText(String ruta_fichero,String cadena_impresa){
+    	boolean valor_retorno = true;
+        
+    	File fichero = new File (ruta_fichero);
+        try {
+            if (fichero.createNewFile()){
+                System.out.println("Se ha creado el Fichero: " + ruta_fichero);
+            }
+            else{
+                System.out.println("No se ha creado el Fichero: " + ruta_fichero);
+            }
+        } catch (IOException ioe) {
+                ioe.printStackTrace();
+                valor_retorno = false;
+        }
+        
+        try{
+            //System.out.println("Alimentando contenido al Fichero: " + dir_fichero + "/" + archivo);
+            FileOutputStream out = new FileOutputStream(fichero,true);
+            OutputStreamWriter os = new OutputStreamWriter(out,"UTF-8");
+            BufferedWriter br = new BufferedWriter(os);
+            PrintWriter fileOut = new PrintWriter(br);
+            fileOut.println(cadena_impresa);
+            fileOut.close();
+            System.out.println("El Contenido fue alimentado con exito al Fichero: " + ruta_fichero);
+        }catch (IOException ioe) {
+            System.out.println(ioe.toString());
+            System.out.println("No se ha alimentado el contenido para el Fichero: " + ruta_fichero);
+            valor_retorno = false;
+        }
+        
+	return valor_retorno;
+    }
     
     public static boolean addText2File(String file,String text){
         boolean valor_retorno = true;

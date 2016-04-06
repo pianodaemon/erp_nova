@@ -6,6 +6,7 @@ package com.agnux.kemikal.interfacedaos;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 /**
  *
@@ -131,4 +132,7 @@ public interface CtbInterfaceDao {
     //Buscador de cuentas agrupadoras del sat
     public ArrayList<HashMap<String, Object>>  getBuscadorCuentasAgrupadorasSat(String codigo, String descripcion);
     public ArrayList<HashMap<String, Object>>  getDataCtaSat(String codigo);
+    
+    //Obtiene los datos de las cuentas contables para el xml
+    public ArrayList<LinkedHashMap<String,String>> getCtbXml_CuentasContables(String data_string);
 }
