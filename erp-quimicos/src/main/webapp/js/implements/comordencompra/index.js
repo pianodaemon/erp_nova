@@ -2177,7 +2177,6 @@ $(function() {
 							trr += '</tr>';
 							$grid_productos.append(trr);
 							
-							
 							if(parseInt(entry['datosOrdenCompra'][0]['tipo_oc'])==1){
 								//Tipo de OC generada a partir de una requisicion
 								$grid_productos.find('#delete'+ tr).hide();

@@ -2115,7 +2115,10 @@ public class CrmSpringDao implements CrmInterfaceDao{
             + "proy.prioridad,"
             + "proy.muestra,"
             + "proy.monto,"
-            + "proy.observaciones "
+            + "proy.gral_mon_id as mon_id,"
+            + "proy.observaciones,"
+            + "proy.kg,"
+            + "proy.periodicidad "
         + "from crm_registro_proyecto as proy "
         + "left join cxp_prov on cxp_prov.id=proy.cxp_prov_id "
         + "left join crm_contactos ON crm_contactos.id=proy.crm_contacto_id "
@@ -2143,7 +2146,10 @@ public class CrmSpringDao implements CrmInterfaceDao{
                     row.put("prioridad",rs.getInt("prioridad"));
                     row.put("muestra",rs.getInt("muestra"));
                     row.put("monto",StringHelper.roundDouble(rs.getDouble("monto"),2));
+                    row.put("mon_id",rs.getInt("mon_id"));
                     row.put("observaciones",rs.getString("observaciones"));
+                    row.put("periodicidad",rs.getInt("periodicidad"));
+                    row.put("kg",StringHelper.roundDouble(rs.getDouble("kg"),2));
                     
                     return row;
                 }
@@ -2151,6 +2157,38 @@ public class CrmSpringDao implements CrmInterfaceDao{
         );
         return datos;
     }
+    
+    
+    //Obtiene datos del proyecto
+    @Override
+    public ArrayList<HashMap<String, Object>> getCrmRegistroProyectos_Competidores(Integer id) {
+        String sql_to_query = ""
+        + "select "
+            + "proy_competidor.id,"
+            + "proy_competidor.nombre,"
+            + "proy_competidor.precio,"
+            + "proy_competidor.proveedor "
+        + "from crm_registro_proyecto_competidor as proy_competidor "
+        + "where proy_competidor.crm_registro_proyecto_id=?";
+        
+        ArrayList<HashMap<String, Object>> datos = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(id)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("nombre",rs.getString("nombre"));
+                    row.put("proveedor",rs.getString("proveedor"));
+                    row.put("precio",StringHelper.roundDouble(rs.getDouble("precio"),2));
+                    
+                    return row;
+                }
+            }
+        );
+        return datos;
+    }
+    
     
     //Obtener los diferentes estatus para registro de proyectos
     @Override
@@ -2171,6 +2209,27 @@ public class CrmSpringDao implements CrmInterfaceDao{
             }
         );
         return hm;
+    }
+    
+    
+    @Override
+    public ArrayList<HashMap<String, Object>> getMonedas() {
+        String sql_to_query = "SELECT id, descripcion, descripcion_abr FROM  gral_mon WHERE borrado_logico=FALSE AND ventas=TRUE ORDER BY id ASC;";
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        ArrayList<HashMap<String, Object>> hm_monedas = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("descripcion_abr",rs.getString("descripcion_abr"));
+                    return row;
+                }
+            }
+        );
+        return hm_monedas;
     }
     
 }

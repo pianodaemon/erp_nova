@@ -116,7 +116,9 @@ public interface CrmInterfaceDao {
     public ArrayList<HashMap<String, Object>> getCrmRegistroProyectos_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
     //Obtiene datos del proyecto
     public ArrayList<HashMap<String, Object>> getCrmRegistroProyectos_Datos(Integer id);
+    public ArrayList<HashMap<String, Object>> getCrmRegistroProyectos_Competidores(Integer id);
     //Obtener los diferentes estatus para registro de proyectos
     public ArrayList<HashMap<String, String>> getCrmRegistroProyectos_Estatus(Integer id_empresa);
     
+    public ArrayList<HashMap<String, Object>> getMonedas();
 }

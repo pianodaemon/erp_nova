@@ -10,6 +10,7 @@ $(function() {
     //Arreglo para select  de Forma de calculo
     var arrayPrioridad = {1:"Baja", 2:"Media", 3:"Alta"};
     var arrayMuestra = {1:"N/A", 2:"Pendiente", 3:"OK"};
+    var arrayPeriodicidad = {1:"Mensual", 2:"Anual"};
 			
 		
 	$('#header').find('#header1').find('span.emp').text($('#lienzo_recalculable').find('input[name=emp]').val());
@@ -590,6 +591,45 @@ $(function() {
 	
 	
 	
+	var $agrega_fila_grid = function($grid_registros, id, competidor, precio, proveedor){
+		var notr = $("tr", $grid_registros).size();
+		notr++;
+		
+		var trr = '';
+		
+		trr = '<tr>';
+			trr += '<td class="grid1">'+ notr +'</td>';
+			trr += '<td class="grid1" width="200">';
+				trr += '<input type="hidden" name="iddet" value="'+ id +'"">';
+				trr += '<input type="text" name="competidor" id="competidor'+ notr +'" value="'+ competidor +'" style="width:197px;">';
+			trr += '</td>';
+			trr += '<td class="grid1" width="100"><input type="text" name="precio" id="precio'+ notr +'" value="'+ precio +'" style="width:97px;"></td>';
+			trr += '<td class="grid1" width="200"><input type="text" name="prov" id="prov'+ notr +'" value="'+ proveedor +'" style="width:197px;"></td>';
+		trr += '</tr>';
+		
+		$grid_registros.append(trr);
+		
+		$grid_registros.find('#precio'+ notr).keypress(function(e){
+			// Permitir  numeros, borrar, suprimir, TAB, puntos, comas
+			if (e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
+				return true;
+			}else {
+				return false;
+			}
+		});
+        
+		$aplicar_evento_focus($grid_registros.find('#precio'+ notr));
+		
+		$grid_registros.find('#precio'+ notr).blur(function(){
+			if($(this).val().trim()==''){
+				$(this).val(0);
+			}
+			
+			$(this).val(parseFloat($(this).val()).toFixed(2));
+		});
+		
+	}
+	
 	
 	//nuevo
 	$new_crmregistroproyectos.click(function(event){
@@ -625,12 +665,17 @@ $(function() {
 		var $fecha_inicio = $('#forma-crmregistroproyectos-window').find('input[name=fecha_inicio]');
 		var $fecha_fin = $('#forma-crmregistroproyectos-window').find('input[name=fecha_fin]');
 		var $monto = $('#forma-crmregistroproyectos-window').find('input[name=monto]');
+		var $kilogramos = $('#forma-crmregistroproyectos-window').find('input[name=kilogramos]');
 		
 		var $select_estatus = $('#forma-crmregistroproyectos-window').find('select[name=select_estatus]');
 		var $select_prioridad = $('#forma-crmregistroproyectos-window').find('select[name=select_prioridad]');
 		var $select_muestra = $('#forma-crmregistroproyectos-window').find('select[name=select_muestra]');
+		var $select_periodicidad = $('#forma-crmregistroproyectos-window').find('select[name=select_periodicidad]');
+		var $select_moneda = $('#forma-crmregistroproyectos-window').find('select[name=select_moneda]');
 		
 		var $observaciones = $('#forma-crmregistroproyectos-window').find('textarea[name=observaciones]');
+		
+		var $grid_registros = $('#forma-crmregistroproyectos-window').find('#grid_registros');
 		
 		var $cerrar_plugin = $('#forma-crmregistroproyectos-window').find('#close');
 		var $cancelar_plugin = $('#forma-crmregistroproyectos-window').find('#boton_cancelar');
@@ -643,6 +688,7 @@ $(function() {
 		$id_prov.attr({'value' : 0});
 		$fecha_alta.val(mostrarFecha());
 		$monto.attr({'value' :parseFloat(0).toFixed(2)});
+		$kilogramos.attr({'value' :parseFloat(0).toFixed(2)});
 		
 		var respuestaProcesada = function(data){
 			if ( data['success'] == "true" ){
@@ -705,6 +751,14 @@ $(function() {
 			});
 			$select_estatus.append(estatus_hmtl);
 			
+			//Alimentando los campos select_moneda
+			$select_moneda.children().remove();
+			var moneda_hmtl='';
+			$.each(entry['Monedas'],function(entryIndex,mon){
+				moneda_hmtl += '<option value="' + mon['id'] + '">' + mon['descripcion_abr'] + '</option>';
+			});
+			$select_moneda.append(moneda_hmtl);
+			
 		},"json");//termina llamada json
         
 		//cargar select
@@ -717,13 +771,24 @@ $(function() {
 		cadena_elemento_cero ="";
 		$carga_campos_select($select_muestra, arrayMuestra, elemento_seleccionado, cadena_elemento_cero);
 		
+		//cargar select
+		elemento_seleccionado = 0;
+		cadena_elemento_cero ="";
+		$carga_campos_select($select_periodicidad, arrayPeriodicidad, elemento_seleccionado, cadena_elemento_cero);
 		
+		var competidor="";
+		var precio="0.00";
+		var proveedor="";
+		
+		for(var i=1; i<=3; i++){
+			$agrega_fila_grid($grid_registros, 0, competidor, precio, proveedor);
+		}
 		
 		$fecha_inicio.click(function (s){
 			var a=$('div.datepicker');
 			a.css({'z-index':100});
 		});
-			
+		
 		$fecha_inicio.DatePicker({
 			format:'Y-m-d',
 			date: $fecha_inicio.val(),
@@ -803,6 +868,25 @@ $(function() {
 		$aplicar_evento_focus($monto);
 		
 		$monto.blur(function(){
+			if($(this).val().trim()==''){
+				$(this).val(0);
+			}
+			
+			$(this).val(parseFloat($(this).val()).toFixed(2));
+		});
+		
+		$kilogramos.keypress(function(e){
+			// Permitir  numeros, borrar, suprimir, TAB, puntos, comas
+			if (e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
+				return true;
+			}else {
+				return false;
+			}
+		});
+		
+		$aplicar_evento_focus($kilogramos);
+		
+		$kilogramos.blur(function(){
 			if($(this).val().trim()==''){
 				$(this).val(0);
 			}
@@ -903,12 +987,17 @@ $(function() {
 			var $fecha_inicio = $('#forma-crmregistroproyectos-window').find('input[name=fecha_inicio]');
 			var $fecha_fin = $('#forma-crmregistroproyectos-window').find('input[name=fecha_fin]');
 			var $monto = $('#forma-crmregistroproyectos-window').find('input[name=monto]');
+			var $kilogramos = $('#forma-crmregistroproyectos-window').find('input[name=kilogramos]');
 			
 			var $select_estatus = $('#forma-crmregistroproyectos-window').find('select[name=select_estatus]');
 			var $select_prioridad = $('#forma-crmregistroproyectos-window').find('select[name=select_prioridad]');
 			var $select_muestra = $('#forma-crmregistroproyectos-window').find('select[name=select_muestra]');
+			var $select_periodicidad = $('#forma-crmregistroproyectos-window').find('select[name=select_periodicidad]');
+			var $select_moneda = $('#forma-crmregistroproyectos-window').find('select[name=select_moneda]');
 			
 			var $observaciones = $('#forma-crmregistroproyectos-window').find('textarea[name=observaciones]');
+			
+			var $grid_registros = $('#forma-crmregistroproyectos-window').find('#grid_registros');
 			
 			var $cerrar_plugin = $('#forma-crmregistroproyectos-window').find('#close');
 			var $cancelar_plugin = $('#forma-crmregistroproyectos-window').find('#boton_cancelar');
@@ -920,6 +1009,7 @@ $(function() {
 			$id_contacto.attr({'value' : 0});
 			$id_prov.attr({'value' : 0});
 			$monto.attr({'value' :parseFloat(0).toFixed(2)});
+			$kilogramos.attr({'value' :parseFloat(0).toFixed(2)});
 			
 			if(accion_mode == 'edit'){
                                 
@@ -967,14 +1057,15 @@ $(function() {
 					$descripcion.text(entry['Datos'][0]['descripcion']);
 					
 					$id_contacto.attr({'value' : entry['Datos'][0]['contacto_id']});
-					$contacto.attr({'value' : entry['Datos'][0]['proveedor']});
+					$contacto.attr({'value' : entry['Datos'][0]['contacto']});
 					
 					$id_prov.attr({'value' : entry['Datos'][0]['prov_id']});
-					$proveedor.attr({'value' : entry['Datos'][0]['contacto']});
+					$proveedor.attr({'value' : entry['Datos'][0]['proveedor']});
 					
 					$fecha_inicio.attr({'value' : entry['Datos'][0]['fecha_inicio']});
 					$fecha_fin.attr({'value' : entry['Datos'][0]['fecha_fin']});
 					$monto.attr({'value' : entry['Datos'][0]['monto']});
+					$kilogramos.attr({'value' : entry['Datos'][0]['kg']});
 					
 					$observaciones.text(entry['Datos'][0]['observaciones']);
 					
@@ -1001,6 +1092,21 @@ $(function() {
 					});
 					$select_estatus.append(estatus_hmtl);
 					
+					//Alimentando los campos select_moneda
+					$select_moneda.children().remove();
+					var moneda_hmtl='';
+					
+					if(parseInt(entry['Datos'][0]['mon_id'])<=0){
+						moneda_hmtl='<option value="0">[--- ---]</option>'
+					}
+					$.each(entry['Monedas'],function(entryIndex,mon){
+						if(parseInt(mon['id'])==parseInt(entry['Datos'][0]['mon_id'])){
+							moneda_hmtl += '<option value="' + mon['id'] + '" selected="yes">' + mon['descripcion_abr'] + '</option>';
+						}else{
+							moneda_hmtl += '<option value="' + mon['id'] + '" >' + mon['descripcion_abr'] + '</option>';
+						}
+					});
+					$select_moneda.append(moneda_hmtl);
 					
 					//cargar select
 					var elemento_seleccionado = entry['Datos'][0]['prioridad'];
@@ -1011,6 +1117,27 @@ $(function() {
 					elemento_seleccionado = entry['Datos'][0]['muestra'];
 					cadena_elemento_cero ="[--- ---]";
 					$carga_campos_select($select_muestra, arrayMuestra, elemento_seleccionado, cadena_elemento_cero);
+					
+					//cargar select
+					elemento_seleccionado = entry['Datos'][0]['periodicidad'];
+					cadena_elemento_cero ="[--- ---]";
+					$carga_campos_select($select_periodicidad, arrayPeriodicidad, elemento_seleccionado, cadena_elemento_cero);
+					
+					var cont=1;
+					if(entry['Competidores']){
+						if(parseInt(entry['Competidores'].length) > 0 ){
+							$.each(entry['Competidores'],function(entryIndex,competidor){
+								
+								$agrega_fila_grid($grid_registros, competidor['id'], competidor['nombre'], competidor['precio'], competidor['proveedor']);
+								
+								cont++;
+							});
+						}
+					}
+					
+					for(var i=cont; i<=3; i++){
+						$agrega_fila_grid($grid_registros, 0, "", "0.00", "");
+					}
 					
 				},"json");//termina llamada json
 				
@@ -1027,6 +1154,25 @@ $(function() {
 				$aplicar_evento_focus($monto);
 				
 				$monto.blur(function(){
+					if($(this).val().trim()==''){
+						$(this).val(0);
+					}
+					
+					$(this).val(parseFloat($(this).val()).toFixed(2));
+				});
+				
+				$kilogramos.keypress(function(e){
+					// Permitir  numeros, borrar, suprimir, TAB, puntos, comas
+					if (e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
+						return true;
+					}else {
+						return false;
+					}
+				});
+				
+				$aplicar_evento_focus($kilogramos);
+				
+				$kilogramos.blur(function(){
 					if($(this).val().trim()==''){
 						$(this).val(0);
 					}

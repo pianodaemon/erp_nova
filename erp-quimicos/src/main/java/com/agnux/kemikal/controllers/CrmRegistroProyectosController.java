@@ -20,6 +20,7 @@ import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -201,6 +202,7 @@ public class CrmRegistroProyectosController {
         
         if( id != 0  ){
             datos = this.getCrmDao().getCrmRegistroProyectos_Datos(id);
+            jsonretorno.put("Competidores", this.getCrmDao().getCrmRegistroProyectos_Competidores(id));
         }
         
         extra = this.getCrmDao().getUserRol(id_usuario);
@@ -210,6 +212,7 @@ public class CrmRegistroProyectosController {
         jsonretorno.put("Datos", datos);
         jsonretorno.put("Extra", arrayExtra);
         jsonretorno.put("Agentes", this.getCrmDao().getAgentes(id_empresa));
+        jsonretorno.put("Monedas", this.getCrmDao().getMonedas());
         jsonretorno.put("Estatus", this.getCrmDao().getCrmRegistroProyectos_Estatus(id_empresa));
         
         return jsonretorno;
@@ -291,8 +294,17 @@ public class CrmRegistroProyectosController {
         @RequestParam(value="select_estatus", required=true) String select_estatus,
         @RequestParam(value="select_prioridad", required=true) String select_prioridad,
         @RequestParam(value="select_muestra", required=true) String select_muestra,
+        @RequestParam(value="select_moneda", required=true) String select_moneda,
+        @RequestParam(value="select_periodicidad", required=true) String select_periodicidad,
         @RequestParam(value="monto", required=true) String monto,
+        @RequestParam(value="kilogramos", required=true) String kilogramos,
         @RequestParam(value="observaciones", required=true) String observaciones,
+        
+        @RequestParam(value="iddet", required=false) String[] iddet,
+        @RequestParam(value="competidor", required=false) String[] competidor,
+        @RequestParam(value="precio", required=false) String[] precio,
+        @RequestParam(value="prov", required=false) String[] prov,
+        
         Model model,@ModelAttribute("user") UserSessionData user
     ) {
         
@@ -301,8 +313,9 @@ public class CrmRegistroProyectosController {
         String command_selected = "new";
         Integer id_usuario= user.getUserId();//variable para el id  del usuario
         String arreglo[];
-        String extra_data_array = "'sin datos'";
+        String extra_data_array = "'sin_datos'";
         String actualizo = "0";
+        arreglo = new String[iddet.length];
         
         HashMap<String, String> jsonretorno = new HashMap<String, String>();
         
@@ -314,9 +327,17 @@ public class CrmRegistroProyectosController {
             command_selected = "edit";
         }
         
-        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+identificador+"___"+nombre.toUpperCase()+"___"+descripcion.toUpperCase()+"___"+select_agente+"___"+id_contacto+"___"+id_prov+"___"+fecha_inicio+"___"+fecha_fin+"___"+select_estatus+"___"+select_prioridad+"___"+select_muestra+"___"+observaciones.toUpperCase()+"___"+monto;
+        if(iddet.length>0){
+            for(int i=0; i<iddet.length; i++) {
+                arreglo[i]= "'"+iddet[i] +"___"+ competidor[i].toUpperCase() +"___"+ precio[i] +"___"+ prov[i].toUpperCase() +"'";
+                //System.out.println(arreglo[i]);
+            }
+            
+            //Serializar el arreglo
+            extra_data_array = StringUtils.join(arreglo, ",");
+        }
         
-        //System.out.println("data_string: "+data_string);
+        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+identificador+"___"+nombre.toUpperCase()+"___"+descripcion.toUpperCase()+"___"+select_agente+"___"+id_contacto+"___"+id_prov+"___"+fecha_inicio+"___"+fecha_fin+"___"+select_estatus+"___"+select_prioridad+"___"+select_muestra+"___"+observaciones.toUpperCase()+"___"+monto+"___"+select_moneda+"___"+select_periodicidad+"___"+kilogramos;
         
         succes = this.getCrmDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
         
