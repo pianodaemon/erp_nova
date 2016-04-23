@@ -514,6 +514,7 @@
 												<a href="#" class="sub">Electr&oacute;nica &raquo;</a>
 												<ul>
 													<li class="topline"><a href="../ctbxmlcuentascontables/startup.agnux">Cuentas Contables</a></li>
+													<li class="topline"><a href="../ctbxmlbalanzacomprobacion/startup.agnux">Balanza de Comprobaci&oacute;n</a></li>
 												</ul>
 											</li>
 											

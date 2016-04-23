@@ -9,9 +9,7 @@ import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,7 +22,7 @@ public class CtbPdfReporteBalanzaComprobacion {
     public File archivoSalida;
     HashMap<String, String> datosHeaderFooter;
     HashMap<String, String> datosEmp;
-    public List<HashMap<String, String>> rows;
+    public List<LinkedHashMap<String, String>> rows;
     private HashMap<String, String> total;
 
     public HashMap<String, String> getTotal() {
@@ -59,15 +57,15 @@ public class CtbPdfReporteBalanzaComprobacion {
         this.datosHeaderFooter = datosHeaderFooter;
     }
 
-    public List<HashMap<String, String>> getRows() {
+    public List<LinkedHashMap<String, String>> getRows() {
         return rows;
     }
     
-    public void setRows(List<HashMap<String, String>> rows) {
+    public void setRows(List<LinkedHashMap<String, String>> rows) {
         this.rows = rows;
     }
     
-    public CtbPdfReporteBalanzaComprobacion(String fileout, HashMap<String, String> datosEncabezadoPie, HashMap<String, String> datosEmpresa, ArrayList<HashMap<String, String>> itemsForPrinting, HashMap<String, String> total){
+    public CtbPdfReporteBalanzaComprobacion(String fileout, HashMap<String, String> datosEncabezadoPie, HashMap<String, String> datosEmpresa, ArrayList<LinkedHashMap<String, String>> itemsForPrinting, HashMap<String, String> total){
         this.setArchivoSalida(new File(fileout));
         this.setDatosHeaderFooter(datosEncabezadoPie);
         this.setDatosEmp(datosEmpresa);

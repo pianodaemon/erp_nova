@@ -5,6 +5,7 @@
 package com.agnux.kemikal.controllers;
 
 import com.agnux.cfd.v2.Base64Coder;
+import com.agnux.common.helpers.StringHelper;
 import com.agnux.common.helpers.TimeHelper;
 import com.agnux.common.obj.ResourceProject;
 import com.agnux.common.obj.UserSessionData;
@@ -35,15 +36,15 @@ import org.springframework.web.servlet.ModelAndView;
  *
  * @author Noe Martinez
  * gpmarsan@gmail.com
- * 04/abril/2016
+ * 22/abril/2016
  * 
  */
 @Controller
 @SessionAttributes({"user"})
-@RequestMapping("/ctbxmlcuentascontables/")
-public class CtbXmlCuentasContablesController {
+@RequestMapping("/ctbxmlbalanzacomprobacion/")
+public class CtbXmlBalanzaComprobacionController {
     ResourceProject resource = new ResourceProject();
-    private static final Logger log  = Logger.getLogger(CtbXmlCuentasContablesController.class.getName());
+    private static final Logger log  = Logger.getLogger(CtbXmlBalanzaComprobacionController.class.getName());
     
     @Autowired
     @Qualifier("daoCtb")
@@ -74,9 +75,9 @@ public class CtbXmlCuentasContablesController {
             @ModelAttribute("user") UserSessionData user)
             throws ServletException, IOException {
         
-        log.log(Level.INFO, "Ejecutando starUp de {0}", CtbXmlCuentasContablesController.class.getName());
+        log.log(Level.INFO, "Ejecutando starUp de {0}", CtbXmlBalanzaComprobacionController.class.getName());
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
-        ModelAndView x = new ModelAndView("ctbxmlcuentascontables/startup", "title", "Xml de Cuentas Contables");
+        ModelAndView x = new ModelAndView("ctbxmlbalanzacomprobacion/startup", "title", "Xml de Balanza de Comprobaci&oacute;n");
         
         x = x.addObject("layoutheader", resource.getLayoutheader());
         x = x.addObject("layoutmenu", resource.getLayoutmenu());
@@ -98,14 +99,47 @@ public class CtbXmlCuentasContablesController {
     
     
     
+   //Cargar año y mes actual
+   @RequestMapping(method = RequestMethod.POST, value="/getDatos.json")
+        public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getDatosJson(
+        @RequestParam(value="iu", required=true) String id_user,
+        Model model
+    ){
+        HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
+        HashMap<String, Object> extra = new HashMap<String, Object>();
+        ArrayList<HashMap<String, Object>> arrayExtra = new ArrayList<HashMap<String, Object>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        
+        //Decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        
+        extra.put("nivel_cta", userDat.get("nivel_cta"));
+        extra.put("mesActual", TimeHelper.getMesActual());
+        extra.put("anioActual", TimeHelper.getFechaActualY());
+        arrayExtra.add(0, extra);
+        
+        jsonretorno.put("Anios", this.getCtbDao().getCtbRepAuxCtas_Anios());
+        jsonretorno.put("Dato", arrayExtra);
+        //Aqui solo nos interesa las subcuentas del nivel uno, por lo tanto le pasamos el numero 1
+        //jsonretorno.put("Cta", this.getCtbDao().getCtbRepAuxCtas_Ctas(1,"","", "", "", id_empresa));
+        //jsonretorno.put("Suc", this.getCtbDao().getCtb_Sucursales(id_empresa));
+        
+        return jsonretorno;
+    }
+    
     
     //Buscador de clientes
     @RequestMapping(method = RequestMethod.POST, value="/getCreaXml.json")
     public @ResponseBody HashMap<String,Object> getCreaXmlJson(
+            @RequestParam(value="tenvio", required=true) String tipo_envio,
+            @RequestParam(value="anio", required=true) String anio,
+            @RequestParam(value="mes", required=true) String mes,
             @RequestParam(value="iu", required=true) String id_user_cod,
             Model model
         ) {
-        
+                                
         HashMap<String,Object> jsonretorno = new HashMap<String,Object>();
         
         HashMap<String, String> userDat = new HashMap<String, String>();
@@ -113,13 +147,12 @@ public class CtbXmlCuentasContablesController {
         ArrayList<LinkedHashMap<String,String>> cuentas = new ArrayList<LinkedHashMap<String,String>>();
         ArrayList<LinkedHashMap<String,String>> errores = new ArrayList<LinkedHashMap<String,String>>();
         
-        System.out.println("Generando xml de cuentas contables");
+        System.out.println("Generando xml de Balanza de Comprobacion");
         
-        //Se utiliza el mismo numero de aplicativo de Catalogo de cuentas
-        Integer app_selected = 106;
+        //Reporte Balanza de Comprobacion
+        Integer app_selected = 158;
         String command_selected="reporte";
-        String anio = TimeHelper.getFechaActualY();
-        String mes = TimeHelper.getMesActual();
+        
         
         //Decodificar id de usuario
         Integer id_user = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
@@ -141,9 +174,20 @@ public class CtbXmlCuentasContablesController {
         System.out.println("rutaFicheroLlave= "+rutaFicheroLlave);
         System.out.println("passwordLlavePrivada= "+passwordLlavePrivada);
         */
-        String file_name = rfcEmpresa.toUpperCase() + anio + mes +"CT";
+        
+        //Obtener el numero de dias del Mes
+        int numeroDiasMes = TimeHelper.getNumDiasMes(Integer.parseInt(anio), Integer.parseInt(mes));
+        
+        Formatter fmt = new Formatter();
+        mes = fmt.format("%02d",Integer.parseInt(mes)).toString();
+        
+        System.out.println("mes="+mes);
+        
+        String file_name = rfcEmpresa.toUpperCase() + anio + mes + tipo_envio;
         
         rutaFicheroXml = rutaFicheroXml +"/"+ file_name + ".xml";
+        
+        System.out.println("rutaFicheroXml="+rutaFicheroXml);
         
         File file_xml = new File(rutaFicheroXml);
         if(file_xml.exists()){
@@ -155,15 +199,34 @@ public class CtbXmlCuentasContablesController {
         datos.put("noCertificado", this.getGralDao().getNoCertificadoEmpresaEmisora(id_empresa, id_sucursal));
         datos.put("rfc", rfcEmpresa);
         datos.put("version", "1.1");
+        if(tipo_envio.equals("BN")) datos.put("tipoEnvio", "N");
+        if(tipo_envio.equals("BC")) datos.put("tipoEnvio", "C");
+        datos.put("fecha", TimeHelper.getFechaActualYMD());
         
-        cuentas = this.getCtbDao().getCtbXml_CuentasContables(app_selected+"___"+id_user+"___"+command_selected);
+        
+        String cta = "";
+        String scta = "";
+        String sscta = "";
+        String ssscta = "";
+        String sssscta = "";
+        String suc = "0";
+        String fecha_ini = anio+"-"+mes+"-01";
+        String fecha_fin = anio+"-"+mes+"-"+numeroDiasMes;
+        String filtro_cuenta="1";
+        String tipo_doc = "";
+        
+        String data_string = app_selected+"___"+id_user+"___"+command_selected+"___"+suc+"___"+fecha_ini+"___"+fecha_fin+"___"+filtro_cuenta+"___"+cta+"___"+scta+"___"+sscta+"___"+ssscta+"___"+sssscta+"___"+tipo_doc;
+        
+        //Obtiene datos del Reporte Auxiliar de Cuentas
+        cuentas = this.getCtbDao().getCtbRepBalanzaComp_Datos(data_string);
+        
         
         errores = validarCuentas(cuentas);
         
         if(errores.size()<=0){
             //Instancia a la clase que construye xml
-            BeanConstruyeSellaXml xml = new BeanConstruyeSellaXml("CATALOGO",datos, cuentas, rutaFicheroCertificado, ficheroXsl, rutaFicheroLlave, passwordLlavePrivada, rutaFicheroXml, rutaFicheroXsd);
-
+            BeanConstruyeSellaXml xml = new BeanConstruyeSellaXml("BALANZA",datos, cuentas, rutaFicheroCertificado, ficheroXsl, rutaFicheroLlave, passwordLlavePrivada, rutaFicheroXml, rutaFicheroXsd);
+            
             jsonretorno.put("success",xml.isSuccess());
             jsonretorno.put("msj",xml.getMensaje());
 
@@ -285,85 +348,4 @@ public class CtbXmlCuentasContablesController {
         return retorno;
     }
     
-
-    
-    
-    /*
-    //Genera pdf Reporte Auxiliar de Cuentas
-    @RequestMapping(value = "/getXml/{iu}/out.json", method = RequestMethod.GET )
-    public ModelAndView getXmlJson(
-                @PathVariable("iu") String id_user_cod,
-                HttpServletRequest request,
-                HttpServletResponse response,
-                Model model)
-        throws ServletException, IOException, URISyntaxException, DocumentException {
-        
-        HashMap<String, String> userDat = new HashMap<String, String>();
-        LinkedHashMap<String,String> datos = new LinkedHashMap<String,String>();
-        ArrayList<LinkedHashMap<String,String>> cuentas = new ArrayList<LinkedHashMap<String,String>>();
-        
-        System.out.println("Generando xml de cuentas contables");
-        
-        //Se utiliza el mismo numero de aplicativo de Catalogo de cuentas
-        Integer app_selected = 106;
-        String command_selected="reporte";
-        
-        //Decodificar id de usuario
-        Integer id_user = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
-        userDat = this.getHomeDao().getUserById(id_user);
-        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
-        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
-        
-        String rfcEmpresa = this.getGralDao().getRfcEmpresaEmisora(id_empresa);
-        String rutaFicheroCertificado = this.getGralDao().getSslDir() + rfcEmpresa + "/" + this.getGralDao().getCertificadoEmpresaEmisora(id_empresa, id_sucursal);
-        String ficheroXsl = this.getGralDao().getXslDir() + rfcEmpresa +"/"+ this.getGralDao().getFicheroXslCuentasContables(id_empresa, id_sucursal);
-        String rutaFicheroLlave = this.getGralDao().getSslDir() + rfcEmpresa + "/" + this.getGralDao().getFicheroLlavePrivada(id_empresa, id_sucursal);
-        String passwordLlavePrivada = this.getGralDao().getPasswordLlavePrivada(id_empresa, id_sucursal);
-        String rutaFicheroXml = this.getGralDao().getCfdiTimbreEmitidosDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa);
-        String rutaFicheroXsd = this.getGralDao().getXsdDir() + this.getGralDao().getFicheroXsdCfdi(id_empresa, id_sucursal);
-        
-        System.out.println("rutaFicheroCertificado= "+rutaFicheroCertificado);
-        System.out.println("ficheroXsl= "+ficheroXsl);
-        System.out.println("rutaFicheroLlave= "+rutaFicheroLlave);
-        System.out.println("passwordLlavePrivada= "+passwordLlavePrivada);
-        
-        String anio = TimeHelper.getFechaActualY();
-        String mes = TimeHelper.getMesActual();
-        
-        datos.put("anio", anio);
-        datos.put("mes", mes);
-        datos.put("noCertificado", this.getGralDao().getNoCertificadoEmpresaEmisora(id_empresa, id_sucursal));
-        datos.put("rfc", rfcEmpresa);
-        datos.put("version", "1.1");
-        
-        cuentas = this.getCtbDao().getCtbXml_CuentasContables(app_selected+"___"+id_user+"___"+command_selected);
-        
-        
-        String file_name = rfcEmpresa.toUpperCase() + anio + mes +"CT.xml";
-        
-        rutaFicheroXml = rutaFicheroXml +"/"+ file_name;
-        
-        //Instancia a la clase que construye xml
-        BeanConstruyeSellaXml xml = new BeanConstruyeSellaXml(datos, cuentas, rutaFicheroCertificado, ficheroXsl, rutaFicheroLlave, passwordLlavePrivada, rutaFicheroXml, rutaFicheroXsd);
-        
-        
-        
-        //Guardar xml
-        
-        
-        //Descargar
-        response.setBufferSize(xml.getBaos().size());
-        response.setContentLength(xml.getBaos().size());
-        response.setContentType("text/plain");
-        response.setHeader("Content-Disposition","attachment; filename=\"" + file_name +"\"");
-        OutputStream os = response.getOutputStream();
-        xml.getBaos().writeTo(os);
-        os.flush();
-        os.close();
-        
-        return null;
-    }
-    */
-    
-  
 }

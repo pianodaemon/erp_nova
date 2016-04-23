@@ -49,7 +49,7 @@ public class BeanConstruyeSellaXml {
         this.baos = baos;
     }
     
-    public BeanConstruyeSellaXml(LinkedHashMap<String,String> datos, ArrayList<LinkedHashMap<String,String>> cuentas, String rutaFicheroCertificado, String rutaFicheroXsl, String rutaFicheroLlave, String passwordLlavePrivada, String rutaFicheroXml, String rutaFicheroXsd) {
+    public BeanConstruyeSellaXml(String tipo, LinkedHashMap<String,String> datos, ArrayList<LinkedHashMap<String,String>> cuentas, String rutaFicheroCertificado, String rutaFicheroXsl, String rutaFicheroLlave, String passwordLlavePrivada, String rutaFicheroXml, String rutaFicheroXsd) {
         this.setBaos(new ByteArrayOutputStream());
         this.setSuccess(false);
         this.setMensaje("");
@@ -63,10 +63,24 @@ public class BeanConstruyeSellaXml {
             datos.put("certificado", certificadoBase64);
             datos.put("sello", "@SELLO_DIGITAL");
             
-            //Construir xml
-            CatalogoCuentasXmlBuilder xml = new CatalogoCuentasXmlBuilder(datos, cuentas);
             
-            cadenaXml = xml.getBaos().toString();
+            
+            if(tipo.equals("CATALOGO")){
+                //Construir xml
+                CatalogoCuentasXmlBuilder xml = new CatalogoCuentasXmlBuilder(datos, cuentas);
+
+                cadenaXml = xml.getBaos().toString();
+            }
+            
+            if(tipo.equals("BALANZA")){
+                //Construir xml
+                BalanzaComprobacionXmlBuilder xml = new BalanzaComprobacionXmlBuilder(datos, cuentas);
+
+                cadenaXml = xml.getBaos().toString();
+            }
+            
+            
+            
             
             //Obtener la cadena original necesario para obtener el sello
             String cadenaOriginal = XmlHelper.transformar(cadenaXml, rutaFicheroXsl);

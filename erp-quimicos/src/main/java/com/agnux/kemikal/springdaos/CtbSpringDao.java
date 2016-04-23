@@ -932,18 +932,19 @@ public class CtbSpringDao implements CtbInterfaceDao{
     
     
     @Override
-    public ArrayList<HashMap<String, String>> getCtbRepBalanzaComp_Datos(String data_string) {
+    public ArrayList<LinkedHashMap<String, String>> getCtbRepBalanzaComp_Datos(String data_string) {
         
-        String sql_to_query = "select * from ctb_reporte(?) as foo(nivel integer, cuenta character varying, descripcion character varying, saldo_inicial character varying, debe character varying, haber character varying, saldo_final character varying);"; 
-        //System.out.println("data_string: "+data_string);
-        //System.out.println("CtbRepBalanzaComp:: "+sql_to_query);
-        ArrayList<HashMap<String, String>> hm_facturas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+        String sql_to_query = "select * from ctb_reporte(?) as foo(nivel integer,  cuenta1 character varying, cuenta character varying, descripcion character varying, saldo_inicial character varying, debe character varying, haber character varying, saldo_final character varying);"; 
+        System.out.println("data_string: "+data_string);
+        System.out.println("CtbRepBalanzaComp:: "+sql_to_query);
+        ArrayList<LinkedHashMap<String, String>> hm_facturas = (ArrayList<LinkedHashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{data_string}, new RowMapper(){
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    HashMap<String, String> row = new HashMap<String, String>();
+                    LinkedHashMap<String, String> row = new LinkedHashMap<String, String>();
                     row.put("nivel",rs.getString("nivel"));
+                    row.put("numCta",rs.getString("cuenta1"));
                     row.put("cuenta",rs.getString("cuenta"));
                     row.put("descripcion",rs.getString("descripcion"));
                     row.put("saldo_inicial",(rs.getString("saldo_inicial").trim().equals(""))?rs.getString("saldo_inicial"):StringHelper.roundDouble(rs.getString("saldo_inicial"),2));
@@ -2186,8 +2187,8 @@ public class CtbSpringDao implements CtbInterfaceDao{
     public ArrayList<LinkedHashMap<String,String>> getCtbXml_CuentasContables(String data_string) {
         
         String sql_to_query = "select * from ctb_reporte(?) as foo(codagrup character varying,numcta text,subctade text,descripcion character varying,natur text,nivel character varying);"; 
-        System.out.println("data_string: "+data_string);
-        System.out.println("getCtbXml_CuentasContables= "+sql_to_query);
+        //System.out.println("data_string: "+data_string);
+        //System.out.println("getCtbXml_CuentasContables= "+sql_to_query);
         ArrayList<LinkedHashMap<String,String>> hm_facturas = (ArrayList<LinkedHashMap<String,String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{data_string}, new RowMapper(){

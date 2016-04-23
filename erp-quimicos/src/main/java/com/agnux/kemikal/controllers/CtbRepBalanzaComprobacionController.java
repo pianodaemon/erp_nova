@@ -187,7 +187,7 @@ public class CtbRepBalanzaComprobacionController {
         HashMap<String,Object> jsonretorno = new HashMap<String,Object>();
         
         //HashMap<String, String> userDat = new HashMap<String, String>();
-        ArrayList<HashMap<String, String>> datos = new ArrayList<HashMap<String, String>>();
+        ArrayList<LinkedHashMap<String, String>> datos = new ArrayList<LinkedHashMap<String, String>>();
         HashMap<String, String> total = new HashMap<String, String>();
         
         //Reporte Balanza de Comprobacion
@@ -260,7 +260,7 @@ public class CtbRepBalanzaComprobacionController {
         HashMap<String, String> userDat = new HashMap<String, String>();
         HashMap<String, String> datosEmpresaEmisora= new HashMap<String, String>();
         HashMap<String, String> datosEncabezadoPie= new HashMap<String, String>();
-        ArrayList<HashMap<String, String>> datos = new ArrayList<HashMap<String, String>>();
+        ArrayList<LinkedHashMap<String, String>> datos = new ArrayList<LinkedHashMap<String, String>>();
         HashMap<String, String> total = new HashMap<String, String>();
         
         System.out.println("Generando Reporte de Balanza de Comprobación");

@@ -154,7 +154,7 @@ $(function() {
 			var activeTab = $(this).find("a").attr("href");
 			$('#forma-proveedors-window').find( activeTab , "ul.pestanas li" ).fadeIn().show();
 			$(this).addClass("active");
-			
+			/*
 			if(activeTab == '#tabx-1'){
 				$('#forma-proveedors-window').find('.proveedors_div_one').css({'height':'465px'});
 			}
@@ -178,7 +178,7 @@ $(function() {
 			if(activeTab == '#tabx-6'){
 				$('#forma-proveedors-window').find('.proveedors_div_one').css({'height':'285px'});
 			}
-			
+			*/
 			return false;
 		});
     }

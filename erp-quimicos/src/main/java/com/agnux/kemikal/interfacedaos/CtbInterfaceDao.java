@@ -68,7 +68,7 @@ public interface CtbInterfaceDao {
     //Metodos para reporte de Balanza de Comprobación
     public ArrayList<HashMap<String, Object>> getCtbRepBalanzaComp_Anios();
     public ArrayList<HashMap<String, Object>> getCtbRepBalanzaComp_Ctas(Integer nivel, String cta, String scta, String sscta, String ssscta, Integer id_empresa);
-    public ArrayList<HashMap<String, String>> getCtbRepBalanzaComp_Datos(String data_string);
+    public ArrayList<LinkedHashMap<String, String>> getCtbRepBalanzaComp_Datos(String data_string);
     
     //Metodos para reporte de Estado de Resultados
     public ArrayList<HashMap<String, Object>> getCtbRepEstadoResult_Anios();

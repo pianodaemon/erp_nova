@@ -33,7 +33,7 @@ $(function() {
 		},
 		
 		getController: function(){
-			return this.contextpath + "/controllers/ctbxmlcuentascontables";
+			return this.contextpath + "/controllers/ctbxmlbalanzacomprobacion";
 			//  return this.controller;
 		}
 	};
@@ -49,6 +49,7 @@ $(function() {
 	//barra para el buscador 
 	$('#barra_buscador').hide();
 	
+	var $select_tipo_envio = $('#lienzo_recalculable').find('table#busqueda tr td').find('select[name=select_tipo_envio]');
 	var $select_ano = $('#lienzo_recalculable').find('table#busqueda tr td').find('select[name=select_ano]');
 	var $select_mes = $('#lienzo_recalculable').find('table#busqueda tr td').find('select[name=select_mes]');
 	
@@ -56,58 +57,54 @@ $(function() {
 	
 	var $div_busqueda= $('#lienzo_recalculable').find('#div_busqueda');
 	
+	var array_meses = {01:"Enero",  02:"Febrero", 03:"Marzo", 04:"Abirl", 05:"Mayo", 06:"Junio", 07:"Julio", 08:"Agosto", 09:"Septiembre", 10:"Octubre", 11:"Noviembre", 12:"Diciembre"};
 	
-	var array_meses = {0:"- Seleccionar -",  1:"Enero",  2:"Febrero", 3:"Marzo", 4:"Abirl", 5:"Mayo", 6:"Junio", 7:"Julio", 8:"Agosto", 9:"Septiembre", 10:"Octubre", 11:"Noviembre", 12:"Diciembre"};
-	var array_ctas_nivel1;
-	var array_ctas;
-	var mesActual=0;
-	var verMas=false;
-	
-	/*
 	var arreglo_parametros = { iu:config.getUi() };
 	var restful_json_service = config.getUrlForGetAndPost() + '/getDatos.json';
 	$.post(restful_json_service,arreglo_parametros,function(entry){
-		//carga select de años
+		//Carga select de años
 		$select_ano.children().remove();
 		var html_anio = '';
 		$.each(entry['Anios'],function(entryIndex,anio){
 			if(parseInt(anio['valor']) == parseInt(entry['Dato'][0]['anioActual']) ){
 				html_anio += '<option value="' + anio['valor'] + '" selected="yes">' + anio['valor'] + '</option>';
 			}else{
-				//html_anio += '<option value="' + anio['valor'] + '"  >' + anio['valor'] + '</option>';
+				html_anio += '<option value="' + anio['valor'] + '"  >' + anio['valor'] + '</option>';
 			}
 		});
 		$select_ano.append(html_anio);
 		
-		//cargar select del Mes inicial
+		//Cargar select del Mes inicial
 		$select_mes.children().remove();
 		var select_html = '';
 		for(var i in array_meses){
 			if(parseInt(i) == parseInt(entry['Dato'][0]['mesActual']) ){
 				select_html += '<option value="' + i + '" selected="yes">' + array_meses[i] + '</option>';	
 			}else{
-				//select_html += '<option value="' + i + '"  >' + array_meses[i] + '</option>';	
+				select_html += '<option value="' + i + '"  >' + array_meses[i] + '</option>';	
 			}
 		}
 		$select_mes.append(select_html);
-		
-		
-		array_ctas_nivel1=entry['Cta'];
-		mesActual = entry['Dato'][0]['mesActual'];
 	});
-	*/
+	
+	
 	
 	//Descargar xml
 	$('#lienzo_recalculable').find('table#busqueda tr td').find('#xml').click(function(event){
 		event.preventDefault();
 		
 		var input_json = config.getUrlForGetAndPost() +'/getCreaXml.json';
-		var $arreglo = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val() }
+		var $arreglo = {
+			'tenvio':$select_tipo_envio.val(),
+			'anio':$select_ano.val(),
+			'mes':$select_mes.val(),
+			'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
+		}
 		
 		$.post(input_json,$arreglo,function(entry){
 			if(entry['success']){
 				var input_json = config.getUrlForGetAndPost() + '/getXml/'+ entry['name'] +'/'+ $('#lienzo_recalculable').find('input[name=iu]').val() +'/out.json';
-				//alert(input_json);
+				
 				window.location.href=input_json;
 			}else{
 				//jAlert(entry['msj'], 'Atencion!');
