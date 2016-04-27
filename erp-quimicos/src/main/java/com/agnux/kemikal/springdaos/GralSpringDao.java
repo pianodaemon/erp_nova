@@ -259,6 +259,14 @@ public class GralSpringDao implements GralInterfaceDao{
     }
     
     @Override
+    public String getFicheroXslBalanzaComprobacion(Integer id_empresa, Integer id_sucursal) {
+        String sql_to_query = "select fac_cfds_conf.archivo_xsl_cadena_balanza_comprobacion from fac_cfds_conf where fac_cfds_conf.empresa_id="+id_empresa+" AND fac_cfds_conf.gral_suc_id="+id_sucursal+";";
+        Map<String, Object> map_certificado = this.getJdbcTemplate().queryForMap(sql_to_query);
+        String fichero_xsl = map_certificado.get("archivo_xsl_cadena_balanza_comprobacion").toString();
+        return fichero_xsl;
+    }
+    
+    @Override
     public String getFicheroXslTimbre(Integer id_empresa, Integer id_sucursal) {
         String sql_to_query = "select fac_cfds_conf.archivo_xsl_cadena_timbre from fac_cfds_conf where fac_cfds_conf.empresa_id="+id_empresa+" AND fac_cfds_conf.gral_suc_id="+id_sucursal+";";
         Map<String, Object> map_certificado = this.getJdbcTemplate().queryForMap(sql_to_query);

@@ -80,8 +80,6 @@ public class BeanConstruyeSellaXml {
             }
             
             
-            
-            
             //Obtener la cadena original necesario para obtener el sello
             String cadenaOriginal = XmlHelper.transformar(cadenaXml, rutaFicheroXsl);
             

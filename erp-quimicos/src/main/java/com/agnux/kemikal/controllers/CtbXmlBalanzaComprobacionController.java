@@ -5,7 +5,6 @@
 package com.agnux.kemikal.controllers;
 
 import com.agnux.cfd.v2.Base64Coder;
-import com.agnux.common.helpers.StringHelper;
 import com.agnux.common.helpers.TimeHelper;
 import com.agnux.common.obj.ResourceProject;
 import com.agnux.common.obj.UserSessionData;
@@ -163,7 +162,7 @@ public class CtbXmlBalanzaComprobacionController {
         String rfcEmpresa = this.getGralDao().getRfcEmpresaEmisora(id_empresa);
         String rutaFicheroXml = this.getGralDao().getCfdiTimbreEmitidosDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa);
         String rutaFicheroCertificado = this.getGralDao().getSslDir() + rfcEmpresa + "/" + this.getGralDao().getCertificadoEmpresaEmisora(id_empresa, id_sucursal);
-        String ficheroXsl = this.getGralDao().getXslDir() + rfcEmpresa +"/"+ this.getGralDao().getFicheroXslCuentasContables(id_empresa, id_sucursal);
+        String ficheroXsl = this.getGralDao().getXslDir() + rfcEmpresa +"/"+ this.getGralDao().getFicheroXslBalanzaComprobacion(id_empresa, id_sucursal);
         String rutaFicheroLlave = this.getGralDao().getSslDir() + rfcEmpresa + "/" + this.getGralDao().getFicheroLlavePrivada(id_empresa, id_sucursal);
         String passwordLlavePrivada = this.getGralDao().getPasswordLlavePrivada(id_empresa, id_sucursal);
         String rutaFicheroXsd = this.getGralDao().getXsdDir() + this.getGralDao().getFicheroXsdXmlCuentasContables(id_empresa, id_sucursal);

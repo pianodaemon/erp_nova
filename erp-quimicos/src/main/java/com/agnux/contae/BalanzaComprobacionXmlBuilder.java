@@ -16,7 +16,6 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import mx.gob.sat.esquemas.contabilidade._1_1.balanzacomprobacion.Balanza;
-import mx.gob.sat.esquemas.contabilidade._1_1.catalogocuentas.Catalogo;
 
 /**
  *
