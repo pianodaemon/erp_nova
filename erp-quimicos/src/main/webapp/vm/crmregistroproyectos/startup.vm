@@ -44,9 +44,15 @@
 				<td width="10"></td>
 				<td width="80">Folio</td>
 				<td width="20"></td>
-				<td width="200">Nombre&nbsp;del&nbsp;proyecto</td>
+				<td width="180">Nombre&nbsp;del&nbsp;proyecto</td>
 				<td width="20"></td>
-				<td width="200">Agente</td>
+				<td width="180">Agente</td>
+				<td width="20"></td>
+				<td width="180">Cliente</td>
+				<td width="20"></td>
+				<td width="100">Segmento</td>
+				<td width="20"></td>
+				<td width="100">Mercado</td>
 				<td width="20"></td>
 				<td width="25"></td>
 				<td colspan="3">Fecha&nbsp;de&nbsp;Creacion</td>
@@ -62,13 +68,15 @@
 				<td width="10"></td>
 				<td width="80"><input type="text" name="busqueda_folio" style="width:80px;"></td>
 				<td width="20"></td>
-				<td width="200"><input type="text" name="busqueda_proyecto" style="width:200px;"></td>
+				<td width="180"><input type="text" name="busqueda_proyecto" style="width:180px;"></td>
 				<td width="20"></td>
-				<td width="200">
-					<select name="busqueda_agente" style="width:200px;">
-						<option value="0" >[-- Selecionar Agente --]</option>
-					</select>
-				</td>
+				<td width="180"><select name="busqueda_agente" style="width:180px;"><option value="0" >[-- Selecionar --]</option></select></td>
+				<td width="20"></td>
+				<td width="180"><input type="text" name="busqueda_cliente" style="width:180px;"></td>
+				<td width="20"></td>
+				<td width="100"><select name="busqueda_segmento" style="width:100px;"><option value="0" >[-- Selecionar --]</option></select></td>
+				<td width="20"></td>
+				<td width="100"><select name="busqueda_mercado" style="width:100px;"><option value="0" >[-- Selecionar --]</option></select></td>
 				<td width="20"></td>
 				
 				<td width="25"><IMG SRC="../../img/catalogo/calendario.png" ALIGN="top"></td>
@@ -158,7 +166,7 @@
 														</tr>
 														<tr>
 															<td width="80">Descripci&oacute;n</td>
-															<td width="490" colspan="7"><textarea name="descripcion" cols="60" rows="1" style="width:490px; height:50px; resize:none;"></textarea></td>
+															<td width="490" colspan="7"><textarea name="descripcion" cols="60" rows="2" style="width:490px; height:40px; resize:none;"></textarea></td>
 															<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_descripcion"></div></td>
 														</tr>
 														<tr>
@@ -173,13 +181,22 @@
 															<td colspan="9" height="8"></td>
 														</tr>
 														<tr>
-															<td width="80">Cotacto</td>
+															<td width="80">Contacto</td>
 															<td width="430" colspan="6">
 																<input type="hidden" name="id_contacto" value="0">
 																<input type="text" name="contacto" style="width:430px;">
 															</td>
 															<td width="60"><a href="#" id="busca_contacto">&nbsp;(Buscar)</a></td>
 															<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_contacto"></div></td>
+														</tr>
+														<tr>
+															<td colspan="9" height="8"></td>
+														</tr>
+														<tr>
+															<td width="80">Cliente</td>
+															<td width="430" colspan="6"><input type="text" name="cliente" style="width:430px;" readonly></td>
+															<td width="60"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_cliente"></div></td>
+															<td width="25"></td>
 														</tr>
 														<tr>
 															<td colspan="9" height="8"></td>
@@ -235,6 +252,21 @@
 															<td width="70"><select name="select_moneda" style="width:70px;"></select></td>
 															<td width="25"></td>
 														</tr>
+														<tr>
+															<td colspan="9" height="8"></td>
+														</tr>
+														<tr>
+															<td width="80">Segmento</td>
+															<td width="100"><select name="select_segmento" style="width:100px;"></select></td>
+															<td width="30"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_segmento"></div></td>
+															<td width="70">Mercado</td>
+															<td width="80"><select name="select_mercado" style="width:80px;"></select></td>
+															<td width="30"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_mercado"></div></td>
+															<td width="80"></td>
+															<td width="70"></td>
+															<td width="25"></td>
+														</tr>
+														
 														<tr>
 															<td colspan="9" height="8"></td>
 														</tr>

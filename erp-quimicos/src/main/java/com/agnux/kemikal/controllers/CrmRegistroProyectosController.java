@@ -10,6 +10,7 @@ import com.agnux.common.obj.DataPost;
 import com.agnux.common.obj.ResourceProject;
 import com.agnux.common.obj.UserSessionData;
 import com.agnux.kemikal.interfacedaos.CrmInterfaceDao;
+import com.agnux.kemikal.interfacedaos.CxcInterfaceDao;
 import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -47,8 +48,20 @@ public class CrmRegistroProyectosController {
     private CrmInterfaceDao CrmlDao;
     
     @Autowired
-    @Qualifier("daoHome")   //permite controlar usuarios que entren
+    @Qualifier("daoHome")
     private HomeInterfaceDao HomeDao;
+    
+    @Autowired
+    @Qualifier("daoCxc")
+    private CxcInterfaceDao cxcDao;
+    
+    public CxcInterfaceDao getCxcDao() {
+        return cxcDao;
+    }
+    
+    public void setCxcDao(CxcInterfaceDao cxcDao) {
+        this.cxcDao = cxcDao;
+    }
     
     public CrmInterfaceDao getCrmDao() {
         return CrmlDao;
@@ -70,8 +83,10 @@ public class CrmRegistroProyectosController {
         infoConstruccionTabla.put("folio", "Folio:80");
         infoConstruccionTabla.put("fecha", "Fecha:80");
         infoConstruccionTabla.put("proyecto", "Proyecto:280");
+        infoConstruccionTabla.put("monto", "Monto:80");
         infoConstruccionTabla.put("agente", "Asignado&nbsp;a:280");
-        infoConstruccionTabla.put("estatus", "Estatus:200");
+        infoConstruccionTabla.put("cliente", "Cliente:280");
+        infoConstruccionTabla.put("estatus", "Estatus:150");
         
         ModelAndView x = new ModelAndView("crmregistroproyectos/startup", "title", "Registro de Proyectos");
         
@@ -122,8 +137,11 @@ public class CrmRegistroProyectosController {
         String agente = String.valueOf(has_busqueda.get("agente"));
         String fecha_inicial = ""+StringHelper.isNullString(String.valueOf(has_busqueda.get("fecha_inicial")))+"";
         String fecha_final = ""+StringHelper.isNullString(String.valueOf(has_busqueda.get("fecha_final")))+"";
+        String cliente = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("cliente")))+"%";
+        String segmento = StringHelper.isNullString(String.valueOf(has_busqueda.get("segmento")));
+        String mercado = StringHelper.isNullString(String.valueOf(has_busqueda.get("mercado")));
         
-        String data_string = app_selected+"___"+id_usuario+"___"+folio+"___"+proyecto+"___"+agente+"___"+fecha_inicial+"___"+fecha_final;
+        String data_string = app_selected+"___"+id_usuario+"___"+folio+"___"+proyecto+"___"+agente+"___"+fecha_inicial+"___"+fecha_final+"___"+cliente+"___"+segmento+"___"+mercado;
         
         //obtiene total de registros en base de datos, con los parametros de busqueda
         int total_items = this.getCrmDao().countAll(data_string);
@@ -149,19 +167,19 @@ public class CrmRegistroProyectosController {
     
     
     //obtiene los Agentes para el Buscador pricipal del Aplicativo
-    @RequestMapping(method = RequestMethod.POST, value="/getAgentesParaBuscador.json")
-    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getAgentesParaBuscador(
+    @RequestMapping(method = RequestMethod.POST, value="/getDatosParaBuscador.json")
+    public @ResponseBody HashMap<String,Object> getDatosParaBuscadorJson(
             @RequestParam(value="iu", required=true) String id_user_cod,
             Model model
         ) {
         
-        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        HashMap<String,Object> jsonretorno = new HashMap<String,Object>();
         HashMap<String, String> userDat = new HashMap<String, String>();
         ArrayList<HashMap<String, String>> agentes = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> arrayExtra = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> extra = new HashMap<String, String>();
         
-        //decodificar id de usuario
+        //Decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
         userDat = this.getHomeDao().getUserById(id_usuario);
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
@@ -175,6 +193,10 @@ public class CrmRegistroProyectosController {
         
         jsonretorno.put("Extra", arrayExtra);
         jsonretorno.put("Agentes", agentes);
+        
+        jsonretorno.put("Segmentos", this.getCxcDao().getCliente_Clasificacion1());
+        jsonretorno.put("Mercados", this.getCxcDao().getCliente_Clasificacion2());
+        
         return jsonretorno;
     }
     
@@ -214,6 +236,8 @@ public class CrmRegistroProyectosController {
         jsonretorno.put("Agentes", this.getCrmDao().getAgentes(id_empresa));
         jsonretorno.put("Monedas", this.getCrmDao().getMonedas());
         jsonretorno.put("Estatus", this.getCrmDao().getCrmRegistroProyectos_Estatus(id_empresa));
+        jsonretorno.put("Segmentos", this.getCxcDao().getCliente_Clasificacion1());
+        jsonretorno.put("Mercados", this.getCxcDao().getCliente_Clasificacion2());
         
         return jsonretorno;
     }
@@ -229,7 +253,7 @@ public class CrmRegistroProyectosController {
             @RequestParam(value="buscador_tipo_contacto", required=true) String tipo_contacto,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
-            ) {
+        ) {
         
         log.log(Level.INFO, "Ejecutando getBuscadorContactoJson de {0}", CrmRegistroProyectosController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
@@ -300,6 +324,9 @@ public class CrmRegistroProyectosController {
         @RequestParam(value="kilogramos", required=true) String kilogramos,
         @RequestParam(value="observaciones", required=true) String observaciones,
         
+        @RequestParam(value="select_segmento", required=true) String select_segmento,
+        @RequestParam(value="select_mercado", required=true) String select_mercado,
+        
         @RequestParam(value="iddet", required=false) String[] iddet,
         @RequestParam(value="competidor", required=false) String[] competidor,
         @RequestParam(value="precio", required=false) String[] precio,
@@ -337,7 +364,16 @@ public class CrmRegistroProyectosController {
             extra_data_array = StringUtils.join(arreglo, ",");
         }
         
-        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+identificador+"___"+nombre.toUpperCase()+"___"+descripcion.toUpperCase()+"___"+select_agente+"___"+id_contacto+"___"+id_prov+"___"+fecha_inicio+"___"+fecha_fin+"___"+select_estatus+"___"+select_prioridad+"___"+select_muestra+"___"+observaciones.toUpperCase()+"___"+monto+"___"+select_moneda+"___"+select_periodicidad+"___"+kilogramos;
+        select_agente = StringHelper.verificarSelect(select_agente);
+        select_estatus = StringHelper.verificarSelect(select_estatus);
+        select_prioridad = StringHelper.verificarSelect(select_prioridad);
+        select_muestra = StringHelper.verificarSelect(select_muestra);
+        select_moneda = StringHelper.verificarSelect(select_moneda);
+        select_periodicidad = StringHelper.verificarSelect(select_periodicidad);
+        select_segmento = StringHelper.verificarSelect(select_segmento);
+        select_mercado = StringHelper.verificarSelect(select_mercado);
+        
+        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+identificador+"___"+nombre.toUpperCase()+"___"+descripcion.toUpperCase()+"___"+select_agente+"___"+id_contacto+"___"+id_prov+"___"+fecha_inicio+"___"+fecha_fin+"___"+select_estatus+"___"+select_prioridad+"___"+select_muestra+"___"+observaciones.toUpperCase()+"___"+monto+"___"+select_moneda+"___"+select_periodicidad+"___"+kilogramos+"___"+select_segmento+"___"+select_mercado;
         
         succes = this.getCrmDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
         

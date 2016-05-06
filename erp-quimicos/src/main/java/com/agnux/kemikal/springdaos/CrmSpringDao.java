@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -102,13 +103,13 @@ public class CrmSpringDao implements CrmInterfaceDao{
         //2->prospecto
         String sql_to_query = "";
         if(tipo_contacto.equals("1")){
-            sql_to_query = "select cont_tmp.*, cxc_clie.razon_social,cxc_clie.rfc from (";
+            sql_to_query = "select cont_tmp.*, cxc_clie.razon_social,cxc_clie.rfc,cxc_clie.clasif_1 as segmento_id,cxc_clie.clasif_2 as mercado_id from (";
             sql_to_query += sql_tmp1;
             sql_to_query += ") as cont_tmp JOIN crm_contacto_cli on crm_contacto_cli.crm_contactos_id=cont_tmp.id "
                     + "JOIN "
                     + "cxc_clie on cxc_clie.id=crm_contacto_cli.cxc_clie_id";
         }else{
-             sql_to_query = "select cont_tmp.*, crm_prospectos.razon_social,crm_prospectos.rfc from ( ";
+             sql_to_query = "select cont_tmp.*, crm_prospectos.razon_social,crm_prospectos.rfc,0::integer as segmento_id,0::integer as mercado_id from ( ";
             sql_to_query += sql_tmp1;
             sql_to_query += " ) as cont_tmp JOIN "
                     + "crm_contacto_pro on crm_contacto_pro.crm_contactos_id=cont_tmp.id "
@@ -117,8 +118,8 @@ public class CrmSpringDao implements CrmInterfaceDao{
         }
         
         sql_tmp1 = sql_tmp1 +" limit 1000;";
-        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
-
+        //System.out.println("Ejecutando query= "+ sql_to_query);
+        
         ArrayList<HashMap<String, String>> hm_datos_contacto = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -131,6 +132,8 @@ public class CrmSpringDao implements CrmInterfaceDao{
                     row.put("razon_social",rs.getString("razon_social"));
                     row.put("contacto",rs.getString("contacto"));
                     row.put("tipo",rs.getString("tipo"));
+                    row.put("segmento_id",String.valueOf(rs.getInt("segmento_id")));
+                    row.put("mercado_id",String.valueOf(rs.getInt("mercado_id")));
                     return row;
                 }
             }
@@ -2062,11 +2065,18 @@ public class CrmSpringDao implements CrmInterfaceDao{
             + "crm_registro_proyecto.folio, "
             + "to_char(crm_registro_proyecto.momento_creacion,'dd/mm/yyyy') as fecha, "
             + "crm_registro_proyecto.titulo as proyecto, "
-            + "cxc_agen.nombre AS agente,"
+            + "crm_registro_proyecto.monto, "
+            + "(case when cxc_agen.nombre is null then '' else cxc_agen.nombre end) AS agente,"
+            + "(case when tbl_cliente.cliente is null then '' else tbl_cliente.cliente end) as cliente,"
             + "upper(crm_proyecto_estatus.titulo) AS estatus "
         + "FROM crm_registro_proyecto "
         + "left JOIN cxc_agen ON cxc_agen.id=crm_registro_proyecto.gral_empleado_id "
         + "left JOIN crm_proyecto_estatus ON crm_proyecto_estatus.id=crm_registro_proyecto.crm_proyecto_estatus_id "
+        + "left join ("
+            + "select crm_contactos.id as contacto_id,cxc_clie.razon_social as cliente from crm_contactos join crm_contacto_cli on crm_contacto_cli.crm_contactos_id=crm_contactos.id join cxc_clie on cxc_clie.id=crm_contacto_cli.cxc_clie_id where crm_contactos.tipo_contacto=1 "
+            + "union "
+            + "select crm_contactos.id as contacto_id,crm_prospectos.razon_social as cliente from crm_contactos join crm_contacto_pro on crm_contacto_pro.crm_contactos_id=crm_contactos.id join crm_prospectos on crm_prospectos.id=crm_contacto_pro.crm_prospectos_id where crm_contactos.tipo_contacto=2 "
+        + ") as tbl_cliente on tbl_cliente.contacto_id=crm_registro_proyecto.crm_contacto_id "
         + "JOIN ("+sql_busqueda+") AS sbt ON sbt.id = crm_registro_proyecto.id "
         + "order by "+orderBy+" "+asc+" limit ? OFFSET ? ";
         /*
@@ -2084,7 +2094,9 @@ public class CrmSpringDao implements CrmInterfaceDao{
                     row.put("folio",rs.getString("folio"));
                     row.put("fecha",rs.getString("fecha"));
                     row.put("proyecto",rs.getString("proyecto"));
+                    row.put("monto",StringHelper.AgregaComas(StringHelper.roundDouble(rs.getString("monto"),2)));
                     row.put("agente",rs.getString("agente"));
+                    row.put("cliente",rs.getString("cliente"));
                     row.put("estatus",rs.getString("estatus"));
                     return row;
                 }
@@ -2107,6 +2119,7 @@ public class CrmSpringDao implements CrmInterfaceDao{
             + "proy.gral_empleado_id as agen_id,"
             + "(case when crm_contactos.id is null then 0 else crm_contactos.id end) as contacto_id,"
             + "crm_contactos.nombre||' '||(CASE WHEN crm_contactos.apellido_paterno IS NULL THEN '' ELSE crm_contactos.apellido_paterno END) ||' '||(CASE WHEN crm_contactos.apellido_paterno IS NULL THEN '' ELSE crm_contactos.apellido_paterno END) AS  contacto,"
+            + "(case when tbl_cliente.cliente is null then '' else tbl_cliente.cliente end) as cliente,"
             + "(case when cxp_prov.id is null then 0 else cxp_prov.id end) as prov_id,"
             + "(case when cxp_prov.id is null then '' else cxp_prov.razon_social end) as proveedor,"
             + "(case when proy.fecha_inicio is null then '' else proy.fecha_inicio::character varying end) as fecha_inicio,"
@@ -2118,10 +2131,17 @@ public class CrmSpringDao implements CrmInterfaceDao{
             + "proy.gral_mon_id as mon_id,"
             + "proy.observaciones,"
             + "proy.kg,"
-            + "proy.periodicidad "
+            + "proy.periodicidad,"
+            + "proy.cxc_clie_clas1_id as segmento_id,"
+            + "proy.cxc_clie_clas2_id as mercado_id "
         + "from crm_registro_proyecto as proy "
         + "left join cxp_prov on cxp_prov.id=proy.cxp_prov_id "
         + "left join crm_contactos ON crm_contactos.id=proy.crm_contacto_id "
+        + "left join ("
+            + "select crm_contactos.id as contacto_id,cxc_clie.razon_social as cliente from crm_contactos join crm_contacto_cli on crm_contacto_cli.crm_contactos_id=crm_contactos.id join cxc_clie on cxc_clie.id=crm_contacto_cli.cxc_clie_id where crm_contactos.tipo_contacto=1 "
+            + "union "
+            + "select crm_contactos.id as contacto_id,crm_prospectos.razon_social as cliente from crm_contactos join crm_contacto_pro on crm_contacto_pro.crm_contactos_id=crm_contactos.id join crm_prospectos on crm_prospectos.id=crm_contacto_pro.crm_prospectos_id where crm_contactos.tipo_contacto=2 "
+        + ") as tbl_cliente on tbl_cliente.contacto_id=proy.crm_contacto_id "
         + "where proy.id=?";
         
         ArrayList<HashMap<String, Object>> datos = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
@@ -2138,6 +2158,7 @@ public class CrmSpringDao implements CrmInterfaceDao{
                     row.put("agen_id",rs.getInt("agen_id"));
                     row.put("contacto_id",rs.getInt("contacto_id"));
                     row.put("contacto",rs.getString("contacto"));
+                    row.put("cliente",rs.getString("cliente"));
                     row.put("prov_id",rs.getInt("prov_id"));
                     row.put("proveedor",rs.getString("proveedor"));
                     row.put("fecha_inicio",rs.getString("fecha_inicio"));
@@ -2150,7 +2171,8 @@ public class CrmSpringDao implements CrmInterfaceDao{
                     row.put("observaciones",rs.getString("observaciones"));
                     row.put("periodicidad",rs.getInt("periodicidad"));
                     row.put("kg",StringHelper.roundDouble(rs.getDouble("kg"),2));
-                    
+                    row.put("segmento_id",rs.getInt("segmento_id"));
+                    row.put("mercado_id",rs.getInt("mercado_id"));
                     return row;
                 }
             }

@@ -55,6 +55,9 @@ $(function() {
 	var $busqueda_agente = $('#barra_buscador').find('.tabla_buscador').find('select[name=busqueda_agente]');
 	var $busqueda_fecha_inicial = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_fecha_inicial]');
 	var $busqueda_fecha_final = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_fecha_final]');
+	var $busqueda_cliente = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_cliente]');
+	var $busqueda_segmento = $('#barra_buscador').find('.tabla_buscador').find('select[name=busqueda_segmento]');
+	var $busqueda_mercado = $('#barra_buscador').find('.tabla_buscador').find('select[name=busqueda_mercado]');
 	
 	var $buscar = $('#barra_buscador').find('.tabla_buscador').find('#boton_buscador');
 	var $limpiar = $('#barra_buscador').find('.tabla_buscador').find('#boton_limpiar');
@@ -67,6 +70,9 @@ $(function() {
 		valor_retorno += "agente" + signo_separador + $busqueda_agente.val() + "|";
 		valor_retorno += "fecha_inicial" + signo_separador + $busqueda_fecha_inicial.val() + "|";
 		valor_retorno += "fecha_final" + signo_separador + $busqueda_fecha_final.val() + "|"
+		valor_retorno += "cliente" + signo_separador + $busqueda_cliente.val() + "|"
+		valor_retorno += "segmento" + signo_separador + $busqueda_segmento.val() + "|"
+		valor_retorno += "mercado" + signo_separador + $busqueda_mercado.val() + "|"
 		valor_retorno += "iu" + signo_separador + $('#lienzo_recalculable').find('input[name=iu]').val();
 		return valor_retorno;
 	};
@@ -88,33 +94,10 @@ $(function() {
 		event.preventDefault();
 		$busqueda_folio.val('');
 		$busqueda_proyecto.val('');
+		$busqueda_cliente.val('');
 		$busqueda_fecha_inicial.val('');
 		$busqueda_fecha_final.val('');
-		$busqueda_agente.find('option[index=0]').attr('selected','selected');
-		
-		//esto se hace para reinicar los valores del select de agentes
-		var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAgentesParaBuscador.json';
-		$arreglo2 = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
-		$.post(input_json2,$arreglo2,function(data){
-			//Alimentando los campos select_agente
-			$busqueda_agente.children().remove();
-			var agente_hmtl = '';
-			if(parseInt(data['Extra'][0]['exis_rol_admin']) > 0){
-				agente_hmtl += '<option value="0" >[-- Selecionar Agente --]</option>';
-			}
-			
-			$.each(data['Agentes'],function(entryIndex,agente){
-				if(parseInt(agente['id'])==parseInt(data['Extra'][0]['id_agente'])){
-					agente_hmtl += '<option value="' + agente['id'] + '" selected="yes">' + agente['nombre_agente'] + '</option>';
-				}else{
-					//si exis_rol_admin es mayor que cero, quiere decir que el usuario logueado es un administrador
-					if(parseInt(data['Extra'][0]['exis_rol_admin']) > 0){
-						agente_hmtl += '<option value="' + agente['id'] + '" >' + agente['nombre_agente'] + '</option>';
-					}
-				}
-			});
-			$busqueda_agente.append(agente_hmtl);
-		});
+		iniciarDatosBuscador();
 		
 	});
 	
@@ -155,31 +138,52 @@ $(function() {
 	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_fecha_inicial, $buscar);
 	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_fecha_final, $buscar);
 	
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_cliente, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_segmento, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_mercado, $buscar);
 	
-	var input_json_agente = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAgentesParaBuscador.json';
-	$arreglo = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
-	$.post(input_json_agente,$arreglo,function(data){
-		//Alimentando los campos select_agente
-		$busqueda_agente.children().remove();
-		var agente_hmtl = '';
-		if(parseInt(data['Extra'][0]['exis_rol_admin']) > 0){
-			agente_hmtl += '<option value="0" >[-- Selecionar Agente --]</option>';
-		}
-		
-		$.each(data['Agentes'],function(entryIndex,agente){
-			if(parseInt(agente['id'])==parseInt(data['Extra'][0]['id_agente'])){
-				agente_hmtl += '<option value="' + agente['id'] + '" selected="yes">' + agente['nombre_agente'] + '</option>';
-			}else{
-				//si exis_rol_admin es mayor que cero, quiere decir que el usuario logueado es un administrador
-				if(parseInt(data['Extra'][0]['exis_rol_admin']) > 0){
-					agente_hmtl += '<option value="' + agente['id'] + '" >' + agente['nombre_agente'] + '</option>';
-				}
+	
+	var iniciarDatosBuscador = function(){
+		var input_json_agente = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDatosParaBuscador.json';
+		var $arreglo = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
+		$.post(input_json_agente,$arreglo,function(data){
+			//Alimentando los campos select_agente
+			$busqueda_agente.children().remove();
+			var agente_hmtl = '';
+			if(parseInt(data['Extra'][0]['exis_rol_admin']) > 0){
+				agente_hmtl += '<option value="0" >[-- Selecionar Agente --]</option>';
 			}
+			
+			$.each(data['Agentes'],function(entryIndex,agente){
+				if(parseInt(agente['id'])==parseInt(data['Extra'][0]['id_agente'])){
+					agente_hmtl += '<option value="' + agente['id'] + '" selected="yes">' + agente['nombre_agente'] + '</option>';
+				}else{
+					//si exis_rol_admin es mayor que cero, quiere decir que el usuario logueado es un administrador
+					if(parseInt(data['Extra'][0]['exis_rol_admin']) > 0){
+						agente_hmtl += '<option value="' + agente['id'] + '" >' + agente['nombre_agente'] + '</option>';
+					}
+				}
+			});
+			$busqueda_agente.append(agente_hmtl);
+			
+			$busqueda_segmento.children().remove();
+			var clas1_hmtl = '<option value="0">[-- Selecionar --]</option>';
+			$.each(data['Segmentos'],function(entryIndex,clas1){
+				clas1_hmtl += '<option value="' + clas1['id'] + '"  >' + clas1['clasificacion1'] + '</option>';
+			});
+			$busqueda_segmento.append(clas1_hmtl);
+			
+			$busqueda_mercado.children().remove();
+			var clasif2_html = '<option value="0">[-- Selecionar --]</option>';
+			$.each(data['Mercados'],function(entryIndex,clas2){
+				clasif2_html += '<option value="' + clas2['id'] + '"  >' + clas2['clasificacion2'] + '</option>';
+			});
+			$busqueda_mercado.append(clasif2_html);
+			
 		});
-		$busqueda_agente.append(agente_hmtl);
-	});
+	}
 	
-	
+	iniciarDatosBuscador();
 	
 	//----------------------------------------------------------------
 	//valida la fecha seleccionada
@@ -390,7 +394,7 @@ $(function() {
         
 	
 	//buscador de Contactos
-	$busca_contactos = function(busqueda_inicial ){
+	$busca_contactos = function(busqueda_inicial, $select_segmento,$select_mercado,arregloSegmentos,arregloMercados){
 		//limpiar_campos_grids();
 		$(this).modalPanel_BuscaContacto();
 		var $dialogoc =  $('#forma-buscacontactos-window');
@@ -442,6 +446,8 @@ $(function() {
 						trr += '<td width="280px">';
 							trr += '<span class="contacto_buscador">'+prospecto['contacto']+'</span>';
 							trr += '<input type="hidden" id="id_contacto_buscador" value="'+prospecto['id']+'">';
+							trr += '<input type="hidden" id="segmento_id_buscador" value="'+prospecto['segmento_id']+'">';
+							trr += '<input type="hidden" id="mercado_id_buscador" value="'+prospecto['mercado_id']+'">';
 						trr += '</td>';
 						trr += '<td width="210px"><span class="razon_social_buscador">'+prospecto['razon_social']+'</span></td>';
 						trr += '<td width="110px"><span class="rfc_buscador">'+prospecto['rfc']+'</span></td>';
@@ -453,13 +459,34 @@ $(function() {
 				
 				//seleccionar un producto del grid de resultados
 				$tabla_resultados.find('tr').click(function(){
-					var id_contacto=$(this).find('#id_contacto_buscador').val();
-					var contacto_buscador=$(this).find('span.contacto_buscador').html();
-					var razon_social_buscador=$(this).find('span.razon_social_buscador').html();
-					var rfc_buscador=$(this).find('span.rfc_buscador').html();
+					var id_segmento = $(this).find('#segmento_id_buscador').val()
+					var id_mercado = $(this).find('#mercado_id_buscador').val()
 					
-					$('#forma-crmregistroproyectos-window').find('input[name=id_contacto]').val(id_contacto);
-					$('#forma-crmregistroproyectos-window').find('input[name=contacto]').val(contacto_buscador);
+					$('#forma-crmregistroproyectos-window').find('input[name=id_contacto]').val($(this).find('#id_contacto_buscador').val());
+					$('#forma-crmregistroproyectos-window').find('input[name=contacto]').val($(this).find('span.contacto_buscador').html());
+					$('#forma-crmregistroproyectos-window').find('input[name=cliente]').val($(this).find('span.razon_social_buscador').html());
+					
+					$select_segmento.children().remove();
+					var segmento_hmtl = '<option value="0">[-- Selecionar --]</option>';
+					$.each(arregloSegmentos,function(entryIndex,clas1){
+						if(parseInt(clas1['id'])==parseInt(id_segmento)){
+							segmento_hmtl += '<option value="' + clas1['id'] + '" selected="yes">' + clas1['clasificacion1'] + '</option>';
+						}else{
+							segmento_hmtl += '<option value="' + clas1['id'] + '" >' + clas1['clasificacion1'] + '</option>';
+						}
+					});
+					$select_segmento.append(segmento_hmtl);
+					
+					$select_mercado.children().remove();
+					var mercado_html = '<option value="0">[-- Selecionar --]</option>';
+					$.each(arregloMercados,function(entryIndex,clas2){
+						if(parseInt(clas2['id'])==parseInt(id_mercado)){
+							mercado_html += '<option value="' + clas2['id'] + '" selected="yes">' + clas2['clasificacion2'] + '</option>';
+						}else{
+							mercado_html += '<option value="' + clas2['id'] + '">' + clas2['clasificacion2'] + '</option>';
+						}
+					});
+					$select_mercado.append(mercado_html);
 					
 					//oculta la ventana de busqueda
 					var remove = function() {$(this).remove();};
@@ -656,6 +683,7 @@ $(function() {
 		
 		var $id_contacto = $('#forma-crmregistroproyectos-window').find('input[name=id_contacto]');
 		var $contacto = $('#forma-crmregistroproyectos-window').find('input[name=contacto]');
+		var $cliente = $('#forma-crmregistroproyectos-window').find('input[name=cliente]');
 		var $busca_contacto = $('#forma-crmregistroproyectos-window').find('#busca_contacto');
 		
 		var $id_prov = $('#forma-crmregistroproyectos-window').find('input[name=id_prov]');
@@ -672,8 +700,9 @@ $(function() {
 		var $select_muestra = $('#forma-crmregistroproyectos-window').find('select[name=select_muestra]');
 		var $select_periodicidad = $('#forma-crmregistroproyectos-window').find('select[name=select_periodicidad]');
 		var $select_moneda = $('#forma-crmregistroproyectos-window').find('select[name=select_moneda]');
-		
 		var $observaciones = $('#forma-crmregistroproyectos-window').find('textarea[name=observaciones]');
+		var $select_segmento = $('#forma-crmregistroproyectos-window').find('select[name=select_segmento]');
+		var $select_mercado = $('#forma-crmregistroproyectos-window').find('select[name=select_mercado]');
 		
 		var $grid_registros = $('#forma-crmregistroproyectos-window').find('#grid_registros');
 		
@@ -683,6 +712,7 @@ $(function() {
 		
 		$folio.css({'background' : '#DDDDDD'});
 		$fecha_alta.css({'background' : '#DDDDDD'});
+		$cliente.css({'background' : '#DDDDDD'});
 		$identificador.attr({'value' : 0});
 		$id_contacto.attr({'value' : 0});
 		$id_prov.attr({'value' : 0});
@@ -759,6 +789,25 @@ $(function() {
 			});
 			$select_moneda.append(moneda_hmtl);
 			
+			$select_segmento.children().remove();
+			var segmento_hmtl = '<option value="0">[-- Selecionar --]</option>';
+			$.each(entry['Segmentos'],function(entryIndex,clas1){
+				segmento_hmtl += '<option value="' + clas1['id'] + '"  >' + clas1['clasificacion1'] + '</option>';
+			});
+			$select_segmento.append(segmento_hmtl);
+			
+			$select_mercado.children().remove();
+			var mercado_html = '<option value="0">[-- Selecionar --]</option>';
+			$.each(entry['Mercados'],function(entryIndex,clas2){
+				mercado_html += '<option value="' + clas2['id'] + '"  >' + clas2['clasificacion2'] + '</option>';
+			});
+			$select_mercado.append(mercado_html);
+			
+			$busca_contacto.click(function(event){
+				event.preventDefault();
+				$busca_contactos($contacto.val(),$select_segmento,$select_mercado,entry['Segmentos'],entry['Mercados']);
+			});
+			
 		},"json");//termina llamada json
         
 		//cargar select
@@ -775,7 +824,7 @@ $(function() {
 		elemento_seleccionado = 0;
 		cadena_elemento_cero ="";
 		$carga_campos_select($select_periodicidad, arrayPeriodicidad, elemento_seleccionado, cadena_elemento_cero);
-		
+				
 		var competidor="";
 		var precio="0.00";
 		var proveedor="";
@@ -894,10 +943,6 @@ $(function() {
 			$(this).val(parseFloat($(this).val()).toFixed(2));
 		});
 		
-        $busca_contacto.click(function(event){
-			event.preventDefault();
-			$busca_contactos($contacto.val());
-        });
         
         $busca_proveedor.click(function(event){
 			event.preventDefault();
@@ -978,6 +1023,7 @@ $(function() {
 			
 			var $id_contacto = $('#forma-crmregistroproyectos-window').find('input[name=id_contacto]');
 			var $contacto = $('#forma-crmregistroproyectos-window').find('input[name=contacto]');
+			var $cliente = $('#forma-crmregistroproyectos-window').find('input[name=cliente]');
 			var $busca_contacto = $('#forma-crmregistroproyectos-window').find('#busca_contacto');
 			
 			var $id_prov = $('#forma-crmregistroproyectos-window').find('input[name=id_prov]');
@@ -994,8 +1040,9 @@ $(function() {
 			var $select_muestra = $('#forma-crmregistroproyectos-window').find('select[name=select_muestra]');
 			var $select_periodicidad = $('#forma-crmregistroproyectos-window').find('select[name=select_periodicidad]');
 			var $select_moneda = $('#forma-crmregistroproyectos-window').find('select[name=select_moneda]');
-			
 			var $observaciones = $('#forma-crmregistroproyectos-window').find('textarea[name=observaciones]');
+			var $select_segmento = $('#forma-crmregistroproyectos-window').find('select[name=select_segmento]');
+			var $select_mercado = $('#forma-crmregistroproyectos-window').find('select[name=select_mercado]');
 			
 			var $grid_registros = $('#forma-crmregistroproyectos-window').find('#grid_registros');
 			
@@ -1005,6 +1052,7 @@ $(function() {
 			
 			$folio.css({'background' : '#DDDDDD'});
 			$fecha_alta.css({'background' : '#DDDDDD'});
+			$cliente.css({'background' : '#DDDDDD'});
 			$identificador.attr({'value' : 0});
 			$id_contacto.attr({'value' : 0});
 			$id_prov.attr({'value' : 0});
@@ -1058,6 +1106,7 @@ $(function() {
 					
 					$id_contacto.attr({'value' : entry['Datos'][0]['contacto_id']});
 					$contacto.attr({'value' : entry['Datos'][0]['contacto']});
+					$cliente.attr({'value' : entry['Datos'][0]['cliente']});
 					
 					$id_prov.attr({'value' : entry['Datos'][0]['prov_id']});
 					$proveedor.attr({'value' : entry['Datos'][0]['proveedor']});
@@ -1123,6 +1172,30 @@ $(function() {
 					cadena_elemento_cero ="[--- ---]";
 					$carga_campos_select($select_periodicidad, arrayPeriodicidad, elemento_seleccionado, cadena_elemento_cero);
 					
+					
+					$select_segmento.children().remove();
+					var segmento_hmtl = '<option value="0">[-- Selecionar --]</option>';
+					$.each(entry['Segmentos'],function(entryIndex,clas1){
+						if(parseInt(clas1['id'])==parseInt(entry['Datos'][0]['segmento_id'])){
+							segmento_hmtl += '<option value="' + clas1['id'] + '" selected="yes">' + clas1['clasificacion1'] + '</option>';
+						}else{
+							segmento_hmtl += '<option value="' + clas1['id'] + '" >' + clas1['clasificacion1'] + '</option>';
+						}
+					});
+					$select_segmento.append(segmento_hmtl);
+					
+					$select_mercado.children().remove();
+					var mercado_html = '<option value="0">[-- Selecionar --]</option>';
+					$.each(entry['Mercados'],function(entryIndex,clas2){
+						if(parseInt(clas2['id'])==parseInt(entry['Datos'][0]['mercado_id'])){
+							mercado_html += '<option value="' + clas2['id'] + '" selected="yes">' + clas2['clasificacion2'] + '</option>';
+						}else{
+							mercado_html += '<option value="' + clas2['id'] + '">' + clas2['clasificacion2'] + '</option>';
+						}
+					});
+					$select_mercado.append(mercado_html);
+					
+					
 					var cont=1;
 					if(entry['Competidores']){
 						if(parseInt(entry['Competidores'].length) > 0 ){
@@ -1139,6 +1212,10 @@ $(function() {
 						$agrega_fila_grid($grid_registros, 0, "", "0.00", "");
 					}
 					
+					$busca_contacto.click(function(event){
+						event.preventDefault();
+						$busca_contactos($contacto.val(),$select_segmento,$select_mercado,entry['Segmentos'],entry['Mercados']);
+					});
 				},"json");//termina llamada json
 				
 				
@@ -1178,11 +1255,6 @@ $(function() {
 					}
 					
 					$(this).val(parseFloat($(this).val()).toFixed(2));
-				});
-				
-				$busca_contacto.click(function(event){
-					event.preventDefault();
-					$busca_contactos($contacto.val());
 				});
 				
 				$busca_proveedor.click(function(event){
