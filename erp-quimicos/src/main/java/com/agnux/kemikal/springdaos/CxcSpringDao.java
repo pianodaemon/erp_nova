@@ -115,7 +115,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
-            new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+            new Object[]{data_string, new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, Object> row = new HashMap<String, Object>();
@@ -2338,11 +2338,11 @@ public class CxcSpringDao implements CxcInterfaceDao{
 
 
 
-    //reporte de ventas netas
-     //reporte de ventas netas
+    //Reporte de Ventas Netas por Producto
+    //Reporte Comercial para Agentes de Ventas
     @Override
-    public ArrayList<HashMap<String, String>> getVentasNetasProductoFactura(Integer tipo_reporte, String cliente,String producto, String fecha_inicial, String fecha_final,Integer id_empresa,Integer id_linea,Integer  id_marca, Integer id_familia,Integer id_subfamilia,Integer tipo_costo, Integer id_agente) {
-    String sql_to_query = "select * from repventasnetasproductofactura("+tipo_reporte+",'"+cliente+"','"+producto+"','"+fecha_inicial+"','"+fecha_final+"',"+id_empresa+","+id_linea+","+id_marca+","+id_familia+","+id_subfamilia+","+tipo_costo+","+id_agente+") as foo( "
+    public ArrayList<HashMap<String, String>> getVentasNetasProductoFactura(Integer tipo_reporte, String cliente,String producto, String fecha_inicial, String fecha_final,Integer id_empresa,Integer id_linea,Integer  id_marca, Integer id_familia,Integer id_subfamilia,Integer tipo_costo, Integer id_agente, Integer segmentoId, Integer mercadoId) {
+    String sql_to_query = "select * from repventasnetasproductofactura("+tipo_reporte+",'"+cliente+"','"+producto+"','"+fecha_inicial+"','"+fecha_final+"',"+id_empresa+","+id_linea+","+id_marca+","+id_familia+","+id_subfamilia+","+tipo_costo+","+id_agente+","+segmentoId+","+mercadoId+") as foo( "
                                     + " numero_control character varying, "
                                     + " razon_social character varying, "
                                     + " codigo character varying, "
@@ -2437,97 +2437,98 @@ public class CxcSpringDao implements CxcInterfaceDao{
     }
     
     //obtiene las lineas de los  productos
-@Override
-public ArrayList<HashMap<String, String>> getLineas() {
-String sql_query = "SELECT DISTINCT id,titulo FROM inv_prod_lineas WHERE borrado_logico=false order by id;";
-ArrayList<HashMap<String, String>> lineas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-    sql_query,
-    new Object[]{}, new RowMapper() {
-        @Override
-        public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
-            HashMap<String, String> row = new HashMap<String, String>();
-            row.put("id",rs.getString("id"));
-            row.put("titulo",rs.getString("titulo"));
-            return row;
-        }
+    @Override
+    public ArrayList<HashMap<String, String>> getLineas(Integer empresaId) {
+        String sql_query = "SELECT DISTINCT id,titulo FROM inv_prod_lineas WHERE borrado_logico=false AND gral_emp_id=? order by titulo;";
+        ArrayList<HashMap<String, String>> lineas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{new Integer(empresaId)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",rs.getString("id"));
+                    row.put("titulo",rs.getString("titulo"));
+                    return row;
+                }
+            }
+        );
+
+        return lineas;
     }
-);
 
-return lineas;
-}
+    //obtiene las marcas de los  productos
+    @Override
+    public ArrayList<HashMap<String, String>> getMarcas(Integer empresaId) {
+        String sql_query = "SELECT DISTINCT id,titulo FROM inv_mar WHERE borrado_logico=false and gral_emp_id=? order by titulo;";
+        ArrayList<HashMap<String, String>> marcas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{new Integer(empresaId)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",rs.getString("id"));
+                    row.put("titulo",rs.getString("titulo"));
+                    return row;
+                }
+            }
+        );
 
-//obtiene las marcas de los  productos
-@Override
-public ArrayList<HashMap<String, String>> getMarcas() {
-String sql_query = "SELECT DISTINCT id,titulo FROM inv_mar WHERE borrado_logico=false order by id;";
-ArrayList<HashMap<String, String>> marcas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-    sql_query,
-    new Object[]{}, new RowMapper() {
-        @Override
-        public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
-            HashMap<String, String> row = new HashMap<String, String>();
-            row.put("id",rs.getString("id"));
-            row.put("titulo",rs.getString("titulo"));
-            return row;
-        }
+        return marcas;
     }
-);
-
-return marcas;
-}
 
 
-//obtiene las familias de los produtos
-@Override
-public ArrayList<HashMap<String, String>> getFamilias() {
-String sql_query = "SELECT DISTINCT id,titulo FROM inv_prod_familias WHERE borrado_logico=false order by id;";
-ArrayList<HashMap<String, String>> familias = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-    sql_query,
-    new Object[]{}, new RowMapper() {
-        @Override
-        public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
-            HashMap<String, String> row = new HashMap<String, String>();
-            row.put("id",rs.getString("id"));
-            row.put("titulo",rs.getString("titulo"));
-            return row;
-        }
+    //obtiene las familias de los produtos
+    @Override
+    public ArrayList<HashMap<String, String>> getFamilias(Integer empresaId) {
+        String sql_query = "SELECT distinct id,titulo FROM inv_prod_familias WHERE borrado_logico=false AND id=identificador_familia_padre AND gral_emp_id=? order by titulo;";
+        ArrayList<HashMap<String, String>> familias = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{new Integer(empresaId)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",rs.getString("id"));
+                    row.put("titulo",rs.getString("titulo"));
+                    return row;
+                }
+            }
+        );
+
+        return familias;
     }
-);
-
-return familias;
-}
 
 
 
-//obtiene las subfamilias de los produtos
-@Override
-public ArrayList<HashMap<String, String>> getSubfamilias(Integer id_familia) {
-String sql_query = " select id,identificador_familia_padre,titulo from( "
-                        +"  select "
-                        +"  id, "
-                        +"  identificador_familia_padre, "
-                        +"  titulo, descripcion, "
-                        +"  borrado_logico "
-                        +"  from inv_prod_familias "
-                        +"  where  identificador_familia_padre="+id_familia
-                +"  )as sbt "
-                +"  where  sbt.id  != sbt.identificador_familia_padre";
-    System.out.println("cargando subfamilias:   "+ sql_query);
-ArrayList<HashMap<String, String>> subfamilias = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-    sql_query,
-    new Object[]{}, new RowMapper() {
-        @Override
-        public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
-            HashMap<String, String> row = new HashMap<String, String>();
-            row.put("id",rs.getString("id"));
-            row.put("titulo",rs.getString("titulo"));
-            return row;
-        }
+    //obtiene las subfamilias de los produtos
+    @Override
+    public ArrayList<HashMap<String, String>> getSubfamilias(Integer id_familia) {
+        String sql_query = ""
+            + "select id,identificador_familia_padre,titulo from( "
+                +"  select "
+                +"  id, "
+                +"  identificador_familia_padre, "
+                +"  titulo, descripcion, "
+                +"  borrado_logico "
+                +"  from inv_prod_familias "
+                +"  where identificador_familia_padre="+id_familia
+            +"  )as sbt "
+            +"  where  sbt.id  != sbt.identificador_familia_padre";
+            System.out.println("cargando subfamilias:   "+ sql_query);
+        ArrayList<HashMap<String, String>> subfamilias = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",rs.getString("id"));
+                    row.put("titulo",rs.getString("titulo"));
+                    return row;
+                }
+            }
+        );
+
+        return subfamilias;
     }
-);
-
-return subfamilias;
-}
 
 
 
@@ -2600,7 +2601,7 @@ return subfamilias;
         //System.out.println("Busqueda GetPage: "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
-            new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+            new Object[]{data_string, new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, Object> row = new HashMap<String, Object>();
@@ -2646,7 +2647,7 @@ return subfamilias;
         //System.out.println("Busqueda GetPage: "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
-            new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+            new Object[]{data_string, new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, Object> row = new HashMap<String, Object>();
@@ -2692,7 +2693,7 @@ return subfamilias;
         //System.out.println("Busqueda GetPage: "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
-            new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+            new Object[]{data_string, new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, Object> row = new HashMap<String, Object>();
@@ -2739,7 +2740,7 @@ return subfamilias;
         //System.out.println("Busqueda GetPage: "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
-            new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+            new Object[]{data_string, new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, Object> row = new HashMap<String, Object>();

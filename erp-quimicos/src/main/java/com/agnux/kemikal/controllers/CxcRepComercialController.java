@@ -39,9 +39,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @SessionAttributes({"user"})
-@RequestMapping("/repventasnetasproductofactura/")
-public class RepVentasNetasProductoFacturaController {
-    private static final Logger log = Logger.getLogger(RepVentasNetasProductoFacturaController.class.getName());
+@RequestMapping("/cxcrepcomercial/")
+public class CxcRepComercialController {
+
+    private static final Logger log = Logger.getLogger(CxcRepComercialController.class.getName());
     ResourceProject resource = new ResourceProject();
     @Autowired
     @Qualifier("daoHome")
@@ -56,29 +57,32 @@ public class RepVentasNetasProductoFacturaController {
     public CxcInterfaceDao getCxcDao() {
         return cxcDao;
     }
-    
+
     public void setCxcDao(CxcInterfaceDao cxcDao) {
         this.cxcDao = cxcDao;
     }
-    
+
     public HomeInterfaceDao getHomeDao() {
         return HomeDao;
     }
-    
+
     public GralInterfaceDao getGralDao() {
         return gralDao;
     }
-    
+
     @RequestMapping(value = "/startup.agnux")
     public ModelAndView startUp(HttpServletRequest request, HttpServletResponse response,
             @ModelAttribute("user") UserSessionData user)
             throws ServletException, IOException {
-        log.log(Level.INFO, "Ejecutando starUp de {0}", RepVentasNetasProductoFacturaController.class.getName());
+
+
+        log.log(Level.INFO, "Ejecutando starUp de {0}", CxcRepComercialController.class.getName());
 
         LinkedHashMap<String, String> infoConstruccionTabla = new LinkedHashMap<String, String>();
-        
-        ModelAndView x = new ModelAndView("repventasnetasproductofactura/startup", "title", "Ventas Netas por producto desglosado por factura");
-        
+
+
+        ModelAndView x = new ModelAndView("cxcrepcomercial/startup", "title", "Reporte Comercial");
+
         x = x.addObject("layoutheader", resource.getLayoutheader());
         x = x.addObject("layoutmenu", resource.getLayoutmenu());
         x = x.addObject("layoutfooter", resource.getLayoutfooter());
@@ -204,9 +208,8 @@ public class RepVentasNetasProductoFacturaController {
         return jsonretorno;
     }
     //fin del buscador de productos
-    
-    
-    //Obtiene datos para el Reporte
+
+    //obtiene datos para el sqlquery
     @RequestMapping(value = "/getVentasNetasProductoFactura/out.json", method = RequestMethod.POST)
     public @ResponseBody
     HashMap<String, ArrayList<HashMap<String, String>>> getVentasNetasProductoFactura(
@@ -225,7 +228,7 @@ public class RepVentasNetasProductoFacturaController {
             @RequestParam(value = "mercado", required = true) Integer mercado,
             @RequestParam(value = "iu", required = true) String id_user_cod,
             Model model) {
-        log.log(Level.INFO, "Ejecutando getVentasNetasProductoFactura de {0}", RepVentasNetasProductoFacturaController.class.getName());
+        log.log(Level.INFO, "Ejecutando getReporteComercial de {0}", CxcRepComercialController.class.getName());
         HashMap<String, ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String, ArrayList<HashMap<String, String>>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
         
@@ -245,8 +248,7 @@ public class RepVentasNetasProductoFacturaController {
         
         String razon_social = "";
         String nombre_producto = "";
-
-
+        
         Double sumatoria_cantidad = 0.0;
         Double sumatoria_costo = 0.0;
         Double sumatoria_venta = 0.0;
@@ -587,7 +589,7 @@ public class RepVentasNetasProductoFacturaController {
         return jsonretorno;
     }
 
-    //reporte de ventas netas por Cliente/producto desglosado por factura
+    //reporte comercial por Cliente/producto desglosado por factura
     @RequestMapping(value = "/getrepventasnetasproductofactura/{cadena}/out.json", method = RequestMethod.GET)
     public ModelAndView PdfVentasNetasProductoFactura(
             @PathVariable("cadena") String cadena,
@@ -597,7 +599,7 @@ public class RepVentasNetasProductoFacturaController {
             throws ServletException, IOException, URISyntaxException, DocumentException {
         //                 0               1            2                3                  4               5             6             7                8                   9               10               11             12            13
         //cadena = tipo_reporte+"___"+cliente+"___"+producto+"___"+fecha_inicial+"___"+fecha_final+"___"+usuario+"___"+id_linea+"___"+id_marca+"___"+id_familia+"___"+id_subfamilia+"___"+tipo_costo+"___" id_agente+"___"+segmento+"___" mercado
-
+        
         String arreglo[];
         arreglo = cadena.split("___");
         HashMap<String, String> userDat = new HashMap<String, String>();
@@ -605,7 +607,7 @@ public class RepVentasNetasProductoFacturaController {
         ArrayList<HashMap<String, String>> arraysumatorias = new ArrayList<HashMap<String, String>>();
         // HashMap<String, String> sumatorias;
 
-        System.out.println("Generando reporte de Ventas Netas por producto factura");
+        System.out.println("Generando reporte comercial por producto factura");
 
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(arreglo[5]));
@@ -628,10 +630,7 @@ public class RepVentasNetasProductoFacturaController {
                 + "pocicion 3:" + arreglo[3] + "pocicion 4:" + arreglo[4]
                 + "pocicion 5:" + arreglo[5] + "pocicion 6:" + Integer.parseInt(arreglo[6])
                 + "pocicion 7:" + Integer.parseInt(arreglo[7]) + "pocicion 8:" + Integer.parseInt(arreglo[8])
-                + "pocicion 9:" + Integer.parseInt(arreglo[9]) + "pocicion 10:" + Integer.parseInt(arreglo[10])
-                + "pocicion 11:" + Integer.parseInt(arreglo[11]) + "Segmento[12]:" + Integer.parseInt(arreglo[12])
-                + "Mercado[13]:" + Integer.parseInt(arreglo[13])
-                );
+                + "pocicion 9:" + Integer.parseInt(arreglo[9]) + "pocicion 10:" + Integer.parseInt(arreglo[10]));
         */
         File file_dir_tmp = new File(dir_tmp);
 
@@ -639,17 +638,17 @@ public class RepVentasNetasProductoFacturaController {
 
         String file_name = "";
         if (Integer.parseInt(arreglo[0]) == 1) {
-            file_name = "VentasNetas_x_cliente.pdf";
+            file_name = "ReporteComercial_x_cliente.pdf";
         }
         if (Integer.parseInt(arreglo[0]) == 4) {
-            file_name = "VentasNetas_sumarizado_x_cliente.pdf";
+            file_name = "ReporteComercial_sumarizado_x_cliente.pdf";
         }
         if (Integer.parseInt(arreglo[0]) == 2) {
-            file_name = "VentasNetas_x_producto.pdf";
+            file_name = "ReporteComercial_x_producto.pdf";
         }
 
         if (Integer.parseInt(arreglo[0]) == 3) {
-            file_name = "VentasNetas_sumarizado_x_producto.pdf";
+            file_name = "ReporteComercial_sumarizado_x_producto.pdf";
         }
         //ruta de archivo de salida
         String fileout = file_dir_tmp + "/" + file_name;
@@ -660,7 +659,7 @@ public class RepVentasNetasProductoFacturaController {
         Double sumatoria_cantidad = 0.0;
         Double sumatoria_costo = 0.0;
         Double sumatoria_venta = 0.0;
-        
+
         String producto = "";
         
         lista_ventasporproducto = this.getCxcDao().getVentasNetasProductoFactura(Integer.parseInt(arreglo[0]), "%"+arreglo[1]+"%", "%"+arreglo[2]+"%", arreglo[3], arreglo[4], id_empresa, Integer.parseInt(arreglo[6]), Integer.parseInt(arreglo[7]), Integer.parseInt(arreglo[8]), Integer.parseInt(arreglo[9]), Integer.parseInt(arreglo[10]),Integer.parseInt(arreglo[11]),Integer.parseInt(arreglo[12]),Integer.parseInt(arreglo[13]));
@@ -749,9 +748,9 @@ public class RepVentasNetasProductoFacturaController {
             }
         }
         
-        //Tipo=1 Reporte de Ventas netas por Producto
+        //Tipo=1 Ventas Netas por Producto
         //Tipo=2 Reporte comercial para agentes de Ventas
-        Integer tipo = 1; 
+        Integer tipo = 2; 
         
         //obtiene los informacion de ventas  del periodo indicado
         //[0]tipo_reporte+"___"+[1]cliente+"___"+[2]producto+"___"+[3]fecha_inicial+"___"+[4]fecha_final+"___"+[5]usuario
@@ -773,7 +772,7 @@ public class RepVentasNetasProductoFacturaController {
             //instancia a la clase que construye el pdf ventas netas Sumarizado por Producto
             PdfReporteVentasNetasSumatoriaxProducto x = new PdfReporteVentasNetasSumatoriaxProducto(tipo, Integer.parseInt(arreglo[0]), arraysumatorias,lista_ventasporproducto, arreglo[1], arreglo[3], arreglo[4], razon_social_empresa, fileout);
         }
-
+        
         //System.out.println("Recuperando archivo: " + fileout);
         File file = new File(fileout);
         int size = (int) file.length(); // Tamaño del archivo
@@ -787,7 +786,7 @@ public class RepVentasNetasProductoFacturaController {
         try {
             FileHelper.delete(fileout);
         } catch (Exception ex) {
-            Logger.getLogger(RepVentasNetasProductoFacturaController.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CxcRepComercialController.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }

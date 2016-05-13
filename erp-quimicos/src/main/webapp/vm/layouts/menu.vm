@@ -200,6 +200,7 @@
 													<li class="topline"><a href="../cxcrepsaldomes/startup.agnux">Saldo Mensual</a></li>
 													<li class="topline"><a href="../cxcrepiepscobrado/startup.agnux">IEPS Cobrado por Factura</a></li>
 													<li class="topline"><a href="../cxcrepiepsxcliente/startup.agnux">IEPS Cobrado por Cliente</a></li>
+													<li class="topline"><a href="../cxcrepcomercial/startup.agnux">Reporte Comercial</a></li>
 													
 													<!--esto se agrego, estaba en menu cunetas por cobrar-->
 													<!--

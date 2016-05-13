@@ -11,13 +11,22 @@ import java.util.HashMap;
  * @author valentin.vale8490@gmail.com
  */
 public class PdfRepVentasNetasProductoFactura {
-
     public String empresa_emisora;
     public static String fecha_reporte;
     public Integer tipo_reporte;
+    public Integer tipo;
+
     public java.util.List<HashMap<String, String>> rows;
     //public java.util.List<HashMap<String, String>> sumatorias;
+    
+    public Integer getTipo() {
+        return tipo;
+    }
 
+    public void setTipo(Integer tipo) {
+        this.tipo = tipo;
+    }    
+    
     public Integer getTipo_reporte() {
         return tipo_reporte;
     }
@@ -58,11 +67,13 @@ public class PdfRepVentasNetasProductoFactura {
         this.empresa_emisora = empresa_emisora;
     }
 
-    public PdfRepVentasNetasProductoFactura(Integer tipo_reporte, ArrayList<HashMap<String, String>> sumatorias, ArrayList<HashMap<String, String>> lista_ventas, String fecha_inicial, String fecha_final, String razon_social_empresa, String fileout) {
+    public PdfRepVentasNetasProductoFactura(Integer tipo, Integer tipo_reporte, ArrayList<HashMap<String, String>> sumatorias, ArrayList<HashMap<String, String>> lista_ventas, String fecha_inicial, String fecha_final, String razon_social_empresa, String fileout) {
         this.setEmpresa_emisora(razon_social_empresa);
         this.setTipo_reporte(tipo_reporte);
+        this.setTipo(tipo);
+        
         //this.setSumatorias(sumatorias);
-        PdfRepVentasNetasProductoFactura.HeaderFooter event = new PdfRepVentasNetasProductoFactura.HeaderFooter();
+        HeaderFooter event = new HeaderFooter();
         Font fontCols = new Font(Font.FontFamily.HELVETICA, 9, Font.NORMAL);
         Font smallFont = new Font(Font.FontFamily.HELVETICA, 8, Font.NORMAL, BaseColor.BLACK);
         Font smallBoldFont = new Font(Font.getFamily("ARIAL"), 6, Font.BOLD, BaseColor.WHITE);
@@ -582,7 +593,7 @@ public class PdfRepVentasNetasProductoFactura {
         } catch (Exception e) {
             System.out.println(e);
         }
-        System.out.println("retorno de venta neta:::" + venta_total);
+        //System.out.println("retorno de venta neta:::" + venta_total);
         return venta_total;
     }
     //}
@@ -620,7 +631,11 @@ public class PdfRepVentasNetasProductoFactura {
         public void onEndPage(PdfWriter writer, Document document) {
             //PdfContentByte cb = writer.getDirectContent();
             ColumnText.showTextAligned(writer.getDirectContent(), Element.ALIGN_CENTER, new Phrase(PdfRepVentasNetasProductoFactura.this.getEmpresa_emisora(), largeBoldFont), document.getPageSize().getWidth() / 2, document.getPageSize().getTop() - 25, 0);
-            ColumnText.showTextAligned(writer.getDirectContent(), Element.ALIGN_CENTER, new Phrase("Reporte Ventas Netas por Cliente.", largeBoldFont), document.getPageSize().getWidth() / 2, document.getPageSize().getTop() - 38, 0);
+            if(PdfRepVentasNetasProductoFactura.this.getTipo()==1){
+                ColumnText.showTextAligned(writer.getDirectContent(), Element.ALIGN_CENTER, new Phrase("Reporte Ventas Netas por Producto.", largeBoldFont), document.getPageSize().getWidth() / 2, document.getPageSize().getTop() - 38, 0);
+            }else{
+                ColumnText.showTextAligned(writer.getDirectContent(), Element.ALIGN_CENTER, new Phrase("Reporte Comercial por Cliente.", largeBoldFont), document.getPageSize().getWidth() / 2, document.getPageSize().getTop() - 38, 0);
+            }
             ColumnText.showTextAligned(writer.getDirectContent(), Element.ALIGN_CENTER, new Phrase(PdfRepVentasNetasProductoFactura.getFecha_reporte(), largeFont), document.getPageSize().getWidth() / 2, document.getPageSize().getTop() - 50, 0);
 
             cb = writer.getDirectContent();

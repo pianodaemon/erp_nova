@@ -85,12 +85,13 @@ public interface CxcInterfaceDao {
     //reporte de venta netas por producto factura
     //reporte de venta netas por producto factura
     //public ArrayList<HashMap<String, String>> getVentasNetasProductoFactura(Integer tipo_reporte,String cliente, String producto, String fecha_inicial, String fecha_final, Integer id_empresa,Integer id_linea, Integer id_marca, Integer id_familia, Integer id_subfamilia,Integer tipo_costo);
-    public ArrayList<HashMap<String, String>> getVentasNetasProductoFactura(Integer tipo_reporte,String cliente, String producto, String fecha_inicial, String fecha_final, Integer id_empresa,Integer id_linea, Integer id_marca, Integer id_familia, Integer id_subfamilia,Integer tipo_costo,Integer id_agente);
+    //public ArrayList<HashMap<String, String>> getVentasNetasProductoFactura(Integer tipo_reporte,String cliente, String producto, String fecha_inicial, String fecha_final, Integer id_empresa,Integer id_linea, Integer id_marca, Integer id_familia, Integer id_subfamilia,Integer tipo_costo,Integer id_agente);
+    public ArrayList<HashMap<String, String>> getVentasNetasProductoFactura(Integer tipo_reporte, String cliente,String producto, String fecha_inicial, String fecha_final,Integer id_empresa,Integer id_linea,Integer  id_marca, Integer id_familia,Integer id_subfamilia,Integer tipo_costo, Integer id_agente, Integer segmentoId, Integer mercadoId);
     public ArrayList<HashMap<String, String>> getProductoTipos();
     public ArrayList<HashMap<String, Object>> getProductoTiposV2();
-    public ArrayList<HashMap<String, String>> getLineas();
-    public ArrayList<HashMap<String, String>> getMarcas();
-    public ArrayList<HashMap<String, String>> getFamilias();
+    public ArrayList<HashMap<String, String>> getLineas(Integer empresaId);
+    public ArrayList<HashMap<String, String>> getMarcas(Integer empresaId);
+    public ArrayList<HashMap<String, String>> getFamilias(Integer empresaId);
     public ArrayList<HashMap<String, String>> getSubfamilias(Integer id_familia);
     public ArrayList<HashMap<String, String>> getBuscadorProductos(String sku, String tipo, String descripcion, Integer id_empresa);
 
