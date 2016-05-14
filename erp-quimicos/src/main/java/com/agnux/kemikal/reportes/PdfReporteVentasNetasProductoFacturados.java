@@ -12,26 +12,26 @@ import java.util.HashMap;
  */
 public class PdfReporteVentasNetasProductoFacturados {
 
-    public String empresa_emisora;
-    public static String fecha_reporte;
-    public Integer tipo_reporte;
-    public Integer tipo;
-    public java.util.List<HashMap<String, String>> rows;
+    private String empresa_emisora;
+    private static String fecha_reporte;
+    private Integer tipo_reporte;
+    private Integer tipo;
+    private java.util.List<HashMap<String, String>> rows;
     //public java.util.List<HashMap<String, String>> sumatorias;
 
-    public Integer getTipo() {
+    private Integer getTipo() {
         return tipo;
     }
 
-    public void setTipo(Integer tipo) {
+    private void setTipo(Integer tipo) {
         this.tipo = tipo;
     }    
     
-    public Integer getTipo_reporte() {
+    private Integer getTipo_reporte() {
         return tipo_reporte;
     }
 
-    public void setTipo_reporte(Integer tipo_reporte) {
+    private void setTipo_reporte(Integer tipo_reporte) {
         this.tipo_reporte = tipo_reporte;
     }
 
@@ -39,8 +39,8 @@ public class PdfReporteVentasNetasProductoFacturados {
         return fecha_reporte;
     }
 
-    public static void setFecha_reporte(String fecha_reporte) {
-        PdfRepVentasNetasProductoFactura.fecha_reporte = fecha_reporte;
+    private void setFecha_reporte(String fecha) {
+        fecha_reporte = fecha;
     }
 
     /*public java.util.List<HashMap<String, String>> getSumatorias() {
@@ -63,7 +63,7 @@ public class PdfReporteVentasNetasProductoFacturados {
         return empresa_emisora;
     }
 
-    public void setEmpresa_emisora(String empresa_emisora) {
+    private void setEmpresa_emisora(String empresa_emisora) {
         this.empresa_emisora = empresa_emisora;
     }
 
@@ -91,18 +91,33 @@ public class PdfReporteVentasNetasProductoFacturados {
             String[] fi = fecha_inicial.split("-");
             String[] ff = fecha_final.split("-");
 
-            String fecha_reporte = "DEL:      " + fi[2] + "/" + fi[1] + "/" + fi[0] + "      AL:      " + ff[2] + "/" + ff[1] + "/" + ff[0];
-            this.setFecha_reporte(fecha_reporte);
-            //codigo   producto, factura,   fecha, unidad  ,  cantidad , $ , precio_unitario, $ ,  venta_neta, moneda , $ tipo_camnbio
-            float[] widths = {1.7f, 6f, 1.6f, 2f, 1.3f, 1.2f, 0.5f, 1.2f, 0.5f, 1.2f, 1.4f, 1.2f,0.5f,1.2f,1.2f,1.2f,1.2f    };
-          //float[] widths = {1.7f, 5f, 1.7f, 2f, 1.7f, 1.5f, 0.5f, 1.5f, 0.5f, 2f, 1.5f, 1.5f, 0.5f,2f,2f,2f,2f    };
+            String fechaReporte = "DEL:      " + fi[2] + "/" + fi[1] + "/" + fi[0] + "      AL:      " + ff[2] + "/" + ff[1] + "/" + ff[0];
+            this.setFecha_reporte(fechaReporte);
+            
+            float [] widths;
+            String[] titulos;
+            
+            float [] widths1 = {1.7f, 6f, 1.6f, 2f, 1.3f, 1.2f, 0.5f, 1.2f, 0.5f, 1.2f, 1.4f, 1.2f,0.5f,1.2f,1.2f,1.2f,1.2f};
+            float [] widths2 = {1.7f, 6f, 1.6f, 2f, 1.3f, 1.2f, 0.5f, 1.2f, 0.5f, 1.2f, 1.4f, 1.2f,1.2f,1.2f,1.2f};
+            
+            String[] titulos1 = {"N.CONTROL", "CLIENTE", "FACTURA", "FECHA", "UNIDAD", "CANT.", "", "P.UNI.", "","V. NETA.", "MONEDA","T. C.","","% COSTO","% POND","% MOP","% M_MOP"};
+            String[] titulos2 = {"N.CONTROL", "CLIENTE", "FACTURA", "FECHA", "UNIDAD", "CANT.", "", "P.UNI.", "","V. NETA.", "MONEDA","T. C.","% POND","% MOP","% M_MOP"};
+            
+            //Tipo=1 Ventas Netas por Producto
+            //Tipo=2 Reporte comercial para agentes de Ventas
+            if(this.getTipo()==1){
+                widths = widths1;
+                titulos = titulos1;
+            }else{
+                widths = widths2;
+                titulos = titulos2;
+            }
+            
             tabla = new PdfPTable(widths);
             tabla.setKeepTogether(false);
             tabla.setKeepTogether(true);
             tabla.setHeaderRows(1);
-
-            String[] titulos = {"N.CONTROL", "CLIENTE", "FACTURA", "FECHA", "UNIDAD", "CANT.", "", "P.UNI.", "","V. NETA.", "MONEDA","T. C.","","% COSTO","% POND","% MOP","% M_MOP"};
-
+            
             for (int i = 0; i <= titulos.length - 1; i++) {
                 cell = new PdfPCell(new Paragraph(titulos[i], smallBoldFont));
                 cell.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -128,8 +143,7 @@ public class PdfReporteVentasNetasProductoFacturados {
             double costogeneral=0.0;
             producto = lista_ventas.get(0).get("producto").toString();
             unidad = lista_ventas.get(0).get("unidad").toString();
-
-
+            
             cell = new PdfPCell(new Paragraph("Producto: " + producto, smallFont));
             cell.setColspan(18);
             cell.setBorder(0);
@@ -140,110 +154,110 @@ public class PdfReporteVentasNetasProductoFacturados {
             for (int j = 0; j <= lista_ventas.size() - 1; j++) {     //inicia for para recorrer las filas de la lista
                 //para conocer el contenido de los hashmap en cada fila de la lista
                 HashMap<String, String> registro = lista_ventas.get(j); //lista_ventas.get(0)
-
+                
                 if (producto.equals(registro.get("producto"))) {   //compara si todos los registros de la razon social
                     cell = new PdfPCell(new Paragraph(registro.get("numero_control").toString(), smallFont));
                     cell.setHorizontalAlignment(Element.ALIGN_LEFT);
                     cell.setBorder(0);
                     tabla.addCell(cell);
-
+                    
                     cell = new PdfPCell(new Paragraph(registro.get("razon_social").toString(), smallFont));
                     cell.setHorizontalAlignment(Element.ALIGN_LEFT);
                     cell.setBorder(0);
                     tabla.addCell(cell);
-
+                    
                     cell = new PdfPCell(new Paragraph(registro.get("factura").toString(), smallFont));
                     cell.setHorizontalAlignment(Element.ALIGN_CENTER);
                     cell.setBorder(0);
                     tabla.addCell(cell);
-
+                    
                     cell = new PdfPCell(new Paragraph(registro.get("fecha_factura").toString(), smallFont));
                     cell.setHorizontalAlignment(Element.ALIGN_CENTER);
                     cell.setBorder(0);
                     tabla.addCell(cell);
-
+                    
                     cell = new PdfPCell(new Paragraph(registro.get("unidad").toString(), smallFont));
                     cell.setHorizontalAlignment(Element.ALIGN_CENTER);
                     cell.setBorder(0);
                     tabla.addCell(cell);
-
+                    
                     //String cant=StringHelper.roundDouble(registro.get("cantidad").toString(), 2);
                     cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(registro.get("cantidad").toString(), 2)), smallFont));
                     cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
                     cell.setBorder(0);
                     tabla.addCell(cell);
-
+                    
                     cell = new PdfPCell(new Paragraph("$", smallFont));
                     cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
                     cell.setBorder(0);
                     tabla.addCell(cell);
-
+                    
                     //String precioUni=StringHelper.roundDouble(registro.get("precio_unitario").toString(), 2);
                     cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(registro.get("precio_unitario").toString(), 2)), smallFont));
                     cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
                     cell.setBorder(0);
                     tabla.addCell(cell);
-
+                    
                     cell = new PdfPCell(new Paragraph("$", smallFont));
                     cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
                     cell.setBorder(0);
                     tabla.addCell(cell);
-
-
+                    
                     cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(registro.get("venta_pesos").toString(), 2)), smallFont));
                     cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
                     cell.setBorder(0);
                     tabla.addCell(cell);
-
+                    
                     cell = new PdfPCell(new Paragraph(registro.get("moneda").toString(), smallFont));
                     cell.setHorizontalAlignment(Element.ALIGN_CENTER);
                     cell.setBorder(0);
                     tabla.addCell(cell);
-
-
-
+                    
                     cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(registro.get("tipo_cambio").toString(), 4)), smallFont));
                     cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
                     cell.setBorder(0);
                     tabla.addCell(cell);
-                    //NUEVO
-                    cell = new PdfPCell(new Paragraph("$", smallFont));
-                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                    cell.setBorder(0);
-                    tabla.addCell(cell);
-                    cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(registro.get("costo").toString(), 2)), smallFont));
-                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                    cell.setBorder(0);
-                    tabla.addCell(cell);
+                    
+                    if(this.getTipo()==1){
+                        //NUEVO
+                        cell = new PdfPCell(new Paragraph("$", smallFont));
+                        cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                        cell.setBorder(0);
+                        tabla.addCell(cell);
 
+                        cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(registro.get("costo").toString(), 2)), smallFont));
+                        cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                        cell.setBorder(0);
+                        tabla.addCell(cell);
+                    }
+                    
                     cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble((Double.parseDouble(registro.get("venta_pesos")) / (totalventa)) *100, 2)), smallFont));
                     cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
                     cell.setBorder(0);
                     tabla.addCell(cell);
+                    
                     cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble((Double.parseDouble(registro.get("venta_pesos")) - Double.parseDouble(registro.get("costo")))  /(Double.parseDouble(registro.get("venta_pesos"))) * 100 , 2)) , smallFont));
                     cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
                     cell.setBorder(0);
                     tabla.addCell(cell);
+                    
                     cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble((Double.parseDouble(registro.get("venta_pesos")) / (totalventa))  * (Double.parseDouble(registro.get("venta_pesos")) - Double.parseDouble(registro.get("costo"))) / (Double.parseDouble(registro.get("venta_pesos")))*100 , 2)) , smallFont));
                     cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
                     cell.setBorder(0);
                     tabla.addCell(cell);
                     //FIN NUEVO
-
-
+                    
                     sumaunidad = sumaunidad + Double.parseDouble(registro.get("cantidad").toString());
                     //suma = suma + Double.parseDouble(registro.get("venta_pesos").toString());
                     TGsuma = TGsuma + Double.parseDouble(registro.get("venta_pesos").toString());
-
+                    
                     totalcosto=totalcosto + Double.parseDouble(registro.get("costo").toString());
                     totalponderacion = totalponderacion + (Double.parseDouble(registro.get("venta_pesos").toString()) / totalventa) * 100 ;
                     totalmop = totalmop + (Double.parseDouble(registro.get("venta_pesos")) - Double.parseDouble(registro.get("costo")))  /(Double.parseDouble(registro.get("venta_pesos"))) * 100;
                     totalmediamop = totalmediamop + (Double.parseDouble(registro.get("venta_pesos")) / (totalventa))  * (Double.parseDouble(registro.get("venta_pesos")) - Double.parseDouble(registro.get("costo"))) / (Double.parseDouble(registro.get("venta_pesos")))*100;
-
+                    
                     ventageneral=ventageneral+ Double.parseDouble(registro.get("venta_pesos").toString());
                     costogeneral=costogeneral+ Double.parseDouble(registro.get("costo").toString());
-
-
                 } else {
                     //si ya no coincide el valor del primer registro (0) agrega la ultima fila de cada
                     //cliente mostrando su total de la venta Neta.
@@ -287,18 +301,20 @@ public class PdfReporteVentasNetasProductoFacturados {
                     cell.setColspan(2);
                     cell.setBorder(0);
                     tabla.addCell(cell);
+                    
+                    if(this.getTipo()==1){
+                        //NUEVO
+                        cell = new PdfPCell(new Paragraph("$", smallFont));
+                        cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                        cell.setBorder(0);
+                        tabla.addCell(cell);
 
-                    //NUEVO
-                    cell = new PdfPCell(new Paragraph("$", smallFont));
-                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                    cell.setBorder(0);
-                    tabla.addCell(cell);
-
-                    cell = new PdfPCell(new Paragraph(""+StringHelper.AgregaComas(StringHelper.roundDouble(totalcosto,2 )), smallFont));
-                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                    cell.setBorder(0);
-                    tabla.addCell(cell);
-
+                        cell = new PdfPCell(new Paragraph(""+StringHelper.AgregaComas(StringHelper.roundDouble(totalcosto,2 )), smallFont));
+                        cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                        cell.setBorder(0);
+                        tabla.addCell(cell);
+                    }
+                    
                     cell = new PdfPCell(new Paragraph(""+StringHelper.AgregaComas(StringHelper.roundDouble(totalponderacion,2 ))+" %", smallFont));
                     cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
                     cell.setBorder(0);
@@ -315,8 +331,7 @@ public class PdfReporteVentasNetasProductoFacturados {
                     tabla.addCell(cell);
                     //FIN NUEVO
                     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
+                    
                     //Reiniciar valores
                     //suma = 0.0;
                     sumaunidad = 0.0;
@@ -329,8 +344,7 @@ public class PdfReporteVentasNetasProductoFacturados {
                     producto = registro.get("producto");
                     totalventa = metodo_sumatorias(this.getTipo_reporte(), sumatorias, producto);
                     ////////////////////////////////
-
-
+                    
                     cell = new PdfPCell(new Paragraph("Producto: " + registro.get("producto"), smallFont));
                     cell.setColspan(18);
                     cell.setBorder(0);
@@ -400,17 +414,20 @@ public class PdfReporteVentasNetasProductoFacturados {
                     cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
                     cell.setBorder(0);
                     tabla.addCell(cell);
-                    //NUEVO
-                    cell = new PdfPCell(new Paragraph("$", smallFont));
-                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                    cell.setBorder(0);
-                    tabla.addCell(cell);
+                    
+                    if(this.getTipo()==1){
+                        //NUEVO
+                        cell = new PdfPCell(new Paragraph("$", smallFont));
+                        cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                        cell.setBorder(0);
+                        tabla.addCell(cell);
 
-                    cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(registro.get("costo").toString(), 2)), smallFont));
-                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                    cell.setBorder(0);
-                    tabla.addCell(cell);
-
+                        cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(registro.get("costo").toString(), 2)), smallFont));
+                        cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                        cell.setBorder(0);
+                        tabla.addCell(cell);
+                    }
+                    
                     cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble((Double.parseDouble(registro.get("venta_pesos")) / (totalventa)) *100, 2)), smallFont));
                     cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
                     cell.setBorder(0);
@@ -420,7 +437,7 @@ public class PdfReporteVentasNetasProductoFacturados {
                     cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
                     cell.setBorder(0);
                     tabla.addCell(cell);
-
+                    
                     cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble((Double.parseDouble(registro.get("venta_pesos")) / (totalventa))  * (Double.parseDouble(registro.get("venta_pesos")) - Double.parseDouble(registro.get("costo"))) / (Double.parseDouble(registro.get("venta_pesos")))*100 , 2)) , smallFont));
                     cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
                     cell.setBorder(0);
@@ -447,121 +464,124 @@ public class PdfReporteVentasNetasProductoFacturados {
 
 
            cell = new PdfPCell(new Paragraph());
-                    cell.setColspan(4);
-                    cell.setBorder(0);
-                    tabla.addCell(cell);
+            cell.setColspan(4);
+            cell.setBorder(0);
+            tabla.addCell(cell);
 
-                    cell = new PdfPCell(new Paragraph("Total", smallFont));
-                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                    cell.setBorder(1);
-                    tabla.addCell(cell);
+            cell = new PdfPCell(new Paragraph("Total", smallFont));
+            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cell.setBorder(1);
+            tabla.addCell(cell);
 
-                    cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(sumaunidad, 2)), smallFont));
-                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                    cell.setBorder(1);
-                    tabla.addCell(cell);
+            cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(sumaunidad, 2)), smallFont));
+            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cell.setBorder(1);
+            tabla.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph());
+            cell.setBorder(0);
+            tabla.addCell(cell);
 
+            cell = new PdfPCell(new Paragraph("Total ", smallFont));
+            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cell.setBorder(1);
+            tabla.addCell(cell);
 
+            cell = new PdfPCell(new Paragraph("$", smallFont));
+            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cell.setBorder(1);
+            tabla.addCell(cell);
 
-                    cell = new PdfPCell(new Paragraph());
-                    cell.setBorder(0);
-                    tabla.addCell(cell);
+            //cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(suma, 2)), smallFont));
+            cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(totalventa, 2)), smallFont));
+            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cell.setBorder(1);
+            tabla.addCell(cell);
 
-                    cell = new PdfPCell(new Paragraph("Total ", smallFont));
-                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                    cell.setBorder(1);
-                    tabla.addCell(cell);
+            cell = new PdfPCell(new Paragraph());
+            cell.setColspan(2);
+            cell.setBorder(0);
+            tabla.addCell(cell);
+            
+            if(this.getTipo()==1){
+                //NUEVO
+                cell = new PdfPCell(new Paragraph("$", smallFont));
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setBorder(0);
+                tabla.addCell(cell);
+                
+                cell = new PdfPCell(new Paragraph(""+StringHelper.AgregaComas(StringHelper.roundDouble(totalcosto,2 )), smallFont));
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setBorder(0);
+                tabla.addCell(cell);
+            }
 
-                    cell = new PdfPCell(new Paragraph("$", smallFont));
-                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                    cell.setBorder(1);
-                    tabla.addCell(cell);
-
-                    //cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(suma, 2)), smallFont));
-                    cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(totalventa, 2)), smallFont));
-                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                    cell.setBorder(1);
-                    tabla.addCell(cell);
-
-                    cell = new PdfPCell(new Paragraph());
-                    cell.setColspan(2);
-                    cell.setBorder(0);
-                    tabla.addCell(cell);
-
-                    //NUEVO
-                    cell = new PdfPCell(new Paragraph("$", smallFont));
-                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                    cell.setBorder(0);
-                    tabla.addCell(cell);
-                    cell = new PdfPCell(new Paragraph(""+StringHelper.AgregaComas(StringHelper.roundDouble(totalcosto,2 )), smallFont));
-                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                    cell.setBorder(0);
-                    tabla.addCell(cell);
-
-                    cell = new PdfPCell(new Paragraph(""+StringHelper.AgregaComas(StringHelper.roundDouble(totalponderacion,2 ))+" %", smallFont));
-                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                    cell.setBorder(0);
-                    tabla.addCell(cell);
-                    cell = new PdfPCell(new Paragraph(""+StringHelper.AgregaComas(StringHelper.roundDouble(totalmop,2 ))+" %", smallFont));
-                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                    cell.setBorder(0);
-                    tabla.addCell(cell);
-                    cell = new PdfPCell(new Paragraph(""+StringHelper.AgregaComas(StringHelper.roundDouble(totalmediamop,2 ))+" %", smallFont));
-                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                    cell.setBorder(0);
-                    tabla.addCell(cell);
-                    //FIN NUEVO
+            cell = new PdfPCell(new Paragraph(""+StringHelper.AgregaComas(StringHelper.roundDouble(totalponderacion,2 ))+" %", smallFont));
+            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cell.setBorder(0);
+            tabla.addCell(cell);
+            cell = new PdfPCell(new Paragraph(""+StringHelper.AgregaComas(StringHelper.roundDouble(totalmop,2 ))+" %", smallFont));
+            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cell.setBorder(0);
+            tabla.addCell(cell);
+            cell = new PdfPCell(new Paragraph(""+StringHelper.AgregaComas(StringHelper.roundDouble(totalmediamop,2 ))+" %", smallFont));
+            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cell.setBorder(0);
+            tabla.addCell(cell);
+            //FIN NUEVO
+            
             //fin total venta del ultimo cliente que se muestra en el pdf
-                    cell = new PdfPCell(new Paragraph("TOTAL GENERAL :",smallFont));
-                                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                                    cell.setColspan(8);
-                                    cell.setBorder(0);
-                                    tabla.addCell(cell);
+            cell = new PdfPCell(new Paragraph("TOTAL GENERAL :",smallFont));
+            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cell.setColspan(8);
+            cell.setBorder(0);
+            tabla.addCell(cell);
 
-                                    cell = new PdfPCell(new Paragraph("$",smallFont));
-                                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                                    cell.setBorder(0);
-                                    tabla.addCell(cell);
+            cell = new PdfPCell(new Paragraph("$",smallFont));
+            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cell.setBorder(0);
+            tabla.addCell(cell);
 
-                                    cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(ventageneral,2)),smallFont));
-                                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                                    cell.setBorder(0);
-                                    tabla.addCell(cell);
+            cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(ventageneral,2)),smallFont));
+            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cell.setBorder(0);
+            tabla.addCell(cell);
 
-                                    cell = new PdfPCell(new Paragraph("",smallFont));
-                                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                                    cell.setColspan(2);
-                                    cell.setBorder(0);
-                                    tabla.addCell(cell);
+            cell = new PdfPCell(new Paragraph("",smallFont));
+            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cell.setColspan(2);
+            cell.setBorder(0);
+            tabla.addCell(cell);
+            
+            if(this.getTipo()==1){
+                cell = new PdfPCell(new Paragraph("$",smallFont));
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setBorder(1);
+                tabla.addCell(cell);
 
-                                    cell = new PdfPCell(new Paragraph("$",smallFont));
-                                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                                    cell.setBorder(1);
-                                    tabla.addCell(cell);
+                cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(costogeneral,2)),smallFont));
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setBorder(1);
+                tabla.addCell(cell);
+            }
 
-                                    cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(costogeneral,2)),smallFont));
-                                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                                    cell.setBorder(1);
-                                    tabla.addCell(cell);
-
-                                    cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble((ventageneral/ventageneral)*100,2))+" %",smallFont));
-                                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                                    cell.setBorder(1);
-                                    tabla.addCell(cell);
-
-
-                                    cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(((ventageneral-costogeneral)/ventageneral) *100,2))+" %",smallFont));
-                                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                                    cell.setBorder(1);
-                                    tabla.addCell(cell);
-
-                                    cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(((ventageneral/ventageneral) )*(((ventageneral-costogeneral)/ventageneral) )*100,2))+" %",smallFont));
-                                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                                    cell.setBorder(1);
-                                    tabla.addCell(cell);
+            cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble((ventageneral/ventageneral)*100,2))+" %",smallFont));
+            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cell.setBorder(1);
+            tabla.addCell(cell);
 
 
-            document.add(tabla); //aÃ±adiendo la tabla
+            cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(((ventageneral-costogeneral)/ventageneral) *100,2))+" %",smallFont));
+            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cell.setBorder(1);
+            tabla.addCell(cell);
+
+            cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(((ventageneral/ventageneral) )*(((ventageneral-costogeneral)/ventageneral) )*100,2))+" %",smallFont));
+            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cell.setBorder(1);
+            tabla.addCell(cell);
+            
+            document.add(tabla);
             document.close();
         } catch (Exception e) {
             e.printStackTrace();
@@ -575,7 +595,7 @@ public class PdfReporteVentasNetasProductoFacturados {
     }
 
     // class Sumatorias {
-    public Double metodo_sumatorias(Integer tipo_reporte, ArrayList<HashMap<String, String>> array_sumatoria, String cliente_producto) {
+    private Double metodo_sumatorias(Integer tipo_reporte, ArrayList<HashMap<String, String>> array_sumatoria, String cliente_producto) {
         Double venta_total = 0.0;
 
         try {
@@ -635,7 +655,7 @@ public class PdfReporteVentasNetasProductoFacturados {
             }else{
                 ColumnText.showTextAligned(writer.getDirectContent(), Element.ALIGN_CENTER, new Phrase("Reporte Comercial por Producto.", largeBoldFont), document.getPageSize().getWidth() / 2, document.getPageSize().getTop() - 38, 0);
             }
-            ColumnText.showTextAligned(writer.getDirectContent(), Element.ALIGN_CENTER, new Phrase(PdfRepVentasNetasProductoFactura.getFecha_reporte(), largeFont), document.getPageSize().getWidth() / 2, document.getPageSize().getTop() - 50, 0);
+            ColumnText.showTextAligned(writer.getDirectContent(), Element.ALIGN_CENTER, new Phrase(PdfReporteVentasNetasProductoFacturados.getFecha_reporte(), largeFont), document.getPageSize().getWidth() / 2, document.getPageSize().getTop() - 50, 0);
 
             cb = writer.getDirectContent();
             //cb.saveState();

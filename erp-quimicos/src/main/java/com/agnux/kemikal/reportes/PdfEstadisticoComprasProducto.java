@@ -23,8 +23,8 @@ public class PdfEstadisticoComprasProducto {
         return fecha_reporte;
     }
 
-    public static void setFecha_reporte(String fecha_reporte) {
-        PdfRepVentasNetasProductoFactura.fecha_reporte = fecha_reporte;
+    public static void setFecha_reporte(String fecha) {
+        fecha_reporte = fecha;
     }
     public java.util.List<HashMap<String, String>> rows;
 
@@ -79,8 +79,8 @@ public class PdfEstadisticoComprasProducto {
             String[] fi = fecha_inicial.split("-");
             String[] ff = fecha_final.split("-");
 
-            String fecha_reporte = "DEL:      "+fi[2]+"/"+fi[1]+"/"+fi[0] + "      AL:      " +ff[2]+"/"+ff[1]+"/"+ff[0];
-            this.setFecha_reporte(fecha_reporte);
+            String fechaReporte = "DEL:      "+fi[2]+"/"+fi[1]+"/"+fi[0] + "      AL:      " +ff[2]+"/"+ff[1]+"/"+ff[0];
+            this.setFecha_reporte(fechaReporte);
             /*
             float [] widths = {0.5f,2f,0.2f,1f,1f};
             table_titulos = new PdfPTable(widths);

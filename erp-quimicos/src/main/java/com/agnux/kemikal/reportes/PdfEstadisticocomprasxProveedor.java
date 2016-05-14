@@ -23,8 +23,8 @@ public class PdfEstadisticocomprasxProveedor {
         return fecha_reporte;
     }
 
-    public static void setFecha_reporte(String fecha_reporte) {
-        PdfRepVentasNetasProductoFactura.fecha_reporte = fecha_reporte;
+    public static void setFecha_reporte(String fecha) {
+        fecha_reporte = fecha;
     }
     public java.util.List<HashMap<String, String>> rows;
 
@@ -69,36 +69,30 @@ public class PdfEstadisticocomprasxProveedor {
             writer.setPageEvent(event);
             document.open();
             //TABLA DE FECHAS
-
-
-
+            
             String[] fi = fecha_inicial.split("-");
             String[] ff = fecha_final.split("-");
 
-            String fecha_reporte = "DEL:      "+fi[2]+"/"+fi[1]+"/"+fi[0] + "      AL:      " +ff[2]+"/"+ff[1]+"/"+ff[0];
-            this.setFecha_reporte(fecha_reporte);
+            String fechaReporte = "DEL:      "+fi[2]+"/"+fi[1]+"/"+fi[0] + "      AL:      " +ff[2]+"/"+ff[1]+"/"+ff[0];
+            this.setFecha_reporte(fechaReporte);
 
             float [] widths = {2f,6f,2f,4f,2f,2f,1f,4f,1f,4f,2f,1f,3f};
             tabla = new PdfPTable(widths);
             tabla.setKeepTogether(false);
             tabla.setKeepTogether(true);
             tabla.setHeaderRows(1);
-
-
+            
             String[] titulos = {"CODIGO","PRODUCTO","FACTURA","FECHA","UNIDAD","CANTIDAD","","PRECIO UNITARIO","","VENTA NETA","MONEDA","","TIPO CAMBIO"};
-
+            
             for (int i = 0; i<=titulos.length -1; i++){
-
-				cell = new PdfPCell(new Paragraph(titulos[i],smallBoldFont));
-				cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-				cell.setUseAscender(true);
-				cell.setUseDescender(true);
-				cell.setBackgroundColor(BaseColor.BLACK);
-				cell.setBorder(0);
-				cell.setBorderWidthLeft(0);
-
-				tabla.addCell(cell);
-
+                cell = new PdfPCell(new Paragraph(titulos[i],smallBoldFont));
+                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                cell.setUseAscender(true);
+                cell.setUseDescender(true);
+                cell.setBackgroundColor(BaseColor.BLACK);
+                cell.setBorder(0);
+                cell.setBorderWidthLeft(0);
+                tabla.addCell(cell);
             }
                //fin de for de insertar encabezado de la tabla
 

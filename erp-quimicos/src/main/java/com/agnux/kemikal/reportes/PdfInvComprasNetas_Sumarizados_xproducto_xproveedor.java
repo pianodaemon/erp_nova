@@ -29,8 +29,8 @@ public class PdfInvComprasNetas_Sumarizados_xproducto_xproveedor {
         return fecha_reporte;
     }
 
-    public static void setFecha_reporte(String fecha_reporte) {
-        PdfReporteVentasNetasSumatoriaxClientes.fecha_reporte = fecha_reporte;
+    public static void setFecha_reporte(String fecha) {
+        fecha_reporte = fecha;
     }
     public java.util.List<HashMap<String, String>> rows;
 

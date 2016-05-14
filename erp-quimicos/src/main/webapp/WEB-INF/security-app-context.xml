@@ -158,7 +158,8 @@ xmlns:beans="http://www.springframework.org/schema/beans"
         ROLE_CTB_DEF_ASIENTO,
         ROLE_CTB_GENERA_POLIZA,
         ROLE_GRAL_IVA_TRASLADADO,
-        ROLE_GRAL_IVA_RETENIDO" />
+        ROLE_GRAL_IVA_RETENIDO,
+        ROLE_CXC_REPORTE_COMERCIAL" />
         
         <intercept-url pattern="/controllers/productos/startup.agnux" access="ROLE_ADMIN,ROLE_ALTA_PRODUCTO" />
         <intercept-url pattern="/controllers/proveedores/startup.agnux" access="ROLE_ADMIN,ROLE_ALTA_PROVEEDOR" />
@@ -295,6 +296,7 @@ xmlns:beans="http://www.springframework.org/schema/beans"
         <intercept-url pattern="/controllers/reppronoscobranza/startup.agnux" access="ROLE_ADMIN,ROLE_REPORTE_CXC_PRONOSTICO" />
         <intercept-url pattern="/controllers/repventasnetasxcliente/startup.agnux" access="ROLE_ADMIN,ROLE_CXC_REPORTE_VENTAS" />
         <intercept-url pattern="/controllers/repventasnetasproductofactura/startup.agnux" access="ROLE_ADMIN,ROLE_CXC_REPORTE_VENTAS" />
+        <intercept-url pattern="/controllers/cxcrepcomercial/startup.agnux" access="ROLE_ADMIN,ROLE_CXC_REPORTE_COMERCIAL" />
         <intercept-url pattern="/controllers/repprogramacionpagos/startup.agnux" access="ROLE_ADMIN, ROLE_REPORTE_PROG_PAGOS" />
         <intercept-url pattern="/controllers/repremision/startup.agnux" access="ROLE_ADMIN,ROLE_REPORTE_REMISIONES" />
         <intercept-url pattern="/controllers/repinvkits/startup.agnux" access="ROLE_ADMIN,ROLE_REPORTE_KITS" />
