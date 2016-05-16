@@ -2361,7 +2361,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
                                     + "presentacion character varying"
                                     + "); ";
 
-       System.out.println("getVentasNetasProductoFactura:"+ sql_to_query);
+       //System.out.println("getVentasNetasProductoFactura:"+ sql_to_query);
 
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
                 sql_to_query,

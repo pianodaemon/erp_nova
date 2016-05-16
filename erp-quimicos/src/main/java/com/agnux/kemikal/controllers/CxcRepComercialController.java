@@ -41,7 +41,6 @@ import org.springframework.web.servlet.ModelAndView;
 @SessionAttributes({"user"})
 @RequestMapping("/cxcrepcomercial/")
 public class CxcRepComercialController {
-
     private static final Logger log = Logger.getLogger(CxcRepComercialController.class.getName());
     ResourceProject resource = new ResourceProject();
     @Autowired
@@ -156,7 +155,7 @@ public class CxcRepComercialController {
             @RequestParam(value = "iu", required = true) String id_user_cod,
             Model model
         ) {
-
+        
         HashMap<String,Object> jsonretorno = new HashMap<String,Object>();
 
         ArrayList<HashMap<String, String>> arraySubfamilia = new ArrayList<HashMap<String, String>>();
