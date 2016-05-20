@@ -176,8 +176,9 @@ public class CrmRegistroProyectosController {
         HashMap<String,Object> jsonretorno = new HashMap<String,Object>();
         HashMap<String, String> userDat = new HashMap<String, String>();
         ArrayList<HashMap<String, String>> agentes = new ArrayList<HashMap<String, String>>();
-        ArrayList<HashMap<String, String>> arrayExtra = new ArrayList<HashMap<String, String>>();
-        HashMap<String, String> extra = new HashMap<String, String>();
+        ArrayList<HashMap<String, String>> agentes2 = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, Object>> arrayExtra = new ArrayList<HashMap<String, Object>>();
+        HashMap<String, Object> extra = new HashMap<String, Object>();
         
         //Decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
@@ -185,14 +186,26 @@ public class CrmRegistroProyectosController {
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         Integer id_agente = Integer.parseInt(userDat.get("empleado_id"));
         
-        extra = this.getCrmDao().getUserRol(id_usuario);
-        extra.put("id_agente", String.valueOf(id_agente));
-        arrayExtra.add(0,extra);
+        //Id del Agente de Ventas(id del empleado)
+        extra.put("no_agen", String.valueOf(id_agente));
         
         agentes = this.getCrmDao().getAgentes(id_empresa);
         
+        if(Integer.parseInt(this.getCrmDao().getUserRol(id_usuario).get("exis_rol_admin"))<=0){
+            for( HashMap<String,String> i : agentes ){
+                if(Integer.parseInt(i.get("id").toString())==id_agente){
+                    agentes2.add(i);
+                }
+            }
+        }else{
+            agentes2 = agentes;
+            extra.put("mostrarAgentes", true);
+        }
+        
+        arrayExtra.add(0,extra);
+        
         jsonretorno.put("Extra", arrayExtra);
-        jsonretorno.put("Agentes", agentes);
+        jsonretorno.put("Agentes", agentes2);
         
         jsonretorno.put("Segmentos", this.getCxcDao().getCliente_Clasificacion1());
         jsonretorno.put("Mercados", this.getCxcDao().getCliente_Clasificacion2());

@@ -150,16 +150,16 @@ $(function() {
 			//Alimentando los campos select_agente
 			$busqueda_agente.children().remove();
 			var agente_hmtl = '';
-			if(parseInt(data['Extra'][0]['exis_rol_admin']) > 0){
+			
+			if(data['Extra'][0]['mostrarAgentes']){
 				agente_hmtl += '<option value="0" >[-- Selecionar Agente --]</option>';
 			}
 			
 			$.each(data['Agentes'],function(entryIndex,agente){
-				if(parseInt(agente['id'])==parseInt(data['Extra'][0]['id_agente'])){
+				if(parseInt(agente['id'])==parseInt(data['Extra'][0]['no_agen'])){
 					agente_hmtl += '<option value="' + agente['id'] + '" selected="yes">' + agente['nombre_agente'] + '</option>';
 				}else{
-					//si exis_rol_admin es mayor que cero, quiere decir que el usuario logueado es un administrador
-					if(parseInt(data['Extra'][0]['exis_rol_admin']) > 0){
+					if(data['Extra'][0]['mostrarAgentes']){
 						agente_hmtl += '<option value="' + agente['id'] + '" >' + agente['nombre_agente'] + '</option>';
 					}
 				}
