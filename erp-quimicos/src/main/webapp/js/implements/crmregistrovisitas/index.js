@@ -7,6 +7,35 @@ $(function() {
 		return work.join(',');
 	};
 	
+	
+	var $autocomplete_input = function($tipo, $campo, json_input, iu){		
+		$campo.autocomplete({
+			source: function(request, response){
+				var $arreglo = {'tipo':$tipo.val(),'cadena':$campo.val(),'iu':iu};
+				
+				$.post(json_input, $arreglo, function(data){
+					response($.map(data, function(item) {
+						return {
+							label: item.titulo,
+							value: item.id
+						  }
+					}))
+				}, "json");
+			},
+			 minLength: 2,
+			 dataType: "json",
+			 cache: false,
+			 focus: function(event, ui) {
+				return false;
+			 },
+			 select: function(event, ui) {
+				this.value = ui.item.label;
+				return false;
+			 }
+		 });
+	}
+	
+	
 	$('#header').find('#header1').find('span.emp').text($('#lienzo_recalculable').find('input[name=emp]').val());
 	$('#header').find('#header1').find('span.suc').text($('#lienzo_recalculable').find('input[name=suc]').val());
         
@@ -43,10 +72,13 @@ $(function() {
 	$('#barra_buscador').append($('#lienzo_recalculable').find('.tabla_buscador'));
 	$('#barra_buscador').find('.tabla_buscador').css({'display':'block'});
 	
+	//$('#barra_buscador').find('.tabla_buscador').find('#td_busqueda_cliente').append('<input type="text" name="busqueda_cliente" value="" style="width:200px;">');
+	
 	var $cadena_busqueda = "";
 	var $busqueda_folio = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_folio]');
 	var $busqueda_tipo_visita = $('#barra_buscador').find('.tabla_buscador').find('select[name=busqueda_tipo_visita]');
 	var $busqueda_contacto = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_contacto]');
+	var $busqueda_cliente = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_cliente]');
 	var $busqueda_agente = $('#barra_buscador').find('.tabla_buscador').find('select[name=busqueda_agente]');
 	var $busqueda_fecha_inicial = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_fecha_inicial]');
 	var $busqueda_fecha_final = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_fecha_final]');
@@ -66,7 +98,8 @@ $(function() {
 		var signo_separador = "=";
 		valor_retorno += "folio" + signo_separador + $busqueda_folio.val() + "|";
 		valor_retorno += "tipo_visita" + signo_separador + $busqueda_tipo_visita.val() + "|";
-		valor_retorno += "contacto" + signo_separador + $busqueda_contacto.val() + "|";
+		valor_retorno += "contacto" + signo_separador + $busqueda_contacto.val().trim() + "|";
+		valor_retorno += "cliente" + signo_separador + $busqueda_cliente.val().trim() + "|";
 		valor_retorno += "agente" + signo_separador + $busqueda_agente.val() + "|";
 		valor_retorno += "fecha_inicial" + signo_separador + $busqueda_fecha_inicial.val() + "|";
 		valor_retorno += "fecha_final" + signo_separador + $busqueda_fecha_final.val() + "|"
@@ -91,6 +124,7 @@ $(function() {
 		event.preventDefault();
 		$busqueda_folio.val('');
 		$busqueda_contacto.val('');
+		$busqueda_cliente.val('');
 		$busqueda_fecha_inicial.val('');
 		$busqueda_fecha_final.val('');
 		$busqueda_agente.find('option[index=0]').attr('selected','selected');
@@ -143,6 +177,8 @@ $(function() {
 			 $('#barra_buscador').find('.tabla_buscador').css({'display':'block'});
 			 $('#barra_buscador').animate({height: '60px'}, 500);
 			 $('#cuerpo').css({'height': pix_alto});
+			 
+			 $busqueda_folio.focus();
 		}else{
 			 TriggerClickVisializaBuscador=0;
 			 var height2 = $('#cuerpo').css('height');
@@ -151,10 +187,18 @@ $(function() {
 			 
 			 $('#barra_buscador').animate({height:'0px'}, 500);
 			 $('#cuerpo').css({'height': pix_alto});
+			 
+			 $visualiza_buscador.focus();
 		};
 	});
 	
-	
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_folio, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_tipo_visita, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_cliente, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_contacto, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_agente, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_fecha_inicial, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_fecha_final, $buscar);
 	
 	var input_json_agente = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAgentesParaBuscador.json';
 	$arreglo = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
@@ -180,7 +224,16 @@ $(function() {
 	});
 	
 	
-
+	//Para el autocomplete
+	var input_json1 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAutoClienteProspecto.json';
+	$autocomplete_input($busqueda_tipo_visita, $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_cliente]'), input_json1,$('#lienzo_recalculable').find('input[name=iu]').val());
+	
+	//Para el autocomplete
+	var input_json1 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAutocompleteContactos.json';
+	$autocomplete_input($busqueda_tipo_visita, $busqueda_contacto, input_json1,$('#lienzo_recalculable').find('input[name=iu]').val());
+	
+	
+                    
 	//----------------------------------------------------------------
 	//valida la fecha seleccionada
 	function mayor(fecha, fecha2){
@@ -212,6 +265,8 @@ $(function() {
 			}
 		}
 	}
+	
+	
 	//muestra la fecha actual
 	var mostrarFecha = function mostrarFecha(){
 		var ahora = new Date();
@@ -224,12 +279,8 @@ $(function() {
 		var Fecha = anoActual + "-" + mesActual + "-" + diaActual;		
 		return Fecha;
 	}
-
-
 	
 	
-        
-        
 	$busqueda_fecha_inicial.click(function (s){
 		var a=$('div.datepicker');
 		a.css({'z-index':100});
@@ -301,7 +352,6 @@ $(function() {
 	});
 	
 	
-	
 	$tabs_li_funxionalidad = function(){
 		$('#forma-crmregistrovisitas-window').find('#submit').mouseover(function(){
 			$('#forma-crmregistrovisitas-window').find('#submit').removeAttr("src").attr("src","../../img/modalbox/bt1.png");
@@ -340,7 +390,7 @@ $(function() {
 		});
 	}
 	
-	
+		
 	/*funcion para colorear la fila en la que pasa el puntero*/
 	$colorea_tr_grid = function($tabla){
 		$tabla.find('tr:odd').find('td').css({'background-color' : '#e7e8ea'});
@@ -495,6 +545,10 @@ $(function() {
 		var $hora_proxima_visita = $('#forma-crmregistrovisitas-window').find('input[name=hora_proxima_visita]');
 		var $comentarios_proxima_visita = $('#forma-crmregistrovisitas-window').find('textarea[name=comentarios_proxima_visita]');
 		
+		var $fecha_proxima_llamada = $('#forma-crmregistrovisitas-window').find('input[name=fecha_proxima_llamada]');
+		var $hora_proxima_llamada = $('#forma-crmregistrovisitas-window').find('input[name=hora_proxima_llamada]');
+		var $comentarios_proxima_llamada = $('#forma-crmregistrovisitas-window').find('textarea[name=comentarios_proxima_llamada]');
+		
 		var $cerrar_plugin = $('#forma-crmregistrovisitas-window').find('#close');
 		var $cancelar_plugin = $('#forma-crmregistrovisitas-window').find('#boton_cancelar');
 		var $submit_actualizar = $('#forma-crmregistrovisitas-window').find('#submit');
@@ -505,6 +559,8 @@ $(function() {
 		$hora_visita.attr({'value' : '00:00'});
 		$hora_duracion.attr({'value' : '00:00'});
 		$hora_proxima_visita.attr({'value' : '00:00'});
+		$hora_proxima_llamada.attr({'value' : '00:00'});
+		
 		var respuestaProcesada = function(data){
 			if ( data['success'] == "true" ){
 				jAlert("La visita se registr&oacute; con &eacute;xito", 'Atencion!');
@@ -597,6 +653,7 @@ $(function() {
         $hora_visita.TimepickerInputMask();
 		$hora_duracion.TimepickerInputMask();
         $hora_proxima_visita.TimepickerInputMask();
+        $hora_proxima_llamada.TimepickerInputMask();
         
         //fecha de la visita
 		$fecha.click(function (s){
@@ -672,14 +729,48 @@ $(function() {
 			}
 		});
         
+		//Fecha para la proxima llamada
+		$fecha_proxima_llamada.click(function (s){
+			var a=$('div.datepicker');
+			a.css({'z-index':100});
+		});
+		
+		$fecha_proxima_llamada.DatePicker({
+			format:'Y-m-d',
+			date: $fecha_proxima_llamada.val(),
+			current: $fecha_proxima_llamada.val(),
+			starts: 1,
+			position: 'bottom',
+			locale: {
+				days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
+				daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
+				daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
+				months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
+				monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
+				weekMin: 'se'
+			},
+			onChange: function(formated, dates){
+				var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
+				$fecha_proxima_llamada.val(formated);
+				if (formated.match(patron) ){
+					var valida_fecha=mayor($fecha_proxima_llamada.val(),mostrarFecha());
+					
+					if (valida_fecha==true){
+						$fecha_proxima_llamada.DatePickerHide();	
+					}else{
+						jAlert("Fecha no valida, debe ser mayor a la actual.",'! Atencion');
+						$fecha_proxima_llamada.val(mostrarFecha());
+					}
+				}
+			}
+		});
         
         
-        //buscar contacto
+        //Buscar contacto
         $busca_contacto.click(function(event){
 			event.preventDefault();
 			$busca_contactos($contacto.val());
         });
-        
         
         
         $cerrar_plugin.bind('click',function(){
@@ -761,6 +852,10 @@ $(function() {
 			var $comentarios_proxima_visita = $('#forma-crmregistrovisitas-window').find('textarea[name=comentarios_proxima_visita]');
 			var $productos = $('#forma-crmregistrovisitas-window').find('textarea[name=productos]');
 			
+			var $fecha_proxima_llamada = $('#forma-crmregistrovisitas-window').find('input[name=fecha_proxima_llamada]');
+			var $hora_proxima_llamada = $('#forma-crmregistrovisitas-window').find('input[name=hora_proxima_llamada]');
+			var $comentarios_proxima_llamada = $('#forma-crmregistrovisitas-window').find('textarea[name=comentarios_proxima_llamada]');
+			
 			var $cerrar_plugin = $('#forma-crmregistrovisitas-window').find('#close');
 			var $cancelar_plugin = $('#forma-crmregistrovisitas-window').find('#boton_cancelar');
 			var $submit_actualizar = $('#forma-crmregistrovisitas-window').find('#submit');
@@ -770,6 +865,7 @@ $(function() {
 			$hora_visita.attr({'value' : '00:00'});
 			$hora_duracion.attr({'value' : '00:00'});
 			$hora_proxima_visita.attr({'value' : '00:00'});
+			$hora_proxima_llamada.attr({'value' : '00:00'});
 			//$busca_contacto.hide();
 			
 			if(accion_mode == 'edit'){
@@ -821,7 +917,7 @@ $(function() {
 					$hora_visita.TimepickerInputMask();
 					$hora_duracion.attr({'value' : entry['Datos'][0]['duracion']});
 					$hora_duracion.TimepickerInputMask();
-				
+					
 					$recusrsos_visita.text(entry['Datos'][0]['recursos_utilizados']);
 					$resultado_visita.text(entry['Datos'][0]['resultado']);
 					$observaciones_visita.text(entry['Datos'][0]['observaciones']);
@@ -831,6 +927,11 @@ $(function() {
 					$hora_proxima_visita.attr({'value' : entry['Datos'][0]['hora_sig_visita']});
 					$hora_proxima_visita.TimepickerInputMask();
 					$comentarios_proxima_visita.text(entry['Datos'][0]['comentarios_sig_visita']);
+					
+					$fecha_proxima_llamada.attr({'value' : entry['Datos'][0]['fecha_sig_llamada']});
+					$hora_proxima_llamada.attr({'value' : entry['Datos'][0]['hora_sig_llamada']});
+					$hora_proxima_llamada.TimepickerInputMask();
+					$comentarios_proxima_llamada.text(entry['Datos'][0]['comentarios_sig_llamada']);
 					
 					//Alimentando los campos select_agente
 					$select_agente.children().remove();
@@ -976,6 +1077,41 @@ $(function() {
 					}
 				});
 				
+				//Fecha para la proxima llamada
+				$fecha_proxima_llamada.click(function (s){
+					var a=$('div.datepicker');
+					a.css({'z-index':100});
+				});
+				
+				$fecha_proxima_llamada.DatePicker({
+					format:'Y-m-d',
+					date: $fecha_proxima_llamada.val(),
+					current: $fecha_proxima_llamada.val(),
+					starts: 1,
+					position: 'bottom',
+					locale: {
+						days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
+						daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
+						daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
+						months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
+						monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
+						weekMin: 'se'
+					},
+					onChange: function(formated, dates){
+						var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
+						$fecha_proxima_llamada.val(formated);
+						if (formated.match(patron) ){
+							var valida_fecha=mayor($fecha_proxima_llamada.val(),mostrarFecha());
+							
+							if (valida_fecha==true){
+								$fecha_proxima_llamada.DatePickerHide();	
+							}else{
+								jAlert("Fecha no valida, debe ser mayor a la actual.",'! Atencion');
+								$fecha_proxima_llamada.val(mostrarFecha());
+							}
+						}
+					}
+				});
 				
 				//Ligamos el boton cancelar al evento click para eliminar la forma
 				$cancelar_plugin.bind('click',function(){

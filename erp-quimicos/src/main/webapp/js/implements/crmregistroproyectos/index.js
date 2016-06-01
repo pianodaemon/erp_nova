@@ -137,7 +137,6 @@ $(function() {
 	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_agente, $buscar);
 	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_fecha_inicial, $buscar);
 	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_fecha_final, $buscar);
-	
 	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_cliente, $buscar);
 	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_segmento, $buscar);
 	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_mercado, $buscar);
@@ -434,8 +433,8 @@ $(function() {
 		$buscar_plugin_contacto.click(function(event){
                     
 			var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/get_buscador_contactos.json';
-			$arreglo = {'buscador_nombre':$campo_buscador_nombre.val(),'buscador_apellidop':$campo_buscador_apellidop.val(),
-			'buscador_apellidom':$campo_buscador_apellidom.val(),'buscador_tipo_contacto':$select_buscador_tipo_contacto.val(),'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
+			$arreglo = {'buscador_nombre':$campo_buscador_nombre.val().trim(),'buscador_apellidop':$campo_buscador_apellidop.val().trim(),
+			'buscador_apellidom':$campo_buscador_apellidom.val().trim(),'buscador_tipo_contacto':$select_buscador_tipo_contacto.val(),'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
 			
 			var trr = '';
 			$tabla_resultados.children().remove();
@@ -500,11 +499,18 @@ $(function() {
 			$buscar_plugin_contacto.trigger('click');
 		}
 		
+		$(this).aplicarEventoKeypressEjecutaTrigger($campo_buscador_nombre, $buscar_plugin_contacto);
+		$(this).aplicarEventoKeypressEjecutaTrigger($campo_buscador_apellidop, $buscar_plugin_contacto);
+		$(this).aplicarEventoKeypressEjecutaTrigger($campo_buscador_apellidom, $buscar_plugin_contacto);
+		$(this).aplicarEventoKeypressEjecutaTrigger($select_buscador_tipo_contacto, $buscar_plugin_contacto);
+		
 		$cancelar_plugin_busca_contacto.click(function(event){
 			//event.preventDefault();
 			var remove = function() {$(this).remove();};
 			$('#forma-buscacontactos-overlay').fadeOut(remove);
 		});
+        
+        $campo_buscador_nombre.focus();
                 
 	}//termina buscador de Contactos
 	
@@ -808,7 +814,12 @@ $(function() {
 				$busca_contactos($contacto.val(),$select_segmento,$select_mercado,entry['Segmentos'],entry['Mercados']);
 			});
 			
+			//Asignar evento keypress al campo Nombre del Contacto
+			$(this).aplicarEventoKeypressEjecutaTrigger($contacto, $busca_contacto);
+			
 		},"json");//termina llamada json
+        
+        
         
 		//cargar select
 		var elemento_seleccionado = 0;
@@ -949,6 +960,8 @@ $(function() {
 			$busca_proveedores('', $proveedor.val().trim())
         });
         
+		//Asignar evento keypress al campo Proveedor
+		$(this).aplicarEventoKeypressEjecutaTrigger($proveedor, $busca_proveedor);
         
 		$submit_actualizar.bind('click',function(){
 			if($contacto.val().trim()==''){
@@ -1070,7 +1083,7 @@ $(function() {
 						var remove = function() {$(this).remove();};
 						$('#forma-crmregistroproyectos-overlay').fadeOut(remove);
 						//refresh_table();
-						$get_datos_grid();
+						//$get_datos_grid();
 					}else{
 						// Desaparece todas las interrogaciones si es que existen
 						$('#forma-crmregistroproyectos-window').find('div.interrogacion').css({'display':'none'});
@@ -1216,6 +1229,9 @@ $(function() {
 						event.preventDefault();
 						$busca_contactos($contacto.val(),$select_segmento,$select_mercado,entry['Segmentos'],entry['Mercados']);
 					});
+					
+					//Asignar evento keypress al campo Nombre del Contacto
+					$(this).aplicarEventoKeypressEjecutaTrigger($contacto, $busca_contacto);
 				},"json");//termina llamada json
 				
 				
@@ -1261,7 +1277,9 @@ $(function() {
 					event.preventDefault();
 					$busca_proveedores('', $proveedor.val().trim())
 				});
-        
+				
+				//Asignar evento keypress al campo Proveedor
+				$(this).aplicarEventoKeypressEjecutaTrigger($proveedor, $busca_proveedor);
 				
 				$fecha_inicio.click(function (s){
 					var a=$('div.datepicker');

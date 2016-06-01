@@ -40,7 +40,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 /**
  *
- * @author agnux
+ * @author Noe Martinez
  */
 @Controller
 @SessionAttributes({"user"})

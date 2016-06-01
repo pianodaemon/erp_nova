@@ -51,7 +51,8 @@ public interface CrmInterfaceDao {
     public ArrayList<HashMap<String, String>> getCrmRegistroVisitas_Motivos(Integer id_empresa);
     public ArrayList<HashMap<String, String>> getCrmRegistroVisitas_Calificaciones(Integer id_empresa);
     public ArrayList<HashMap<String, String>> getCrmRegistroVisitas_Seguimientos(Integer id_empresa);
-
+    public ArrayList<HashMap<String, Object>> getClientesProspectos(Integer tipo, String cadena, Integer id_empresa);
+    public ArrayList<HashMap<String, Object>> getAutocompletadoContactos(Integer tipo, String cadena, Integer id_empresa);
 
     //metodos para aplicativo de Oportunidades
     public ArrayList<HashMap<String, Object>> getOportunidades_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc,Integer id_empresa);
@@ -121,4 +122,8 @@ public interface CrmInterfaceDao {
     public ArrayList<HashMap<String, String>> getCrmRegistroProyectos_Estatus(Integer id_empresa);
     
     public ArrayList<HashMap<String, Object>> getMonedas();
+    
+    public ArrayList<HashMap<String, Object>> getSeguimientoVisitas_Datos(Integer id);
+    public ArrayList<HashMap<String, Object>> getSeguimientoVisitas_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc, Integer id_empresa);
+    
 }

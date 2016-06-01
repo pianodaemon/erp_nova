@@ -65,13 +65,14 @@ public class CrmRegistroVisitasController {
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
         
         infoConstruccionTabla.put("id", "Acciones:90");
-        infoConstruccionTabla.put("folio", "Folio:100");
-        infoConstruccionTabla.put("agente", "Nombre del Agente:250");
+        infoConstruccionTabla.put("folio", "Folio:75");
+        infoConstruccionTabla.put("fecha", "Fecha:80");
+        infoConstruccionTabla.put("agente", "Nombre&nbsp;del&nbsp;Agente:250");
         infoConstruccionTabla.put("motivo", "Motivo:150");
         infoConstruccionTabla.put("calif", "Calificaci&oacute;n:120");
-        infoConstruccionTabla.put("tipo_seg", "Tipo de Seguimiento:150");
-        infoConstruccionTabla.put("fecha", "Fecha:100");
-        infoConstruccionTabla.put("hora", "Hora:100");
+        infoConstruccionTabla.put("tipo_seg", "Tipo&nbsp;de&nbsp;Seguimiento:150");
+        infoConstruccionTabla.put("proxvisita", "Pr&oacute;xima&nbsp;visita:118");
+        infoConstruccionTabla.put("proxllamada", "Pr&oacute;xima&nbsp;llamada:118");
         
         ModelAndView x = new ModelAndView("crmregistrovisitas/startup", "title", "Registro de Visitas");
         
@@ -115,43 +116,42 @@ public class CrmRegistroVisitasController {
         //Aplicativo de Registro de Visitas
         Integer app_selected = 115;
         
-        //decodificar id de usuario
+        //Decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
         
-        //variables para el buscador
+        //Variables para el buscador
         String folio = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("folio")))+"%";
         String tipo_visita = String.valueOf(has_busqueda.get("tipo_visita"));
         String contacto = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("contacto")))+"%";
+        String cliente = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("cliente")))+"%";
         String agente = String.valueOf(has_busqueda.get("agente"));
         String fecha_inicial = ""+StringHelper.isNullString(String.valueOf(has_busqueda.get("fecha_inicial")))+"";
         String fecha_final = ""+StringHelper.isNullString(String.valueOf(has_busqueda.get("fecha_final")))+"";
         
-        String data_string = app_selected+"___"+id_usuario+"___"+folio+"___"+tipo_visita+"___"+contacto+"___"+agente+"___"+fecha_inicial+"___"+fecha_final;
+        String data_string = app_selected+"___"+id_usuario+"___"+folio+"___"+tipo_visita+"___"+contacto+"___"+agente+"___"+fecha_inicial+"___"+fecha_final+"___"+cliente;
         
-        //obtiene total de registros en base de datos, con los parametros de busqueda
+        //Obtiene total de registros en base de datos, con los parametros de busqueda
         int total_items = this.getCrmDao().countAll(data_string);
         
-        //calcula el total de paginas
+        //Calcula el total de paginas
         int total_pags = resource.calculaTotalPag(total_items,items_por_pag);
         
-        //variables que necesita el datagrid, para no tener que hacer uno por cada aplicativo
+        //Variables que necesita el datagrid, para no tener que hacer uno por cada aplicativo
         DataPost dataforpos = new DataPost(orderby, desc, items_por_pag, pag_start, display_pag, input_json, cadena_busqueda,total_items,total_pags, id_user_cod);
         
         int offset = resource.__get_inicio_offset(items_por_pag, pag_start);
         
-        //obtiene los registros para el grid, de acuerdo a los parametros de busqueda
+        //Obtiene los registros para el grid, de acuerdo a los parametros de busqueda
         jsonretorno.put("Data", this.getCrmDao().getCrmRegistroVisitas_PaginaGrid(data_string, offset, items_por_pag, orderby, desc));
-        //obtiene el hash para los datos que necesita el datagrid
+        
+        //Obtiene el hash para los datos que necesita el datagrid
         jsonretorno.put("DataForGrid", dataforpos.formaHashForPos(dataforpos));
         
         return jsonretorno;
     }
     
     
-    
-    
-    
-    //obtiene los Agentes para el Buscador pricipal del Aplicativo
+    //Obtiene los Agentes para el Buscador pricipal del Aplicativo
     @RequestMapping(method = RequestMethod.POST, value="/getAgentesParaBuscador.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getAgentesParaBuscador(
             @RequestParam(value="iu", required=true) String id_user_cod,
@@ -181,6 +181,50 @@ public class CrmRegistroVisitasController {
         return jsonretorno;
     }
     
+    
+    //Obtiene los Clientes y Prospectos
+    @RequestMapping(method = RequestMethod.POST, value="/getAutoClienteProspecto.json")
+    public @ResponseBody ArrayList<HashMap<String, Object>> getAutoClienteProspectoJson(
+            @RequestParam(value="tipo", required=true) Integer tipo,
+            @RequestParam(value="cadena", required=true) String cadena,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+        ) {
+        
+        log.log(Level.INFO, "Ejecutando getAutoClienteProspectoJson de {0}", CrmRegistroVisitasController.class.getName());
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        
+        //Decodificar id de usuario
+        userDat = this.getHomeDao().getUserById(Integer.parseInt(Base64Coder.decodeString(id_user)));
+        
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        
+        cadena = "%"+StringHelper.isNullString(String.valueOf(cadena.trim()))+"%";
+        
+        return this.getCrmDao().getClientesProspectos(tipo, cadena, id_empresa);
+    }
+    
+    //Obtiene los Clientes y Prospectos
+    @RequestMapping(method = RequestMethod.POST, value="/getAutocompleteContactos.json")
+    public @ResponseBody ArrayList<HashMap<String, Object>> getAutocompleteContactosJson(
+            @RequestParam(value="tipo", required=true) Integer tipo,
+            @RequestParam(value="cadena", required=true) String cadena,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+        ) {
+        
+        log.log(Level.INFO, "Ejecutando getAutocompleteContactosJson de {0}", CrmRegistroVisitasController.class.getName());
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        
+        //Decodificar id de usuario
+        userDat = this.getHomeDao().getUserById(Integer.parseInt(Base64Coder.decodeString(id_user)));
+        
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        
+        cadena = "%"+StringHelper.isNullString(String.valueOf(cadena.trim()))+"%";
+        
+        return this.getCrmDao().getAutocompletadoContactos(tipo, cadena, id_empresa);
+    }
     
     
     @RequestMapping(method = RequestMethod.POST, value="/getRegistroVisita.json")
@@ -242,7 +286,7 @@ public class CrmRegistroVisitasController {
             @RequestParam(value="buscador_tipo_contacto", required=true) String tipo_contacto,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
-            ) {
+        ) {
         
         log.log(Level.INFO, "Ejecutando getBuscadorContactoJson de {0}", CrmRegistroVisitasController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
@@ -267,7 +311,7 @@ public class CrmRegistroVisitasController {
     
     
     
-    //crear y editar un cliente
+    //Crear y editar
     @RequestMapping(method = RequestMethod.POST, value="/edit.json")
     public @ResponseBody HashMap<String, String> editJson(
         @RequestParam(value="identificador", required=true) String identificador,
@@ -287,8 +331,11 @@ public class CrmRegistroVisitasController {
         @RequestParam(value="hora_proxima_visita", required=true) String hora_proxima_visita,
         @RequestParam(value="comentarios_proxima_visita", required=true) String comentarios_proxima_visita,
         @RequestParam(value="productos", required=true) String productos,
+        @RequestParam(value="fecha_proxima_llamada", required=true) String fecha_proxima_llamada,
+        @RequestParam(value="hora_proxima_llamada", required=true) String hora_proxima_llamada,
+        @RequestParam(value="comentarios_proxima_llamada", required=true) String comentarios_proxima_llamada,
         Model model,@ModelAttribute("user") UserSessionData user
-        ) {
+    ) {
         Integer app_selected = 115;//Aplicativo de Registro de Visitas
         String command_selected = "new";
         Integer id_usuario= user.getUserId();//variable para el id  del usuario
@@ -325,8 +372,11 @@ public class CrmRegistroVisitasController {
         +"___"+observaciones_visita.toUpperCase()
         +"___"+fecha_proxima_visita
         +"___"+hora_proxima_visita
-        +"___"+comentarios_proxima_visita.toUpperCase()
-        +"___"+productos.toUpperCase();
+        +"___"+comentarios_proxima_visita.trim().toUpperCase()
+        +"___"+productos.toUpperCase()
+        +"___"+fecha_proxima_llamada
+        +"___"+hora_proxima_llamada
+        +"___"+comentarios_proxima_llamada.trim().toUpperCase();
         
         //System.out.println("data_string: "+data_string);
         
@@ -369,9 +419,4 @@ public class CrmRegistroVisitasController {
         
         return jsonretorno;
     }
-    
-    
-    
-    
-    
 }

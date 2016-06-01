@@ -134,8 +134,6 @@ $(function() {
 			
 			$get_datos_grid();
 		});
-        
-        
 	});
 	
 	
@@ -167,7 +165,14 @@ $(function() {
 			$('#barra_buscador').animate({height:'0px'}, 500);
 			$('#cuerpo').css({'height': pix_alto});
 		};
+		
+		$busqueda_nombre.focus();
+		
 	});
+	
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_nombre, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busquedatipo_contacto, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_agente, $buscar);
 	
 	/*funcion para colorear la fila en la que pasa el puntero*/
 	$colorea_tr_grid = function($tabla){
@@ -229,7 +234,7 @@ $(function() {
 	//buscador de Contactos
 	$Pluguin_cliente_prospecto = function(busqueda_inicial_rfc, busqueda_inicial_razon_soc ,buscado_por,nivel_ejecucion){
 		//limpiar_campos_grids();
-                $(this).modalPanel_BuscaCliente_prospecto();
+		$(this).modalPanel_BuscaCliente_prospecto();
 		var $dialogoc =  $('#forma-buscacliente_prospecto-window');
                 
 		//var $dialogoc.prependTo('#forma-buscaproduct-window');
@@ -332,7 +337,6 @@ $(function() {
         
 	//nuevos puestos
 	$new.click(function(event){
-            
             event.preventDefault();
             var id_to_show = 0;
             $(this).modalPanel_CrmContactos();   //contacto al plug in 
@@ -436,12 +440,21 @@ $(function() {
                 
             });//termina llamada json
             
-            //buscar contacto
+			$tipo_contacto.change(function(){
+				$('#forma-crmcontactos-window').find('input[name=rfc]').val('');
+				$('#forma-crmcontactos-window').find('input[name=id_cliente]').val(0);
+				$('#forma-crmcontactos-window').find('input[name=razon_social]').val('');
+				
+				$busca_cliente.show();
+				
+				$rfc.focus();
+			});
+			
+			
+            //Buscar contacto
             $busca_cliente.click(function(event){
                 event.preventDefault();
                 if($tipo_contacto.val() != 0 ){
-                    var nivel_ejecucion=$tipo_contacto.val();
-                    //$Pluguin_cliente_prospecto($cliente_prospecto.val(),$buscando_por.val(),nivel_ejecucion);
                     $Pluguin_cliente_prospecto($rfc.val(),$razon_social.val(),$tipo_contacto.val(), $tipo_contacto.val());
                 }else{
                     jAlert("Elije una Opcion",'Atencion!!!');
@@ -459,15 +472,16 @@ $(function() {
                 $buscar.trigger('click');
             });
 	});
+    
+    
         
-        var carga_formaClientsgrupos_for_datagrid00 = function(id_to_show, accion_mode){
+	var carga_formaClientsgrupos_for_datagrid00 = function(id_to_show, accion_mode){
 		//aqui entra para eliminar una entrada
 		if(accion_mode == 'cancel'){
                      
 			var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/' + 'logicDelete.json';
-			$arreglo = {'id':id_to_show,
-                                    'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
-                                    };
+			var $arreglo = {'id':id_to_show, 'iu': $('#lienzo_recalculable').find('input[name=iu]').val() };
+			
 			jConfirm('Realmente desea eliminar el contacto seleccionado', 'Dialogo de confirmacion', function(r) {
 				if (r){
 					$.post(input_json,$arreglo,function(entry){
@@ -536,7 +550,6 @@ $(function() {
 					iu: $('#lienzo_recalculable').find('input[name=iu]').val()
 				};
 				
-				
 				var respuestaProcesada = function(data){
 					if ( data['success'] == "true" ){
 						jAlert("El contacto fue actualizado con exito", 'Atencion!');
@@ -586,19 +599,22 @@ $(function() {
             
 					$tipo_contacto.children().remove();
 					$html_tipo = "";
-					if(entry['Contacto']['0']['observaciones'] == 1){
-						$html_tipo = '<option value="1" >Cliente</option>';
+					
+					
+					if(parseInt(entry['Contacto'][0]['tipo_contacto']) == 1){
+						$tipo_contacto.append('<option value="1" selected="yes">Cliente</option>');
+						$tipo_contacto.append('<option value="2">Prospecto</option>');
 					}else{
-						$html_tipo = '<option value="2" >Prospecto</option>';
+						$tipo_contacto.append('<option value="1">Cliente</option>');
+						$tipo_contacto.append('<option value="2" selected="yes">Prospecto</option>');
 					}
-					$tipo_contacto.append($html_tipo);
 					
 					if(entry['Contacto']['0']['cliente'].trim() != "" && entry['Contacto']['0']['cliente'] != null ){
 						$id_cliente.val(entry['Contacto']['0']['cliente'].split("___")[0]);
 						$rfc.val(entry['Contacto']['0']['cliente'].split("___")[1]);
 						$razon_social.val(entry['Contacto']['0']['cliente'].split("___")[2]);
 					}
-                                        
+					
 					//Alimentando los campos select_agente
 					$select_agente.children().remove();
 					var agente_hmtl='';
@@ -612,6 +628,26 @@ $(function() {
 					$select_agente.append(agente_hmtl);
 				},"json");//termina llamada json
 				
+				
+				$tipo_contacto.change(function(){
+					$('#forma-crmcontactos-window').find('input[name=rfc]').val('');
+					$('#forma-crmcontactos-window').find('input[name=id_cliente]').val(0);
+					$('#forma-crmcontactos-window').find('input[name=razon_social]').val('');
+					
+					$busca_cliente.show();
+					
+					$rfc.focus();
+				});
+				
+				//Buscar Cliente o Prospecto
+				$busca_cliente.click(function(event){
+					event.preventDefault();
+					if($tipo_contacto.val() != 0 ){
+						$Pluguin_cliente_prospecto($rfc.val(),$razon_social.val(),$tipo_contacto.val(), $tipo_contacto.val());
+					}else{
+						jAlert("Elije una Opcion",'Atencion!!!');
+					}
+				});
 				
 				//Ligamos el boton cancelar al evento click para eliminar la forma
 				$cancelar_plugin.bind('click',function(){

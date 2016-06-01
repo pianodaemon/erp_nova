@@ -11,7 +11,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -355,37 +354,49 @@ public class CrmSpringDao implements CrmInterfaceDao{
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
 
 	String sql_to_query = ""
-                + "SELECT "
-                    + "crm_registro_visitas.id,"
-                    + "crm_registro_visitas.folio, "
-                    + "cxc_agen.nombre AS agente, "
-                    + "crm_motivos_visita.descripcion AS motivo, "
-                    + "crm_calificaciones_visita.titulo AS calif, "
-                    + "crm_tipos_seguimiento_visita.titulo AS tipo_seg, "
-                    + "crm_registro_visitas.fecha,"
-                    + "crm_registro_visitas.hora "
-                + "FROM crm_registro_visitas "
-                + "JOIN cxc_agen ON cxc_agen.id=crm_registro_visitas.gral_empleado_id "
-                + "LEFT JOIN crm_motivos_visita ON crm_motivos_visita.id=crm_registro_visitas.crm_motivos_visita_id "
-                + "LEFT JOIN crm_calificaciones_visita ON crm_calificaciones_visita.id=crm_registro_visitas.crm_calificacion_visita_id "
-                + "LEFT JOIN crm_tipos_seguimiento_visita ON crm_tipos_seguimiento_visita.id=crm_registro_visitas.crm_tipos_seguimiento_visita_id "
-                + "JOIN ("+sql_busqueda+") AS sbt ON sbt.id = crm_registro_visitas.id "
-                + "order by "+orderBy+" "+asc+" limit ? OFFSET ? ";
-
+        + "SELECT "
+            + "crm_registro_visitas.id,"
+            + "crm_registro_visitas.folio, "
+            + "cxc_agen.nombre AS agente, "
+            + "crm_motivos_visita.descripcion AS motivo, "
+            + "crm_calificaciones_visita.titulo AS calif, "
+            + "crm_tipos_seguimiento_visita.titulo AS tipo_seg, "
+            + "crm_registro_visitas.fecha,"
+            + "(case when crm_registro_visitas.fecha_sig_visita='2999-12-31'::date then '' else crm_registro_visitas.fecha_sig_visita::character varying end) as fecha_sig_visita,"
+            + "crm_registro_visitas.hora_sig_visita::time as hora_sig_visita, "
+            + "(case when crm_registro_visitas.fecha_sig_llamada='2999-12-31'::date then '' else crm_registro_visitas.fecha_sig_llamada::character varying end) as fecha_sig_llamada,"
+            + "crm_registro_visitas.hora_sig_llamada::time as hora_sig_llamada "
+        + "FROM crm_registro_visitas "
+        + "left join cxc_agen ON cxc_agen.id=crm_registro_visitas.gral_empleado_id "
+        + "LEFT JOIN crm_motivos_visita ON crm_motivos_visita.id=crm_registro_visitas.crm_motivos_visita_id "
+        + "LEFT JOIN crm_calificaciones_visita ON crm_calificaciones_visita.id=crm_registro_visitas.crm_calificacion_visita_id "
+        + "LEFT JOIN crm_tipos_seguimiento_visita ON crm_tipos_seguimiento_visita.id=crm_registro_visitas.crm_tipos_seguimiento_visita_id "
+        + "JOIN ("+sql_busqueda+") AS sbt ON sbt.id = crm_registro_visitas.id "
+        + "order by "+orderBy+" "+asc+" limit ? OFFSET ? ";
+        
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{data_string, new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, Object> row = new HashMap<String, Object>();
-                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("id",rs.getInt("id"));
                     row.put("folio",rs.getString("folio"));
                     row.put("agente",rs.getString("agente"));
                     row.put("motivo",rs.getString("motivo"));
                     row.put("calif",rs.getString("calif"));
                     row.put("tipo_seg",rs.getString("tipo_seg"));
                     row.put("fecha",String.valueOf(rs.getDate("fecha")));
-                    row.put("hora",String.valueOf(rs.getTime("hora")));
+                    if(rs.getString("fecha_sig_visita").trim().equals("")){
+                        row.put("proxvisita","");
+                    }else{
+                        row.put("proxvisita",rs.getString("fecha_sig_visita") +" "+ String.valueOf(rs.getTime("hora_sig_visita")));
+                    }
+                    if(rs.getString("fecha_sig_llamada").trim().equals("")){
+                        row.put("proxllamada","");
+                    }else{
+                        row.put("proxllamada",rs.getString("fecha_sig_llamada") +" "+ String.valueOf(rs.getTime("hora_sig_llamada")));
+                    }
                     
                     return row;
                 }
@@ -420,7 +431,10 @@ public class CrmSpringDao implements CrmInterfaceDao{
                 + "(CASE WHEN crm_rv.fecha_sig_visita::character varying='2999-12-31' THEN '' ELSE crm_rv.fecha_sig_visita::character varying END) AS fecha_sig_visita,"
                 + "(CASE WHEN EXTRACT(HOUR FROM crm_rv.hora_sig_visita)=0 AND EXTRACT(MINUTE FROM crm_rv.hora_sig_visita)=0 THEN '00:00' ELSE (lpad(EXTRACT(HOUR FROM crm_rv.hora_sig_visita)::character varying, 2, '0')||':'||lpad(EXTRACT(MINUTE FROM crm_rv.hora_sig_visita)::character varying, 2, '0'))END) AS hora_sig_visita, "
                 + "crm_rv.comentarios_sig_visita,"
-                + "crm_rv.productos "
+                + "crm_rv.productos,"
+                + "(CASE WHEN crm_rv.fecha_sig_llamada::character varying='2999-12-31' THEN '' ELSE crm_rv.fecha_sig_llamada::character varying END) AS fecha_sig_llamada,"
+                + "(CASE WHEN EXTRACT(HOUR FROM crm_rv.hora_sig_llamada)=0 AND EXTRACT(MINUTE FROM crm_rv.hora_sig_llamada)=0 THEN '00:00' ELSE (lpad(EXTRACT(HOUR FROM crm_rv.hora_sig_llamada)::character varying, 2, '0')||':'||lpad(EXTRACT(MINUTE FROM crm_rv.hora_sig_llamada)::character varying, 2, '0'))END) AS hora_sig_llamada, "
+                + "crm_rv.comentarios_sig_llamada "
             + "FROM crm_registro_visitas as crm_rv "
             + "LEFT JOIN crm_contactos ON crm_contactos.id=crm_rv.crm_contacto_id "
             + "WHERE crm_rv.id=?";
@@ -449,6 +463,10 @@ public class CrmSpringDao implements CrmInterfaceDao{
                     row.put("hora_sig_visita",rs.getString("hora_sig_visita"));
                     row.put("comentarios_sig_visita",rs.getString("comentarios_sig_visita"));
                     row.put("productos",rs.getString("productos"));
+                    
+                    row.put("fecha_sig_llamada",rs.getString("fecha_sig_llamada"));
+                    row.put("hora_sig_llamada",rs.getString("hora_sig_llamada"));
+                    row.put("comentarios_sig_llamada",rs.getString("comentarios_sig_llamada"));
                     return row;
                 }
             }
@@ -563,11 +581,79 @@ public class CrmSpringDao implements CrmInterfaceDao{
         );
         return hm;
     }
+    
+    
+    //Obtiene clientes y prospectos para el autocomplatado
+    @Override
+    public ArrayList<HashMap<String, Object>> getClientesProspectos(Integer tipo, String cadena, Integer id_empresa) {
+        String where = "";
+        
+        if(tipo > 0){
+            where = " where sbt.tipo="+tipo;
+        }
+        
+        String sql_to_query = ""
+        + "SELECT * FROM ("
+            + "select distinct id, razon_social as nombre, 1::integer as tipo from cxc_clie where borrado_logico=false and empresa_id=? and razon_social ilike '"+ cadena +"' "
+            + "UNION "
+            + "select distinct id, razon_social as nombre, 2::integer as tipo  from crm_prospectos where borrado_logico=false and gral_emp_id=? and razon_social ilike '"+ cadena +"' "
+        + ") AS sbt"+ where +" "
+        + "order by sbt.nombre limit 10;";
+        
+        //System.out.println("sql_to_query= "+sql_to_query);
+        
+        ArrayList<HashMap<String, Object>> docs = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(id_empresa),new Integer(id_empresa)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("titulo",rs.getString("nombre"));
+                    return row;
+                }
+            }
+        );
+        return docs;
+    }
+    
+    //Obtener contactos para el autocompletado
+    @Override
+    public ArrayList<HashMap<String, Object>> getAutocompletadoContactos(Integer tipo, String cadena, Integer id_empresa) {
+        String where = "";
+        
+        if(tipo > 0){
+            where = " and sbt.tipo_contacto="+tipo;
+        }
+        
+        String sql_to_query = ""
+        + "select * from ("
+            + "select tipo_contacto,id,nombre||' '||(CASE WHEN apellido_paterno IS NULL THEN '' ELSE apellido_paterno END) ||' '||(CASE WHEN apellido_materno IS NULL THEN '' ELSE apellido_materno END) AS nombre "
+            + "from crm_contactos where gral_emp_id=? and borrado_logico=? "
+        + ") as sbt where nombre ilike '"+cadena+"' "+ where +" "
+        + "order by sbt.nombre limit 10;";
+        
+        //System.out.println("sql_to_query= "+sql_to_query);
+        
+        ArrayList<HashMap<String, Object>> docs = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(id_empresa),false}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("titulo",rs.getString("nombre"));
+                    return row;
+                }
+            }
+        );
+        return docs;
+    }
 
-   //----------------------------------------------fin de Catalogo de Registro de Visitas--------------------------------------------------
+    //----------------------------------------------fin de Catalogo de Registro de Visitas--------------------------------------------------
 
 
-//----------------------------------------------inicio de catalogo de crm_oportunidades--------------------------------------------------
+    //----------------------------------------------inicio de catalogo de crm_oportunidades--------------------------------------------------
     @Override
     public ArrayList<HashMap<String, Object>> getOportunidades_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc, Integer id_empresa) {
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
@@ -1207,7 +1293,7 @@ public class CrmSpringDao implements CrmInterfaceDao{
                     +"(CASE WHEN EXTRACT(HOUR FROM crm_registro_llamadas.duracion)=0 AND EXTRACT(MINUTE FROM crm_registro_llamadas.duracion)=0 THEN '00:00' ELSE (lpad(EXTRACT(HOUR FROM crm_registro_llamadas.duracion)::character varying, 2, '0')||':'||lpad(EXTRACT(MINUTE FROM crm_registro_llamadas.duracion)::character varying, 2, '0'))END) AS duracion, "
                     +"crm_registro_llamadas.gral_empleado_id, "
                     +"crm_registro_llamadas.crm_contacto_id, "
-                    +"crm_contactos.nombre||' '||(CASE WHEN crm_contactos.apellido_paterno IS NULL THEN '' ELSE crm_contactos.apellido_paterno END) ||' '||(CASE WHEN crm_contactos.apellido_paterno IS NULL THEN '' ELSE crm_contactos.apellido_paterno END) AS  nombre_contacto, "
+                    +"crm_contactos.nombre||' '||(CASE WHEN crm_contactos.apellido_paterno IS NULL THEN '' ELSE crm_contactos.apellido_paterno END) ||' '||(CASE WHEN crm_contactos.apellido_materno IS NULL THEN '' ELSE crm_contactos.apellido_materno END) AS  nombre_contacto, "
                     +"crm_registro_llamadas.crm_motivos_llamda_id, "
                     +"crm_registro_llamadas.crm_calificacion_llamada_id, "
                     +"crm_registro_llamadas.crm_tipos_seguimiento_llamada_id, "
@@ -1283,7 +1369,7 @@ public class CrmSpringDao implements CrmInterfaceDao{
         System.out.println("Devuelve la consulta"+sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
-            new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+            new Object[]{data_string, new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, Object> row = new HashMap<String, Object>();
@@ -1337,7 +1423,7 @@ public class CrmSpringDao implements CrmInterfaceDao{
         System.out.println("Busqueda GetPage GRIDD PRINCIPAL: "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
-            new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+            new Object[]{data_string, new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, Object> row = new HashMap<String, Object>();
@@ -1461,7 +1547,7 @@ public class CrmSpringDao implements CrmInterfaceDao{
                 +" "+cadena_where
                 +"  AND "+empresa+"="+id_empresa+" ";
 
-        System.out.println("Ejecutando query" +sql_to_query);
+        //System.out.println("Ejecutando query" +sql_to_query);
 
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
 
@@ -1550,7 +1636,7 @@ public class CrmSpringDao implements CrmInterfaceDao{
                                                         + "gestion double precision) ";
 
 
-            System.out.println("Resultados de la FUNCION___2____"+" "+query);
+    //System.out.println("Resultados de la FUNCION___2____"+" "+query);
       ArrayList<HashMap<String,String>>hm_registro_visitas =(ArrayList<HashMap<String,String>>)this.jdbcTemplate.query(
             query,
             new Object[]{}, new RowMapper(){
@@ -1587,7 +1673,7 @@ public class CrmSpringDao implements CrmInterfaceDao{
                 + "casos_varios double precision)";
 
 
-        System.out.println("Resultados de la FUNCION___3____"+" "+query);
+      //System.out.println("Resultados de la FUNCION___3____"+" "+query);
       ArrayList<HashMap<String,String>>hm_registro_casos =(ArrayList<HashMap<String,String>>)this.jdbcTemplate.query(
             query,
             new Object[]{}, new RowMapper(){
@@ -1624,7 +1710,7 @@ public class CrmSpringDao implements CrmInterfaceDao{
                  + ",oport_cierre double precision, oport_ganados double precision, oport_perdidos double precision)";
 
 
-            System.out.println("Resultados de la FUNCION___4____"+" "+query);
+    //System.out.println("Resultados de la FUNCION___4____"+" "+query);
       ArrayList<HashMap<String,String>>hm_registro_oportunidades =(ArrayList<HashMap<String,String>>)this.jdbcTemplate.query(
             query,
             new Object[]{}, new RowMapper(){
@@ -1662,7 +1748,7 @@ public class CrmSpringDao implements CrmInterfaceDao{
                                                         + "contactos integer )";
 
 
-            System.out.println("Resultados de la FUNCION___5____"+" "+query);
+        //System.out.println("Resultados de la FUNCION___5____"+" "+query);
       ArrayList<HashMap<String,String>>hm_registro_varios =(ArrayList<HashMap<String,String>>)this.jdbcTemplate.query(
             query,
             new Object[]{}, new RowMapper(){
@@ -1809,7 +1895,7 @@ public class CrmSpringDao implements CrmInterfaceDao{
                 +" "+cadena_where+" "
                 + "ORDER BY gral_empleados.nombre_pila desc;";
         
-        System.out.println("DATOS del registro de Visitas:  "+sql_to_query);
+        //System.out.println("DATOS del registro de Visitas:  "+sql_to_query);
         
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
@@ -1975,7 +2061,7 @@ public class CrmSpringDao implements CrmInterfaceDao{
                         + "por_mont_cot_cli double precision "
                 + ");";//14
         
-        System.out.println("sql_to_query:"+sql_to_query);
+        //System.out.println("sql_to_query:"+sql_to_query);
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -2254,5 +2340,53 @@ public class CrmSpringDao implements CrmInterfaceDao{
         return hm_monedas;
     }
     
-}
+    
+    //----------------------------------------------catalogo de motivos de llamada-------------------------------------------------------------
+    @Override
+    public ArrayList<HashMap<String, Object>> getSeguimientoVisitas_Datos(Integer id) {
+        String sql_to_query = "SELECT id,titulo FROM crm_tipos_seguimiento_visita WHERE id=?;";
+        
+        ArrayList<HashMap<String, Object>> dato_datos = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(id)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("titulo",rs.getString("titulo"));
 
+                    return row;
+                }
+            }
+        );
+        return dato_datos;
+    }
+
+    @Override
+    public ArrayList<HashMap<String, Object>> getSeguimientoVisitas_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc, Integer id_empresa) {
+        String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
+
+	String sql_to_query = ""
+        +"SELECT crm_tipos_seguimiento_visita.id, crm_tipos_seguimiento_visita.titulo "
+        +"FROM crm_tipos_seguimiento_visita "
+        +"JOIN ("+sql_busqueda+") AS sbt ON sbt.id = crm_tipos_seguimiento_visita.id "
+        +"order by "+orderBy+" "+asc+" limit ? OFFSET ? ";
+
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{data_string, new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("titulo",rs.getString("titulo"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+   //----------------------------------------------fin de catalogo de motivos de llamada--------------------------------------------------
+
+    
+}

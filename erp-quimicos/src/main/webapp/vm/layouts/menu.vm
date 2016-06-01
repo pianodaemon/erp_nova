@@ -543,9 +543,10 @@
 										<ul>
 											<li><a href="#" class="sub">Catalogos &raquo;</a>
 												<ul>
-													<li class="topline"><a href="../crmmotivosvisitas/startup.agnux">Motivo&nbsp;de&nbsp;Visita.</a></li>
-													<li class="topline"><a href="../crmformascontacto/startup.agnux">Formas&nbsp;de&nbsp;Contacto.</a></li>
-													<li class="topline"><a href="../crmmotivosllamadas/startup.agnux">Motivos&nbsp;de&nbsp;Llamadas.</a></li>
+													<li class="topline"><a href="../crmmotivosvisitas/startup.agnux">Motivo&nbsp;de&nbsp;Visita</a></li>
+													<li class="topline"><a href="../crmvisitaseguimiento/startup.agnux">Tipos&nbsp;de&nbsp;Seguimiento&nbsp;de&nbsp;Visitas</a></li>
+													<li class="topline"><a href="../crmformascontacto/startup.agnux">Formas&nbsp;de&nbsp;Contacto</a></li>
+													<li class="topline"><a href="../crmmotivosllamadas/startup.agnux">Motivos&nbsp;de&nbsp;Llamadas</a></li>
 													<li class="topline"><a href="../crmprospectos/startup.agnux">Prospectos</a></li>
 													<li class="topline"><a href="../crmcontactos/startup.agnux">Contactos</a></li>
 												</ul>
