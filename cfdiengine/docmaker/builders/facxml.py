@@ -104,6 +104,7 @@ class FacXml(BuilderGen):
                 'CUENTA': row['no_cuenta']
             }
 
+
     def __q_moneda(self, conn, prefact_id):
         """
         Consulta la moneda de la prefactura en dbms
