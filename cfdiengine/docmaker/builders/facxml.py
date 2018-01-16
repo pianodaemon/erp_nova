@@ -139,7 +139,7 @@ class FacXml(BuilderGen):
             return {
                 'RFC': row['rfc'],
                 'RAZON_SOCIAL': unidecode.unidecode(row['razon_social']),
-                'USO_CFDI': 'P01'
+                'USO_CFDI': 'G03'
             }
 
     def __q_conceptos(self, conn, prefact_id):
