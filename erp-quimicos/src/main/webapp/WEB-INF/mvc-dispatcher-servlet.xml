@@ -15,15 +15,11 @@
 	<mvc:annotation-driven />
         
         
-        <!--   Inicia  nuevo   -->
-        <!--<bean id="viewResolver" class=" org.springframework.web.servlet.view.InternalResourceViewResolver" >
-            <property name="prefix">
-                <value>/jsp/</value>
-            </property>
-            <property name="suffix">
-                <value>.jsp</value>
-            </property>
-        </bean> -->
+    <bean id="propertyPlaceholderConfigurer"
+          class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />
+        <property name="searchSystemEnvironment" value="true" />
+    </bean>
         
         
         <bean id="velocityConfig" class="org.springframework.web.servlet.view.velocity.VelocityConfigurer">
@@ -52,22 +48,12 @@
 	     </constructor-arg>
 	</bean>
 	
-        
-        
-        
-        <!--Conexion a bd instance01 LOCAL-->
-	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-	     <property name="driverClassName" value="org.postgresql.Driver" />
-	     <property name="url" value="jdbc:postgresql://localhost:5432/disnp" />
-	     <property name="username" value="disnp" />
-	     <property name="password" value="disnp" />
-       </bean>
-        
-        
-        
-        <!--<bean name="beanOutCfdi" class="com.agnux.cfdi.BeanSolicitidesOut"></bean>-->
-        
-        <!--http://static.springsource.org/spring/docs/2.5.x/reference/beans.html#beans-factory-lifecycle-initializingbean-->
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="org.postgresql.Driver" />
+        <property name="url" value="#{systemEnvironment['MS_DBMS_URL']}" />
+        <property name="username" value="#{systemEnvironment['MS_DBMS_USER']}" />
+        <property name="password" value="#{systemEnvironment['MS_DBMS_PASS']}" />
+    </bean>
         
         <bean name="beanFacturador" class="com.agnux.cfd.v2.BeanFacturador"></bean>
         <bean name="beanFacturadorCfdi" class="com.agnux.cfdi.BeanFacturadorCfdi"></bean>
